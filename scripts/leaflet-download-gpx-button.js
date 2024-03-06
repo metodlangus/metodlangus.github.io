@@ -4,7 +4,7 @@ L.Control.DownloadGPX = L.Control.extend({
     options: {
         position: "topleft",
         title: "Download GPX",
-        gpxData: null,
+        gpxUrl: null,
         fileName: null
     },
     onAdd: function(map) {
@@ -22,35 +22,40 @@ L.Control.DownloadGPX = L.Control.extend({
         this.downloadGPX();
     },
     downloadGPX: function() {
-        var gpxData = this.options.gpxData;
+        var gpxUrl = this.options.gpxUrl;
         var fileName = this.options.fileName;
         
-        if (!gpxData) {
-            console.error("GPX data not provided.");
+        if (!gpxUrl) {
+            console.error("GPX URL not provided.");
             return;
         }
         
-        // Create a Blob containing the GPX data
-        var blob = new Blob([gpxData], {type: 'application/gpx+xml'});
-        
-        // Create a temporary anchor element
-        var a = document.createElement('a');
-        a.href = window.URL.createObjectURL(blob);
-        
-        // Set the file name
-        if (fileName) {
-            a.download = fileName + '.gpx';
-        } else {
-            console.error("File name not provided.");
-            return;
-        }
-        
-        // Append the anchor to the body and trigger the click event
-        document.body.appendChild(a);
-        a.click();
-        
-        // Clean up
-        document.body.removeChild(a);
+        // Fetch the GPX data from the URL
+        fetch(gpxUrl)
+            .then(response => response.blob())
+            .then(blob => {
+                // Create a temporary anchor element
+                var a = document.createElement('a');
+                a.href = window.URL.createObjectURL(blob);
+                
+                // Set the file name
+                if (fileName) {
+                    a.download = fileName + '.gpx';
+                } else {
+                    console.error("File name not provided.");
+                    return;
+                }
+                
+                // Append the anchor to the body and trigger the click event
+                document.body.appendChild(a);
+                a.click();
+                
+                // Clean up
+                document.body.removeChild(a);
+            })
+            .catch(error => {
+                console.error("Error fetching GPX data:", error);
+            });
     }
 });
 
