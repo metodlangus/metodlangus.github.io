@@ -1,11 +1,85 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="5; URL='https://gorski-uzitki.blogspot.com/'" /> <!-- Wait for 10 seconds -->
     <title>Document</title>
+    <style>
+        body {
+            background-color: #333; /* Dark grey background */
+            color: white; /* White text color */
+            font-size: 1vw; /* Set base font size using viewport width */
+            text-align: center; /* Center-align text */
+            padding-top: 0px; /* Add some top padding */
+            position: relative; /* Set position to relative */
+        }
+
+        .title {
+            white-space: nowrap; /* Ensure title stays in one line */
+            position: absolute; /* Position the title absolutely */
+            top: 70px; /* Distance from the top */
+            left: 50%; /* Center-align the title */
+            transform: translateX(-50%); /* Center horizontally */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add shadow effect to the title */
+            font-size: 5vw; /* Set font size using viewport width */
+        }
+
+        .loading-text {
+            position: absolute; /* Position the loading text absolutely */
+            top: calc(50% + 50px); /* Place below the title */
+            left: 50%; /* Center-align the loading text */
+            transform: translateX(-50%); /* Center horizontally */
+            font-size: 3vw; /* Set font size using viewport width */
+            opacity: 0; /* Initially hidden */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add shadow effect to the loading text */
+        }
+
+        .image-container {
+            display: flex; /* Use flexbox to arrange images horizontally */
+            justify-content: center; /* Center-align images horizontally */
+            flex-wrap: wrap; /* Allow images to wrap to the next line */
+            gap: 10px; /* Add some spacing between images */
+            margin-top: 20px; /* Add space between title and images */
+        }
+
+        .image-container img {
+            width: calc(33.33% - 40px); /* Set the width of each image */
+            border-radius: 10px; /* Add border radius to images */
+        }
+
+        @media screen and (max-width: 768px) {
+            .title {
+                font-size: 6vw; /* Adjust font size for smaller screens */
+            }
+
+            .loading-text {
+                font-size: 4vw; /* Adjust font size for smaller screens */
+            }
+
+            .image-container img {
+                width: calc(50% - 20px); /* Set the width of each image for smaller screens */
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Test</h1>
-    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quos quo voluptatibus neque dicta laboriosam consequatur, voluptates, odit nesciunt ipsam eos quibusdam reprehenderit ullam architecto adipisci excepturi voluptatum labore facere dolores.</p>
+    <h1 class="title">GORSKI UŽITKI</h1>
+    <div class="loading-text">Nalaganje ...</div>
+    <div class="image-container">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJUIPCiC8zGW4n4Ju7_Zl-DGaK01Ygp7NpcnNlXKV6y4oVsd8ZSjv2pWulOJdv4ipQu1wWB4M2ImxmO3WHIJeTTCZ0KP6DYMt-0q8pZXkhR6wzYL1_K872d3cHhWMBS3AEM0C24Ig9ye1AqqvaFX7u0DYsEGDrvtqaFFm_Uavc35SxUxAowmP4aP-NubA0/s600/20230814_074257.jpg" alt="Image">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj29NyFglIUdQB3_tPGJ18e1PLHKMbnflnx-T72U90i1dVFXNt8Eycjwo1dMnX6Kk9G_cXJiFvo4HEcvAyxEIM-Vny_sj70NtF0bXHyI_7ukNrp6F0hSTNvHdydiYWeaVV5hsb29k8KyYM-zw72Tz-zqtoF57wWqVLXAk6BvmNUU1gZ_u9HOeLeZSj5s3c/s600/20230311_095517.jpg" alt="Image">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi7Y1sJGKs4ZG0s_rnnHMUPEIpbSsb1DlvzeicQ5IsIOGzrXsDL5ODQZBzrvHSjLY6JOvc1pDjhPG1zmiUuvhmsFHqKbpKixSg2e_YVBnH7NxCzpUb95Q7XS0YSZTsYLNZC-PezAOaJosk45GnQaSa1O6dSFm2ENfXbKI9BjoK0cnQ8pgX9wt72hoZBw6Y/s600/20220627_075655.jpg" alt="Image">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhR-d_mxA2qGkOTzK2CYAlWNT1lP8IQDmibergJvgbDwo5ahQsq0gjHpPJ-7_8bntrN_HGz72JsEP3cDcsnpoigxnJaed7bIQ9-DQOjeOe8zO81blpXwZBdhv9F3h1PihTRp3lpPsYn3vzIGZKpBndok48yy0gV9Q2t0zS2Q4Vpqtm5btFyiE7LaujGsrI/s600/20220625_111544.jpg" alt="Image">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgWxo5icLrpWFCy7vVpTOXk6zL_bXPmUXXghMfg8ZdBFh0v5PYIUMdmgYAFWKnFxOhVVbvKMJ7O7Jo6EXNNkMk9TLiPCtsuxl5QOTj-lkRyE7jr6b3JIadJu5cXEWeyuG9RV8OoXPkYQP-mi5OMxO8B9MVcayGWZB5VanTG9dWd4m9aP6vTN5wTyWRc6MU/s600/20240309_113153.jpg" alt="Image">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjiyTVF6Zp2ixP8oxpXMkQlBCLjjJz6AIm5hBK8XRoXgTNlHCp89F1vI5GySkzdh7c7X8-dIHzc7poZj-Sata7gMOOsw-q2FUj6bua781J2jVs0UrOP09oy-CDwysxFm_yQCRc9akL-_vQHzObEx-0SrVqo311Mj7J3Hi2yiImy7nQgq4uxyGuOQmBspRg/s600/20230815_091044.jpg" alt="Image">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjgGZixW6r-z2dLZ8aOoFBUB9dyXq6cGAaQaIcUmAlvywvmpUeq9FBl7wIRzxmLpHepQ3sYKiCVVkFUW6yXhsqeLLGfNxWEkY3Tq33mtUDeeI1W1vSdtLdCw3oPxzRCwUnoS5l-KX1m67nTX5K4Hw6a5GfCLVicFr_fzg4gpndtZhRGcyN4ks4yL4yqXgM/s1200/20230820_112951.jpg" alt="Image">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhRJV7OzNicVQLbNo73zLN9KjGEetJS138xtKgdnazSRL18u5m7wLgqjWaqu1H57x1RXpkHSWcVS3T5cB-5hyphenhyphenm1skEgCRDreWp27rk1bJ6Xhx6APAD2AJZC4SrOcVNSBtau7ubCHEQU_nCMYWP8PtcgoJZP_fTYnKOypA95DHjRDMIt-v4oJPdgEOdbwT4/s600/20230819_110722.jpg" alt="Image">
+    </div>
+    <script>
+        window.addEventListener('load', function() {
+            document.querySelector('.loading-text').style.opacity = '1'; // Show the loading text
+        });
+    </script>
 </body>
 </html>
