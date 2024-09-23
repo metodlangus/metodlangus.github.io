@@ -23,18 +23,18 @@ var windowWidth = window.innerWidth;
 var windowHeight = window.innerHeight;
 var topPosition = 5;
 
-function checkWindowSize() {
-    var newWindowWidth = window.innerWidth;
-    var newWindowHeight = window.innerHeight;
+// function checkWindowSize() {
+//     var newWindowWidth = window.innerWidth;
+//     var newWindowHeight = window.innerHeight;
     
-    if (((windowWidth / windowHeight) > 1) ^ ((newWindowWidth / newWindowHeight) > 1)) {
-        // If window size has changed, reload the page
-        location.reload();
-    }
-}
+//     if (((windowWidth / windowHeight) > 1) ^ ((newWindowWidth / newWindowHeight) > 1)) {
+//         // If window size has changed, reload the page
+//         location.reload();
+//     }
+// }
 
-// Add event listener for window resize
-window.addEventListener('resize', checkWindowSize);
+// // Add event listener for window resize
+// window.addEventListener('resize', checkWindowSize);
 
 // Check if windowWidth is less than windowHeight
 if (windowWidth < windowHeight) {
