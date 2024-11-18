@@ -1,0 +1,16 @@
+{
+    "name": "my-repo",
+    "version": "1.0.0",
+    "description": "",
+    "main": "fetch-images.js",
+    "scripts": {
+      "start": "node fetch-images.js"
+    },
+    "dependencies": {
+      "cheerio": "^1.0.0-rc.12",
+      "node-fetch": "^2.6.7"
+    },
+    "author": "",
+    "license": "ISC"
+  }
+  
