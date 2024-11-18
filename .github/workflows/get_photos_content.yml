@@ -1,0 +1,46 @@
+name: Update list_of_photos.txt
+
+on:
+  schedule:
+    - cron: '0 8 * * 3'  # Run every Wednesday at 08:00 AM UTC
+  workflow_dispatch:  # Allow manual triggering of the workflow
+
+jobs:
+  get_photos_content:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # Use a Node version
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run script to fetch and list image names
+        run: node get_photos_content.js
+
+      - name: Commit updated list_of_photos.txt
+        run: |
+          # Configure Git user for commit
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Add the list of photos file (list_of_photos.txt)
+          git add list_of_photos.txt
+
+          # Commit the changes
+          git commit -m "Update list_of_photos.txt" || echo "No changes to commit"
+
+          # Push the commit
+          git push
+
+      - name: Upload image names (optional)
+        uses: actions/upload-artifact@v3
+        with:
+          name: image-names
+          path: ./list_of_photos.txt
