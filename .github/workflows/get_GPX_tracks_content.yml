@@ -3,7 +3,7 @@ name: Update list_of_tracks.txt
 on:
   push:
     paths:
-      - "GPX_tracks/**"  # Replace with the path to the folder you want to track
+      - "GPX_tracks/**"  # Track changes in the GPX folder
   pull_request:
     paths:
       - "GPX_tracks/**"
@@ -15,17 +15,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: List folder contents and write to list_of_tracks.txt
+      - name: Set up Python environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Python dependencies
         run: |
-          # List the contents of the folder and output to list_of_tracks.txt
-          ls -R GPX_tracks > list_of_tracks.txt
+          python -m pip install gpxpy
+
+      - name: Generate list_of_tracks.txt with coordinates
+        run: |
+          echo "Generating list_of_tracks.txt with start coordinates"
+          python generate_track_list.py
           
       - name: Commit updated list_of_tracks.txt
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git add list_of_tracks.txt
-          git commit -m "Update list_of_tracks.txt" || echo "No changes to commit"
+          git commit -m "Update list_of_tracks.txt with start coordinates" || echo "No changes to commit"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
