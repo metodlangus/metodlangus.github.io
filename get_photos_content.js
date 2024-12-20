@@ -5,7 +5,7 @@ const fs = require('fs');
 const blogUrl = 'https://gorski-uzitki.blogspot.com/'; // Blog URL
 const maxResults = 10;  // Number of results to fetch in one request
 let startIndex = 1;
-let imageDetailsBuffer = []; // Array to store image details (filename and URL)
+let imageDetailsBuffer = []; // Array to store image details (filename, URL, data-skip)
 
 function fetchData() {
     const feedUrl = `${blogUrl}feeds/posts/default?start-index=${startIndex}&max-results=${maxResults}&alt=json`;
@@ -33,7 +33,7 @@ function fetchData() {
 
                 // Save the unique image details (with no duplicates) to a file
                 const output = uniqueImages
-                    .map(img => `${img.imageName} Link: ${img.imgUrl}`)
+                    .map(img => `${img.imageName} Link: ${img.imgUrl} data-skip=${img.dataSkip}`)
                     .join('\n');
                 fs.writeFileSync('./list_of_photos.txt', output);
                 return;
@@ -51,8 +51,11 @@ function fetchData() {
                     // Extract the image name (filename) from the URL
                     const imageName = imgSrc.split('/').pop(); // Get the filename from the URL
 
-                    // Push image details (filename and URL) into the buffer
-                    imageDetailsBuffer.push({ imageName, imgUrl: imgSrc });
+                    // Check for the data-skip attribute
+                    const dataSkip = $(img).attr('data-skip') || 'NA';
+
+                    // Push image details (filename, URL, and data-skip) into the buffer
+                    imageDetailsBuffer.push({ imageName, imgUrl: imgSrc, dataSkip });
                 });
             });
 
@@ -68,16 +71,17 @@ function processDuplicates(imageDetails) {
     const uniqueImages = [];    // To store unique images (one occurrence per filename)
     const duplicates = [];      // To store duplicate info for logging
 
-    imageDetails.forEach(({ imageName, imgUrl }) => {
+    imageDetails.forEach(({ imageName, imgUrl, dataSkip }) => {
         if (!filenameCounts[imageName]) {
-            filenameCounts[imageName] = { count: 0, urls: [] };
+            filenameCounts[imageName] = { count: 0, urls: [], dataSkips: [] };
         }
         filenameCounts[imageName].count += 1;
         filenameCounts[imageName].urls.push(imgUrl);
+        filenameCounts[imageName].dataSkips.push(dataSkip);
 
         // Only add the image to uniqueImages the first time we encounter it
         if (filenameCounts[imageName].count === 1) {
-            uniqueImages.push({ imageName, imgUrl });
+            uniqueImages.push({ imageName, imgUrl, dataSkip });
         }
     });
 
