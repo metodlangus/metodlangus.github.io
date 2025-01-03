@@ -1,4 +1,5 @@
 import requests
+import re
 
 def fetch_file_content(url):
     """Fetches the content of a file from a URL."""
@@ -28,6 +29,9 @@ def update_photo_data(extracted_url, list_url, local_file_path):
     extracted_content = fetch_file_content(extracted_url)
     extracted_lines = extracted_content.splitlines()
 
+    # Regex to match `data-skip` attribute in any format
+    data_skip_regex = re.compile(r"(data-skip=[^\s]+)")
+
     # Process and update each line
     updated_lines = []
     for line in extracted_lines:
@@ -36,9 +40,13 @@ def update_photo_data(extracted_url, list_url, local_file_path):
             image_name, rest = parts[0], parts[1]
             skip_data = photo_dict.get(image_name, "")
             if skip_data:
-                # Insert the data-skip attribute
-                link_part, remainder = rest.split(' ', 1)
-                updated_line = f"{image_name}, Link: {link_part} data-skip={skip_data} {remainder}"
+                # Update the `data-skip` attribute if it exists
+                if "data-skip=" in line:
+                    updated_line = re.sub(data_skip_regex, f"data-skip={skip_data}", line)
+                else:
+                    # Add the `data-skip` attribute if it doesn't exist
+                    link_part, remainder = rest.split(' ', 1)
+                    updated_line = f"{image_name}, Link: {link_part} data-skip={skip_data} {remainder}"
             else:
                 updated_line = line  # No update needed
         else:
