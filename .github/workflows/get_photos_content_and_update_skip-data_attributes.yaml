@@ -1,0 +1,56 @@
+name: Update and Commit Photo Data
+
+on:
+  schedule:
+    - cron: '0 8 * * 3'  # Run every Wednesday at 08:00 AM UTC
+  workflow_dispatch:  # Allow manual triggering of the workflow
+
+jobs:
+  process_and_commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # First Job: Generate `list_of_photos.txt`
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Node.js dependencies
+        run: npm install
+
+      - name: Generate list_of_photos.txt
+        run: node get_photos_content.js
+
+      # Second Job: Update `extracted_photos_with_gps_data.txt` using the local `list_of_photos.txt`
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Update extracted photos data
+        run: |
+          python update_data-skip_atributes.py
+
+      # Final Step: Commit and Push All Changes
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Add all changed files
+          git add list_of_photos.txt extracted_photos_with_gps_data.txt
+
+          # Commit the changes
+          git commit -m "Update photo data and skip attributes" || echo "No changes to commit"
+
+          # Push the changes
+          git push
