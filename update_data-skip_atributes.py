@@ -1,16 +1,19 @@
 import requests
 import re
 
-def fetch_file_content(url):
-    """Fetches the content of a file from a URL."""
+def fetch_file_content(url, local_override=None):
+    """Fetches the content of a file either from a URL or a local file."""
+    if local_override:
+        with open(local_override, 'r') as file:
+            return file.read()
     response = requests.get(url)
     response.raise_for_status()  # Raise an error if the request failed
     return response.text
 
-def parse_file_to_dict(url):
-    """Parses a file from a URL into a dictionary where the key is the image name."""
+def parse_file_to_dict(local_path=None, url=None):
+    """Parses a file into a dictionary where the key is the image name."""
     photo_data = {}
-    content = fetch_file_content(url)
+    content = fetch_file_content(url, local_override=local_path)
     for line in content.splitlines():
         parts = line.split(' ', 1)
         if len(parts) > 1:
@@ -20,10 +23,10 @@ def parse_file_to_dict(url):
                 photo_data[image_name] = skip_data
     return photo_data
 
-def update_photo_data(extracted_url, list_url, local_file_path):
+def update_photo_data(extracted_url, list_url, local_list_path, local_file_path):
     """Updates the extracted photos file with the data-skip attribute."""
     # Parse the list file into a dictionary
-    photo_dict = parse_file_to_dict(list_url)
+    photo_dict = parse_file_to_dict(local_path=local_list_path)
 
     # Fetch the extracted photos file content
     extracted_content = fetch_file_content(extracted_url)
@@ -58,12 +61,13 @@ def update_photo_data(extracted_url, list_url, local_file_path):
     with open(local_file_path, 'w') as file:
         file.writelines("\n".join(updated_lines) + "\n")
 
-# URLs to input files
+# Local paths for files
+local_list_path = 'list_of_photos.txt'
+local_file_path = 'extracted_photos_with_gps_data.txt'
+
+# URLs to fallback files (if needed)
 extracted_url = 'https://metodlangus.github.io/extracted_photos_with_gps_data.txt'
 list_url = 'https://metodlangus.github.io/list_of_photos.txt'
 
-# Local file path for the updated file
-local_file_path = 'extracted_photos_with_gps_data.txt'
-
 # Update the photo data
-update_photo_data(extracted_url, list_url, local_file_path)
+update_photo_data(extracted_url, list_url, local_list_path, local_file_path)
