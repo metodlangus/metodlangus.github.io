@@ -49,7 +49,7 @@ def update_photo_data(extracted_url, list_url, local_list_path, local_file_path)
                 else:
                     # Add the `data-skip` attribute if it doesn't exist
                     link_part, remainder = rest.split(' ', 1)
-                    updated_line = f"{image_name}, Link: {link_part} data-skip={skip_data} {remainder}"
+                    updated_line = f"{image_name}, Link: {link_part} data-skip={skip_data}, {remainder}"
             else:
                 updated_line = line  # No update needed
         else:
