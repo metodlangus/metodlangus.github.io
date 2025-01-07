@@ -32,8 +32,8 @@ def update_photo_data(extracted_url, list_url, local_list_path, local_file_path)
     extracted_content = fetch_file_content(extracted_url)
     extracted_lines = extracted_content.splitlines()
 
-    # Regex to match `data-skip` attribute in any format
-    data_skip_regex = re.compile(r"(data-skip=[^\s]+)")
+    # Regex to match and capture the `data-skip` attribute
+    data_skip_regex = re.compile(r"(data-skip=[^,]*),?")
 
     # Process and update each line
     updated_lines = []
@@ -45,7 +45,7 @@ def update_photo_data(extracted_url, list_url, local_list_path, local_file_path)
             if skip_data:
                 # Update the `data-skip` attribute if it exists
                 if "data-skip=" in line:
-                    updated_line = re.sub(data_skip_regex, f"data-skip={skip_data}", line)
+                    updated_line = re.sub(data_skip_regex, f"data-skip={skip_data},", line)
                 else:
                     # Add the `data-skip` attribute if it doesn't exist
                     link_part, remainder = rest.split(' ', 1)
