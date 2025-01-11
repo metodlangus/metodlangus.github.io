@@ -28,9 +28,9 @@ def generate_list_of_tracks():
                     gpx_path = os.path.join(root, file)
                     lat, lon = extract_start_coordinates(gpx_path)
                     if lat is not None and lon is not None:
-                        output.write(f"{lat},{lon},{file}\n")
+                        output.write(f"{lat};{lon};{file}\n")
                     else:
-                        output.write(f"0.0,0.0,{file}\n")  # Default coordinates if parsing fails
+                        output.write(f"0.0;0.0;{file}\n")  # Default coordinates if parsing fails
 
 if __name__ == "__main__":
     generate_list_of_tracks()
