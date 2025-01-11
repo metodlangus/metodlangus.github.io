@@ -54,7 +54,7 @@ function fetchData() {
                     // Check for the data-skip attribute
                     const dataSkip = $(img).attr('data-skip') || 'NA';
 
-                    // Push image details (filename, URL, and data-skip) into the buffer
+                    // Push image details (filename, URL, data-skip) into the buffer
                     imageDetailsBuffer.push({ imageName, imgUrl: imgSrc, dataSkip });
                 });
             });
@@ -88,11 +88,37 @@ function processDuplicates(imageDetails) {
     // Collect duplicates for logging purposes
     for (const [imageName, data] of Object.entries(filenameCounts)) {
         if (data.count > 1) {
+            const combinedDataSkip = combineDataSkipValues(data.dataSkips);
+            uniqueImages.forEach(img => {
+                if (img.imageName === imageName) {
+                    img.dataSkip = combinedDataSkip;
+                }
+            });
             duplicates.push({ imageName, count: data.count, urls: data.urls });
         }
     }
 
     return { uniqueImages, duplicates };
+}
+
+// Function to combine duplicate data-skip values into a unique, semicolon-separated entry
+function combineDataSkipValues(dataSkips) {
+    const uniqueValues = new Set();
+
+    dataSkips.forEach(dataSkip => {
+        if (dataSkip !== 'NA') {
+            // Split by semicolon and remove duplicates within the same `data-skip`
+            const parts = dataSkip.split(';').filter(Boolean);
+            parts.forEach(part => uniqueValues.add(part));
+        }
+    });
+
+    // If 'NA' is the only value, keep it; otherwise, concatenate unique non-NA values
+    if (uniqueValues.size === 0) {
+        return 'NA';
+    }
+
+    return [...uniqueValues].join(';');
 }
 
 fetchData(); // Start fetching images
