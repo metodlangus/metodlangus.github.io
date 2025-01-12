@@ -7,6 +7,7 @@ const maxResults = 10;  // Number of results to fetch in one request
 let startIndex = 1;
 let imageDetailsBuffer = []; // Array to store image details (filename, URL, data-skip)
 
+// Function to fetch data from the blog feed
 function fetchData() {
     const feedUrl = `${blogUrl}feeds/posts/default?start-index=${startIndex}&max-results=${maxResults}&alt=json`;
 
@@ -46,6 +47,12 @@ function fetchData() {
 
                 images.each((i, img) => {
                     let imgSrc = $(img).attr('src');
+                    
+                    // Skip SVG images encoded as text
+                    if (imgSrc && imgSrc.startsWith('data:image/svg+xml')) {
+                        return; // Skip this image
+                    }
+
                     imgSrc = imgSrc.replace(/\/s\d+\/|\/w\d+-h\d+\//, `/s400/`); // Resize images for uniformity
 
                     // Extract the image name (filename) from the URL
