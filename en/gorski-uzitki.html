@@ -1,20 +1,20 @@
 <!DOCTYPE html>
-<html lang="sl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
-    <meta name="description" content="Gorske avanture in nepozabni trenutki: Odkrijte lepote gorskega sveta in se prepustite predvajalnikom slik, ki vas popeljejo skozi dogodivščine." />
-    <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
+    <meta name="description" content="Mountain adventures and unforgettable moments: Discover the beauty of the mountain world and enjoy the image slideshows that take you through the adventures." />
+    <meta name="keywords" content="mountain adventures, hiking, mountains, photography, nature, free time, gorski užitki, Metod Langus" />
     <meta name="author" content="Metod Langus" />
-    <meta property="og:title" content="Gorski Užitki | Gorske pustolovščine skozi slike | Metod Langus" />
-    <meta property="og:description" content="Gorske avanture in nepozabni trenutki: Odkrijte lepote gorskega sveta in se prepustite predvajalnikom slik, ki vas popeljejo skozi dogodivščine." />
-    <meta property="og:image" content="slike/gore-pokrajina-razgled.jpg" />
-    <meta property="og:image:alt" content="Gorski razgledi in narava" />
-    <meta property="og:url" content="https://metodlangus.github.io/gorski-uzitki.html" />
+    <meta property="og:title" content="Gorski Užitki | Mountain Adventures Through Pictures | Metod Langus" />
+    <meta property="og:description" content="Mountain adventures and unforgettable moments: Discover the beauty of the mountain world and enjoy the image slideshows that take you through the adventures." />
+    <meta property="og:image" content="images/mountain-landscape-view.jpg" />
+    <meta property="og:image:alt" content="Mountain views and nature" />
+    <meta property="og:url" content="https://metodlangus.github.io/en/gorski-uzitki.html" />
     <meta property="og:type" content="website" />
 
-    <title>Gorski Užitki | Gorske pustolovščine skozi slike | Metod Langus</title>
+    <title>Gorski Užitki | Mountain Adventures Through Pictures | Metod Langus</title>
 
     <style>
         body {
@@ -97,13 +97,13 @@
     </style>
 </head>
 <body>
-    <!-- <select class="language-selector" id="language-select">
-        <option value="sl" selected>sl</option>
-        <option value="en">en</option>
-    </select> -->
+    <select class="language-selector" id="language-select">
+        <option value="sl">sl</option>
+        <option value="en" selected>en</option>
+    </select>
 
     <h1 class="title">GORSKI UŽITKI</h1>
-    <div class="loading-text">S klikom vstopi v svet dogodivščin</div>
+    <div class="loading-text">Click to enter the world of adventures</div>
     <div class="image-container" id="image-container"></div>
 
     <script type="application/ld+json">
@@ -112,7 +112,7 @@
       "@type": "WebPage",
       "name": "Gorski Užitki",
       "url": "https://metodlangus.github.io",
-      "description": "Odkrijte gorske avanture in fotografije narave v blogu Gorski Užitki Metoda Langusa."
+      "description": "Explore breathtaking outdoor adventures and nature photos in the Gorski Užitki blog by Metod Langus."
     }
     </script>
 
@@ -125,6 +125,7 @@
         //         window.location.href = "https://metodlangus.github.io/gorski-uzitki.html"; // Redirect to the Slovenian version
         //     }
         // });
+
 
         async function fetchAndDisplayImages() {
             try {
@@ -152,7 +153,7 @@
 
                     const img = document.createElement('img');
                     img.src = link;
-                    img.alt = "Naslovna slika avanture iz bloga Gorski užitki.";
+                    img.alt = "Cover photo of an adventurous landscape from Gorski Užitki.";
 
                     wrapper.appendChild(img);
                     container.appendChild(wrapper);
@@ -171,11 +172,11 @@
             return new Date(year, month - 1, day, hour, minute, second).getTime();
         }
 
-        document.body.addEventListener('click', function(event) {
-            if (!event.target.closest('#language-select')) {
-                window.location.href = "https://gorski-uzitki.blogspot.com/";
-            }
-        });
+        // document.body.addEventListener('click', function(event) {
+        //     if (!event.target.closest('#language-select')) {
+        //         window.location.href = "https://gorski-uzitki.blogspot.com/";
+        //     }
+        // });
 
         fetchAndDisplayImages();
     </script>
