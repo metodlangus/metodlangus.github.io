@@ -4,7 +4,7 @@ import re
 def fetch_file_content(url, local_override=None):
     """Fetches the content of a file either from a URL or a local file."""
     if local_override:
-        with open(local_override, 'r') as file:
+        with open(local_override, 'r', encoding='utf-8') as file:
             return file.read()
     response = requests.get(url)
     response.raise_for_status()  # Raise an error if the request failed
@@ -24,7 +24,7 @@ def parse_file_to_dict(local_path=None, url=None):
     return photo_data
 
 def update_photo_data(extracted_url, list_url, local_list_path, local_file_path):
-    """Updates the extracted photos file with the data-skip attribute."""
+    """Updates the extracted photos file with the data-skip attribute correctly formatted."""
     # Parse the list file into a dictionary
     photo_dict = parse_file_to_dict(local_path=local_list_path)
 
@@ -32,8 +32,8 @@ def update_photo_data(extracted_url, list_url, local_list_path, local_file_path)
     extracted_content = fetch_file_content(extracted_url)
     extracted_lines = extracted_content.splitlines()
 
-    # Regex to match and capture the `data-skip` attribute
-    data_skip_regex = re.compile(r"(data-skip=[^,]*),?")
+    # Regex to match data-skip (correcting cases where it's misplaced)
+    data_skip_regex = re.compile(r"(data-skip=[^,]*)\s")
 
     # Process and update each line
     updated_lines = []
@@ -41,15 +41,20 @@ def update_photo_data(extracted_url, list_url, local_list_path, local_file_path)
         parts = line.split(', Link: ', 1)
         if len(parts) > 1:
             image_name, rest = parts[0], parts[1]
-            skip_data = photo_dict.get(image_name, "")
+            skip_data = photo_dict.get(image_name, "").strip()
+
             if skip_data:
-                # Update the `data-skip` attribute if it exists
                 if "data-skip=" in line:
-                    updated_line = re.sub(data_skip_regex, f"data-skip={skip_data},", line)
+                    # Ensure proper comma placement after data-skip
+                    updated_line = re.sub(data_skip_regex, f"data-skip={skip_data}, ", line)
                 else:
-                    # Add the `data-skip` attribute if it doesn't exist
-                    link_part, remainder = rest.split(' ', 1)
-                    updated_line = f"{image_name}, Link: {link_part} data-skip={skip_data}, {remainder}"
+                    # Find the blog post link position and insert properly formatted data-skip
+                    rest_parts = rest.split(', ', 1)
+                    if len(rest_parts) > 1:
+                        link_part, remainder = rest_parts
+                        updated_line = f"{image_name}, Link: {link_part}, data-skip={skip_data}, {remainder}"
+                    else:
+                        updated_line = f"{image_name}, Link: {rest}, data-skip={skip_data}"
             else:
                 updated_line = line  # No update needed
         else:
@@ -58,7 +63,7 @@ def update_photo_data(extracted_url, list_url, local_list_path, local_file_path)
         updated_lines.append(updated_line)
 
     # Write the updated lines to a local file
-    with open(local_file_path, 'w') as file:
+    with open(local_file_path, 'w', encoding='utf-8') as file:
         file.writelines("\n".join(updated_lines) + "\n")
 
 # Local paths for files
