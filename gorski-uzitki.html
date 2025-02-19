@@ -98,8 +98,10 @@
             font-size: 3vw;
             text-align: center;
             padding: 5px; /* Padding inside instead of margin */
+            margin: 0; /* Remove margin to avoid overflow */
             opacity: 0;
             transition: opacity 0.3s ease-in-out;
+            box-sizing: border-box; /* Ensures padding is included in width */
 
             /* Ensure whole words move to the next line */
             white-space: normal; 
@@ -123,7 +125,9 @@
             .image-wrapper {
                 width: calc(50% - 10px);
             }
+        }
 
+        @media screen and (min-width: 768px) {
             .image-title {
                 font-size: 2vw;
             }
