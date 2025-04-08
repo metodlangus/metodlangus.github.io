@@ -66,11 +66,18 @@ def update_photo_data(extracted_url, list_url, local_list_path, local_file_path)
 
                 # Ensure we keep existing metadata and update only what’s necessary
                 if "data-skip=" in line:
-                    updated_line = re.sub(data_skip_regex, f"data-skip={skip_data},", line)
+                    line = re.sub(data_skip_regex, f"data-skip={skip_data},", line)
                 else:
-                    # Extract the link part and remaining metadata
-                    link_part, remainder = rest.split(' ', 1)
-                    updated_line = f"{image_name}, Link: {link_part} data-skip={skip_data}, \"{post_title}\" {post_link}, {remainder}"
+                    # Insert data-skip if missing
+                    line = line.replace(rest, f"{rest} data-skip={skip_data},")
+
+                # Update post title (text inside quotes)
+                line = re.sub(r'"[^"]*"', f'"{post_title}"', line)
+
+                # Update post link (e.g., 2023/03/sardija-2023.html)
+                line = re.sub(r'\d{4}/\d{2}/[\w-]+\.html', post_link, line)
+
+                updated_line = line
             else:
                 updated_line = line  # No update needed
         else:
