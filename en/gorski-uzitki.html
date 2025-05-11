@@ -135,7 +135,11 @@
     </style>
 </head>
 <body>
-    <h1 class="title">GORSKI UŽITKI</h1>
+    <h1 class="title">
+      <a href="https://gorski-uzitki.blogspot.com/" target="_blank" rel="noopener noreferrer" style="color: white; text-decoration: none;">
+        GORSKI UŽITKI
+      </a>
+    </h1>
     <div class="loading-text">Click to enter the world of adventures</div>
     <div class="image-container" id="image-container"></div>
 
@@ -145,7 +149,7 @@
       "@type": "WebPage",
       "name": "Gorski Užitki",
       "url": "https://metodlangus.github.io",
-      "description": "Explore breathtaking outdoor adventures and nature photos in the Gorski Užitki blog by Metod Langus."
+      "description": "Odkrijte gorske avanture in fotografije narave v blogu Gorski Užitki Metoda Langusa."
     }
     </script>
 
@@ -229,12 +233,31 @@
         }
 
         function extractDateFromTitle(title) {
-            const match = title.match(/(\d{8}_\d{6}|\d{8}\d{6})/);
+            const match = title.match(/(\d{8}_\d{6}|\d{14})/); // e.g., 20240511_144501 or 20240511144501
             if (!match) return 0;
 
-            const dateStr = match[0];
-            const [year, month, day, hour, minute, second] = dateStr.match(/\d{2}/g).map(Number);
-            return new Date(year, month - 1, day, hour, minute, second).getTime();
+            let dateStr = match[0];
+
+            // Handle format: 20240511_144501
+            if (dateStr.includes('_')) {
+                const [datePart, timePart] = dateStr.split('_');
+                const year = parseInt(datePart.substring(0, 4));
+                const month = parseInt(datePart.substring(4, 6)) - 1;
+                const day = parseInt(datePart.substring(6, 8));
+                const hour = parseInt(timePart.substring(0, 2));
+                const minute = parseInt(timePart.substring(2, 4));
+                const second = parseInt(timePart.substring(4, 6));
+                return new Date(year, month, day, hour, minute, second).getTime();
+            }
+
+            // Handle format: 20240511144501
+            const year = parseInt(dateStr.substring(0, 4));
+            const month = parseInt(dateStr.substring(4, 6)) - 1;
+            const day = parseInt(dateStr.substring(6, 8));
+            const hour = parseInt(dateStr.substring(8, 10));
+            const minute = parseInt(dateStr.substring(10, 12));
+            const second = parseInt(dateStr.substring(12, 14));
+            return new Date(year, month, day, hour, minute, second).getTime();
         }
 
         fetchAndDisplayImages();
