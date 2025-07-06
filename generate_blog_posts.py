@@ -19,13 +19,16 @@ def extract_cover_paragraphs_and_gallery(html_content):
     paragraphs = soup.find_all("p")
     content_html = "\n".join(str(p) for p in paragraphs)
 
-    # Extract gallery images with data-skip="2"
+    # Extract gallery images with data-skip="1"
     gallery_imgs = soup.find_all("img", attrs={"data-skip": "1"})
     gallery_html = ""
     if gallery_imgs:
         gallery_html += '<div class="image-gallery">\n'
         for img in gallery_imgs:
-            gallery_html += f'  <img src="{img.get("src")}" alt="" style="max-width:100%;margin:5px;" />\n'
+            src = img.get("src", "")
+            # Replace /s1600/ or /s1200/ with /s400/
+            reduced_src = src.replace("/s1600/", "/s400/").replace("/s1200/", "/s400/")
+            gallery_html += f'  <img src="{reduced_src}" alt="" style="max-width:100%;margin:5px;" />\n'
         gallery_html += '</div>'
 
     return cover_img_html, content_html, gallery_html
