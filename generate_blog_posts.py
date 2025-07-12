@@ -74,13 +74,18 @@ def fetch_and_save_raw_posts():
  
   <link href='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.css' rel='stylesheet'></script>
 
+    <link rel="stylesheet" href="../assets/Main.css">
     <link rel="stylesheet" href="../assets/MyMapScript.css">
     <link rel="stylesheet" href="../assets/MySlideshowScript.css">
 
 </head>
 <body>
-<h2>{title}</h2>
-{content_html}
+<body>
+  <div class="content-wrapper">
+    <h2>{title}</h2>
+    {content_html}
+  </div>
+
 
 
   
