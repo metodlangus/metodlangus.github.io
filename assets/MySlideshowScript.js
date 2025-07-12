@@ -1,6 +1,3 @@
-var postTitle = "Naslov";
-
-
     const blogUrl = "https://gorski-uzitki.blogspot.com";
     const initPhotos = 1; // Determine range of photos to be shown on slideshows and in posts
     const initMapPhotos = -1; // Determine range of photos to be shown on map
@@ -732,7 +729,7 @@ var postTitle = "Naslov";
      */
     function fetchData(index) {
         var feedUrl;
-        const postId = getPostIdFromAnchor();
+        // const postId = getPostIdFromAnchor();
         
         // Determine the feed URL based on the slideshow title
         if (slideshowTitles[index] === "All pictures") {
@@ -743,9 +740,16 @@ var postTitle = "Naslov";
             feedUrl = `${blogUrl}/feeds/posts/default?q=${encodeURIComponent(slideshowTitles[index])}&alt=json`;
         }
 
+        console.log("feedUrl:",feedUrl)
+
+
+
+
+const corsProxy = "https://api.allorigins.win/raw?url=";
+const proxiedUrl = corsProxy + encodeURIComponent(feedUrl);
 
         // Fetch the data from the constructed feed URL
-        fetch(feedUrl)
+        fetch(proxiedUrl)
             .then(response => response.json())
             .then(async (data) => {
                 // The entries are in data.entry, if retrieving data by postId
@@ -868,7 +872,7 @@ var postTitle = "Naslov";
                                     });
                                 } else if (element.type === 'script') {
                                     const additionalPostId = element.postId;
-                                    const additionalPostUrl = `${blogUrl}/feeds/posts/default/${additionalPostId}?alt=json`;
+                                    const additionalPostUrl = `${blogUrl}/feeds/posts/default/?alt=json`;
 
                                     try {
                                         const additionalPostResponse = await fetch(additionalPostUrl);

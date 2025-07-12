@@ -35,7 +35,7 @@ def fetch_and_save_raw_posts():
 
   <script>
     var postTitle = {title!r};
-    var postID = {postId!r};
+    var postId = {postId!r};
   </script>
   
    <!-- Leaflet Map -->
