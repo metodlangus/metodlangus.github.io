@@ -1,0 +1,420 @@
+.my-slideshow-container {
+  height: 400px;
+  margin: 0 auto;
+  margin-top: 15px;
+  border-radius: 3px;
+  position: relative;
+  transition: all 0.3s ease; /* Smooth transition */
+}
+
+.my-slideshow-container.fullscreen {
+  position: fixed; /* Fixed position for fullscreen */
+  top: 0; /* Align to top */
+  left: 0; /* Align to left */
+  width: 100vw; /* Full width */
+  height: 100vh; /* Full height */
+  z-index: 9999; /* Ensure it is on top of other content */
+  margin: 0; /* Remove margin in fullscreen */
+  border-radius: 0; /* Remove border radius in fullscreen */
+}
+
+.my-slideshow-container .slideshow-outer-container.fullscreen {
+  background-color: #000; /* Change this to your desired fullscreen background color */
+  border-radius: 0; /* Remove border radius in fullscreen */
+  overflow: visible; /* Allow children to extend beyond boundaries */
+}
+
+.my-slideshow-container .slideshow-outer-container {
+  background-color: #ccc;
+  height: 100%;
+  width: 100%;
+  display: flex; /* Use flexbox for centering */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  border-radius: 3px;
+  overflow: visible; /* Allow children to extend beyond boundaries */
+}
+
+.my-slideshow-container .slideshow-container {
+  position: relative;
+  overflow: hidden;
+  height: 97%;
+  width: 97%;
+  overflow: visible; /* Allow children to extend beyond boundaries */
+}
+
+/* Fullscreen mode specific styles for slideshow-container */
+.slideshow-container.fullscreen {
+  position: relative;
+  overflow: hidden;
+  height: 97vh;
+  width: 97em;
+  overflow: visible; /* Allow children to extend beyond boundaries */
+}
+
+.my-slideshow-container .mySlides {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.my-slideshow-container .mySlides.fade-in {
+  opacity: 1;
+  transition: opacity 0.5s cubic-bezier(0.6, 0, 0.4, 1); /* Adjust fading-in speed */
+}
+
+.my-slideshow-container .mySlides.fade-out {
+  opacity: 0;
+  transition: opacity 0.01s ease-out; /* Fast fade-out */
+}
+
+.my-slideshow-container .mySlides img {
+  max-width: 100%; /* Set the maximum width to the width of the container */
+  max-height: 100%; /* Set the maximum height to the height of the container */
+  object-fit: contain; /* Maintain aspect ratio without cropping */
+  border-radius: 0; /* Remove border radius if needed */
+}
+
+.my-slideshow-container .mySlides.active {
+  opacity: 1;
+}
+
+.my-slideshow-container .text,
+.my-slideshow-container .uppertext {
+  color: #f2f2f2;
+  font-size: 18px;
+  padding: 8px;
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  text-shadow: 
+      2px 2px 4px black,                 /* Sharp black shadow */
+      0 0 30px rgba(0, 0, 0, 0.7),       /* Larger soft black glow */
+      0 0 10px black,                    /* Dark blue glow */
+      -1px -1px 5px rgba(0, 0, 0, 0.5),  /* Additional shadow in the top-left */
+      1px -1px 5px rgba(0, 0, 0, 0.5),   /* Additional shadow in the top-right */
+      -1px 1px 5px rgba(0, 0, 0, 0.5),   /* Additional shadow in the bottom-left */
+      1px 1px 5px rgba(0, 0, 0, 0.5);    /* Additional shadow in the bottom-right */
+}
+
+.my-slideshow-container .text {
+  bottom: 0px;
+}
+
+.my-slideshow-container .uppertext {
+  top: 0;
+}
+
+/* Base styles for light theme */
+.my-slideshow-container .slider-container {
+  position: absolute;
+  left: 40px;
+  bottom: 80px;
+  background: rgba(255, 255, 255, 0.9); /* Light background for light theme */
+  padding: 8px;
+  border-radius: 10px;
+  text-align: center;
+  width: 10%;
+  min-width: 100px; /* Ensures it doesn&#39;t get too small */
+  display: none; /* Hidden by default */
+  z-index: 3;
+}
+
+.my-slideshow-container .slider-container label {
+  font-size: 12px;
+  color: #333; /* Dark text for light theme */
+}
+
+.my-slideshow-container input[type=&quot;range&quot;] {
+  width: 100%;
+}
+
+/* Settings button styles */
+.my-slideshow-container .settings-button {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: #eee; /* Light button background */
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  color: #333; /* Dark text for light theme */
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+  font-size: 25px;
+}
+
+.my-slideshow-container .settings-button:hover {
+  background-color: #ccc; /* Slightly darker on hover */
+}
+
+/* Navigation control styles */
+.my-slideshow-container .navigation-controll {
+  position: absolute;
+  bottom: 20px; /* Position from bottom */
+  left: 20px; /* Position from left */
+  display: flex;
+  align-items: center; /* Center items vertically */
+  border-radius: 8px; /* Rounded corners for the background */
+  background-color: #f0f0f0; /* Light background color */
+}
+
+/* Ensure the toggle button stays in place */
+.my-slideshow-container .toggle-container {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+}
+
+/* Buttons container (except the toggle button) */
+.my-slideshow-container .buttons-container {
+  display: flex;
+  align-items: center;
+  margin-left: 60px; /* Offset to avoid overlap with the toggle button */
+}
+
+/* Vertical layout */
+.my-slideshow-container .vertical {
+  flex-direction: column-reverse;
+}
+
+/* Make buttons container vertical */
+.my-slideshow-container .vertical .buttons-container {
+  flex-direction: column;
+  margin-left: 0; /* Reset margin for vertical layout */
+  margin-top: 50px; /* Space between toggle and other buttons */
+}
+
+.my-slideshow-container button {
+  background-color: transparent;
+  border: none; /* No border */
+  border-radius: 17px; /* Rounded corners */
+  width: 40px; /* Fixed width */
+  height: 40px; /* Fixed height */
+  cursor: pointer; /* Pointer cursor on hover */
+  display: flex; /* Flexbox for centering the icon */
+  align-items: center; /* Center icon vertically */
+  justify-content: center; /* Center icon horizontally */
+  position: relative; /* Relative for tooltip positioning */
+  transition: background-color 0.3s ease; /* Smooth background color transition */
+}
+
+.my-slideshow-container button:hover {
+  background-color: #ddd; /* Lighter gray on hover for light theme */
+}
+
+.my-slideshow-container .navigation-controll svg {
+  display: block; /* Ensure SVGs take up the full button space */
+  margin: auto; /* Auto margins for perfect centering */
+  width: 24px; /* Set SVG width */
+  height: 24px; /* Set SVG height */
+}
+
+/* Set the color of the SVG path to dark */
+.my-slideshow-container .navigation-controll svg path {
+  fill: #333; /* Dark color for the icon in light theme */
+}
+
+.my-slideshow-container .tooltip {
+  display: none; /* Hide tooltips by default */
+  position: absolute; /* Position absolutely */
+  background-color: rgba(255, 255, 255, 0.9); /* Light background for tooltip */
+  color: #333; /* Dark text */
+  padding: 5px; /* Padding around text */
+  border-radius: 4px; /* Rounded corners for tooltip */
+  font-size: 12px; /* Smaller font size */
+  white-space: nowrap; /* Prevent text wrapping */
+  z-index: 10; /* Ensure tooltip appears above other elements */
+  bottom: 100%; /* Position above the button */
+  left: 50%; /* Center the tooltip horizontally */
+  transform: translateX(-50%); /* Adjust positioning */
+  opacity: 0; /* Start invisible */
+  transition: opacity 0.3s ease; /* Smooth transition for opacity */
+}
+
+/* Show tooltip on hover with a delay */
+.my-slideshow-container button:hover .tooltip {
+  display: block; /* Show tooltip on hover */
+  opacity: 1; /* Fade in tooltip */
+}
+
+/* Fullscreen styles - retain original styles */
+.my-slideshow-container.fullscreen .slider-container {
+  background: rgba(0, 0, 0, 0.5); /* Original background */
+  color: white; /* Original text color */
+}
+
+.my-slideshow-container.fullscreen .slider-container label {
+  color: #ccc; /* Original text color for labels */
+}
+
+.my-slideshow-container.fullscreen .settings-button {
+  background-color: #555; /* Original button background */
+  color: white; /* Original button text color */
+}
+
+.my-slideshow-container.fullscreen .navigation-controll {
+  background-color: #131314; /* Original navigation background */
+}
+
+/* Button and SVG styles in fullscreen mode */
+.my-slideshow-container.fullscreen button {
+  background-color: transparent; /* Original button background */
+}
+
+.my-slideshow-container.fullscreen .navigation-controll svg path {
+  fill: white; /* Original color for SVG icons */
+}
+
+.my-slideshow-container.fullscreen .tooltip {
+  background-color: rgba(0, 0, 0, 0.8); /* Original tooltip background */
+  color: white; /* Original tooltip text color */
+}
+
+
+/* Responsive styles 
+@media only screen and (max-width: 1200px) {
+  .my-slideshow-container .slideshow-container {
+    height: 98vh;
+    width: 98%;
+  }
+}
+*/
+@media only screen and (max-width: 600px) {
+  .my-slideshow-container .text,
+  .my-slideshow-container .uppertext {
+    font-size: 14px;
+  }
+}
+
+@media only screen and (max-width: 300px) {
+  .my-slideshow-container .text,
+  .my-slideshow-container .uppertext {
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 633px) {
+  .my-slideshow-container {
+    width: 600px;
+    height: 450px;
+  }
+}  
+
+/* Cover photo container (overlays the slideshow initially) */
+.my-slideshow-container .cover-photo-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.my-slideshow-container .cover-photo-container img {
+  width: 100%;
+  height: 100%;
+  border-radius: 0px;
+  object-fit: contain; /* Ensure the image fits the container without cropping or resizing */
+}
+
+/* Overlay Styling */
+.photo-overlay {
+  position: absolute;
+  top: 20%; /* Position 1/5 from the top */
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.25); /* Optional for better readability */
+  padding: 10px;
+}
+
+/* Text Styling - Consistent Proportion Relative to Parent */
+.my-title {
+  font-size: 3em; /* Font-size as percentage of parent height */
+  line-height: 1.2;
+  font-weight: 600;
+  font-family: &quot;Montserrat&quot;;
+  color: #fff;
+  text-shadow: 2px 2px 4px #000; /* Shadow for readability */
+  margin: 0;
+}
+
+.connection-error {
+  font-size: 2em; /* Font-size as percentage of parent height */
+  line-height: 1.2;
+  font-weight: 600;
+  font-family: &quot;Montserrat&quot;;
+  text-shadow: 2px 2px 4px #000; /* Shadow for readability */
+  margin: 0;
+}
+
+@media (max-width: 1000px) {
+  .my-title {
+    font-size: 2em; /* Adjusted for tablets */
+  }
+  .connection-error {
+    font-size: 1.5em; /* Adjusted for tablets */
+  }
+}
+
+@media (max-width: 700px) {
+  .my-title {
+    font-size: 1.5em; /* Smaller font size for mobile devices */
+  }
+  .connection-error {
+    font-size: 1em; /* Smaller font size for mobile devices */
+  }
+}
+
+/* Invisible Overlay for Click Events */
+.overlay-progress-container {
+  position: absolute;
+  bottom: -15px;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  display: flex;
+  z-index: 200000000; /* Below the progress bar */
+}
+
+/* Progress Bar Container */
+.progress-container {
+  position: absolute;
+  bottom: 24px;
+  left: 0;
+  width: 100%;
+  height: 0; /* Initially hidden */
+  background-color: #ddd;
+  transition: height 0.3s ease; /* Smooth animation for height change */
+}
+
+/* Progress Bar */
+.progress-bar {
+    height: 100%; /* Full height of the progress container */
+    width: 0; /* Initially 0% width */
+    background-color: red; /* Red color for the progress bar */
+    transition: width 0.3s ease; /* Smooth animation for progress change */
+}
+
+.progress-container.fullscreen {
+  position: absolute;
+  bottom: 15px;
+  left: 0;
+  width: 100%;
+  height: 0; /* Initially hidden */
+  background-color: #ddd;
+  transition: height 0.3s ease; /* Smooth animation for height change */
+}
