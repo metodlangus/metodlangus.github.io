@@ -87,9 +87,14 @@ function insertPostContainer(postTitle, displayMode, scriptTag) {
         .replace(/\s+/g, '-')                    // Replace spaces with dashes
         .replace(/-+/g, '-');                    // Collapse multiple dashes
 
+      var publishedDate = new Date(post.published.$t);
+
+      // Extract year and month
+      var year = publishedDate.getUTCFullYear().toString();
+      var month = (publishedDate.getUTCMonth() + 1).toString().padStart(2, '0');
 
       // Prepend domain to the slug-based path
-      var fullUrl = `${window.location.origin}/metodlangus.github.io/posts/${slug}.html`;
+      var fullUrl = `${window.location.origin}/metodlangus.github.io/posts/${year}/${month}/${slug}.html`;
 
       postLink.href = fullUrl;
 
@@ -126,7 +131,7 @@ function insertPostContainer(postTitle, displayMode, scriptTag) {
 
       var authorDate = document.createElement('div');
       authorDate.classList.add('author-date');
-      var publishedDate = new Date(post.published.$t);
+      // var publishedDate = new Date(post.published.$t);
       var formattedDate = publishedDate.toLocaleDateString('sl-SI', {
         weekday: 'long',
         year: 'numeric',
@@ -147,7 +152,7 @@ function insertPostContainer(postTitle, displayMode, scriptTag) {
       thumbnailImg.src = post.media$thumbnail.url.replace(/\/s\d+(?:-w\d+-h\d+)?-c\//, '/s800/');
 
       var linkElement = document.createElement('a');
-      linkElement.href = `posts/${slug}.html`;
+      linkElement.href = `${window.location.origin}/metodlangus.github.io/posts/${year}/${month}/${slug}.html`;
       
       // Set aria-label for the link
       linkElement.setAttribute('aria-label', `${post.title.$t}`);

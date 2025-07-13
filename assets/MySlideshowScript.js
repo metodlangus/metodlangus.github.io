@@ -867,10 +867,11 @@
                                     });
                                 } else if (element.type === 'script') {
                                     const additionalPostId = element.postId;
-                                    const additionalPostUrl = `${blogUrl}/feeds/posts/default/?alt=json`;
+                                    const additionalPostUrl = `${blogUrl}/feeds/posts/default/${additionalPostId}?alt=json`;
+                                    const proxiedUrl = `https://corsproxy.io/?${additionalPostUrl}`;
 
                                     try {
-                                        const additionalPostResponse = await fetch(additionalPostUrl);
+                                        const additionalPostResponse = await fetch(proxiedUrl);
 
                                         if (!additionalPostResponse.ok) {
                                             console.error(`Failed to fetch additional post with ID ${additionalPostId}: HTTP ${additionalPostResponse.status}`);

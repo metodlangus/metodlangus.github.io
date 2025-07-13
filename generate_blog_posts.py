@@ -7,7 +7,7 @@ from collections import defaultdict
 
 # Constants
 BASE_FEED_URL = "https://gorski-uzitki.blogspot.com/feeds/posts/default"
-MAX_RESULTS = 250
+MAX_RESULTS = 25
 OUTPUT_DIR = Path(r"C:\Spletna_stran_Github\metodlangus.github.io\posts")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -155,20 +155,35 @@ def fetch_and_save_all_posts():
         """
 
         archive_html_parts = ["<aside class='sidebar-archive'><h3>Arhiv</h3>"]
+
         for y in sorted(archive_dict.keys(), reverse=True):
-            archive_html_parts.append(f"<h4>{y}</h4>")
+            # Count all posts in the year
+            year_count = sum(len(archive_dict[y][m]) for m in archive_dict[y])
+            archive_html_parts.append(f"<details open><summary>{y} ({year_count})</summary>")
+
             for m in sorted(archive_dict[y].keys(), reverse=True):
+                posts = archive_dict[y][m]
                 try:
                     month_name = datetime.strptime(m, '%m').strftime('%B')
                 except ValueError:
                     month_name = m
-                archive_html_parts.append(f"<h5>{month_name}</h5><ul>")
-                for s, t, idx in archive_dict[y][m]:
+                month_label = f"{month_name} {y} ({len(posts)})"
+                archive_html_parts.append(f"<details class='month-group'><summary>{month_label}</summary><ul>")
+
+                for s, t, idx in posts:
                     active = " class='active-post'" if idx == index else ""
-                    archive_html_parts.append(f"<li{active}><a href='../../{y}/{m}/{s}.html'>{t}</a></li>")
-                archive_html_parts.append("</ul>")
+                    archive_html_parts.append(
+                        f"<li{active}><a href='../../{y}/{m}/{s}.html'>{t}</a></li>"
+                    )
+
+                archive_html_parts.append("</ul></details>")
+
+            archive_html_parts.append("</details>")
+
         archive_html_parts.append("</aside>")
         archive_sidebar_html = "\n".join(archive_html_parts)
+
+
 
         post_dir = OUTPUT_DIR / year / month
         post_dir.mkdir(parents=True, exist_ok=True)

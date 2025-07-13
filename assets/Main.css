@@ -169,3 +169,91 @@
   font-weight: bold;
   color: #007acc;
 }
+
+
+.sidebar-archive .month-group {
+  margin-left: 1em; /* Indents the month block */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*sidebar Css*/
+
+.sidebar-archive {
+  font-family: sans-serif;
+  font-size: 14px;
+  color: #444;
+}
+
+.sidebar-archive h3 {
+  font-size: 1.2em;
+  margin-bottom: 0.5em;
+}
+
+.sidebar-archive details {
+  margin-bottom: 0.5em;
+}
+
+.sidebar-archive summary {
+  cursor: pointer;
+  list-style: none;
+  font-weight: bold;
+  /* color: #222; */
+}
+
+.sidebar-archive details[open] > summary::before,
+.sidebar-archive summary::before {
+  content: "▸";
+  display: inline-block;
+  margin-right: 0.4em;
+  transform: rotate(0deg);
+  transition: transform 0.2s ease;
+}
+
+.sidebar-archive details[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.sidebar-archive .month-group {
+  margin-left: 1em;
+}
+
+.sidebar-archive .month-group summary {
+  font-weight: normal;
+  color: #9b6e00; /* dark gold */
+}
+
+.sidebar-archive ul {
+  list-style: none;
+  padding-left: 1em;
+  margin-top: 0.2em;
+}
+
+.sidebar-archive li {
+  margin: 0.2em 0;
+}
+
+.sidebar-archive a {
+  text-decoration: none;
+  color: #9b6e00; /* match gold link color */
+}
+
+.sidebar-archive a:hover {
+  text-decoration: underline;
+}
+
+.active-post > a {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
