@@ -1,0 +1,157 @@
+/* Custom Blog Posts Design Implementation - start */
+
+.centered {
+    max-width: 1000px;
+}
+
+body:not(.item-view) .blog-posts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 15px;
+    margin-top: 60px;
+    font-family: "Montserrat", sans-serif;
+    color: #eee;
+}
+
+.my-post-outer-container a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.my-post-outer-container .post .my-snippet-thumbnail img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 5px;
+	aspect-ratio: 4/3; /* Predefined aspect ratio */
+  display: block;
+}
+
+.my-post-outer-container .post {
+    position: relative;
+}
+
+.my-post-outer-container .post .my-snippet-thumbnail {
+    filter: brightness(90%);
+}
+
+.my-post-outer-container .my-meta-data {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    padding: 24px;
+	padding-bottom: 18px;
+    gap: 8px;
+    font-size: 10px;
+    font-weight: 600;
+    transition: all 400ms ease;
+    z-index: 1; /* Ensure metadata is above the image */
+}
+
+.my-post-outer-container .my-meta-data > * {
+    text-shadow: 2px 2px 4px #000;
+}
+
+.my-post-outer-container .post .my-title-container {
+    position: absolute;
+    bottom: 30px;
+    padding: 24px;
+    transition: all 400ms ease;
+    z-index: 3; /* Ensure titles are above the image */
+}
+
+.my-post-outer-container .post .my-title {
+    font-size: 18px;
+    line-height: 1;
+    font-weight: 600;
+    margin: 0;
+    color: #fff;
+    z-index: 15;
+    text-shadow: 2px 2px 4px #000;
+}
+
+.my-post-outer-container .my-labels {
+    background-color: rgba(243, 137, 29, 0.75);
+    color: #222;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 2px 8px;
+    margin-bottom: 10px;
+    display: inline-block;
+    z-index: 3; /* Ensure labels are above the image */
+    border-radius: 3px;
+}
+
+.my-post-outer-container .my-tag-container .label-six {
+    background-color: rgba(175, 175, 175, 0.75);
+}
+
+.my-post-outer-container .post .my-tag-container {
+    position: absolute;
+    top: 0px;
+	  right: 0px;
+    padding: 24px;
+    transition: all 400ms ease;
+    z-index: 3; /* Ensure titles are above the image */
+}
+
+.my-post-outer-container .post:hover .my-tag-container {
+	  opacity: 0.2;
+}
+
+.my-post-outer-container .post .my-post-link {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+}
+
+.my-post-outer-container .post:hover .my-title-container {
+    transform: translateY(+40px);
+    opacity: 0.2;
+}
+
+.my-post-outer-container .post:hover .my-meta-data {
+    opacity: 0;
+    transition: all 200ms ease;
+}
+
+@media (max-width: 1000px) {
+    body:not(.item-view) .blog-posts {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    body:not(.item-view) .blog-posts {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Custom Blog Posts Design Implementation - end */
+
+
+
+
+article.my-post-outer-container {
+  margin: 0px auto;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}  
+  
+@media (min-width: 633px) {
+  article.my-post-outer-container {
+    width: 600px;
+  }
+}  
+  
+.post-body .my-post-outer-container {
+  line-height: 1.4;
+  font-family: "Montserrat", sans-serif;
+}
+  
+.my-post-outer-container .my-meta-data {
+  font-family: "Montserrat", sans-serif;
+  color: #eee;
+}  

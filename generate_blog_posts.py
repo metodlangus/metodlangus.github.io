@@ -4,7 +4,7 @@ from slugify import slugify
 
 # Constants
 FEED_URL = "https://gorski-uzitki.blogspot.com/feeds/posts/default?alt=json"
-OUTPUT_DIR = Path(r"C:\Spletna_stran_Github\metodlangus.github.io\raw_posts")
+OUTPUT_DIR = Path(r"C:\Spletna_stran_Github\metodlangus.github.io\posts")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 def fetch_and_save_raw_posts():
@@ -25,6 +25,11 @@ def fetch_and_save_raw_posts():
         
         fullId = entry.get("id", {}).get("$t", "")
         postId = fullId.split("post-")[-1] if "post-" in fullId else ""
+
+        #  Get the author name
+        author = ""
+        if "author" in entry and isinstance(entry["author"], list) and entry["author"]:
+              author = entry["author"][0].get("name", {}).get("$t", "")
 
         # Previous and next posts
         prev_slug = slugs[index - 1] if index > 0 else ""
@@ -53,6 +58,7 @@ def fetch_and_save_raw_posts():
   <script>
     var postTitle = {title!r};
     var postId = {postId!r};
+    var author = {author!r};
   </script>
 
   <link href='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.css' rel='stylesheet'>
@@ -67,6 +73,7 @@ def fetch_and_save_raw_posts():
   <link rel="stylesheet" href="../assets/Main.css">
   <link rel="stylesheet" href="../assets/MyMapScript.css">
   <link rel="stylesheet" href="../assets/MySlideshowScript.css">
+  <link rel="stylesheet" href="../assets/MyPostContainerScript.css">
 </head>
 <body>
   <div class="content-wrapper">
@@ -89,6 +96,9 @@ def fetch_and_save_raw_posts():
 
   <script src="../assets/MyMapScript.js" defer></script>
   <script src="../assets/MySlideshowScript.js" defer></script>
+  <script src="../assets/MyPostContainerScript.js" defer></script>
+  <script src="../assets/Main.js" defer></script>
+
 </body>
 </html>""")
 

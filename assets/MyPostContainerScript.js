@@ -1,0 +1,206 @@
+var postDetails = [];
+document.querySelectorAll('script').forEach(script => {
+  var scriptContent = script.innerText;
+
+  // Improved regex to correctly capture post titles inside `, ', or "
+  var titleMatches = scriptContent.matchAll(/var\s+(postTitle\d+)\s*=\s*([`'"])(.*?)\2/g);
+
+  for (let match of titleMatches) {
+    var titleValue = match[3].trim(); // Ensure full title is captured
+    var displayModeMatch = scriptContent.match(new RegExp('var\\s+displayMode' + match[1].replace(/\D/g, '') + '\\s*=\\s*([`\'"])(.*?)\\1'));
+    var displayModeValue = displayModeMatch ? displayModeMatch[2].trim() : ""; // Default to empty if not found
+
+    if (titleValue) {
+      postDetails.push({ title: titleValue, displayMode: displayModeValue });
+      console.log("Extracted Title:", titleValue, "| Display Mode:", displayModeValue);
+      insertPostContainer(titleValue, displayModeValue, script);
+    }
+  }
+});
+
+// Retrieve post by title or ID using JSON Feeds
+function getPostByTitle(postTitle, callback) {
+    let apiUrl;
+    const isNumeric = /^\d+$/.test(postTitle); // Check if it's purely numeric
+
+    if (isNumeric) {
+        // If postTitle is a number, treat it as a Post ID
+        apiUrl = `${blogUrl}/feeds/posts/default/${postTitle}?alt=json`;
+    } else {
+        // Otherwise, search by title
+        apiUrl = `${blogUrl}/feeds/posts/default?q=${encodeURIComponent(postTitle)}&alt=json`;
+    }
+
+    const proxiedUrl = `https://corsproxy.io/?${apiUrl}`;
+
+    fetch(proxiedUrl)
+        .then(response => response.json())
+        .then(data => {
+            if (isNumeric) {
+                // Fetching by ID (may return `entry` directly, not inside `feed`)
+                if (data.entry) {
+                    callback(data.entry); // Return the single post
+                } else {
+                    console.error("No post found for ID:", postTitle);
+                    callback(null);
+                }
+            } else {
+                // Fetching by Title (must search inside `feed.entry`)
+                if (data.feed?.entry) {
+                    let matchingEntry = data.feed.entry.find(entry => entry.title.$t === postTitle);
+                    if (matchingEntry) {
+                        callback(matchingEntry);
+                    } else {
+                        console.error("No post found for title:", postTitle);
+                        callback(null);
+                    }
+                } else {
+                    console.error("No post entries found in feed.");
+                    callback(null);
+                }
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching post:", error);
+            callback(null);
+        });
+}
+
+function insertPostContainer(postTitle, displayMode, scriptTag) {
+  getPostByTitle(postTitle, function(post) {
+    if (post) {
+      var outerContainer = document.createElement('article');
+      outerContainer.classList.add('my-post-outer-container');
+
+      var postContainer = document.createElement('div');
+      postContainer.classList.add('post');
+
+      var postLink = document.createElement('a');
+      postLink.classList.add('my-post-link');
+
+      // Convert post title to a slug (lowercase, dashes, no special chars)
+      var slug = post.title.$t
+        .toLowerCase()
+        .normalize("NFD")                         // Split accents from letters
+        .replace(/[\u0300-\u036f]/g, '')         // Remove accents (diacritics)
+        .replace(/[^\w\s-]/g, '')                // Remove remaining special characters
+        .replace(/\s+/g, '-')                    // Replace spaces with dashes
+        .replace(/-+/g, '-');                    // Collapse multiple dashes
+
+
+      // Prepend domain to the slug-based path
+      var fullUrl = `${window.location.origin}/metodlangus.github.io/posts/${slug}.html`;
+
+      postLink.href = fullUrl;
+
+
+      // Set a meaningful aria-label for the link
+      postLink.setAttribute('aria-label', `${post.title.$t}`);
+
+      var titleContainer = document.createElement('div');
+      titleContainer.classList.add('my-title-container');
+      
+      // Check if post.category exists and has elements
+      if (post.category?.length > 0) {
+        // Check if there's a category starting with "1. "
+        var titleLabel = post.category.find(category => category.term.startsWith("1. "));
+        if (titleLabel) {
+
+          // Create the new label for "1. " category
+          var labelOne = document.createElement('a');
+          labelOne.classList.add('my-labels');
+          labelOne.href =  blogUrl + 'search/label/' + encodeURIComponent(titleLabel.term);
+          labelOne.textContent = titleLabel.term.replace(/^\d+\.\s*/, ''); // Remove the prefix
+
+          // Append the label to the tag container
+          titleContainer.appendChild(labelOne);
+        }
+      }
+
+      var titleTitle = document.createElement('h2');
+      titleTitle.classList.add('my-title');
+      titleTitle.textContent = post.title.$t;
+
+      var metaDataContainer = document.createElement('div');
+      metaDataContainer.classList.add('my-meta-data');
+
+      var authorDate = document.createElement('div');
+      authorDate.classList.add('author-date');
+      var publishedDate = new Date(post.published.$t);
+      var formattedDate = publishedDate.toLocaleDateString('sl-SI', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      authorDate.textContent = /*'Objavil ' + author +*/ 'Dne ' + formattedDate;
+
+      var thumbnailContainer = document.createElement('div');
+      thumbnailContainer.classList.add('my-thumbnail');
+      thumbnailContainer.id = 'post-snippet-' + post.id.$t;
+
+      var thumbnail = document.createElement('div');
+      thumbnail.classList.add('my-snippet-thumbnail');
+
+      var thumbnailImg = document.createElement('img');
+      thumbnailImg.alt = `Thumbnail image for post: ${post.title.$t}`;  // Descriptive alt text
+      thumbnailImg.src = post.media$thumbnail.url.replace(/\/s\d+(?:-w\d+-h\d+)?-c\//, '/s800/');
+
+      var linkElement = document.createElement('a');
+      linkElement.href = `posts/${slug}.html`;
+      
+      // Set aria-label for the link
+      linkElement.setAttribute('aria-label', `${post.title.$t}`);
+      
+      // Check if post.category exists and has elements
+      if (post.category?.length > 0) {
+        // Check if there's a category starting with "6."
+        var sixCategory = post.category.find(category => category.term.startsWith("6. "));
+        if (sixCategory) {
+          // Create the new tag container
+          var tagContainer = document.createElement('div');
+          tagContainer.classList.add('my-tag-container');
+
+          // Create the new label for "6. " category
+          var labelSix = document.createElement('a');
+          labelSix.classList.add('my-labels', 'label-six');
+          labelSix.href = blogUrl + 'search/label/' + encodeURIComponent(sixCategory.term);
+          labelSix.textContent = sixCategory.term.replace(/^\d+\.\s*\d+\.\s*/, ''); // Remove the prefix
+
+          // Append the label to the tag container
+          tagContainer.appendChild(labelSix);
+
+          // Append the tag container to the post container
+          postContainer.appendChild(tagContainer);
+        }
+      }
+
+      // Only add the `separator` container if displayMode is NOT 'alwaysVisible'
+      if (displayMode !== 'alwaysVisible') {
+        var wrapperContainer = document.createElement('div');
+        wrapperContainer.classList.add('separator');
+        wrapperContainer.style.display = 'none';
+        wrapperContainer.appendChild(outerContainer);
+        scriptTag.parentNode.insertBefore(wrapperContainer, scriptTag.nextSibling);
+      } else {
+        scriptTag.parentNode.insertBefore(outerContainer, scriptTag.nextSibling);
+      }
+
+      // Append all other elements
+      outerContainer.appendChild(postContainer);
+      postContainer.appendChild(postLink);
+      postLink.appendChild(titleContainer);
+      titleContainer.appendChild(titleTitle);
+      postContainer.appendChild(metaDataContainer);
+      metaDataContainer.appendChild(authorDate);
+      postContainer.appendChild(thumbnailContainer);
+      thumbnailContainer.appendChild(thumbnail);
+      thumbnail.appendChild(thumbnailImg);
+      postContainer.appendChild(linkElement);
+
+      console.log(`Inserted ${displayMode} post: ${postTitle}`);
+    } else {
+      console.error(`No post found for title: ${postTitle}`);
+    }
+  });
+}
