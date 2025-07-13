@@ -90,19 +90,35 @@ def fetch_and_save_all_posts():
         metadata_html = f"<div class='post-date' data-date='{formatted_date}'></div>"
 
         # Previous and next posts
-        prev_slug = slugs[index - 1] if index > 0 else ""
-        prev_title = entries[index - 1].get("title", {}).get("$t", "") if index > 0 else ""
+        next_slug = slugs[index - 1] if index > 0 else ""
+        next_title = entries[index - 1].get("title", {}).get("$t", "") if index > 0 else ""
 
-        next_slug = slugs[index + 1] if index < len(entries) - 1 else ""
-        next_title = entries[index + 1].get("title", {}).get("$t", "") if index < len(entries) - 1 else ""
+        prev_slug = slugs[index + 1] if index < len(entries) - 1 else ""
+        prev_title = entries[index + 1].get("title", {}).get("$t", "") if index < len(entries) - 1 else ""
 
         # Navigation HTML
-        nav_html = '<div class="nav-links" style="margin-top: 2rem; text-align: center;">'
+        nav_html = """
+        <div class="nav-links-wrapper" style="margin-top: 2em;">
+          <div class="nav-links" style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+        """
         if prev_slug:
-            nav_html += f'<a href="{prev_slug}.html" style="margin-right: 2rem;">&larr; {prev_title}</a>'
+            nav_html += f"""
+            <div class="prev-link" style="text-align: left; max-width: 45%;">
+              <div class="pager-title">Prejšnja objava</div>
+              <a href="{prev_slug}.html">&larr; {prev_title}</a>
+            </div>
+            """
         if next_slug:
-            nav_html += f'<a href="{next_slug}.html">{next_title} &rarr;</a>'
-        nav_html += '</div>'
+            nav_html += f"""
+            <div class="next-link" style="text-align: right; max-width: 45%;">
+              <div class="pager-title">Naslednja objava</div>
+              <a href="{next_slug}.html">{next_title} &rarr;</a>
+            </div>
+            """
+        nav_html += """
+          </div>
+        </div>
+        """
 
         filename = OUTPUT_DIR / f"{slug}.html"
 
