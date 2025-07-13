@@ -3,12 +3,15 @@ from pathlib import Path
 from slugify import slugify
 from datetime import datetime
 from bs4 import BeautifulSoup
+from collections import defaultdict
 
 # Constants
 BASE_FEED_URL = "https://gorski-uzitki.blogspot.com/feeds/posts/default"
 MAX_RESULTS = 250
 OUTPUT_DIR = Path(r"C:\Spletna_stran_Github\metodlangus.github.io\posts")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+BASE_SITE_URL = "https://metodlangus.github.io/posts"
 
 def fetch_all_entries():
     print("Fetching all paginated posts...")
@@ -63,6 +66,24 @@ def fetch_and_save_all_posts():
     entries = fetch_all_entries()
     slugs = [slugify(entry.get("title", {}).get("$t", f"untitled-{i}")) or f"post-{i}" for i, entry in enumerate(entries)]
 
+    archive_dict = defaultdict(lambda: defaultdict(list))
+
+    for i, entry in enumerate(entries):
+        title = entry.get("title", {}).get("$t", f"untitled-{i}")
+        published = entry.get("published", {}).get("$t", "")
+        try:
+            # Fix timezone format from -07:00 to -0700
+            if published[-3] == ":":
+                published = published[:-3] + published[-2:]
+            parsed_date = datetime.strptime(published, "%Y-%m-%dT%H:%M:%S.%f%z")
+            year = str(parsed_date.year)
+            month = f"{parsed_date.month:02d}"
+        except Exception:
+            year, month = "unknown", "unknown"
+
+        archive_dict[year][month].append((slugs[i], title, i))
+
+
     for index, entry in enumerate(entries):
         title = entry.get("title", {}).get("$t", f"untitled-{index}")
         content_html = entry.get("content", {}).get("$t", "")
@@ -79,10 +100,16 @@ def fetch_and_save_all_posts():
         # Parse published date
         published = entry.get("published", {}).get("$t", "")
         try:
-            parsed_date = datetime.strptime(published, "%Y-%m-%dT%H:%M:%S.%fZ")
+            # Fix the timezone format from -07:00 to -0700 for strptime
+            if published[-3] == ":":
+                published = published[:-3] + published[-2:]
+
+            parsed_date = datetime.strptime(published, "%Y-%m-%dT%H:%M:%S.%f%z")
             formatted_date = parsed_date.isoformat()
+            year = str(parsed_date.year)
+            month = f"{parsed_date.month:02d}"
         except Exception:
-            formatted_date = published
+            formatted_date, year, month = published, "unknown", "unknown"
 
         # Fix images
         content_html = fix_images_for_lightbox(content_html)
@@ -93,9 +120,7 @@ def fetch_and_save_all_posts():
         og_image = first_img_tag["src"] if first_img_tag else "https://metodlangus.github.io/assets/default-og.jpg"
 
         # Construct og:url
-        BASE_SITE_URL = "https://metodlangus.github.io/posts"
-        og_url = f"{BASE_SITE_URL}/{slug}.html"
-
+        og_url = f"{BASE_SITE_URL}/{year}/{month}/{slug}.html"
         metadata_html = f"<div class='post-date' data-date='{formatted_date}'></div>"
 
         # Previous and next posts
@@ -107,21 +132,21 @@ def fetch_and_save_all_posts():
 
         # Navigation HTML
         nav_html = """
-        <div class="nav-links-wrapper" style="margin-top: 2em;">
-          <div class="nav-links" style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+        <div class=\"nav-links-wrapper\" style=\"margin-top: 2em;\">
+          <div class=\"nav-links\" style=\"display: flex; justify-content: space-between; flex-wrap: wrap;\">
         """
         if prev_slug:
             nav_html += f"""
-            <div class="prev-link" style="text-align: left; max-width: 45%;">
-              <div class="pager-title">Prejšnja objava</div>
-              <a href="{prev_slug}.html">&larr; {prev_title}</a>
+            <div class=\"prev-link\" style=\"text-align: left; max-width: 45%;\">
+              <div class=\"pager-title\">Prejšnja objava</div>
+              <a href=\"../../{year}/{month}/{prev_slug}.html\">&larr; {prev_title}</a>
             </div>
             """
         if next_slug:
             nav_html += f"""
-            <div class="next-link" style="text-align: right; max-width: 45%;">
-              <div class="pager-title">Naslednja objava</div>
-              <a href="{next_slug}.html">{next_title} &rarr;</a>
+            <div class=\"next-link\" style=\"text-align: right; max-width: 45%;\">
+              <div class=\"pager-title\">Naslednja objava</div>
+              <a href=\"../../{year}/{month}/{next_slug}.html\">{next_title} &rarr;</a>
             </div>
             """
         nav_html += """
@@ -129,40 +154,39 @@ def fetch_and_save_all_posts():
         </div>
         """
 
+        archive_html_parts = ["<aside class='sidebar-archive'><h3>Arhiv</h3>"]
+        for y in sorted(archive_dict.keys(), reverse=True):
+            archive_html_parts.append(f"<h4>{y}</h4>")
+            for m in sorted(archive_dict[y].keys(), reverse=True):
+                try:
+                    month_name = datetime.strptime(m, '%m').strftime('%B')
+                except ValueError:
+                    month_name = m
+                archive_html_parts.append(f"<h5>{month_name}</h5><ul>")
+                for s, t, idx in archive_dict[y][m]:
+                    active = " class='active-post'" if idx == index else ""
+                    archive_html_parts.append(f"<li{active}><a href='../../{y}/{m}/{s}.html'>{t}</a></li>")
+                archive_html_parts.append("</ul>")
+        archive_html_parts.append("</aside>")
+        archive_sidebar_html = "\n".join(archive_html_parts)
 
-        # Archive sidebar HTML
-        archive_links = []
-        for i, e in enumerate(entries):
-            archive_title = e.get("title", {}).get("$t", f"untitled-{i}")
-            archive_slug = slugs[i]
-            is_current = " class='active-post'" if i == index else ""
-            archive_links.append(f"<li{is_current}><a href='{archive_slug}.html'>{archive_title}</a></li>")
-        
-        archive_sidebar_html = f"""
-        <aside class="sidebar-archive">
-          <h3>Arhiv</h3>
-          <ul>
-            {'\n'.join(archive_links)}
-          </ul>
-        </aside>
-        """
-
-
-        filename = OUTPUT_DIR / f"{slug}.html"
+        post_dir = OUTPUT_DIR / year / month
+        post_dir.mkdir(parents=True, exist_ok=True)
+        filename = post_dir / f"{slug}.html"
 
         with open(filename, "w", encoding="utf-8") as f:
             f.write(f"""<!DOCTYPE html>
-<html lang="en">
+<html lang=\"en\">
 <head>
-  <meta charset="UTF-8">
+  <meta charset=\"UTF-8\">
   <title>{title}</title>
 
   <!-- OpenGraph meta tags -->
-  <meta property="og:title" content="{title}">
-  <meta property="og:type" content="article">
-  <meta property="og:image" content="{og_image}">
-  <meta property="og:url" content="{og_url}">
-  <meta property="og:description" content="{title}">
+  <meta property=\"og:title\" content=\"{title}\">
+  <meta property=\"og:type\" content=\"article\">
+  <meta property=\"og:image\" content=\"{og_image}\">
+  <meta property=\"og:url\" content=\"{og_url}\">
+  <meta property=\"og:description\" content=\"{title}\">
 
   <script>
     var postTitle = {title!r};
@@ -179,15 +203,15 @@ def fetch_and_save_all_posts():
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css' rel='stylesheet'>
   <link href='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.css' rel='stylesheet'>
 
-  <link rel="stylesheet" href="../assets/Main.css">
-  <link rel="stylesheet" href="../assets/MyMapScript.css">
-  <link rel="stylesheet" href="../assets/MySlideshowScript.css">
-  <link rel="stylesheet" href="../assets/MyPostContainerScript.css">
+  <link rel="stylesheet" href="../../../assets/Main.css">
+  <link rel="stylesheet" href="../../../assets/MyMapScript.css">
+  <link rel="stylesheet" href="../../../assets/MySlideshowScript.css">
+  <link rel="stylesheet" href="../../../assets/MyPostContainerScript.css">
 </head>
 <body>
-  <div class="main-layout" style="display: flex; gap: 2em;">
+  <div class=\"main-layout\" style=\"display: flex; gap: 2em;\">
     {archive_sidebar_html}
-    <div class="content-wrapper" style="flex: 1;">
+    <div class=\"content-wrapper\" style=\"flex: 1;\">
       <h2>{title}</h2>
       {metadata_html}
       {content_html}
@@ -208,10 +232,10 @@ def fetch_and_save_all_posts():
   <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
 
-  <script src="../assets/MyMapScript.js" defer></script>
-  <script src="../assets/MySlideshowScript.js" defer></script>
-  <script src="../assets/MyPostContainerScript.js" defer></script>
-  <script src="../assets/Main.js" defer></script>
+  <script src="../../../assets/MyMapScript.js" defer></script>
+  <script src="../../../assets/MySlideshowScript.js" defer></script>
+  <script src="../../../assets/MyPostContainerScript.js" defer></script>
+  <script src="../../../assets/Main.js" defer></script>
 
 </body>
 </html>""")

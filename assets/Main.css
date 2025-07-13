@@ -134,3 +134,38 @@
     font-size: 16px;
   }
 }
+
+
+
+.sidebar-archive {
+  width: 220px;
+  flex-shrink: 0;
+  background: #f7f7f7;
+  padding: 1em;
+  border-right: 1px solid #ccc;
+  font-size: 0.9em;
+}
+
+.sidebar-archive h3 {
+  margin-top: 0;
+}
+
+.sidebar-archive ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-archive li {
+  margin: 0.3em 0;
+}
+
+.sidebar-archive li a {
+  text-decoration: none;
+  color: #333;
+}
+
+.sidebar-archive li.active-post a {
+  font-weight: bold;
+  color: #007acc;
+}
