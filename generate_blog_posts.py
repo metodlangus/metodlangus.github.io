@@ -1,35 +1,93 @@
 import requests
 from pathlib import Path
 from slugify import slugify
+from datetime import datetime
+from bs4 import BeautifulSoup
 
 # Constants
-FEED_URL = "https://gorski-uzitki.blogspot.com/feeds/posts/default?alt=json"
+BASE_FEED_URL = "https://gorski-uzitki.blogspot.com/feeds/posts/default"
+MAX_RESULTS = 25
 OUTPUT_DIR = Path(r"C:\Spletna_stran_Github\metodlangus.github.io\posts")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-def fetch_and_save_raw_posts():
-    print("Fetching feed...")
-    response = requests.get(FEED_URL)
-    response.raise_for_status()
+def fetch_all_entries():
+    print("Fetching all paginated posts...")
+    all_entries = []
+    start_index = 1
 
-    data = response.json()
-    entries = data.get("feed", {}).get("entry", [])
-    print(f"Found {len(entries)} entries.")
+    while True:
+        url = f"{BASE_FEED_URL}?start-index={start_index}&max-results={MAX_RESULTS}&alt=json"
+        print(f"Fetching: {url}")
+        response = requests.get(url)
+        response.raise_for_status()
 
+        data = response.json()
+        entries = data.get("feed", {}).get("entry", [])
+
+        if not entries:
+            break
+
+        all_entries.extend(entries)
+        start_index += MAX_RESULTS
+
+    print(f"Total entries fetched: {len(all_entries)}")
+    return all_entries
+
+def fix_images_for_lightbox(html_content):
+    # Parse your HTML content
+    soup = BeautifulSoup(html_content, "html.parser")
+
+    for a_tag in soup.find_all("a"):
+        img = a_tag.find("img")
+        if not img:
+            continue
+
+        # Replace size in href
+        href = a_tag.get("href", "")
+        new_href = href.replace("/s1200/", "/s600/").replace("/s1600/", "/s1000/")
+        a_tag["href"] = new_href
+
+        # Add lightbox attributes
+        a_tag["data-lightbox"] = "Gallery"
+        title_attr = img.get("alt") or img.get("title") or ""
+        if title_attr:
+            a_tag["data-title"] = title_attr
+
+        # Replace size in img src
+        src = img.get("src", "")
+        new_src = src.replace("/s1200/", "/s600/").replace("/s1600/", "/s1000/")
+        img["src"] = new_src
+    return str(soup)
+
+def fetch_and_save_all_posts():
+    entries = fetch_all_entries()
     slugs = [slugify(entry.get("title", {}).get("$t", f"untitled-{i}")) or f"post-{i}" for i, entry in enumerate(entries)]
 
     for index, entry in enumerate(entries):
         title = entry.get("title", {}).get("$t", f"untitled-{index}")
         content_html = entry.get("content", {}).get("$t", "")
         slug = slugs[index]
-        
+
         fullId = entry.get("id", {}).get("$t", "")
         postId = fullId.split("post-")[-1] if "post-" in fullId else ""
 
         #  Get the author name
         author = ""
         if "author" in entry and isinstance(entry["author"], list) and entry["author"]:
-              author = entry["author"][0].get("name", {}).get("$t", "")
+            author = entry["author"][0].get("name", {}).get("$t", "")
+
+        # Parse published date
+        published = entry.get("published", {}).get("$t", "")
+        try:
+            parsed_date = datetime.strptime(published, "%Y-%m-%dT%H:%M:%S.%fZ")
+            formatted_date = parsed_date.isoformat()
+        except Exception:
+            formatted_date = published
+
+        # Fix images
+        content_html = fix_images_for_lightbox(content_html)
+
+        metadata_html = f"<div class='post-date' data-date='{formatted_date}'></div>"
 
         # Previous and next posts
         prev_slug = slugs[index - 1] if index > 0 else ""
@@ -78,6 +136,7 @@ def fetch_and_save_raw_posts():
 <body>
   <div class="content-wrapper">
     <h2>{title}</h2>
+    {metadata_html}
     {content_html}
     {nav_html}
   </div>
@@ -102,7 +161,7 @@ def fetch_and_save_raw_posts():
 </body>
 </html>""")
 
-        print(f"Saved raw post: {filename}")
+        print(f"Saved: {filename}")
 
 if __name__ == "__main__":
-    fetch_and_save_raw_posts()
+    fetch_and_save_all_posts()
