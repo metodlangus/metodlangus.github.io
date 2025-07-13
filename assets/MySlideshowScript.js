@@ -739,14 +739,9 @@
         } else {
             feedUrl = `${blogUrl}/feeds/posts/default?q=${encodeURIComponent(slideshowTitles[index])}&alt=json`;
         }
+        // console.log("feedUrl:",feedUrl)
 
-        console.log("feedUrl:",feedUrl)
-
-
-
-
-const corsProxy = "https://api.allorigins.win/raw?url=";
-const proxiedUrl = corsProxy + encodeURIComponent(feedUrl);
+        const proxiedUrl = `https://corsproxy.io/?${feedUrl}`;
 
         // Fetch the data from the constructed feed URL
         fetch(proxiedUrl)
