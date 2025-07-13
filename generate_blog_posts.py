@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 # Constants
 BASE_FEED_URL = "https://gorski-uzitki.blogspot.com/feeds/posts/default"
-MAX_RESULTS = 25
+MAX_RESULTS = 250
 OUTPUT_DIR = Path(r"C:\Spletna_stran_Github\metodlangus.github.io\posts")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -87,6 +87,15 @@ def fetch_and_save_all_posts():
         # Fix images
         content_html = fix_images_for_lightbox(content_html)
 
+        # Extract first image for og:image
+        soup = BeautifulSoup(content_html, "html.parser")
+        first_img_tag = soup.find("img")
+        og_image = first_img_tag["src"] if first_img_tag else "https://metodlangus.github.io/assets/default-og.jpg"
+
+        # Construct og:url
+        BASE_SITE_URL = "https://metodlangus.github.io/posts"
+        og_url = f"{BASE_SITE_URL}/{slug}.html"
+
         metadata_html = f"<div class='post-date' data-date='{formatted_date}'></div>"
 
         # Previous and next posts
@@ -120,6 +129,25 @@ def fetch_and_save_all_posts():
         </div>
         """
 
+
+        # Archive sidebar HTML
+        archive_links = []
+        for i, e in enumerate(entries):
+            archive_title = e.get("title", {}).get("$t", f"untitled-{i}")
+            archive_slug = slugs[i]
+            is_current = " class='active-post'" if i == index else ""
+            archive_links.append(f"<li{is_current}><a href='{archive_slug}.html'>{archive_title}</a></li>")
+        
+        archive_sidebar_html = f"""
+        <aside class="sidebar-archive">
+          <h3>Arhiv</h3>
+          <ul>
+            {'\n'.join(archive_links)}
+          </ul>
+        </aside>
+        """
+
+
         filename = OUTPUT_DIR / f"{slug}.html"
 
         with open(filename, "w", encoding="utf-8") as f:
@@ -128,6 +156,13 @@ def fetch_and_save_all_posts():
 <head>
   <meta charset="UTF-8">
   <title>{title}</title>
+
+  <!-- OpenGraph meta tags -->
+  <meta property="og:title" content="{title}">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="{og_image}">
+  <meta property="og:url" content="{og_url}">
+  <meta property="og:description" content="{title}">
 
   <script>
     var postTitle = {title!r};
@@ -150,12 +185,16 @@ def fetch_and_save_all_posts():
   <link rel="stylesheet" href="../assets/MyPostContainerScript.css">
 </head>
 <body>
-  <div class="content-wrapper">
-    <h2>{title}</h2>
-    {metadata_html}
-    {content_html}
-    {nav_html}
+  <div class="main-layout" style="display: flex; gap: 2em;">
+    {archive_sidebar_html}
+    <div class="content-wrapper" style="flex: 1;">
+      <h2>{title}</h2>
+      {metadata_html}
+      {content_html}
+      {nav_html}
+    </div>
   </div>
+
 
   <script src='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.js'></script>
   <script src='https://metodlangus.github.io/plugins/togeojson/0.16.0/togeojson.min.js'></script>
