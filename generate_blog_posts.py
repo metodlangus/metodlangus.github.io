@@ -1,7 +1,11 @@
+import re
 import requests
 from pathlib import Path
 from slugify import slugify
+from collections import defaultdict
 from datetime import datetime
+from zoneinfo import ZoneInfo  # Python 3.9+
+from dateutil import parser  # pip install python-dateutil
 from bs4 import BeautifulSoup
 from collections import defaultdict
 
@@ -67,18 +71,22 @@ def fetch_and_save_all_posts():
     slugs = [slugify(entry.get("title", {}).get("$t", f"untitled-{i}")) or f"post-{i}" for i, entry in enumerate(entries)]
 
     archive_dict = defaultdict(lambda: defaultdict(list))
+    label_posts = defaultdict(list)  # Collect posts by label here
+
+    local_tz = ZoneInfo("Europe/Ljubljana")  # UTC+2 (with daylight saving support)
 
     for i, entry in enumerate(entries):
         title = entry.get("title", {}).get("$t", f"untitled-{i}")
         published = entry.get("published", {}).get("$t", "")
         try:
-            # Fix timezone format from -07:00 to -0700
-            if published[-3] == ":":
-                published = published[:-3] + published[-2:]
-            parsed_date = datetime.strptime(published, "%Y-%m-%dT%H:%M:%S.%f%z")
-            year = str(parsed_date.year)
-            month = f"{parsed_date.month:02d}"
-        except Exception:
+            # Parse with timezone from string
+            parsed_date = parser.isoparse(published)
+            # Convert to your local time zone
+            local_date = parsed_date.astimezone(local_tz)
+            year = str(local_date.year)
+            month = f"{local_date.month:02d}"
+        except Exception as e:
+            print(f"Date parse error at index {i}: {e}")
             year, month = "unknown", "unknown"
 
         archive_dict[year][month].append((slugs[i], title, i))
@@ -123,12 +131,36 @@ def fetch_and_save_all_posts():
         og_url = f"{BASE_SITE_URL}/{year}/{month}/{slug}.html"
         metadata_html = f"<div class='post-date' data-date='{formatted_date}'></div>"
 
-        # Previous and next posts
-        next_slug = slugs[index - 1] if index > 0 else ""
-        next_title = entries[index - 1].get("title", {}).get("$t", "") if index > 0 else ""
+        # Previous and next posts with correct date paths
+        if index < len(entries) - 1:
+            prev_entry = entries[index + 1]
+            prev_title = prev_entry.get("title", {}).get("$t", "")
+            prev_slug = slugs[index + 1]
 
-        prev_slug = slugs[index + 1] if index < len(entries) - 1 else ""
-        prev_title = entries[index + 1].get("title", {}).get("$t", "") if index < len(entries) - 1 else ""
+            prev_published = prev_entry.get("published", {}).get("$t", "")
+            try:
+                prev_parsed_date = parser.isoparse(prev_published).astimezone(local_tz)
+                prev_year = str(prev_parsed_date.year)
+                prev_month = f"{prev_parsed_date.month:02d}"
+            except Exception:
+                prev_year, prev_month = year, month
+        else:
+            prev_slug = prev_title = prev_year = prev_month = ""
+
+        if index > 0:
+            next_entry = entries[index - 1]
+            next_title = next_entry.get("title", {}).get("$t", "")
+            next_slug = slugs[index - 1]
+
+            next_published = next_entry.get("published", {}).get("$t", "")
+            try:
+                next_parsed_date = parser.isoparse(next_published).astimezone(local_tz)
+                next_year = str(next_parsed_date.year)
+                next_month = f"{next_parsed_date.month:02d}"
+            except Exception:
+                next_year, next_month = year, month
+        else:
+            next_slug = next_title = next_year = next_month = ""
 
         # Navigation HTML
         nav_html = """
@@ -139,14 +171,14 @@ def fetch_and_save_all_posts():
             nav_html += f"""
             <div class=\"prev-link\" style=\"text-align: left; max-width: 45%;\">
               <div class=\"pager-title\">Prejšnja objava</div>
-              <a href=\"../../{year}/{month}/{prev_slug}.html\">&larr; {prev_title}</a>
+              <a href=\"../../{prev_year}/{prev_month}/{prev_slug}.html\">&larr; {prev_title}</a>
             </div>
             """
         if next_slug:
             nav_html += f"""
             <div class=\"next-link\" style=\"text-align: right; max-width: 45%;\">
               <div class=\"pager-title\">Naslednja objava</div>
-              <a href=\"../../{year}/{month}/{next_slug}.html\">{next_title} &rarr;</a>
+              <a href=\"../../{next_year}/{next_month}/{next_slug}.html\">{next_title} &rarr;</a>
             </div>
             """
         nav_html += """
@@ -154,6 +186,34 @@ def fetch_and_save_all_posts():
         </div>
         """
 
+        # Extract labels/categories
+        labels = []
+        if "category" in entry and isinstance(entry["category"], list):
+            for cat in entry["category"]:
+                label_raw = cat.get("term", "")
+                label_clean = re.sub(r"^(?:\d+\.\s*)+", "", label_raw)
+                labels.append(label_clean)
+                # Collect post info for label page generation
+                label_posts[label_clean].append({
+                    "title": title,
+                    "slug": slug,
+                    "year": year,
+                    "month": month,
+                    "date": formatted_date,
+                    "postId": postId
+                })
+
+        # Build labels HTML linking to static label pages
+        if labels:
+            label_links = []
+            for label_clean in labels:
+                label_url = f"../../labels/{slugify(label_clean)}.html"
+                label_links.append(f"<a class='my-labels' href='{label_url}'>{label_clean}</a>")
+            labels_html = "<div class='post-labels'>" + " ".join(label_links) + "</div>"
+        else:
+            labels_html = "<div class='post-labels'><em>No labels</em></div>"
+
+        # Archive sidebar HTML
         archive_html_parts = ["<aside class='sidebar-archive'><h3>Arhiv</h3>"]
 
         for y in sorted(archive_dict.keys(), reverse=True):
@@ -230,6 +290,7 @@ def fetch_and_save_all_posts():
       <h2>{title}</h2>
       {metadata_html}
       {content_html}
+      {labels_html}
       {nav_html}
     </div>
   </div>
@@ -257,5 +318,70 @@ def fetch_and_save_all_posts():
 
         print(f"Saved: {filename}")
 
+    return label_posts
+
+
+
+def generate_label_pages(label_posts):
+    labels_dir = OUTPUT_DIR / "labels"
+    labels_dir.mkdir(parents=True, exist_ok=True)
+
+    for label, posts in label_posts.items():
+        label_slug = slugify(label)
+        filename = labels_dir / f"{label_slug}.html"
+
+        # Sort posts by date descending (newest first)
+        posts_sorted = sorted(posts, key=lambda x: x['date'], reverse=True)
+
+        post_scripts_html = ""
+
+        for i, post in enumerate(posts_sorted):
+            post_id = str(post.get('postId', '')).strip()
+
+            if post_id:
+                post_scripts_html += f""" 
+    <script>
+      var postTitle{i} = "{post_id}";
+      var displayMode{i} = "alwaysVisible";
+    </script>\n"""
+            else:
+                print(f"Warning: Post at index {i} missing 'postId'")
+
+        html_content = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Prikaz objav z oznako: {label}</title>
+
+  <link rel="stylesheet" href="../../assets/Main.css">
+  <link rel="stylesheet" href="../../assets/MyMapScript.css">
+  <link rel="stylesheet" href="../../assets/MySlideshowScript.css">
+  <link rel="stylesheet" href="../../assets/MyPostContainerScript.css">
+
+</head>
+<body>
+  <h1>Prikaz objav z oznako: {label}</h1>
+
+  <div class="blog-posts hfeed container">
+    {post_scripts_html}
+  </div>
+
+  <script src="../../assets/MyMapScript.js" defer></script>
+  <script src="../../assets/MySlideshowScript.js" defer></script>
+  <script src="../../assets/MyPostContainerScript.js" defer></script>
+  <script src="../../assets/Main.js" defer></script>
+
+  <p><a href="../labels">Back to home</a></p>
+
+</body>
+</html>"""
+
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write(html_content)
+
+        print(f"Generated label page: {filename}")
+
+
 if __name__ == "__main__":
-    fetch_and_save_all_posts()
+    label_posts = fetch_and_save_all_posts()  # This function should return { label: [ {postId, date, html}, ... ] }
+    generate_label_pages(label_posts)
