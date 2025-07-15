@@ -94,7 +94,7 @@ function insertPostContainer(postTitle, displayMode, scriptTag) {
       var month = (publishedDate.getUTCMonth() + 1).toString().padStart(2, '0');
 
       // Prepend domain to the slug-based path
-      var fullUrl = `${window.location.origin}/metodlangus.github.io/posts/${year}/${month}/${slug}.html`;
+      var fullUrl = `${window.location.origin}/posts/${year}/${month}/${slug}.html`;
 
       postLink.href = fullUrl;
 
@@ -114,7 +114,7 @@ function insertPostContainer(postTitle, displayMode, scriptTag) {
           // Create the new label for "1. " category
           var labelOne = document.createElement('a');
           labelOne.classList.add('my-labels');
-          labelOne.href =  window.location.origin + '/metodlangus.github.io/search/labels/' + slugify(titleLabel.term) + '.html';
+          labelOne.href =  window.location.origin + '/search/labels/' + slugify(titleLabel.term) + '.html';
           labelOne.textContent = titleLabel.term.replace(/^\d+\.\s*/, ''); // Remove the prefix
 
           // Append the label to the tag container
@@ -152,7 +152,7 @@ function insertPostContainer(postTitle, displayMode, scriptTag) {
       thumbnailImg.src = post.media$thumbnail.url.replace(/\/s\d+(?:-w\d+-h\d+)?-c\//, '/s800/');
 
       var linkElement = document.createElement('a');
-      linkElement.href = `${window.location.origin}/metodlangus.github.io/posts/${year}/${month}/${slug}.html`;
+      linkElement.href = `${window.location.origin}/posts/${year}/${month}/${slug}.html`;
       
       // Set aria-label for the link
       linkElement.setAttribute('aria-label', `${post.title.$t}`);
@@ -169,7 +169,7 @@ function insertPostContainer(postTitle, displayMode, scriptTag) {
           // Create the new label for "6. " category
           var labelSix = document.createElement('a');
           labelSix.classList.add('my-labels', 'label-six');
-          labelSix.href = window.location.origin + '/metodlangus.github.io/search/labels/' + slugify(sixCategory.term) + '.html';
+          labelSix.href = window.location.origin + '/search/labels/' + slugify(sixCategory.term) + '.html';
           labelSix.textContent = sixCategory.term.replace(/^\d+\.\s*\d+\.\s*/, ''); // Remove the prefix
 
           // Append the label to the tag container
