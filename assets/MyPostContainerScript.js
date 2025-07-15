@@ -114,7 +114,7 @@ function insertPostContainer(postTitle, displayMode, scriptTag) {
           // Create the new label for "1. " category
           var labelOne = document.createElement('a');
           labelOne.classList.add('my-labels');
-          labelOne.href =  blogUrl + 'search/label/' + encodeURIComponent(titleLabel.term);
+          labelOne.href =  window.location.origin + '/metodlangus.github.io/search/labels/' + slugify(titleLabel.term) + '.html';
           labelOne.textContent = titleLabel.term.replace(/^\d+\.\s*/, ''); // Remove the prefix
 
           // Append the label to the tag container
@@ -169,7 +169,7 @@ function insertPostContainer(postTitle, displayMode, scriptTag) {
           // Create the new label for "6. " category
           var labelSix = document.createElement('a');
           labelSix.classList.add('my-labels', 'label-six');
-          labelSix.href = blogUrl + 'search/label/' + encodeURIComponent(sixCategory.term);
+          labelSix.href = window.location.origin + '/metodlangus.github.io/search/labels/' + slugify(sixCategory.term) + '.html';
           labelSix.textContent = sixCategory.term.replace(/^\d+\.\s*\d+\.\s*/, ''); // Remove the prefix
 
           // Append the label to the tag container
@@ -209,3 +209,16 @@ function insertPostContainer(postTitle, displayMode, scriptTag) {
     }
   });
 }
+
+function slugify(text) {
+  return text
+    .normalize('NFD')                      // Decompose diacritics
+    .replace(/[\u0300-\u036f]/g, '')       // Remove diacritic marks
+    .trim()
+    .toLowerCase()
+    .replace(/^\d+\.\s*/, '')              // Remove numeric prefix like "1. "
+    .replace(/\s+/g, '-')                  // Replace spaces with hyphens
+    .replace(/[^\w\-]+/g, '')              // Remove non-word characters
+    .replace(/\-\-+/g, '-');               // Collapse multiple dashes
+}
+

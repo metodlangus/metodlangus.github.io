@@ -223,7 +223,7 @@ def fetch_and_save_all_posts():
         if labels:
             label_links = []
             for label_clean in labels:
-                label_url = f"../../labels/{slugify(label_clean)}.html"
+                label_url = f"../../../search/labels/{slugify(label_clean)}.html"
                 label_links.append(f"<a class='my-labels' href='{label_url}'>{label_clean}</a>")
             labels_html = "<div class='post-labels'>" + " ".join(label_links) + "</div>"
         else:
@@ -298,7 +298,7 @@ def fetch_and_save_all_posts():
                 clean_label = re.sub(r'^\d+\.\s*', '', label)
                 slug_label = slugify(clean_label)
                 label_html_parts.append(
-                    f"<li><a class='label-name' href='../../labels/{slug_label}.html'>{clean_label}</a></li>"
+                    f"<li><a class='label-name' href='../../../search/labels/{slug_label}.html'>{clean_label}</a></li>"
                 )
 
             label_html_parts.append("</ul>")
@@ -403,7 +403,7 @@ def fetch_and_save_all_posts():
 
 
 def generate_label_pages(label_posts):
-    labels_dir = OUTPUT_DIR / "labels"
+    labels_dir = OUTPUT_DIR.parent / "search/labels"
     labels_dir.mkdir(parents=True, exist_ok=True)
 
     for label, posts in label_posts.items():
@@ -451,7 +451,7 @@ def generate_label_pages(label_posts):
   <script src="../../assets/MyPostContainerScript.js" defer></script>
   <script src="../../assets/Main.js" defer></script>
 
-  <p><a href="../labels">Back to home</a></p>
+  <p><a href="../search/labels">Back to home</a></p>
 
 </body>
 </html>"""
