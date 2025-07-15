@@ -88,3 +88,27 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 });
+
+
+
+/* For togling label navigation bar */
+document.addEventListener("DOMContentLoaded", function() {
+  const showMoreBtn = document.querySelector(".show-more");
+  const showLessBtn = document.querySelector(".show-less");
+  const remainingItems = document.querySelector(".remaining-items");
+
+  if (showMoreBtn && showLessBtn && remainingItems) {
+    showMoreBtn.addEventListener("click", function() {
+      remainingItems.classList.remove("hidden");
+      showMoreBtn.classList.add("hidden");
+      showLessBtn.classList.remove("hidden");
+    });
+
+    showLessBtn.addEventListener("click", function() {
+      remainingItems.classList.add("hidden");
+      showMoreBtn.classList.remove("hidden");
+      showLessBtn.classList.add("hidden");
+    });
+  }
+});
+

@@ -17,6 +17,10 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 BASE_SITE_URL = "https://metodlangus.github.io/posts"
 
+
+# def slugify(value):
+#     return re.sub(r'\s+', '-', value.strip().lower())
+
 def fetch_all_entries():
     print("Fetching all paginated posts...")
     all_entries = []
@@ -72,6 +76,7 @@ def fetch_and_save_all_posts():
 
     archive_dict = defaultdict(lambda: defaultdict(list))
     label_posts = defaultdict(list)  # Collect posts by label here
+    label_posts_raw = defaultdict(list)  # Collect posts by label here
 
     local_tz = ZoneInfo("Europe/Ljubljana")  # UTC+2 (with daylight saving support)
 
@@ -188,9 +193,20 @@ def fetch_and_save_all_posts():
 
         # Extract labels/categories
         labels = []
+        labels_raw = []
         if "category" in entry and isinstance(entry["category"], list):
             for cat in entry["category"]:
                 label_raw = cat.get("term", "")
+                # Keep original label with prefix
+                labels_raw.append(label_raw)
+                label_posts_raw[label_raw].append({
+                    "title": title,
+                    "slug": slug,
+                    "year": year,
+                    "month": month,
+                    "date": formatted_date,
+                    "postId": postId
+                })
                 label_clean = re.sub(r"^(?:\d+\.\s*)+", "", label_raw)
                 labels.append(label_clean)
                 # Collect post info for label page generation
@@ -244,6 +260,62 @@ def fetch_and_save_all_posts():
         archive_sidebar_html = "\n".join(archive_html_parts)
 
 
+        # Organize labels by prefix
+        label_groups = defaultdict(list)
+
+        for label in label_posts_raw:
+            prefix_match = re.match(r'^(\d+)', label)
+            prefix = int(prefix_match.group(1)) if prefix_match else 99  # 99 = Uncategorized/Other
+            label_groups[prefix].append(label)
+
+        # Sort groups by prefix
+        sorted_prefixes = sorted(label_groups.keys())
+
+        label_html_parts = ["<aside class='sidebar-labels'><h3><b>Navigacija</b></h3>"]
+
+        # Mapping of prefixes to section titles
+        prefix_titles = {
+            1: "Kategorija",
+            2: "Država",
+            3: "Gorstvo",
+            4: "Časovno",
+            5: "Ostalo"
+        }
+
+        # Generate HTML blocks
+        for idx, prefix in enumerate(sorted_prefixes):
+            group_labels = sorted(label_groups[prefix], key=lambda l: l.lower())
+            title_label = prefix_titles.get(prefix, "Ostalo")
+            
+            if idx == 0:
+                label_html_parts.append(f"<div class='first-items'><h3>{title_label}:</h3><ul class='label-list'>")
+            else:
+                if idx == 1:
+                    label_html_parts.append("<div class='remaining-items hidden' style='height:auto;'>")
+                label_html_parts.append(f"<h3>{title_label}:</h3><ul class='label-list'>")
+
+            for label in group_labels:
+                clean_label = re.sub(r'^\d+\.\s*', '', label)
+                slug_label = slugify(clean_label)
+                label_html_parts.append(
+                    f"<li><a class='label-name' href='../../labels/{slug_label}.html'>{clean_label}</a></li>"
+                )
+
+            label_html_parts.append("</ul>")
+
+        # Close remaining-items div if it was added
+        if len(sorted_prefixes) > 1:
+            label_html_parts.append("</div>")  # End of .remaining-items
+
+            label_html_parts.append("""
+            <span class='show-more pill-button'>Pokaži več</span>
+            <span class='show-less pill-button hidden'>Pokaži manj</span>
+            """)
+
+        label_html_parts.append("</aside>")
+        labels_sidebar_html = "\n".join(label_html_parts)
+
+
 
         post_dir = OUTPUT_DIR / year / month
         post_dir.mkdir(parents=True, exist_ok=True)
@@ -285,7 +357,15 @@ def fetch_and_save_all_posts():
 </head>
 <body>
   <div class=\"main-layout\" style=\"display: flex; gap: 2em;\">
-    {archive_sidebar_html}
+    <div class="sidebar">
+      <div class="archive">
+        {archive_sidebar_html}
+      </div>
+      <div class="labels">
+        {labels_sidebar_html}
+      </div>
+    </div>
+
     <div class=\"content-wrapper\" style=\"flex: 1;\">
       <h2>{title}</h2>
       {metadata_html}
