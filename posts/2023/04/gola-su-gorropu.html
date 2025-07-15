@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Gola su Gorropu</title>
+
+  <!-- OpenGraph meta tags -->
+  <meta property="og:title" content="Gola su Gorropu">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiloupZN_Me3NqAu-SH_FUXKdTPvCXOOOwJZJFY2IrLl5rOG9nLJF0bLPe4dE3IlHQAPrC796S1Bmbbu5PAgnJ8DcabUQUV6xXZfWMChASbSuPEd6fK3u0PRczRcv57WTNhkTsCaftwCYjZesRCv7T5So__Kq8vbV2iTzkHPUc6GJRfIX0Cl7xqqdAUjw4/s600/20230429_091355.jpg">
+  <meta property="og:url" content="https://metodlangus.github.io/posts/2023/04/gola-su-gorropu.html">
+  <meta property="og:description" content="Gola su Gorropu">
+
+  <script>
+    var postTitle = 'Gola su Gorropu';
+    var postId = '5916413402263066283';
+    var author = 'Metod';
+  </script>
+
+  <link href='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.css' rel='stylesheet'>
+  <link href='https://metodlangus.github.io/plugins/@raruto/leaflet-elevation/dist/leaflet-elevation.min.css' rel='stylesheet'>
+  <link href='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet'>
+  <link href='https://metodlangus.github.io/scripts/leaflet-download-gpx-button.css' rel='stylesheet'>
+  <link href='https://metodlangus.github.io/plugins/lightbox2/2.11.1/css/lightbox.min.css' rel='stylesheet'>
+  <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css' rel='stylesheet'>
+  <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css' rel='stylesheet'>
+  <link href='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.css' rel='stylesheet'>
+
+  <link rel="stylesheet" href="../../../assets/Main.css">
+  <link rel="stylesheet" href="../../../assets/MyMapScript.css">
+  <link rel="stylesheet" href="../../../assets/MySlideshowScript.css">
+  <link rel="stylesheet" href="../../../assets/MyPostContainerScript.css">
+</head>
+<body>
+  <div class="main-layout" style="display: flex; gap: 2em;">
+    <div class="sidebar">
+      <div class="archive">
+        <aside class='sidebar-archive'><h3>Arhiv</h3>
+<details open><summary>2025 (45)</summary>
+<details class='month-group'><summary>June 2025 (9)</summary><ul>
+<li><a href='../../2025/06/greben-lonzakopfl-2317-m-vorder-geisslkopf-2974-m.html'>Greben Lonzaköpfl (2317 m) – Vorder Geißlkopf (2974 m)</a></li>
+<li><a href='../../2025/06/hohe-leier-2774-m.html'>Hohe Leier (2774 m)</a></li>
+<li><a href='../../2025/06/mosermandl-2608-m.html'>Mosermandl (2608 m)</a></li>
+<li><a href='../../2025/06/kleine-guglspitze-2570-m-in-speiereck-2411-m-ter-se-vsaj-15-vrhov-vmes.html'>Kleine Guglspitze (2570 m) in Speiereck (2411 m) ter še vsaj 15 vrhov vmes</a></li>
+<li><a href='../../2025/06/cez-krisko-goro-na-storzic-2132-m.html'>Čez Kriško goro na Storžič (2132 m)</a></li>
+<li><a href='../../2025/06/brezpotni-ravnik-1477-m-ter-brda-2009-m-iz-krme.html'>Brezpotni Ravnik (1477 m) ter Brda (2009 m) iz Krme</a></li>
+<li><a href='../../2025/06/cez-kofce-na-stari-ljubelj.html'>Čez Kofce na stari Ljubelj</a></li>
+<li><a href='../../2025/06/za-vikend-v-karnijce-31-5-1-6-2025.html'>Za vikend v Karnijce (31. 5. – 1. 6. 2025)</a></li>
+<li><a href='../../2025/06/creta-di-timau-2217-m.html'>Creta di Timau (2217 m)</a></li>
+</ul></details>
+<details class='month-group'><summary>May 2025 (13)</summary><ul>
+<li><a href='../../2025/05/mestece-timau.html'>Mestece Timau</a></li>
+<li><a href='../../2025/05/cuestalta-hoher-trieb-2198-m.html'>Cuestalta / Hoher Trieb (2198 m)</a></li>
+<li><a href='../../2025/05/rutarski-vrsic-1699-m-vanezev-rob-1891-m.html'>Rutarski vršič (1699 m), Vanežev rob (1891 m)</a></li>
+<li><a href='../../2025/05/veliki-vrh-kriz-1742-m-slap-cedca.html'>Veliki vrh (Križ) (1742 m), slap Čedca</a></li>
+<li><a href='../../2025/05/skozi-kraljestvo-muflonov.html'>Skozi kraljestvo muflonov</a></li>
+<li><a href='../../2025/05/greben-begunjscice-2060-m-cez-potocnikovo-planino.html'>Greben Begunjščice (2060 m) čez Potočnikovo planino</a></li>
+<li><a href='../../2025/05/visoki-kurjek-barenkogel-1973-m-lepa-plevelnica-1959-m.html'>Visoki Kurjek / Bärenkogel (1973 m), Lepa Plevelnica (1959 m)</a></li>
+<li><a href='../../2025/05/potepanje-po-hrvaski-26-4-4-5-2025.html'>Potepanje po Hrvaški (26. 4. – 4. 5. 2025)</a></li>
+<li><a href='../../2025/05/klek-1181-m.html'>Klek (1181 m)</a></li>
+<li><a href='../../2025/05/split.html'>Split</a></li>
+<li><a href='../../2025/05/ferata-perunika.html'>Ferata Perunika</a></li>
+<li><a href='../../2025/05/kimet-1536-m.html'>Kimet (1536 m)</a></li>
+<li><a href='../../2025/05/jama-krjava-vosac-1421-m.html'>Jama Krjava, Vošac (1421 m)</a></li>
+</ul></details>
+<details class='month-group'><summary>April 2025 (9)</summary><ul>
+<li><a href='../../2025/04/veliki-sibenik-1467-m-sveti-jure-1762-m.html'>Veliki Šibenik (1467 m), Sveti Jure (1762 m)</a></li>
+<li><a href='../../2025/04/omis-ferata-fortica.html'>Omiš (ferata Fortica)</a></li>
+<li><a href='../../2025/04/greben-kozjak.html'>Greben Kozjak</a></li>
+<li><a href='../../2025/04/sibenik.html'>Šibenik</a></li>
+<li><a href='../../2025/04/kanjon-krupe.html'>Kanjon Krupe</a></li>
+<li><a href='../../2025/04/veliki-bat-1381-m-bili-kuk-1171-m.html'>Veliki Bat (1381 m), Bili kuk (1171 m)</a></li>
+<li><a href='../../2025/04/klekovac-898-m.html'>Klekovac (898 m)</a></li>
+<li><a href='../../2025/04/kriska-gora-1472-m-vrh-vrata-1591-m.html'>Kriška gora (1472 m), Vrh Vrata (1591 m)</a></li>
+<li><a href='../../2025/04/sentanski-vrh-1635-m-dobrca-1634-m.html'>Šentanski vrh (1635 m), Dobrča (1634 m)</a></li>
+</ul></details>
+<details class='month-group'><summary>March 2025 (4)</summary><ul>
+<li><a href='../../2025/03/schilchernock-2270-m-gaipahohe-2192-m.html'>Schilchernock (2270 m), Gaipahöhe (2192 m)</a></li>
+<li><a href='../../2025/03/mrezce-1965-m.html'>Mrežce (1965 m)</a></li>
+<li><a href='../../2025/03/mozic-1602-m-slatnik-1599-m-lajnar-1549-m.html'>Možic (1602 m), Slatnik (1599 m), Lajnar (1549 m)</a></li>
+<li><a href='../../2025/03/veliki-draski-vrh-2240-m-draski-rob-1981-m.html'>Veliki Draški vrh (2240 m), Draški rob (1981 m)</a></li>
+</ul></details>
+<details class='month-group'><summary>February 2025 (6)</summary><ul>
+<li><a href='../../2025/02/turno-smucanje-po-kaninu.html'>Turno smučanje po Kaninu</a></li>
+<li><a href='../../2025/02/kriska-gora-1472-m.html'>Kriška gora (1472 m)</a></li>
+<li><a href='../../2025/02/breska-planina.html'>Breška planina</a></li>
+<li><a href='../../2025/02/sentanski-vrh-1635-m-dobrca-1634-m.html'>Šentanski vrh (1635 m), Dobrča (1634 m)</a></li>
+<li><a href='../../2025/02/turno-smucanje-po-kaninu.html'>Turno smučanje po Kaninu</a></li>
+<li><a href='../../2025/02/turno-smucanje-po-kaninu.html'>Turno smučanje po Kaninu</a></li>
+</ul></details>
+<details class='month-group'><summary>January 2025 (4)</summary><ul>
+<li><a href='../../2025/01/vosca-1737-m-zajcnik-1746-m-trupejevo-poldne-1931-m.html'>Vošca (1737 m), Zajčnik (1746 m), Trupejevo poldne (1931 m)</a></li>
+<li><a href='../../2025/01/pticji-vrh-1551-m-korenjscica-1764-m.html'>Ptičji vrh (1551 m), Korenjščica (1764 m)</a></li>
+<li><a href='../../2025/01/lepenatka-1425-m-veliki-rogatec-1557-m.html'>Lepenatka (1425 m), Veliki Rogatec (1557 m)</a></li>
+<li><a href='../../2025/01/zimska-pravljica-na-kriski-gori.html'>Zimska pravljica na Kriški gori</a></li>
+</ul></details>
+</details>
+<details open><summary>2024 (60)</summary>
+<details class='month-group'><summary>November 2024 (7)</summary><ul>
+<li><a href='../../2024/11/srednji-vrh-1796-m-vrtaca-wertatscha-2180-m.html'>Srednji vrh (1796 m), Vrtača / Wertatscha (2180 m)</a></li>
+<li><a href='../../2024/11/potepanje-po-dolomitih-28-10-4-11-2024.html'>Potepanje po Dolomitih (28. 10. – 4. 11. 2024)</a></li>
+<li><a href='../../2024/11/bruneck-brunico.html'>Bruneck - Brunico</a></li>
+<li><a href='../../2024/11/piccolo-cir-2520-m-gran-cir-2592-m.html'>Piccolo Cir (2520 m), Gran Cir (2592 m)</a></li>
+<li><a href='../../2024/11/mesola-2727-m-mesolina-2642-m.html'>Mesola (2727 m), Mesolina (2642 m)</a></li>
+<li><a href='../../2024/11/roda-di-vael-rotwand-2806-m.html'>Roda di Vaèl - Rotwand (2806 m)</a></li>
+<li><a href='../../2024/11/cima-costabella-2762-m-cima-dell-uomo-3010-m.html'>Cima Costabella (2762 m), Cima dell'Uomo (3010 m)</a></li>
+</ul></details>
+<details class='month-group'><summary>October 2024 (4)</summary><ul>
+<li><a href='../../2024/10/cima-d-auta-orientale-2645-m.html'>Cima d'Auta Orientale (2645 m)</a></li>
+<li><a href='../../2024/10/cima-di-val-di-roda-2791-m.html'>Cima di Val di Roda (2791 m)</a></li>
+<li><a href='../../2024/10/monte-grappa-1776-m.html'>Monte Grappa (1776 m)</a></li>
+<li><a href='../../2024/10/nlb-28-ljubljanski-maraton-21-km.html'>NLB 28. Ljubljanski maraton (21 km)</a></li>
+</ul></details>
+<details class='month-group'><summary>September 2024 (19)</summary><ul>
+<li><a href='../../2024/09/slovaska-madzarska-31-8-12-9-2024.html'>Slovaška, Madžarska  (31. 8. – 12. 9. 2024)</a></li>
+<li><a href='../../2024/09/budapest-budimpesta.html'>Budapest - Budimpešta</a></li>
+<li><a href='../../2024/09/kekesteto-1014-m-najvisji-vrh-madzarske.html'>Kékestető (1014 m) - najvišji vrh Madžarske</a></li>
+<li><a href='../../2024/09/mesto-eger.html'>Mesto Eger</a></li>
+<li><a href='../../2024/09/bukki-nemzeti-park-madzarski-narodni-park.html'>Bükki Nemzeti Park - madžarski narodni park</a></li>
+<li><a href='../../2024/09/kosice.html'>Košice</a></li>
+<li><a href='../../2024/09/narodni-park-slovensky-kras.html'>Národní park Slovenský kras</a></li>
+<li><a href='../../2024/09/narodny-park-muranska-planina-sedlo-zbojska.html'>Národný park Muránska planina - Sedlo Zbojská</a></li>
+<li><a href='../../2024/09/narodny-park-muranska-planina-grad-muran.html'>Národný park Muránska planina - Grad Muráň</a></li>
+<li><a href='../../2024/09/slovensky-raj-soteska-zejmarska-roklina.html'>Slovenský raj - soteska Zejmarská roklina</a></li>
+<li><a href='../../2024/09/slovensky-raj-soteski-piecky-in-velky-sokol.html'>Slovenský raj - soteski Piecky in Veľký Sokol</a></li>
+<li><a href='../../2024/09/slovensky-raj-slovaski-np-stevilnih-kanjonov-in-sotesk.html'>Slovenský raj - Slovaški NP številnih kanjonov in sotesk</a></li>
+<li><a href='../../2024/09/rysy-2499-m-najvisji-vrh-poljske-koprovsky-stit-2367-m.html'>Rysy (2499 m) - najvišji vrh Poljske, Kôprovský štít (2367 m)</a></li>
+<li><a href='../../2024/09/gerlachovsky-stit-2654-m-najvisji-vrh-slovaske-vychodna-vysoka-2429-m.html'>Gerlachovský štít (2654 m) - najvišji vrh Slovaške, Východná Vysoká (2429 m)</a></li>
+<li><a href='../../2024/09/jezero-strbske-pleso.html'>Jezero Štrbské Pleso</a></li>
+<li><a href='../../2024/09/krivan-2494-m-simbol-slovaske-narodne-zavesti.html'>Kriváň (2494 m) - simbol slovaške narodne zavesti</a></li>
+<li><a href='../../2024/09/nizke-tatre-derese-2004-m-chopok-2024-m-dumbier-2043-m.html'>Nizke Tatre - Dereše (2004 m), Chopok (2024 m), Ďumbier (2043 m)</a></li>
+<li><a href='../../2024/09/jama-harmanecka-jaskyna.html'>Jama Harmanecká jaskyňa</a></li>
+<li><a href='../../2024/09/park-skalka.html'>Park Skalka</a></li>
+</ul></details>
+<details class='month-group'><summary>August 2024 (5)</summary><ul>
+<li><a href='../../2024/08/kremnica.html'>Kremnica</a></li>
+<li><a href='../../2024/08/razgledni-stolp-haj-gupna-442-m.html'>Razgledni stolp Háj, Gupňa (442 m)</a></li>
+<li><a href='../../2024/08/zobor-587-m.html'>Zobor (587 m)</a></li>
+<li><a href='../../2024/08/monte-nabois-piccolo-1695-m-in-monte-nabois-grande-2301-m.html'>Monte Nabois piccolo (1695 m) in Monte Nabois grande (2301 m)</a></li>
+<li><a href='../../2024/08/po-grebenu-od-visoke-ponce-2274-m-do-mangarta-2679-m.html'>Po grebenu od Visoke Ponce (2274 m) do Mangarta (2679 m)</a></li>
+</ul></details>
+<details class='month-group'><summary>July 2024 (9)</summary><ul>
+<li><a href='../../2024/07/potepanje-po-karnijcih-25-28-7-2024.html'>Potepanje po Karnijcih (25. – 28. 7. 2024)</a></li>
+<li><a href='../../2024/07/cimon-del-cavallo-2251-m.html'>Cimon del Cavallo (2251 m)</a></li>
+<li><a href='../../2024/07/ferrata-rino-costacurta-al-teverone.html'>Ferrata Rino Costacurta al Teverone</a></li>
+<li><a href='../../2024/07/schiara-2565-m-pelf-2502-m.html'>Schiara (2565 m), Pelf (2502 m)</a></li>
+<li><a href='../../2024/07/monte-pramaggiore-2478-m.html'>Monte Pramaggiore (2478 m)</a></li>
+<li><a href='../../2024/07/precenje-mojstrovk-in-sit.html'>Prečenje Mojstrovk in Šit</a></li>
+<li><a href='../../2024/07/vikend-v-ksa-6-4-7-2024.html'>Vikend v KSA (6. – 4. 7. 2024)</a></li>
+<li><a href='../../2024/07/strelovec-1763-m-kroficka-2083-m.html'>Strelovec (1763 m), Krofička (2083 m)</a></li>
+<li><a href='../../2024/07/matkova-kopa-1957-m-krnicka-gora-2064-m.html'>Matkova Kopa (1957 m), Krnička gora (2064 m)</a></li>
+</ul></details>
+<details class='month-group'><summary>June 2024 (8)</summary><ul>
+<li><a href='../../2024/06/dolina-rezije-29-30-6-2024.html'>Dolina Rezije (29. – 30. 6. 2024)</a></li>
+<li><a href='../../2024/06/baba-grande-velika-baba-2161-m.html'>Baba grande / Velika Baba (2161 m)</a></li>
+<li><a href='../../2024/06/monte-sart-2324-m.html'>Monte Sart (2324 m)</a></li>
+<li><a href='../../2024/06/precenje-kumlehov.html'>Prečenje Kumlehov</a></li>
+<li><a href='../../2024/06/mokrica-1853-m-iz-kurje-doline.html'>Mokrica (1853 m) iz Kurje doline</a></li>
+<li><a href='../../2024/06/bistrica-dobrca-1634-m-begunjscica-2060-m-vrtaca-2180-m-ljubelj.html'>Bistrica - Dobrča (1634 m) - Begunjščica (2060 m) - Vrtača (2180 m) - Ljubelj</a></li>
+<li><a href='../../2024/06/bivak-stebrasta-skala-in-naprej-na-mezaklo.html'>Bivak Stebrasta skala in naprej na Mežaklo</a></li>
+<li><a href='../../2024/06/kriska-gora-1472-m-tolsti-vrh-1715-m.html'>Kriška gora (1472 m), Tolsti vrh (1715 m)</a></li>
+</ul></details>
+<details class='month-group'><summary>May 2024 (1)</summary><ul>
+<li><a href='../../2024/05/brezpotje-cez-akle-1380-m-in-starca-1426-m.html'>Brezpotje čez Akle (1380 m) in Starca (1426 m)</a></li>
+</ul></details>
+<details class='month-group'><summary>April 2024 (5)</summary><ul>
+<li><a href='../../2024/04/vrh-ljubeljscice-1705-m.html'>Vrh Ljubeljščice (1705 m)</a></li>
+<li><a href='../../2024/04/vrh-ljubeljscice-1705-m.html'>Vrh Ljubeljščice (1705 m)</a></li>
+<li><a href='../../2024/04/sentanski-vrh-1635-m-dobrca-1634-m.html'>Šentanski vrh (1635 m), Dobrča (1634 m)</a></li>
+<li><a href='../../2024/04/po-hribckih-nad-vasico-chiusaforte-z-najvisjim-monte-plananizza-1555-m.html'>Po hribčkih nad vasico Chiusaforte, z najvišjim Monte Plananizza (1555 m)</a></li>
+<li><a href='../../2024/04/od-alpe-piccola-1304-m-do-monte-acuto-1781-m.html'>Od Alpe Piccola (1304 m) do Monte Acuto (1781 m)</a></li>
+</ul></details>
+<details class='month-group'><summary>March 2024 (2)</summary><ul>
+<li><a href='../../2024/03/pot-sedmih-slapov.html'>Pot sedmih slapov</a></li>
+<li><a href='../../2024/03/mrezce-1965-m-okroglez-1965-m.html'>Mrežce (1965 m), Okroglež (1965 m)</a></li>
+</ul></details>
+</details>
+<details open><summary>2023 (32)</summary>
+<details class='month-group'><summary>December 2023 (2)</summary><ul>
+<li><a href='../../2023/12/prevala-2067-m-iz-sella-nevea.html'>Prevala (2067 m) iz Sella Nevea</a></li>
+<li><a href='../../2023/12/dobrca-1634-m-cez-travnike.html'>Dobrča (1634 m) čez travnike</a></li>
+</ul></details>
+<details class='month-group'><summary>October 2023 (3)</summary><ul>
+<li><a href='../../2023/10/podaljsan-vikend-v-dolomitih-28-9-2-10-2023.html'>Podaljšan vikend v Dolomitih (28. 9. – 2. 10. 2023)</a></li>
+<li><a href='../../2023/10/piz-boe-3152-m.html'>Piz Boè (3152 m)</a></li>
+<li><a href='../../2023/10/cima-presanella-3556-m.html'>Cima Presanella (3556 m)</a></li>
+</ul></details>
+<details class='month-group'><summary>September 2023 (3)</summary><ul>
+<li><a href='../../2023/09/sentiero-alpinistico-claudio-costanzi.html'>Sentiero Alpinistico Claudio Costanzi</a></li>
+<li><a href='../../2023/09/giro-del-brenta.html'>Giro del Brenta</a></li>
+<li><a href='../../2023/09/crete-di-gleris-monte-chiavals-2098-m.html'>Crete di Gleris, Monte Chiavals (2098 m)</a></li>
+</ul></details>
+<details class='month-group'><summary>August 2023 (9)</summary><ul>
+<li><a href='../../2023/08/podaljsan-vikend-v-dolomitih-18-21-8-2024.html'>Podaljšan vikend v Dolomitih  (18. – 21. 8. 2024)</a></li>
+<li><a href='../../2023/08/antelao-3264-m-kralj-dolomitov.html'>Antelao (3264 m) - kralj Dolomitov</a></li>
+<li><a href='../../2023/08/monte-civetta-3220-m.html'>Monte Civetta (3220 m)</a></li>
+<li><a href='../../2023/08/monte-pelmo-3168-m.html'>Monte Pelmo (3168 m)</a></li>
+<li><a href='../../2023/08/za-marijin-praznik-na-veliki-oltar-2621-m.html'>Za Marijin praznik na Veliki Oltar (2621 m)</a></li>
+<li><a href='../../2023/08/misticna-kepa-2145-m.html'>Mistična Kepa (2145 m)</a></li>
+<li><a href='../../2023/08/za-vikend-v-julijce-12-13-8-2023.html'>Za vikend v Julijce (12. – 13. 8. 2023)</a></li>
+<li><a href='../../2023/08/planika-triglav-2864-m-savica.html'>Planika - Triglav (2864 m) - Savica</a></li>
+<li><a href='../../2023/08/savica-spicje-kanjavceve-police-planika.html'>Savica - Špičje - Kanjavčeve police - Planika</a></li>
+</ul></details>
+<details class='month-group'><summary>July 2023 (1)</summary><ul>
+<li><a href='../../2023/07/izpitna-tura-smer-ogrin-omersa-v-ojstrici-2350-m.html'>Izpitna tura smer Ogrin-Omersa v Ojstrici (2350 m)</a></li>
+</ul></details>
+<details class='month-group'><summary>May 2023 (4)</summary><ul>
+<li><a href='../../2023/05/sardinija-25-4-2-5-2023.html'>Sardinija  (25. 4. – 2. 5. 2023)</a></li>
+<li><a href='../../2023/05/olbia.html'>Olbia</a></li>
+<li><a href='../../2023/05/ferrata-di-giorre.html'>Ferrata di Giorré</a></li>
+<li><a href='../../2023/05/ferrata-della-regina.html'>Ferrata della Regina</a></li>
+</ul></details>
+<details class='month-group'><summary>April 2023 (8)</summary><ul>
+<li><a href='../../2023/04/cagliari-sella-del-diavolo.html'>Cagliari, Sella del Diavolo</a></li>
+<li><a href='../../2023/04/pedra-longa.html'>Pedra Longa</a></li>
+<li class='active-post'><a href='../../2023/04/gola-su-gorropu.html'>Gola su Gorropu</a></li>
+<li><a href='../../2023/04/ferrata-di-badde-pentumas.html'>Ferrata di Badde Pentumas</a></li>
+<li><a href='../../2023/04/ferrata-degli-angeli-tavolara.html'>Ferrata degli Angeli (Tavolara)</a></li>
+<li><a href='../../2023/04/livorno-olbia.html'>Livorno – Olbia</a></li>
+<li><a href='../../2023/04/pisa.html'>Pisa</a></li>
+<li><a href='../../2023/04/ferata-rocca-di-badolo.html'>Ferata Rocca di Badolo</a></li>
+</ul></details>
+<details class='month-group'><summary>March 2023 (2)</summary><ul>
+<li><a href='../../2023/03/vrtaski-vrh-1898-m-vrtasko-sleme-2077-m.html'>Vrtaški vrh (1898 m), Vrtaško Sleme (2077 m)</a></li>
+<li><a href='../../2023/03/prvi-turni-smuk.html'>Prvi turni smuk</a></li>
+</ul></details>
+</details>
+<details open><summary>2022 (4)</summary>
+<details class='month-group'><summary>June 2022 (4)</summary><ul>
+<li><a href='../../2022/06/ledeniska-tura-saas-fee-svica-24-28-6-2022.html'>Ledeniška tura Saas-Fee (Švica) (24. – 28. 6. 2022)</a></li>
+<li><a href='../../2022/06/nadelhorn-4327-m.html'>Nadelhorn (4327 m)</a></li>
+<li><a href='../../2022/06/saas-fee.html'>Saas-Fee</a></li>
+<li><a href='../../2022/06/allalinhorn-4027-m.html'>Allalinhorn (4027 m)</a></li>
+</ul></details>
+</details>
+</aside>
+      </div>
+      <div class="labels">
+        <aside class='sidebar-labels'><h3><b>Navigacija</b></h3>
+<div class='first-items'><h3>Kategorija:</h3><ul class='label-list'>
+<li><a class='label-name' href='../../../search/labels/alpinizem.html'>Alpinizem</a></li>
+<li><a class='label-name' href='../../../search/labels/ferata.html'>Ferata</a></li>
+<li><a class='label-name' href='../../../search/labels/gornistvo.html'>Gorništvo</a></li>
+<li><a class='label-name' href='../../../search/labels/gorski-tek.html'>Gorski tek</a></li>
+<li><a class='label-name' href='../../../search/labels/plezanje.html'>Plezanje</a></li>
+<li><a class='label-name' href='../../../search/labels/pohodnistvo.html'>Pohodništvo</a></li>
+<li><a class='label-name' href='../../../search/labels/potepanja.html'>Potepanja</a></li>
+<li><a class='label-name' href='../../../search/labels/sprehod.html'>Sprehod</a></li>
+<li><a class='label-name' href='../../../search/labels/tek.html'>Tek</a></li>
+<li><a class='label-name' href='../../../search/labels/turno-smucanje.html'>Turno smučanje</a></li>
+</ul>
+<div class='remaining-items hidden' style='height:auto;'>
+<h3>Država:</h3><ul class='label-list'>
+<li><a class='label-name' href='../../../search/labels/avstrija.html'>Avstrija</a></li>
+<li><a class='label-name' href='../../../search/labels/hrvaska.html'>Hrvaška</a></li>
+<li><a class='label-name' href='../../../search/labels/italija.html'>Italija</a></li>
+<li><a class='label-name' href='../../../search/labels/madzarska.html'>Madžarska</a></li>
+<li><a class='label-name' href='../../../search/labels/sardinija.html'>Sardinija</a></li>
+<li><a class='label-name' href='../../../search/labels/slovaska.html'>Slovaška</a></li>
+<li><a class='label-name' href='../../../search/labels/slovenija.html'>Slovenija</a></li>
+</ul>
+<h3>Gorstvo:</h3><ul class='label-list'>
+<li><a class='label-name' href='../../../search/labels/beneske-predalpe.html'>Beneške Predalpe</a></li>
+<li><a class='label-name' href='../../../search/labels/biokovo.html'>Biokovo</a></li>
+<li><a class='label-name' href='../../../search/labels/dinarsko-gorstvo.html'>Dinarsko gorstvo</a></li>
+<li><a class='label-name' href='../../../search/labels/dolomiti.html'>Dolomiti</a></li>
+<li><a class='label-name' href='../../../search/labels/julijske-alpe.html'>Julijske Alpe</a></li>
+<li><a class='label-name' href='../../../search/labels/kamnisko-savinjske-alpe.html'>Kamniško-Savinjske Alpe</a></li>
+<li><a class='label-name' href='../../../search/labels/karavanke.html'>Karavanke</a></li>
+<li><a class='label-name' href='../../../search/labels/karnijske-alpe.html'>Karnijske Alpe</a></li>
+<li><a class='label-name' href='../../../search/labels/kriske-alpe.html'>Kriške Alpe</a></li>
+<li><a class='label-name' href='../../../search/labels/matra.html'>Mátra</a></li>
+<li><a class='label-name' href='../../../search/labels/nizke-tatre.html'>Nizke Tatre</a></li>
+<li><a class='label-name' href='../../../search/labels/nizke-ture.html'>Nizke Ture</a></li>
+<li><a class='label-name' href='../../../search/labels/slovaski-raj.html'>Slovaški raj</a></li>
+<li><a class='label-name' href='../../../search/labels/tribec.html'>Tribeč</a></li>
+<li><a class='label-name' href='../../../search/labels/velebit.html'>Velebit</a></li>
+<li><a class='label-name' href='../../../search/labels/visoke-tatre.html'>Visoke Tatre</a></li>
+<li><a class='label-name' href='../../../search/labels/visoke-ture.html'>Visoke Ture</a></li>
+</ul>
+<h3>Časovno:</h3><ul class='label-list'>
+<li><a class='label-name' href='../../../search/labels/celodnevni.html'>Celodnevni</a></li>
+<li><a class='label-name' href='../../../search/labels/daljsa-potepanja.html'>Daljša potepanja</a></li>
+<li><a class='label-name' href='../../../search/labels/kratki.html'>Kratki</a></li>
+<li><a class='label-name' href='../../../search/labels/poldnevni.html'>Poldnevni</a></li>
+<li><a class='label-name' href='../../../search/labels/vikend-potepanja.html'>Vikend potepanja</a></li>
+</ul>
+<h3>Ostalo:</h3><ul class='label-list'>
+<li><a class='label-name' href='../../../search/labels/brezpotje.html'>Brezpotje</a></li>
+<li><a class='label-name' href='../../../search/labels/greben.html'>Greben</a></li>
+<li><a class='label-name' href='../../../search/labels/jama.html'>Jama</a></li>
+<li><a class='label-name' href='../../../search/labels/jezero.html'>Jezero</a></li>
+<li><a class='label-name' href='../../../search/labels/kanjon.html'>Kanjon</a></li>
+<li><a class='label-name' href='../../../search/labels/mesto.html'>Mesto</a></li>
+<li><a class='label-name' href='../../../search/labels/moji-najljubsi.html'>Moji najljubši</a></li>
+<li><a class='label-name' href='../../../search/labels/polotok.html'>Polotok</a></li>
+<li><a class='label-name' href='../../../search/labels/slap.html'>Slap</a></li>
+<li><a class='label-name' href='../../../search/labels/soteska.html'>Soteska</a></li>
+<li><a class='label-name' href='../../../search/labels/grad.html'>Grad</a></li>
+</ul>
+<h3>Ostalo:</h3><ul class='label-list'>
+<li><a class='label-name' href='../../../search/labels/0-sardinija-2023.html'>0. Sardinija 2023</a></li>
+<li><a class='label-name' href='../../../search/labels/0-slovaska-2024.html'>0. Slovaška 2024</a></li>
+<li><a class='label-name' href='../../../search/labels/0-teden-na-hrvaskem.html'>0. Teden na Hrvaškem</a></li>
+<li><a class='label-name' href='../../../search/labels/0-teden-v-dolomitih.html'>0. Teden v Dolomitih</a></li>
+<li><a class='label-name' href='../../../search/labels/0-vikend-dolomiti.html'>0. Vikend Dolomiti</a></li>
+<li><a class='label-name' href='../../../search/labels/0-vikend-julijci.html'>0. Vikend Julijci</a></li>
+<li><a class='label-name' href='../../../search/labels/0-vikend-karnijci.html'>0. Vikend Karnijci</a></li>
+<li><a class='label-name' href='../../../search/labels/0-vikend-ksa.html'>0. Vikend KSA</a></li>
+<li><a class='label-name' href='../../../search/labels/0-vikend-rezija.html'>0. Vikend Rezija</a></li>
+<li><a class='label-name' href='../../../search/labels/1-vikend-dolomiti.html'>1. Vikend Dolomiti</a></li>
+<li><a class='label-name' href='../../../search/labels/1-vikend-karnijci.html'>1. Vikend Karnijci</a></li>
+</ul>
+</div>
+
+            <span class='show-more pill-button'>Pokaži več</span>
+            <span class='show-less pill-button hidden'>Pokaži manj</span>
+            
+</aside>
+      </div>
+    </div>
+
+    <div class="content-wrapper" style="flex: 1;">
+      <h2>Gola su Gorropu</h2>
+      <div class='post-date' data-date='2023-04-29T11:00:00-07:00'></div>
+      <div style="display: none;">
+<summary>Kaj češ lepšega, kot biti v naravi.</summary>
+</div>
+<span><a name="more"></a></span>
+<div style="display: none;">
+<!--Hidden cover photo-->
+</div>
+<span>
+<!--Lightbox settings:
+  * photo title -> after <a insert atribut: data-title="My image"
+  * make more separate photo rolls -> after <a insert changed atribut: data-lightbox="Galery"-->
+</span>
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiloupZN_Me3NqAu-SH_FUXKdTPvCXOOOwJZJFY2IrLl5rOG9nLJF0bLPe4dE3IlHQAPrC796S1Bmbbu5PAgnJ8DcabUQUV6xXZfWMChASbSuPEd6fK3u0PRczRcv57WTNhkTsCaftwCYjZesRCv7T5So__Kq8vbV2iTzkHPUc6GJRfIX0Cl7xqqdAUjw4/s1000/20230429_091355.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="1;best;cover" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiloupZN_Me3NqAu-SH_FUXKdTPvCXOOOwJZJFY2IrLl5rOG9nLJF0bLPe4dE3IlHQAPrC796S1Bmbbu5PAgnJ8DcabUQUV6xXZfWMChASbSuPEd6fK3u0PRczRcv57WTNhkTsCaftwCYjZesRCv7T5So__Kq8vbV2iTzkHPUc6GJRfIX0Cl7xqqdAUjw4/s600/20230429_091355.jpg" width="800"/></a>
+<!--Line break-->
+<hr/>
+<div class="peak-tag">
+<br/><b><span style="font-size: 25px;">Monte Su Nercone 1263 m</span></b><br/><br/>
+</div>
+<!--Content-->
+<p></p>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh-wmShq1fimZoOri7UaqZXlZ_ZxrNxrBzTyTRRkzYfkE_l5CXjnekBZmk0nA0shg6Y2JJ3wVsNEFoOnj9C4TnLCfuKkqdbro9Kdu5EuqzcXrzQSH8eevdTmrNbrwN57hzCx0d7jDLR4HNwf7yeSzl2LQ_y1o38AchHvAlBqwnMCAR0356XMDS7FB3c8s4/s1000/20230429_051511.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh-wmShq1fimZoOri7UaqZXlZ_ZxrNxrBzTyTRRkzYfkE_l5CXjnekBZmk0nA0shg6Y2JJ3wVsNEFoOnj9C4TnLCfuKkqdbro9Kdu5EuqzcXrzQSH8eevdTmrNbrwN57hzCx0d7jDLR4HNwf7yeSzl2LQ_y1o38AchHvAlBqwnMCAR0356XMDS7FB3c8s4/s600/20230429_051511.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Start ob 5.15h</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgJrOSbRt9Vx7wNj9PxXYEpHZnMISOmXlYB1fzYerXyC817E5a1HjAVVkgCLojr6DD7jXLzhNAJbMjEErauv1zTXX1i09_QeP2SDUNajS8rWmwSdL7eY8LrNzQSYUHwucq5LJScJPAAQUwp6qqhW0wuZxRj_UQgOI0PgmooWxaWn_SFv-8t8L-nc6xAD_4/s1000/20230429_053721.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgJrOSbRt9Vx7wNj9PxXYEpHZnMISOmXlYB1fzYerXyC817E5a1HjAVVkgCLojr6DD7jXLzhNAJbMjEErauv1zTXX1i09_QeP2SDUNajS8rWmwSdL7eY8LrNzQSYUHwucq5LJScJPAAQUwp6qqhW0wuZxRj_UQgOI0PgmooWxaWn_SFv-8t8L-nc6xAD_4/s600/20230429_053721.jpg" width="600"/></a>
+</div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiXnzRRPINN2KhFSeNTIyQVEcpGLH7QFdiflHtomZ6knqX5-5awyo5cR_zVjAeYRshD3PIVnr4M7LTfGDlP2qn2vimUu3FyD7T5SnODca6DlOljZO1rIIlLA_3aeVuYAuWrSAst6v4BfhBifnP0d4gxy0shNRYZ1GCgy6CfgLzhWodQjGSXkHm6huK8P-Y/s1000/20230429_053832.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiXnzRRPINN2KhFSeNTIyQVEcpGLH7QFdiflHtomZ6knqX5-5awyo5cR_zVjAeYRshD3PIVnr4M7LTfGDlP2qn2vimUu3FyD7T5SnODca6DlOljZO1rIIlLA_3aeVuYAuWrSAst6v4BfhBifnP0d4gxy0shNRYZ1GCgy6CfgLzhWodQjGSXkHm6huK8P-Y/s600/20230429_053832.jpg" width="600"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEimJ-vOSQurLRs9kV0KZRjrW11SWGY7UaLROmmesoO9crHxVRF-yzIv0ABbqdjxESjjHWLLER6CvNGsvRKZegcKzN-HHli2cobjVGUqEqlTKr5XoU82yVl2ovoWhctTbHnwZ608oYUi8cpqjwWa7tH69G1cSYWWdXjEcdbFwZrnBtj_x3IjJVAu763rBuo/s1000/20230429_055401.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEimJ-vOSQurLRs9kV0KZRjrW11SWGY7UaLROmmesoO9crHxVRF-yzIv0ABbqdjxESjjHWLLER6CvNGsvRKZegcKzN-HHli2cobjVGUqEqlTKr5XoU82yVl2ovoWhctTbHnwZ608oYUi8cpqjwWa7tH69G1cSYWWdXjEcdbFwZrnBtj_x3IjJVAu763rBuo/s600/20230429_055401.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Spremljevalec s prelaza
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjnYMCKEfO7JQRqBCJyTSNP_ylmNDoiO48WeLuAuk80J-xRT8dO_esPKarXO6jfRuXiVc92z74d5hyphenhyphenolgjiy3Pkt25iz21fqinjWm0msr4Ddgz9Rd8vwdOEtXJOn3D4s-8Q2PbxTDOxh99pN3Ajb5kWspjjz0uwFMkOMfMmP6WMviHkmrM6fYHPaZq_yxQ/s1000/20230429_060056.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjnYMCKEfO7JQRqBCJyTSNP_ylmNDoiO48WeLuAuk80J-xRT8dO_esPKarXO6jfRuXiVc92z74d5hyphenhyphenolgjiy3Pkt25iz21fqinjWm0msr4Ddgz9Rd8vwdOEtXJOn3D4s-8Q2PbxTDOxh99pN3Ajb5kWspjjz0uwFMkOMfMmP6WMviHkmrM6fYHPaZq_yxQ/s600/20230429_060056.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Vrh Monte Su Nercone (1263 m)
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiuwphOMIGqvklCmhT1lwBBTIaldwSj0abvOErT-y1Kh1rI1PjyKHy6T7WDmguyHm4TIb1qtAvRJUt1rWpeGKM_84jpJ5zUcmp1kjmbH5rMOYFlDgzujW95dhnE1a3x9GiYXolz0149LSsAt7PX4y1x-cEt_kTJfKcVBZwumYJ6UNadCP_N0lSTnx7cpEI/s1000/20230429_062205.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="1;best;peak" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiuwphOMIGqvklCmhT1lwBBTIaldwSj0abvOErT-y1Kh1rI1PjyKHy6T7WDmguyHm4TIb1qtAvRJUt1rWpeGKM_84jpJ5zUcmp1kjmbH5rMOYFlDgzujW95dhnE1a3x9GiYXolz0149LSsAt7PX4y1x-cEt_kTJfKcVBZwumYJ6UNadCP_N0lSTnx7cpEI/s600/20230429_062205.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Sončni vzhod s pogledom na prelaz
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjm1Hyol_9Qk5ZV6oeD1bhAcdQvwRw0qC60OD8RxGr3Vb6ot_04OY8Q5Tow3RQE3IkR68_9qx5S26G35XWboO5_2S7DJ_tDfKJhfK-DQA9KN5n6mDs7UdBxEk9aD6U5NVnIXeAlxP_zPEZFeJVlJo9b56svTlXnXa_7OXDjXIQN-cqbVasHhyphenhyphenobdGPfVoI/s1000/20230429_062747.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjm1Hyol_9Qk5ZV6oeD1bhAcdQvwRw0qC60OD8RxGr3Vb6ot_04OY8Q5Tow3RQE3IkR68_9qx5S26G35XWboO5_2S7DJ_tDfKJhfK-DQA9KN5n6mDs7UdBxEk9aD6U5NVnIXeAlxP_zPEZFeJVlJo9b56svTlXnXa_7OXDjXIQN-cqbVasHhyphenhyphenobdGPfVoI/s600/20230429_062747.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Ožarjen greben | FOTO: Matej
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi49MrnyeBr1WLXOBpG8g7rJ6slAws7hPjNQl2MVGvaLEgU5NMZeTNoshNL_rgD8vf72njpQvyMnaSi33t_VjEeZ7vwIVvx6GLhON5ofDpj8HsZ7i-bisrmtv9mqYC6knFo-g-NyQ6xOfNrSbU5pxqrFQVPMIvTk_b-IuZRo2aduRKMS1jmZj7FDuEa_YU/s1000/20230429_063315.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="1" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi49MrnyeBr1WLXOBpG8g7rJ6slAws7hPjNQl2MVGvaLEgU5NMZeTNoshNL_rgD8vf72njpQvyMnaSi33t_VjEeZ7vwIVvx6GLhON5ofDpj8HsZ7i-bisrmtv9mqYC6knFo-g-NyQ6xOfNrSbU5pxqrFQVPMIvTk_b-IuZRo2aduRKMS1jmZj7FDuEa_YU/s600/20230429_063315.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Z zvestim spremljevalcem
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj5lRMtGlQBj3DU2KQZnMFWKQyYW7rWZE9HHMH055jQvZirjmSJHtlVKNK2Us7dMkV_gLx2xADCgiVN4_ETJ8A4D2pJTlpbZuEYQtmPmhPFN6UPdqAy2ugB_oBF0RzIVlvdA1PehbsZwkZl7g73SwhS81kQ-pQGNM0r6-bY9N1tp0XBWzaCMA5ecrEJHNI/s1000/20230429_063355.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="1;best" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj5lRMtGlQBj3DU2KQZnMFWKQyYW7rWZE9HHMH055jQvZirjmSJHtlVKNK2Us7dMkV_gLx2xADCgiVN4_ETJ8A4D2pJTlpbZuEYQtmPmhPFN6UPdqAy2ugB_oBF0RzIVlvdA1PehbsZwkZl7g73SwhS81kQ-pQGNM0r6-bY9N1tp0XBWzaCMA5ecrEJHNI/s600/20230429_063355.jpg" width="600"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiPOjH4fthtq9fajYcKJTaXiMh_Pzojx74zKdZbLtAmI1oJs0DeIsyHUf6b6aX75r3s0zEi2_JymMTQV2lfTBnDTSCUBQff43XSCu6pOFXeB9IEtLi8aAAU2PePCX3vgtmTulLKiatT8MnObSojwY6Zg4KWH0c8OILG547OYMHZFkxMay6GPGiwRVUuO2s/s1000/20230429_063856.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiPOjH4fthtq9fajYcKJTaXiMh_Pzojx74zKdZbLtAmI1oJs0DeIsyHUf6b6aX75r3s0zEi2_JymMTQV2lfTBnDTSCUBQff43XSCu6pOFXeB9IEtLi8aAAU2PePCX3vgtmTulLKiatT8MnObSojwY6Zg4KWH0c8OILG547OYMHZFkxMay6GPGiwRVUuO2s/s600/20230429_063856.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">FOTO: Matej</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEheT1n5C4S2O75sIE3EpHa3IFTEMCfmxxnhkylZY8dymxPpfC_npcWP1sIMaufBDm3EsPLMhAPulGZw35pCF-sgufr_UUF7LYOcFub0jaXDE0q_PbQa3PWtvY0pCir8PcfWnBeuWqtQiulxrZze8TH5UVLBs8aAFayP8vwsLCPPsyvzxvHkSXVvCly7CcQ/s1000/20230429_064307.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEheT1n5C4S2O75sIE3EpHa3IFTEMCfmxxnhkylZY8dymxPpfC_npcWP1sIMaufBDm3EsPLMhAPulGZw35pCF-sgufr_UUF7LYOcFub0jaXDE0q_PbQa3PWtvY0pCir8PcfWnBeuWqtQiulxrZze8TH5UVLBs8aAFayP8vwsLCPPsyvzxvHkSXVvCly7CcQ/s600/20230429_064307.jpg" width="600"/></a>
+</div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhGl6B8Z65TlfBqsbh_VjSfyjFmA2sxkvpP8Byb0QfMXwDTW06CS3gQGMkUM7kSb54UGpZF6GkuOI75Akvu75Mgewk135-M5gMN5x53Topt0FaKZ7nMtG_-YUWkPVR01ONbIizVOJSVb5DS4sWpdTYiU-kVWveRdkCnw2pW0NCaBh4_d5wqjd_M5OWFWs0/s1000/20230429_070357.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhGl6B8Z65TlfBqsbh_VjSfyjFmA2sxkvpP8Byb0QfMXwDTW06CS3gQGMkUM7kSb54UGpZF6GkuOI75Akvu75Mgewk135-M5gMN5x53Topt0FaKZ7nMtG_-YUWkPVR01ONbIizVOJSVb5DS4sWpdTYiU-kVWveRdkCnw2pW0NCaBh4_d5wqjd_M5OWFWs0/s600/20230429_070357.jpg" width="600"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgC49ag4RaI7d3uItv5Cr7Klnlpxeh-cZsSok-sESc1sbjmGRO1VhEkMKPWQ4BHvtYnAxeev5SJ8eAWT5b4eL_66EDxS8cfkH_qck_Kyl3t2ZZtlBnIvAZJ1NtYUwifZL6TKd-YEeK6rSApzXfFfytRdq9Ed7eJFNyHg44zcLne1pVNtnOh7v1MDV1HeLU/s1000/20230429_070534.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="1;best" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgC49ag4RaI7d3uItv5Cr7Klnlpxeh-cZsSok-sESc1sbjmGRO1VhEkMKPWQ4BHvtYnAxeev5SJ8eAWT5b4eL_66EDxS8cfkH_qck_Kyl3t2ZZtlBnIvAZJ1NtYUwifZL6TKd-YEeK6rSApzXfFfytRdq9Ed7eJFNyHg44zcLne1pVNtnOh7v1MDV1HeLU/s600/20230429_070534.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Tipično zatočišče</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgpr5_AL4CEL0npuSwCIKC0LTKgRQS5xU2VvpPKXh2doetQOq1VCgjbShq5XHImqQGjeOF2SoATDhOw1sYFeMdgFCesXXTPfgYN5zAa3Bm7aVC8mdCeUxW8PUU7-8WSr7z7jolHRGbYhItxzxI3AJTbkJGzkQNkmvurhlcnQHRjhuCUzdOz_Yzwl1-8DVc/s1000/20230429_070752.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgpr5_AL4CEL0npuSwCIKC0LTKgRQS5xU2VvpPKXh2doetQOq1VCgjbShq5XHImqQGjeOF2SoATDhOw1sYFeMdgFCesXXTPfgYN5zAa3Bm7aVC8mdCeUxW8PUU7-8WSr7z7jolHRGbYhItxzxI3AJTbkJGzkQNkmvurhlcnQHRjhuCUzdOz_Yzwl1-8DVc/s600/20230429_070752.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Z lepo urejeno okolico
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjl58lI0p42eiQ2zTPJDW8LabAo-x7oAFXd2tEoc2Cv6Gj8I3PUapy3rFb5MBtGmsbFeBj7fqp-2AoCaeq4m2LurZb45HAtzLw0e8hbJxA07XNrSctoVu0H4iEbV3cS2b6-sSXd-PMLA1jezm1Z3b7vMkXqa3VcPKWkmCKndYDzDEcvN5IPCZavgW0Kuz4/s1000/20230429_071208.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjl58lI0p42eiQ2zTPJDW8LabAo-x7oAFXd2tEoc2Cv6Gj8I3PUapy3rFb5MBtGmsbFeBj7fqp-2AoCaeq4m2LurZb45HAtzLw0e8hbJxA07XNrSctoVu0H4iEbV3cS2b6-sSXd-PMLA1jezm1Z3b7vMkXqa3VcPKWkmCKndYDzDEcvN5IPCZavgW0Kuz4/s600/20230429_071208.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Pogled nazaj</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiW0PxJs8NhY_Gi5hEGwteb_eLOeFnB1O2LjA4CSyuJvphZF5RfPMuC1nOHuZUjEr_-fadzBvW8YN6NcN0g3xwM2qiC6XaRN6XlGRjXns6Po7rtoxW2InfY8wIWiIs6znWBvKEonkTkQ5dBY8o6-mOgChL7ot7-Vg-5Re_Qqg4VXbJJp8UX98H3s01b3Go/s1000/20230429_072030.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiW0PxJs8NhY_Gi5hEGwteb_eLOeFnB1O2LjA4CSyuJvphZF5RfPMuC1nOHuZUjEr_-fadzBvW8YN6NcN0g3xwM2qiC6XaRN6XlGRjXns6Po7rtoxW2InfY8wIWiIs6znWBvKEonkTkQ5dBY8o6-mOgChL7ot7-Vg-5Re_Qqg4VXbJJp8UX98H3s01b3Go/s600/20230429_072030.jpg" width="600"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhEscAjP1paRJr2se5-1EKHclo2Y7QXQc8U33M4SvO0_fNyOvogTwo-afaX1X_1lLcexIoKcdrFMBMPZRBDIN9sESfMhGf2juAn8wvlttUzIJM-Um_EzABJk5ejpmJEdsF2XQ5xexyNUpI0l7GgehqRNdxCLGn2lZLP6urodyhogpYC3NAVp8dlJmogoJU/s1000/20230429_072229.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhEscAjP1paRJr2se5-1EKHclo2Y7QXQc8U33M4SvO0_fNyOvogTwo-afaX1X_1lLcexIoKcdrFMBMPZRBDIN9sESfMhGf2juAn8wvlttUzIJM-Um_EzABJk5ejpmJEdsF2XQ5xexyNUpI0l7GgehqRNdxCLGn2lZLP6urodyhogpYC3NAVp8dlJmogoJU/s600/20230429_072229.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Še eno zatočišče</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh2vYJGneI8mi7UQZxC5N7a1GsiGlLXlmCFPW7nJGb1gYoNgOFraEiWHbU8_DbXsm_kZc9Zt_Ux6ryjLKidcoil6v-LcaqUJWPiiNTwypn-yLPK50vYwtUZmSbA3xhZC1i2AgC1A9J8yF-H_SiEivmql53x9_5Haxz84KmVpWOjiR02siRxBXeX2YL7GGc/s1000/20230429_072822.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh2vYJGneI8mi7UQZxC5N7a1GsiGlLXlmCFPW7nJGb1gYoNgOFraEiWHbU8_DbXsm_kZc9Zt_Ux6ryjLKidcoil6v-LcaqUJWPiiNTwypn-yLPK50vYwtUZmSbA3xhZC1i2AgC1A9J8yF-H_SiEivmql53x9_5Haxz84KmVpWOjiR02siRxBXeX2YL7GGc/s600/20230429_072822.jpg" width="600"/></a>
+</div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi6paksqGkomigw6YEaP8P3rz-5OaOIa4W_A03h5pZ1zJao1m4rWmuP5qWFhfp3b4zuHC8gPiHlhxNY1-gja-MGrOSKcrANgsIRVphVVmVXLayjxWVPc323lObsR6GIzJ8S2Z6mGY5zIpxu41z64uAjBAz0hv3ksApowZirnn6LrQYM66BOOUYyBdccKAg/s1000/20230429_073922.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi6paksqGkomigw6YEaP8P3rz-5OaOIa4W_A03h5pZ1zJao1m4rWmuP5qWFhfp3b4zuHC8gPiHlhxNY1-gja-MGrOSKcrANgsIRVphVVmVXLayjxWVPc323lObsR6GIzJ8S2Z6mGY5zIpxu41z64uAjBAz0hv3ksApowZirnn6LrQYM66BOOUYyBdccKAg/s600/20230429_073922.jpg" width="600"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgQUfrjEBFcSoq5gd8gh-kKKd-nLi7cV-buzAZS2YAY60ekVfKaZ9KH7Srpm9E2viLIcdQiLP49R0xiF9w7N1OoCKhvUfzWhDBu-_KwaloDhgRQaA1HYEXXApb4TUd_Ow9ebbihDuo_UaWw52CaChi2CA2KUFJMn74s143Y7AHrlvY50HfnbgzU2FPs34c/s1000/20230429_074316.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgQUfrjEBFcSoq5gd8gh-kKKd-nLi7cV-buzAZS2YAY60ekVfKaZ9KH7Srpm9E2viLIcdQiLP49R0xiF9w7N1OoCKhvUfzWhDBu-_KwaloDhgRQaA1HYEXXApb4TUd_Ow9ebbihDuo_UaWw52CaChi2CA2KUFJMn74s143Y7AHrlvY50HfnbgzU2FPs34c/s600/20230429_074316.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Prašiči</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgh1-lt6ChLM0Y6rteIXQKoliqt_QMylxrK1D2a2m_aY9PwsF9enqKVPRydBbIB6mWQbf1DBvBOFA53oYk1FzFJYXYd8CbI2XxNZ9MTbgzTHpRPdklNQuNBm1aCsGP1sDarBu2h1I1zxg7rAyX1CMu0WpJhD3K26iSBkbJDe_z_dVKxRDeiNeqUWKliONM/s1440/20230506_171457.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="1080" data-original-width="1440" data-skip="1" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgh1-lt6ChLM0Y6rteIXQKoliqt_QMylxrK1D2a2m_aY9PwsF9enqKVPRydBbIB6mWQbf1DBvBOFA53oYk1FzFJYXYd8CbI2XxNZ9MTbgzTHpRPdklNQuNBm1aCsGP1sDarBu2h1I1zxg7rAyX1CMu0WpJhD3K26iSBkbJDe_z_dVKxRDeiNeqUWKliONM/s600/20230506_171457.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Odziv psa na prašiče
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjE81WeEw4bfC7FfV-U9T5jEBS42uB7qu5rcUWV4hb4Z9S1kYj3S38iCyc0k4SRrnxF9m_XdmCle1YIxMg8MZSn9HSVQxU7_oEkJEhTFGTE_2z28FLAs0bX3GRTFw521fxQSmT386I_o4FQdWXKyW7TG9fOr-qVurKMclJonfAursSIrYYU1_gG5bCJ5ww/s1440/VideoCapture_20230506-171912.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="1080" data-original-width="1440" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjE81WeEw4bfC7FfV-U9T5jEBS42uB7qu5rcUWV4hb4Z9S1kYj3S38iCyc0k4SRrnxF9m_XdmCle1YIxMg8MZSn9HSVQxU7_oEkJEhTFGTE_2z28FLAs0bX3GRTFw521fxQSmT386I_o4FQdWXKyW7TG9fOr-qVurKMclJonfAursSIrYYU1_gG5bCJ5ww/s600/VideoCapture_20230506-171912.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Odziv psa na prašiče
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgwmA_-rsbFAyDxOwGg5xZ7ew2IqAD-8N5z4k7mpYPIMwllDzdp2Ckkskyg6iZM38Xry34qY7L9NTe4FvDW-yQ2FH6RaaaYeQR6AZezOZwtC0447veNFF0wk6fmFxubpJpimfbU4EH8Te2PkhEhMimqYTTxLJY3Ls3JjZAbO-PY4ZyGQb54Grk_kQp0Vxs/s1000/20230429_075117.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgwmA_-rsbFAyDxOwGg5xZ7ew2IqAD-8N5z4k7mpYPIMwllDzdp2Ckkskyg6iZM38Xry34qY7L9NTe4FvDW-yQ2FH6RaaaYeQR6AZezOZwtC0447veNFF0wk6fmFxubpJpimfbU4EH8Te2PkhEhMimqYTTxLJY3Ls3JjZAbO-PY4ZyGQb54Grk_kQp0Vxs/s600/20230429_075117.jpg" width="600"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgUiwDg7OJwQKCGXoh3UWj9c8WS3W3aMCyVaXzHSV991UB9c4oDwUbGYZA6rznF8upqwc6dgXOb9u6tyKzwJaY0kJo6Ojb22xTpSXtMGCBe6-uXuUP-7fEGPbaqrau4HFtcndM6AGnt118nHB9fg7yv4mYYRkWjUo4kQIeXWE8jHxUIDHYKKzPnt8g0Q6A/s1000/20230429_075157.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgUiwDg7OJwQKCGXoh3UWj9c8WS3W3aMCyVaXzHSV991UB9c4oDwUbGYZA6rznF8upqwc6dgXOb9u6tyKzwJaY0kJo6Ojb22xTpSXtMGCBe6-uXuUP-7fEGPbaqrau4HFtcndM6AGnt118nHB9fg7yv4mYYRkWjUo4kQIeXWE8jHxUIDHYKKzPnt8g0Q6A/s600/20230429_075157.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Pogled nazaj</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiFmciquKk73dsdFuKY9JAnHd8f_WRofpJ0vkm_eBd_9poj3Cyn-A9LdYenJUcDWmLVUZtrD8pA_5Ck6Iwje0k3EbeXvFLbRARPA3MzCxiN2US83GK5rulaQrAqIaqbK9WAbuIO5hxZ0-Bjx7iIE8gHa4Xe2meUvEq93NB0pilYcjnebk-Zz1KkdpwyiFc/s1000/20230429_075542.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiFmciquKk73dsdFuKY9JAnHd8f_WRofpJ0vkm_eBd_9poj3Cyn-A9LdYenJUcDWmLVUZtrD8pA_5Ck6Iwje0k3EbeXvFLbRARPA3MzCxiN2US83GK5rulaQrAqIaqbK9WAbuIO5hxZ0-Bjx7iIE8gHa4Xe2meUvEq93NB0pilYcjnebk-Zz1KkdpwyiFc/s600/20230429_075542.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Razpotje</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEieDpU6oZ3-24E_YgXtjFJfFf5wWrfsPlgKTHzhBqsG-e0SUnvdAf7JffGdsWK3y_G_bweLdbAB7q_HAlngZvYNQe_RjBY_JBM7kwJ1NgFUhQPGCtVby8pgT9_3An-nwyrQnlHhl4aB4VAzGz6DqPHs9o53ndirSHEHVVetfNvlAoH_EobWgeBqh9MJerA/s1000/20230429_075714.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEieDpU6oZ3-24E_YgXtjFJfFf5wWrfsPlgKTHzhBqsG-e0SUnvdAf7JffGdsWK3y_G_bweLdbAB7q_HAlngZvYNQe_RjBY_JBM7kwJ1NgFUhQPGCtVby8pgT9_3An-nwyrQnlHhl4aB4VAzGz6DqPHs9o53ndirSHEHVVetfNvlAoH_EobWgeBqh9MJerA/s600/20230429_075714.jpg" width="600"/></a>
+</div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiVzijEyIxODr2Shn8q3XtlS8yBEdebVgqcgQ88IZehtnFkmNxI91kKpY_G7JQOSmXIUSPcqJxtxBFIZ6ZTkTcPuJ2Dr4E5YXX8A7ctDPIPNqhguTSnUTbba0ww_Oa6f8ZYK0n92fBEd-2ZX8K5sjHWNz3tzhc_4jwfYOLO3d6HHAtQRnQ6Ig-x2wDe_vU/s1000/20230429_075815.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiVzijEyIxODr2Shn8q3XtlS8yBEdebVgqcgQ88IZehtnFkmNxI91kKpY_G7JQOSmXIUSPcqJxtxBFIZ6ZTkTcPuJ2Dr4E5YXX8A7ctDPIPNqhguTSnUTbba0ww_Oa6f8ZYK0n92fBEd-2ZX8K5sjHWNz3tzhc_4jwfYOLO3d6HHAtQRnQ6Ig-x2wDe_vU/s600/20230429_075815.jpg" width="600"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi8FyJ6wA4yWMoYPeO1o4HfTwMq0C2UndEnbnbRXCl6X7G4kTq0WuyycSslob8QKKMECNuUh74RrVHNPucy9CTPNzSviqH0Jz5NiyFLv9ZgEJTxrOpEQIG8eUYvE5F3P052M1GeRV6g3xqGArF3zF-tGexDCJK2eXv8gJeBohWLz4g2dYdbiuo-l6CDQqU/s1000/20230429_080330.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi8FyJ6wA4yWMoYPeO1o4HfTwMq0C2UndEnbnbRXCl6X7G4kTq0WuyycSslob8QKKMECNuUh74RrVHNPucy9CTPNzSviqH0Jz5NiyFLv9ZgEJTxrOpEQIG8eUYvE5F3P052M1GeRV6g3xqGArF3zF-tGexDCJK2eXv8gJeBohWLz4g2dYdbiuo-l6CDQqU/s600/20230429_080330.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        "Tomba dei giganti" ... še ena megalitska grobnica
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgQrUzpenbf34Il2Wv5_b00JT57kynDeOsOqomB4d21z5TXDLYjEmp7fwk-ErpITk91Tk1hVAsI_3xKWq5Tg5E-bBmPo88jfSnVqD03ncVLyBQbe0VFReswx-9IfKqsrqWtseLc_CdSjtFaxqlEhtNA17gsjn2LBSBbXDrC1W-4291LhCWTo5e5aHhUyos/s1000/20230429_080447.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgQrUzpenbf34Il2Wv5_b00JT57kynDeOsOqomB4d21z5TXDLYjEmp7fwk-ErpITk91Tk1hVAsI_3xKWq5Tg5E-bBmPo88jfSnVqD03ncVLyBQbe0VFReswx-9IfKqsrqWtseLc_CdSjtFaxqlEhtNA17gsjn2LBSBbXDrC1W-4291LhCWTo5e5aHhUyos/s600/20230429_080447.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Kanjon se že vidi</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjl1NuYJbI4wgT5bM87bSaKRFuMDsJKJ9LWznjMbMxTe8zMIvqaQw4S_VQn6G79X0dJxgojlwrPbx82-vFPNgTbDtNsEdvKmMMr9nDxbYPo4iw82B-BtK_6-vqtHCxoBkl4_V7KLpDLIpJHFIhfsi1oqTmFtRLNCaUo4Xi41OuPzrQbvcOHGmZYULcEYbA/s1000/20230429_081816.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjl1NuYJbI4wgT5bM87bSaKRFuMDsJKJ9LWznjMbMxTe8zMIvqaQw4S_VQn6G79X0dJxgojlwrPbx82-vFPNgTbDtNsEdvKmMMr9nDxbYPo4iw82B-BtK_6-vqtHCxoBkl4_V7KLpDLIpJHFIhfsi1oqTmFtRLNCaUo4Xi41OuPzrQbvcOHGmZYULcEYbA/s600/20230429_081816.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Naravna znamenitost Pischina Urtaddala
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjE0MyVmsDzYbTgDHMg240m1MPpPCCwo84TKW0W23y5bBacq8DSUCE1E0SXaBs-wpFB7bOHy9HKRUck7Yn2BxwHg06Lx2AT0Ai96AlMgmjgW8NaHfU9CwA4p6MvI33-hI3XNb8fAtc0c34KA1rS-2XWFlxQ7Y64PsQNfT-L6T5qjJ_Xd_3zqmKYjsaSqZ0/s1000/20230429_082056.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjE0MyVmsDzYbTgDHMg240m1MPpPCCwo84TKW0W23y5bBacq8DSUCE1E0SXaBs-wpFB7bOHy9HKRUck7Yn2BxwHg06Lx2AT0Ai96AlMgmjgW8NaHfU9CwA4p6MvI33-hI3XNb8fAtc0c34KA1rS-2XWFlxQ7Y64PsQNfT-L6T5qjJ_Xd_3zqmKYjsaSqZ0/s600/20230429_082056.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Še vedno hodi z nama
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjG_VnTz7DwEkScVo4psvSIydQ-JLszgfZdB6gAXS_jU47unVXFu5LwIVKStvYFiPpDxY-O-AgG16lvxVa4b63E7AHmHewKLXKw-jEY6ERSdC7xkxU-yob1QF3ivDObJMGYAfk-zPkDhWg8xDay9Xz2iDM11GRKa4yjIxLonTZSJZnlxunpG9L0VLf65L0/s1000/20230429_082220.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="1;best" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjG_VnTz7DwEkScVo4psvSIydQ-JLszgfZdB6gAXS_jU47unVXFu5LwIVKStvYFiPpDxY-O-AgG16lvxVa4b63E7AHmHewKLXKw-jEY6ERSdC7xkxU-yob1QF3ivDObJMGYAfk-zPkDhWg8xDay9Xz2iDM11GRKa4yjIxLonTZSJZnlxunpG9L0VLf65L0/s600/20230429_082220.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Naravna znamenitost Pischina Urtaddala
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWtPlako7nEbA01NL0Gkre_LQHiRK3fCWsza6-yasi8WztdTPniOrQ0B2x5QdCEzOzJQWEiZraEEg8JUkAitfu160RJXRdDxZO57zWmaQw49EmpXaDJivnd3fuooTixV_-yjHZjgOfqzVthVTjGKcfOCPbmb9gCnEh9jnIFyw_r8VfzzFvWwC3kVKE1gQ/s1000/20230429_082520.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWtPlako7nEbA01NL0Gkre_LQHiRK3fCWsza6-yasi8WztdTPniOrQ0B2x5QdCEzOzJQWEiZraEEg8JUkAitfu160RJXRdDxZO57zWmaQw49EmpXaDJivnd3fuooTixV_-yjHZjgOfqzVthVTjGKcfOCPbmb9gCnEh9jnIFyw_r8VfzzFvWwC3kVKE1gQ/s600/20230429_082520.jpg" width="600"/></a>
+</div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhkOgX3YDrKTEskuxchgHnrh1e0xI3MBXhoNeQWvQsrV0xaEdTICx1nr7GmGhnlnJdYqvDNidmcgpKXv7-io_2op5OnU49U19McyKJnZXiNTJ6O5xx6bIojfyALp5ay_WYBdp9bCnuQFjYZ9VOkX_EvBMaD5dbkARQvkMCm3FruE-xgtOf2gmNUSBIihj0/s1000/20230429_083422.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhkOgX3YDrKTEskuxchgHnrh1e0xI3MBXhoNeQWvQsrV0xaEdTICx1nr7GmGhnlnJdYqvDNidmcgpKXv7-io_2op5OnU49U19McyKJnZXiNTJ6O5xx6bIojfyALp5ay_WYBdp9bCnuQFjYZ9VOkX_EvBMaD5dbkARQvkMCm3FruE-xgtOf2gmNUSBIihj0/s600/20230429_083422.jpg" width="600"/></a>
+</div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgkMNDbTLq5zhCa_pMLAfyjE2YALDDG3SKVpdFrjoIyyWSKM21MBGedH1BJWSz8qZu9MNiX5Fmulwn2lXtJ7EEQiWHYNDR4aitZwNgA9Uc1N_6QUcyaBwkZKptAz8zPm-4oYnj49yC_9WBvWXpmewO_VPsGpjsB1crotLK8ceWdF-JvCrI0FpOfWn6rgng/s1000/20230429_084102.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgkMNDbTLq5zhCa_pMLAfyjE2YALDDG3SKVpdFrjoIyyWSKM21MBGedH1BJWSz8qZu9MNiX5Fmulwn2lXtJ7EEQiWHYNDR4aitZwNgA9Uc1N_6QUcyaBwkZKptAz8zPm-4oYnj49yC_9WBvWXpmewO_VPsGpjsB1crotLK8ceWdF-JvCrI0FpOfWn6rgng/s600/20230429_084102.jpg" width="600"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEibiS2GYS06N56z2oXjswWlyK4OajAFLD0CipMnEuTJL9qcF2LNQCixc0bwsJR2TagZrTitvjgyt9IMNDK7P51szl7ZlvxzMXBNgxj82nz5e5Oc6gON5wDoJPc6XVBF97GyM2nAm4QbKE5xCiQyZ3Nhz98csf4Vpv6RETF6GJP_AOu00INT9TZRJLGj9nM/s1000/20230429_084611.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="1" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEibiS2GYS06N56z2oXjswWlyK4OajAFLD0CipMnEuTJL9qcF2LNQCixc0bwsJR2TagZrTitvjgyt9IMNDK7P51szl7ZlvxzMXBNgxj82nz5e5Oc6gON5wDoJPc6XVBF97GyM2nAm4QbKE5xCiQyZ3Nhz98csf4Vpv6RETF6GJP_AOu00INT9TZRJLGj9nM/s600/20230429_084611.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Vse bliže kanjonu</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjRYaZsldjdBlCK0Y366sOTEHeWJSsWqCZa49qzewBfhx-0kcTwl6OcrOhtFHlhVQAKLVz0euYek185lB8HNoP2mfxP_lwMTNN13QlvV4ZbFMHNzSiq8e9FobeXH77FbJZV7rAjRr3wEuXHYCffkqXSVXsEHpxc3dac9tiMBQTxixIXlSv32OUO7gjoRNE/s1000/20230429_084936.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="1;best" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjRYaZsldjdBlCK0Y366sOTEHeWJSsWqCZa49qzewBfhx-0kcTwl6OcrOhtFHlhVQAKLVz0euYek185lB8HNoP2mfxP_lwMTNN13QlvV4ZbFMHNzSiq8e9FobeXH77FbJZV7rAjRr3wEuXHYCffkqXSVXsEHpxc3dac9tiMBQTxixIXlSv32OUO7gjoRNE/s600/20230429_084936.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgy5XoFeyBS5VKQG6J1EFTKE7mHYKg3yVQSuo86heVGakjawtoZaPahbQUYN735Qp4OIaNf4unaXqlsFMKqPtUw4w5pCpqT2ZT64y4tmtZft8gDjSWCR-Cu2xchqwCrD_dXfOg86edGDrN4Ph-j-DRITfQp707xB2hDhA0Qte4ud6WLaOI2Qm0SsAgGoqc/s1000/20230429_085758.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgy5XoFeyBS5VKQG6J1EFTKE7mHYKg3yVQSuo86heVGakjawtoZaPahbQUYN735Qp4OIaNf4unaXqlsFMKqPtUw4w5pCpqT2ZT64y4tmtZft8gDjSWCR-Cu2xchqwCrD_dXfOg86edGDrN4Ph-j-DRITfQp707xB2hDhA0Qte4ud6WLaOI2Qm0SsAgGoqc/s600/20230429_085758.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Pes že vedel, kje je pot
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgET2SfvWlpn4LQs8FUDUa56WRoFDs2fJcCgwfPDMg9e_DGn1a5-HPOegZsRpDVylgHeqDj6XvpPWCGBqz4eZzx5ikKdc3Ha4xqIG5r2AcIMl0M_cvrkKt_3JsILC5euiUxCsZx6b7y0FvxmuL1akZ6i0i9FZknQUeyIS6SLVh1r-gWV1Z6BN1bwKc0zdw/s1000/20230429_085817.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgET2SfvWlpn4LQs8FUDUa56WRoFDs2fJcCgwfPDMg9e_DGn1a5-HPOegZsRpDVylgHeqDj6XvpPWCGBqz4eZzx5ikKdc3Ha4xqIG5r2AcIMl0M_cvrkKt_3JsILC5euiUxCsZx6b7y0FvxmuL1akZ6i0i9FZknQUeyIS6SLVh1r-gWV1Z6BN1bwKc0zdw/s600/20230429_085817.jpg" width="600"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEijl2J82z2V4Vu71bG5cZQ-YSHTz1ATk9OKVBxyrnZk1nDo82Ll8eTIP639LGOiGz7vAcV-qDXn6GkG0xiEwcbHR6TAM7gbpWuJFZrJjC3K5jXjR8b7CIA3lmxtqKpZvRFRUFazgxnaDol7XZwyVkyYmbg1uJZQLAJM6qK0tP14ewWNFgy2B2cVvfoQ8Yc/s1000/20230429_090120.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEijl2J82z2V4Vu71bG5cZQ-YSHTz1ATk9OKVBxyrnZk1nDo82Ll8eTIP639LGOiGz7vAcV-qDXn6GkG0xiEwcbHR6TAM7gbpWuJFZrJjC3K5jXjR8b7CIA3lmxtqKpZvRFRUFazgxnaDol7XZwyVkyYmbg1uJZQLAJM6qK0tP14ewWNFgy2B2cVvfoQ8Yc/s600/20230429_090120.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Na koncu markirane poti
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgKMmNcBUK-BAi4l_KCkRUCBWad6Vves0UUsH-_UiKAIZZnqZqeoAcPLwJ9JnwPWsUHQbFFdcw-URu7xLKUY0FHGkW8kh4vOokLTbfevEdjn3Cby4X9CEAnnU5NcYGRuGYayK3EVDcrTiU1MkDKK0EwmWLxow88p7MSsYW0Y_A1AtpXpmoptZSM6xUWd4s/s1000/20230429_090639.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgKMmNcBUK-BAi4l_KCkRUCBWad6Vves0UUsH-_UiKAIZZnqZqeoAcPLwJ9JnwPWsUHQbFFdcw-URu7xLKUY0FHGkW8kh4vOokLTbfevEdjn3Cby4X9CEAnnU5NcYGRuGYayK3EVDcrTiU1MkDKK0EwmWLxow88p7MSsYW0Y_A1AtpXpmoptZSM6xUWd4s/s600/20230429_090639.jpg" width="600"/></a>
+</div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjljBBr0wPwOrRtk5Z4a0Hh5YgJ90boXoMu4iI5tD974aeRBGrn4QBSBgX6nDAqx56fAgLh-iSFLCE13d3QVRzITbRr0Z4PEu1-_bS8athbVkZqf_gNKE72_r7qSvUJ-Ddz_WXuVvAmlA9NcznjMNM0vOWOEYYccKGuHcZ4tP-n4oi6b4DU5_zDipZhXfg/s1000/20230429_090724.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjljBBr0wPwOrRtk5Z4a0Hh5YgJ90boXoMu4iI5tD974aeRBGrn4QBSBgX6nDAqx56fAgLh-iSFLCE13d3QVRzITbRr0Z4PEu1-_bS8athbVkZqf_gNKE72_r7qSvUJ-Ddz_WXuVvAmlA9NcznjMNM0vOWOEYYccKGuHcZ4tP-n4oi6b4DU5_zDipZhXfg/s600/20230429_090724.jpg" width="600"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiDvYUyhquuQnu13jK0IH54cxHytHoLO83-ZntvdkTffYEcyd6VIiLl0pWzXjCpJ1f5I7G9M03xqBpKBpf2qgp3ivajE0L2h354_J6Ma-ZCkpuE2z-XXVgBvwMV_0lyWBoKquxOZjef0Ay8Ee8ZProherfZSs_V6ymdtLI6_qpPoBWyJZlyCp3dH1xTxhM/s1000/20230429_090808.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiDvYUyhquuQnu13jK0IH54cxHytHoLO83-ZntvdkTffYEcyd6VIiLl0pWzXjCpJ1f5I7G9M03xqBpKBpf2qgp3ivajE0L2h354_J6Ma-ZCkpuE2z-XXVgBvwMV_0lyWBoKquxOZjef0Ay8Ee8ZProherfZSs_V6ymdtLI6_qpPoBWyJZlyCp3dH1xTxhM/s600/20230429_090808.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Zahteven prehod po levi strani | FOTO: Matej
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgCa0ToOT-Y2thZozKZVlBarC6h3WeQJU1-0TB9FZiC2Ub_S_kTFGkKSaYpA2hUtNEwoBqUpHH077GL0DOh513RDM8-umXMV8tIaiy4ay_lSCP3d0_jqZ1qqJxbNCuEJcqv48549tvG_CfjsDXcwXEmTKWxXB-vnCwJRCejXGszUXjUamzVds8IWTyDcLk/s1000/20230429_091217.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgCa0ToOT-Y2thZozKZVlBarC6h3WeQJU1-0TB9FZiC2Ub_S_kTFGkKSaYpA2hUtNEwoBqUpHH077GL0DOh513RDM8-umXMV8tIaiy4ay_lSCP3d0_jqZ1qqJxbNCuEJcqv48549tvG_CfjsDXcwXEmTKWxXB-vnCwJRCejXGszUXjUamzVds8IWTyDcLk/s600/20230429_091217.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Žalostno je cvilil pes, ker ni mogel naprej
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiloupZN_Me3NqAu-SH_FUXKdTPvCXOOOwJZJFY2IrLl5rOG9nLJF0bLPe4dE3IlHQAPrC796S1Bmbbu5PAgnJ8DcabUQUV6xXZfWMChASbSuPEd6fK3u0PRczRcv57WTNhkTsCaftwCYjZesRCv7T5So__Kq8vbV2iTzkHPUc6GJRfIX0Cl7xqqdAUjw4/s1000/20230429_091355.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="1;best" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiloupZN_Me3NqAu-SH_FUXKdTPvCXOOOwJZJFY2IrLl5rOG9nLJF0bLPe4dE3IlHQAPrC796S1Bmbbu5PAgnJ8DcabUQUV6xXZfWMChASbSuPEd6fK3u0PRczRcv57WTNhkTsCaftwCYjZesRCv7T5So__Kq8vbV2iTzkHPUc6GJRfIX0Cl7xqqdAUjw4/s600/20230429_091355.jpg" width="600"/></a>
+</div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiNX8Vigfh_8LMBiL-U_lrHmQ5zhqCIsNEG04ANWtQWRWU8GoVZ73r3DqDmjJhlrMEg1T5xZw8nA7Rkc6liqSIARt-RqhA5BZKIRIBKOsEzM8QsKD4sZVokHLsGROFPbqSxFJFgVKiD6K8U0yFl8uAxegyv400APzSqc7M1B6_UEOl9K0LofA7V5eNB_H4/s1000/20230429_092044.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiNX8Vigfh_8LMBiL-U_lrHmQ5zhqCIsNEG04ANWtQWRWU8GoVZ73r3DqDmjJhlrMEg1T5xZw8nA7Rkc6liqSIARt-RqhA5BZKIRIBKOsEzM8QsKD4sZVokHLsGROFPbqSxFJFgVKiD6K8U0yFl8uAxegyv400APzSqc7M1B6_UEOl9K0LofA7V5eNB_H4/s600/20230429_092044.jpg" width="600"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEic5Pd0F24pS13iQK1MtnrbBgTJA5Wl4gz0lf4XbYFKyplqdWyIERfvO3CDWobsxnYn4yYQnDVvUIZicLEcqsEeYSgin3_Qc-2MpQeQaLz0XJKjVL1lfZtOoxQLj4Unsq4xxdcSNx0e1Wla-QUfYcoj1vILE6ka9wddsNSwwl4ogStsbTYngonZUkb034U/s1000/20230429_092724.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEic5Pd0F24pS13iQK1MtnrbBgTJA5Wl4gz0lf4XbYFKyplqdWyIERfvO3CDWobsxnYn4yYQnDVvUIZicLEcqsEeYSgin3_Qc-2MpQeQaLz0XJKjVL1lfZtOoxQLj4Unsq4xxdcSNx0e1Wla-QUfYcoj1vILE6ka9wddsNSwwl4ogStsbTYngonZUkb034U/s600/20230429_092724.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Kratek zavarovan spust
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhmBrVPN4ihvpe8j0CIo53zIbxoIzjy0vgPIvREfmbOPrmtDCvslx1xh7o9XBmE6bnk9WalW1zVLyK6suidsppc5ZPGbCHz4vWObUA3lG3w2WxfLy3BIWG1HVku3FMSaQwW38fjB9ZXaY3uAO5tJvSnN6RuaHhH-YzW0nlvXwvzdwIiJRn-949nTEGFc4o/s1000/20230429_093342.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="4128" data-original-width="3096" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhmBrVPN4ihvpe8j0CIo53zIbxoIzjy0vgPIvREfmbOPrmtDCvslx1xh7o9XBmE6bnk9WalW1zVLyK6suidsppc5ZPGbCHz4vWObUA3lG3w2WxfLy3BIWG1HVku3FMSaQwW38fjB9ZXaY3uAO5tJvSnN6RuaHhH-YzW0nlvXwvzdwIiJRn-949nTEGFc4o/s600/20230429_093342.jpg" width="450"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Pogled nazaj | FOTO: Matej
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiEBCpcAInvTAzvcwnNW6p2PSdFLLgteYy6m2HYs-hwM8lhgeR-wClJJAV37OBeCWec08NytRXQoRSNlUJIR1e3q3i42i6Srm8Ow57If237EuTYjDW2-ryZ8CwLew59n-HwnP8Xz93S6wWSfCww2fC4y-WUOfQCmRwS8P6GfdP0W5R8xN6vmhlbL_IRRkg/s1000/20230429_093947.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiEBCpcAInvTAzvcwnNW6p2PSdFLLgteYy6m2HYs-hwM8lhgeR-wClJJAV37OBeCWec08NytRXQoRSNlUJIR1e3q3i42i6Srm8Ow57If237EuTYjDW2-ryZ8CwLew59n-HwnP8Xz93S6wWSfCww2fC4y-WUOfQCmRwS8P6GfdP0W5R8xN6vmhlbL_IRRkg/s600/20230429_093947.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Spust nazaj v kanjon
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg1V-CJUlk9B_ZhZsLu5UlXchfhTC5AKe92sBf6FeuGfOOhDNW9I2j6fZ6le7NHoRl2fgjCjTEDDNEW0aiR8Kgy3oF0AJX28lRKc5owpCbHjyQ0cnTPQyknwBMvKu1lta8nPO8BZ0QK_OS4wZjpVujeAFQuboFeYoPb8MgMnoKowUgkrdC5PwBH6aoN7O0/s1000/20230429_094319.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg1V-CJUlk9B_ZhZsLu5UlXchfhTC5AKe92sBf6FeuGfOOhDNW9I2j6fZ6le7NHoRl2fgjCjTEDDNEW0aiR8Kgy3oF0AJX28lRKc5owpCbHjyQ0cnTPQyknwBMvKu1lta8nPO8BZ0QK_OS4wZjpVujeAFQuboFeYoPb8MgMnoKowUgkrdC5PwBH6aoN7O0/s600/20230429_094319.jpg" width="600"/></a>
+</div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiY44HLkMS-HJSzifjmeS4B48W9JCMv8nHiJhdseBaUAIcZSGiGEApmP78fpm6NkBGD5XY-slwK8bleZPbWNgvRI2dKhFngSBK5Okl2QJuprj_JwhlUA2RIvCCFShZr8zEBlR2sSDeVR-EAA8TMNOKG0Abi3e38MXLdTnUxDT4YrrfhUHnqdji58VDU2rQ/s1000/20230429_094520.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="4128" data-original-width="3096" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiY44HLkMS-HJSzifjmeS4B48W9JCMv8nHiJhdseBaUAIcZSGiGEApmP78fpm6NkBGD5XY-slwK8bleZPbWNgvRI2dKhFngSBK5Okl2QJuprj_JwhlUA2RIvCCFShZr8zEBlR2sSDeVR-EAA8TMNOKG0Abi3e38MXLdTnUxDT4YrrfhUHnqdji58VDU2rQ/s600/20230429_094520.jpg" width="450"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjvrMcYhWJDkNS_QfWr-J5P7jztyXJ2FgjOKKh5uQ6KH__8cYpukRs_HcHq4pBiDG8pujwH5Ok6c1NlUkkTRQykWBhH14_fVzDQUDZL8W_amNLiiSkAYpsCk0OrarlsYyEzMuiJqQTx0mT4aWXJ0npSLprWuA-wlKLxeV76PN32NahzTS4JPMF2N-0IN2U/s1000/20230429_095214.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="1" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjvrMcYhWJDkNS_QfWr-J5P7jztyXJ2FgjOKKh5uQ6KH__8cYpukRs_HcHq4pBiDG8pujwH5Ok6c1NlUkkTRQykWBhH14_fVzDQUDZL8W_amNLiiSkAYpsCk0OrarlsYyEzMuiJqQTx0mT4aWXJ0npSLprWuA-wlKLxeV76PN32NahzTS4JPMF2N-0IN2U/s600/20230429_095214.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Pogled nazaj | FOTO: Matej
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiqMK5lu4ukMsA6r2Mtkw82NW_cFtGvt3qgVqfYQ36VtOfyXseqVYckOT4wpy_t6yg4KNY62CwJCIGvxOqFciS1K88NmoQiPdSTDFgJ8jHAkQkBtv7cNOQfimoXHGytfQCZzSpzk6EVnxFpTW8XL9XOXwOdoahtBvGNSdyCz9O7gGLfHQJcpL5eSKeA_rw/s1000/20230429_095522.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiqMK5lu4ukMsA6r2Mtkw82NW_cFtGvt3qgVqfYQ36VtOfyXseqVYckOT4wpy_t6yg4KNY62CwJCIGvxOqFciS1K88NmoQiPdSTDFgJ8jHAkQkBtv7cNOQfimoXHGytfQCZzSpzk6EVnxFpTW8XL9XOXwOdoahtBvGNSdyCz9O7gGLfHQJcpL5eSKeA_rw/s600/20230429_095522.jpg" width="600"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhM9QgjBwHmw6UVtzzQQuympJwJJyPWOB03kGxohwaBAb1x3URDBIYRS3IKLBhhovDxxOqKDw3lxB_1Cv_5e9O28nybLMzxAkIm5priHaMz9Yvb7U_Z9FAoOiGmkIuSRwVATMT_pHea4okTzfWhb1oq3K3SPNS34YllO8F2lHYtVn4qu8uj5QsEnMRn-gA/s1000/20230429_095555.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhM9QgjBwHmw6UVtzzQQuympJwJJyPWOB03kGxohwaBAb1x3URDBIYRS3IKLBhhovDxxOqKDw3lxB_1Cv_5e9O28nybLMzxAkIm5priHaMz9Yvb7U_Z9FAoOiGmkIuSRwVATMT_pHea4okTzfWhb1oq3K3SPNS34YllO8F2lHYtVn4qu8uj5QsEnMRn-gA/s600/20230429_095555.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Po najlažjih prehodih | FOTO: Matej
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjl2-fwMwcXe86dF4W_0tpOqMfPbAXt4rYKDq7SFN_XvXu2nsdy-WNgDSpMGcgwoXcwNyEqZxqOQniy-esa78E9_Wyh1yLHG_Gyua7XZg8d98bSiLwPjN4b3IBJyT5qwJJCyD7YodO_HPkUiHGM0OG_K7xPw3SC5DIWTzWaWfLREiH1Z2j2i_e4yp05U6Y/s1000/20230429_095701.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjl2-fwMwcXe86dF4W_0tpOqMfPbAXt4rYKDq7SFN_XvXu2nsdy-WNgDSpMGcgwoXcwNyEqZxqOQniy-esa78E9_Wyh1yLHG_Gyua7XZg8d98bSiLwPjN4b3IBJyT5qwJJCyD7YodO_HPkUiHGM0OG_K7xPw3SC5DIWTzWaWfLREiH1Z2j2i_e4yp05U6Y/s600/20230429_095701.jpg" width="600"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjNIk9be1c0sDPKJWeVfCIslCj9I93hoDqW7wTm6Bcc8MvsEzH3pWFlYDF0T9k_oUr4qylNxA_UpKyrKpFP8BPUZeSl37azhWJiTTxFyA-5ybNf3gtv4iCRMD_T1t05ejbxsjkGjmIMYjNy2Ct_GH0rU0To-8Q6N472nLHS6KMaEAjkDvNPjiFRggPrTD4/s1000/20230429_100007.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="4128" data-original-width="3096" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjNIk9be1c0sDPKJWeVfCIslCj9I93hoDqW7wTm6Bcc8MvsEzH3pWFlYDF0T9k_oUr4qylNxA_UpKyrKpFP8BPUZeSl37azhWJiTTxFyA-5ybNf3gtv4iCRMD_T1t05ejbxsjkGjmIMYjNy2Ct_GH0rU0To-8Q6N472nLHS6KMaEAjkDvNPjiFRggPrTD4/s600/20230429_100007.jpg" width="450"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Luštno poplezavanje | FOTO: Matej
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhDZbfFhPSKG1rikUGuGmFGmhAvfzisH6opb4uXDxVlGY3yOgcGa50dNmJnMTFS-CYBHGjQ91uf1iglYPYWlnQLP0CI3sn1X4hPITlM3m6IESkmMBdVf7p9y6mu6vGzAPwRSRCv8MpabaBw9FWa1SA0Ic651QcH9wuq9EjNQz_LQWhhCJ1CewNMqcDfRKs/s1000/20230429_100110.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="4128" data-original-width="3096" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhDZbfFhPSKG1rikUGuGmFGmhAvfzisH6opb4uXDxVlGY3yOgcGa50dNmJnMTFS-CYBHGjQ91uf1iglYPYWlnQLP0CI3sn1X4hPITlM3m6IESkmMBdVf7p9y6mu6vGzAPwRSRCv8MpabaBw9FWa1SA0Ic651QcH9wuq9EjNQz_LQWhhCJ1CewNMqcDfRKs/s600/20230429_100110.jpg" width="450"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Pogled nazaj</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgk9X6m-b1UBzjLHKHaL4LXJSzuQw90VU1Hq7ghO-xYw5q1fqg5paIfXwfqlKhGB5_F_2a8mIiWI37DFA0gHcoiz1KwnUv6WOwWEQ4JaPUjK3JupGG8XA3nIVMt8rV0OjvwSNMjIGgGZOt2NrAO2T9_LXWEEM8zrhhHdAcBHjh-JcqSnnKYaJy0uavfEJs/s1000/20230429_100341.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="4128" data-original-width="3096" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgk9X6m-b1UBzjLHKHaL4LXJSzuQw90VU1Hq7ghO-xYw5q1fqg5paIfXwfqlKhGB5_F_2a8mIiWI37DFA0gHcoiz1KwnUv6WOwWEQ4JaPUjK3JupGG8XA3nIVMt8rV0OjvwSNMjIGgGZOt2NrAO2T9_LXWEEM8zrhhHdAcBHjh-JcqSnnKYaJy0uavfEJs/s600/20230429_100341.jpg" width="450"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiAvS-NimHezKA-HvNdQVgDEh7oHsd82lAgJ76k7TXc9tyRbgHP0UTs_C4qtwSrKgpK1hrdMijQ0-M1rg42YbwVo9_1OEywNbElvCrRDZqiM0w5efJ7-D1cP63u5lzqd_9ZjXj_OwoeoqlmOQCkNBM37z3KVyQ8oHwnLFVer8dDTXEAg1xH4KcrV9SdAfY/s1000/20230429_100500.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="1;best" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiAvS-NimHezKA-HvNdQVgDEh7oHsd82lAgJ76k7TXc9tyRbgHP0UTs_C4qtwSrKgpK1hrdMijQ0-M1rg42YbwVo9_1OEywNbElvCrRDZqiM0w5efJ7-D1cP63u5lzqd_9ZjXj_OwoeoqlmOQCkNBM37z3KVyQ8oHwnLFVer8dDTXEAg1xH4KcrV9SdAfY/s600/20230429_100500.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Tihožitje</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh1D9floC9P2BCp1XyyakPgCt24fubxiAmf7vbkZz06Q6JyDBCrImCxDv8DiHN8Kekul2y6JjaGsvxmRanr8ofseGEjBwEUvjwZxxf93P6JoFw5FKt43UwFbLmd9vft6hdWqrlwiaSoA-UvvDCPqOjwAfDkQEylo6WcHvJjck7YMaQSHEGsYhPgTz4dE2k/s1000/20230429_100920.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh1D9floC9P2BCp1XyyakPgCt24fubxiAmf7vbkZz06Q6JyDBCrImCxDv8DiHN8Kekul2y6JjaGsvxmRanr8ofseGEjBwEUvjwZxxf93P6JoFw5FKt43UwFbLmd9vft6hdWqrlwiaSoA-UvvDCPqOjwAfDkQEylo6WcHvJjck7YMaQSHEGsYhPgTz4dE2k/s600/20230429_100920.jpg" width="600"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgTpEHITzc7r-vlBcXXP6xv5ScfiDB2N-jmzVfp9eCjgS4gCajT2O0tn856LTHqEnMl7IRBpQP2txnz_0b2KW_wCpd03tqcmhmq2Y7tef1lMxD9V2EGIIswM66VLUh2OFIUfVtS2ORprT_PzD7r-dfGom27aIauFAiLoE6PMYfp039k4kD9sEMp5INARc8/s1000/20230429_101124.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="4128" data-original-width="3096" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgTpEHITzc7r-vlBcXXP6xv5ScfiDB2N-jmzVfp9eCjgS4gCajT2O0tn856LTHqEnMl7IRBpQP2txnz_0b2KW_wCpd03tqcmhmq2Y7tef1lMxD9V2EGIIswM66VLUh2OFIUfVtS2ORprT_PzD7r-dfGom27aIauFAiLoE6PMYfp039k4kD9sEMp5INARc8/s600/20230429_101124.jpg" width="450"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Prva dva pohodnika danes
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhxV7NN5WU9_Bs5raGZeyAqRms5N8HaAx8POyNxb6ZwOQb5TlVbI1bXtBGVgvw6DPbnTuysPhZIVNmRrQXHlKFhyphenhyphenNPhAkR7gFAUQ380nZ0DaC3UngOj3rdipWnLOvBY2jn7acBFkgGCh1PJrWrD3DdCYUSZboAqTLAGaCCfH2emwpiprN9K5BH8T-O7CJE/s1000/20230429_101528.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhxV7NN5WU9_Bs5raGZeyAqRms5N8HaAx8POyNxb6ZwOQb5TlVbI1bXtBGVgvw6DPbnTuysPhZIVNmRrQXHlKFhyphenhyphenNPhAkR7gFAUQ380nZ0DaC3UngOj3rdipWnLOvBY2jn7acBFkgGCh1PJrWrD3DdCYUSZboAqTLAGaCCfH2emwpiprN9K5BH8T-O7CJE/s600/20230429_101528.jpg" width="600"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjBnWTCvX7ixbC3L_1duzKMc2iFEYbBuH2Fd6WS8uXV8na07UdiXdVS6Qv2frJS1qMgPiUIOY8XPqsPGWv5q32z3h1ygi0reYRehRta_ezHHfqM_fgcnjU402Xu-EoTN0bGLo46nD6qQ59g04vIKBX-HNWlYz6EAc5xnfSFk-PzZZWsSiv46ZWxFcW5lec/s1000/20230429_103106.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjBnWTCvX7ixbC3L_1duzKMc2iFEYbBuH2Fd6WS8uXV8na07UdiXdVS6Qv2frJS1qMgPiUIOY8XPqsPGWv5q32z3h1ygi0reYRehRta_ezHHfqM_fgcnjU402Xu-EoTN0bGLo46nD6qQ59g04vIKBX-HNWlYz6EAc5xnfSFk-PzZZWsSiv46ZWxFcW5lec/s600/20230429_103106.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Kakšne zanimive oblike
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhrNLwic4OgEHK_vtPr47AXDqTywsHxFvCHlMPLiHd_1UjEm01FK-vH1R2HEwGqN1cSWSe-KIdFPVBV_IclnBL_p87IolG12SltqbM0In0ON-yNEuXLU0YoGC2ck_iNgH-yVhLYXHKPAyEFSIx7MhhZO5MsLFtbmLSDUxOfjMGejtIvq4dLxIGOekDIyU4/s1000/20230429_105313.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhrNLwic4OgEHK_vtPr47AXDqTywsHxFvCHlMPLiHd_1UjEm01FK-vH1R2HEwGqN1cSWSe-KIdFPVBV_IclnBL_p87IolG12SltqbM0In0ON-yNEuXLU0YoGC2ck_iNgH-yVhLYXHKPAyEFSIx7MhhZO5MsLFtbmLSDUxOfjMGejtIvq4dLxIGOekDIyU4/s600/20230429_105313.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Konec kanjona</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgdgCoeUjchDWweRQIebp3TGeu8O2AlKMSndnv36nb8VVsnA2kPI4CkC2iUu1vpi3M7u_0B3F6qoUm1o1s1NOT94JEc7z1JVYLxm5vkXT4-6-8kpgDoX2Yv4QDlYQvXiS_cGQGbKZVn-xD59FJd-be03dxpzQCo2r-CsJQuWsHVunb7KUo0O0DH4dl01Ho/s1000/20230429_105434.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgdgCoeUjchDWweRQIebp3TGeu8O2AlKMSndnv36nb8VVsnA2kPI4CkC2iUu1vpi3M7u_0B3F6qoUm1o1s1NOT94JEc7z1JVYLxm5vkXT4-6-8kpgDoX2Yv4QDlYQvXiS_cGQGbKZVn-xD59FJd-be03dxpzQCo2r-CsJQuWsHVunb7KUo0O0DH4dl01Ho/s600/20230429_105434.jpg" width="600"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh1wftHLjHa-uZ0hlhCQBQVJkZDMaf8k8P_44_EWNrABdVnTIBnVJsuC9-RmVB9Gi1dGIk5R3KR25RYWeZ-_BIqN0FnMfhmwwYcmQJJUUEEvHt0gpUtcA3bZ9CIPrdnAOIhS_iAgXOvQqOKkTUtnf5jqJdgDDZ-RVe-qYhw3FZd9rMaVR3hC_CoDBSMWpA/s1000/20230429_105906.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh1wftHLjHa-uZ0hlhCQBQVJkZDMaf8k8P_44_EWNrABdVnTIBnVJsuC9-RmVB9Gi1dGIk5R3KR25RYWeZ-_BIqN0FnMfhmwwYcmQJJUUEEvHt0gpUtcA3bZ9CIPrdnAOIhS_iAgXOvQqOKkTUtnf5jqJdgDDZ-RVe-qYhw3FZd9rMaVR3hC_CoDBSMWpA/s600/20230429_105906.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Nazaj proti sedlu</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh0q9lFSRd3SMckMAw5_uwtX2yPPeXECO34gqlMM0HQhdtbawaerVwZ1o-GkAvwL8IHAD9WJdy9VWOHg3hSbdXv2zqaSRnEJyy1NAToG483Wc4BA9l0gP11P65HYp8Cz1AxukQTLe8KP4l2fBWj9xXhigjJuXF2uxjlqJMb3mH93MEOVY0iRELs0o6WCVU/s1000/20230429_105937.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh0q9lFSRd3SMckMAw5_uwtX2yPPeXECO34gqlMM0HQhdtbawaerVwZ1o-GkAvwL8IHAD9WJdy9VWOHg3hSbdXv2zqaSRnEJyy1NAToG483Wc4BA9l0gP11P65HYp8Cz1AxukQTLe8KP4l2fBWj9xXhigjJuXF2uxjlqJMb3mH93MEOVY0iRELs0o6WCVU/s600/20230429_105937.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Mogočno drevo</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhpozhmYGCXx8-Rm1f6UfqbRwVudMxcGFtqnRZrAx0f9h2aRLA0pkZIoarH16yYY_Pw_iO5XehYOyd_OR2Zu24LEEzX726E4GY-jEjVd_geCa0x2nmKxJ-xHZeMoKtWgi91VDAGjEsWoqJ7S1t26lJSPePRjg9qEKvls53Yr6dY4JyZafe_0K73DF31lMQ/s1000/20230429_110246.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhpozhmYGCXx8-Rm1f6UfqbRwVudMxcGFtqnRZrAx0f9h2aRLA0pkZIoarH16yYY_Pw_iO5XehYOyd_OR2Zu24LEEzX726E4GY-jEjVd_geCa0x2nmKxJ-xHZeMoKtWgi91VDAGjEsWoqJ7S1t26lJSPePRjg9qEKvls53Yr6dY4JyZafe_0K73DF31lMQ/s600/20230429_110246.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Namesto po turistični, gor po zahtevni poti
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgRIijrIF0e4jU50gqgtPMnMQ5qaEDI6glkQRP8t5bKSBkvzFaEUOvoSjgICHRnahgYDA9PNJR5MSIBda5ThL1WOnrEdc0-Ez6apkmbDJdZBf_Elxgeo1UBcvYoDy4DlgCq31Lfx-7G3XxLIMeITGdsyMO45HfggMB8XKzhZ37mOFgzgif-C6z5vmAYsA8/s1000/20230429_111056.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgRIijrIF0e4jU50gqgtPMnMQ5qaEDI6glkQRP8t5bKSBkvzFaEUOvoSjgICHRnahgYDA9PNJR5MSIBda5ThL1WOnrEdc0-Ez6apkmbDJdZBf_Elxgeo1UBcvYoDy4DlgCq31Lfx-7G3XxLIMeITGdsyMO45HfggMB8XKzhZ37mOFgzgif-C6z5vmAYsA8/s600/20230429_111056.jpg" width="600"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbBSFLIgwRd29JRckOYgUmGblEvyL_qTZPrtqHraH7oHUOIWhLV5_yKESta4Am3koEq-a7XfY-Qfh3fkdYcRgLMdq9I9aQb8qDK21keV-4UJ8w-KefzOMSdwdsajF2Jl5ssOa255SiCtreKOp78nrqaKab_E-xyuBjghcNxfQYC-LoJDUu445BEq3gj3o/s1000/20230429_112035.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="1" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbBSFLIgwRd29JRckOYgUmGblEvyL_qTZPrtqHraH7oHUOIWhLV5_yKESta4Am3koEq-a7XfY-Qfh3fkdYcRgLMdq9I9aQb8qDK21keV-4UJ8w-KefzOMSdwdsajF2Jl5ssOa255SiCtreKOp78nrqaKab_E-xyuBjghcNxfQYC-LoJDUu445BEq3gj3o/s600/20230429_112035.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Pogled nazaj</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiyhPmg6KydIY2ucKVmn7esBxbHDb2Miym4ty9t74HRnrxElHgGrW1IVN0XGs7FTzeaKzdeqwE69MNxQnD5wggwnKAdiDoxApOMz94F4fqn57uadDKuRG2outJZWNmsLrMi9Bf2cGX8NMscCCSPdQrAOYtDwfhb2GnFLmS-4TJbIcx7QW0oTzldIX-DB-4/s1000/20230429_112205.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiyhPmg6KydIY2ucKVmn7esBxbHDb2Miym4ty9t74HRnrxElHgGrW1IVN0XGs7FTzeaKzdeqwE69MNxQnD5wggwnKAdiDoxApOMz94F4fqn57uadDKuRG2outJZWNmsLrMi9Bf2cGX8NMscCCSPdQrAOYtDwfhb2GnFLmS-4TJbIcx7QW0oTzldIX-DB-4/s600/20230429_112205.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Dol s turistične poti
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEglzFD9_or2DiofMJhtRsmx4fnneBUw9o7Ypq4PK59ESxa86fav9XwHXHTql9lALLALDWltgU1m50pMWyNk6AaoO0dn3Lhf8YKAJPqNcdOi7-SXlTxRE8JVj49pKpkBDQve-Akr-7jHY5t4KdT3wNMU1NePdf2d1_dHvrp08-BKnb1ltHuPnaqJ9nPoWic/s1000/20230429_112734.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEglzFD9_or2DiofMJhtRsmx4fnneBUw9o7Ypq4PK59ESxa86fav9XwHXHTql9lALLALDWltgU1m50pMWyNk6AaoO0dn3Lhf8YKAJPqNcdOi7-SXlTxRE8JVj49pKpkBDQve-Akr-7jHY5t4KdT3wNMU1NePdf2d1_dHvrp08-BKnb1ltHuPnaqJ9nPoWic/s600/20230429_112734.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Pogled na iztek kanjona
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh7_KnhIQY1j2JUm80eV6_qM-WymFhNqAS5JX6ba0EU7_Koo-OI7dcd9SUcepyVgelpklaCIDNYoUdVa6-ZtuSa1vAm2MrGJ0bIrt1JKQaTERNeGZZvzrStmI8hueDIpDF_KVrP8lYrwiyh6QznLIVRIjCbEwdSiaxVrFmMILw-Kj9UZcLWJRBj8P-kN2A/s1000/20230429_113653.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh7_KnhIQY1j2JUm80eV6_qM-WymFhNqAS5JX6ba0EU7_Koo-OI7dcd9SUcepyVgelpklaCIDNYoUdVa6-ZtuSa1vAm2MrGJ0bIrt1JKQaTERNeGZZvzrStmI8hueDIpDF_KVrP8lYrwiyh6QznLIVRIjCbEwdSiaxVrFmMILw-Kj9UZcLWJRBj8P-kN2A/s600/20230429_113653.jpg" width="600"/></a>
+</div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjEWavkH07g8Cy705lJE5uaeLh04fbsfH5rogyabc3K0Cld2OQshnQD3sj2GvCRVzyQpLiRVbC7_5tyqS0HXZApvG1xy_vZepIpUFHNlWuOjOnSDXHCyILZzrbR6Jj5W_d1w2EHTm4EEsb1Uv0pXPpMpRHLSQqWuKabTEiUCJne9IKTZnbqD_x6kzVYEcg/s1000/20230429_114133.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjEWavkH07g8Cy705lJE5uaeLh04fbsfH5rogyabc3K0Cld2OQshnQD3sj2GvCRVzyQpLiRVbC7_5tyqS0HXZApvG1xy_vZepIpUFHNlWuOjOnSDXHCyILZzrbR6Jj5W_d1w2EHTm4EEsb1Uv0pXPpMpRHLSQqWuKabTEiUCJne9IKTZnbqD_x6kzVYEcg/s600/20230429_114133.jpg" width="600"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgXBJjlt37M10iRSDXEHRbIk7KHVMEgHUP5Mb-Al3vPLlriyrgYGcei2w1lgAfV4gZ2l1lm3hJCxWoQT3bMN_wz9QZVF2T2x76Fd5V9E36eNHiKe_5aSkjtAeKZq5bXtuuUF7iabFff8IJzQo8nco44Uad49EeZT5DZsuVjPZKNadjQEQ67N9rOx2Y7qIs/s1000/20230429_114432.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="1;best" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgXBJjlt37M10iRSDXEHRbIk7KHVMEgHUP5Mb-Al3vPLlriyrgYGcei2w1lgAfV4gZ2l1lm3hJCxWoQT3bMN_wz9QZVF2T2x76Fd5V9E36eNHiKe_5aSkjtAeKZq5bXtuuUF7iabFff8IJzQo8nco44Uad49EeZT5DZsuVjPZKNadjQEQ67N9rOx2Y7qIs/s600/20230429_114432.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Naravno okno s stolpičem v ozadju
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhRuMIHYCftMF39KTqZmG8oKMHZ83KzAWDAuTLVq6ZYFQmaIrY-GZ_t_cM99iFlojtJJOMH2d5mn6VGdnmY5ohSb7ktjFtzVN7QlV23No5zioliapqOnGUuJ7Ef0mqzrESr0qBqZ2YEtijOugl6OCkyzfELiYRuAzS2vuz8Iutp5Hz7faDh-zUVlXLwzgI/s2576/20230429_114510.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="1932" data-original-width="2576" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhRuMIHYCftMF39KTqZmG8oKMHZ83KzAWDAuTLVq6ZYFQmaIrY-GZ_t_cM99iFlojtJJOMH2d5mn6VGdnmY5ohSb7ktjFtzVN7QlV23No5zioliapqOnGUuJ7Ef0mqzrESr0qBqZ2YEtijOugl6OCkyzfELiYRuAzS2vuz8Iutp5Hz7faDh-zUVlXLwzgI/s600/20230429_114510.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Še širša slika</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjN3Rfv1vNrF4KRQEPV9slkI-vdOxmM3tpL1YYJWUjhGpKZ9RlEPOp-52Df52BusPnN6MiPZIOqe4rq0NO3in0D2kNIJQGoz_nJStF3jZmMVNL3baDX4JxC-KFObLKV2pxBltkN3ypMLvEFsHOkfrnUAoc1-v_dPjYJMUykUhQmhT1muwdm0Lap5m4IR40/s1000/20230429_115550.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjN3Rfv1vNrF4KRQEPV9slkI-vdOxmM3tpL1YYJWUjhGpKZ9RlEPOp-52Df52BusPnN6MiPZIOqe4rq0NO3in0D2kNIJQGoz_nJStF3jZmMVNL3baDX4JxC-KFObLKV2pxBltkN3ypMLvEFsHOkfrnUAoc1-v_dPjYJMUykUhQmhT1muwdm0Lap5m4IR40/s600/20230429_115550.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Poplezavanje</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgn_VgNh0nqnWNRXwzLj8s1k17CfmsgUFehh5vVBmPxno_b9X_KM6JQ7V7ESmfoArxuTyjsNA2sbSdmF_cfU83-OR6S354v0Y1w5w_fv8NjI81wDWVmXvyyleGpWmY2LGvkahogo-vlXWwgKjKuoL5KhgNzqM5Xp55QhtwUqpG9HmTFnEPNUJ1S7K1fDgI/s1000/20230429_120655.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="4128" data-original-width="3096" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgn_VgNh0nqnWNRXwzLj8s1k17CfmsgUFehh5vVBmPxno_b9X_KM6JQ7V7ESmfoArxuTyjsNA2sbSdmF_cfU83-OR6S354v0Y1w5w_fv8NjI81wDWVmXvyyleGpWmY2LGvkahogo-vlXWwgKjKuoL5KhgNzqM5Xp55QhtwUqpG9HmTFnEPNUJ1S7K1fDgI/s600/20230429_120655.jpg" width="450"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgor46uicyUBoz2Aszm96J6YHKLUOqXlyv_GpZP5mhvj0dMyL2sF42ASh9q9TKUj-Zu-qi21SwqdT8zhW_wEQ5WfYEpfn1ZgmEAsa3XLoGaKPm4Lgadp3I-utLL9DXFFvCVfCCbl5U9HLYZJWkwCTzrfVPNarGHR1MmPbW5mEJ9XQPzsKb3OYFFU2bVg3o/s1000/20230429_120842.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgor46uicyUBoz2Aszm96J6YHKLUOqXlyv_GpZP5mhvj0dMyL2sF42ASh9q9TKUj-Zu-qi21SwqdT8zhW_wEQ5WfYEpfn1ZgmEAsa3XLoGaKPm4Lgadp3I-utLL9DXFFvCVfCCbl5U9HLYZJWkwCTzrfVPNarGHR1MmPbW5mEJ9XQPzsKb3OYFFU2bVg3o/s600/20230429_120842.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Pogled navzdol</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhYk1BL_Whr3CUrn8BCVHe0URQDHhrWa5eIE6Eonnv8tX0ZWczrwpqQ22pcFv2yT8VlWLSwpMI1u6-bZHVaM4eh6zAJc6-i5s6GYv2KWHTtkapUincPAqGTAo8OLX0z1BOfCtFErDCko7ron-ygQWmaz9laGd4UZIorGolILWT-xg1nAHGy9tzlBOIG_MY/s1000/20230429_121032.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhYk1BL_Whr3CUrn8BCVHe0URQDHhrWa5eIE6Eonnv8tX0ZWczrwpqQ22pcFv2yT8VlWLSwpMI1u6-bZHVaM4eh6zAJc6-i5s6GYv2KWHTtkapUincPAqGTAo8OLX0z1BOfCtFErDCko7ron-ygQWmaz9laGd4UZIorGolILWT-xg1nAHGy9tzlBOIG_MY/s600/20230429_121032.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Zanimivi prehodi</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiCZ9_rxS73rHNUTt2vyzyGD7wg-CUSD44iBzni84V5CjT0graMppnm-yMWpGwp34kdDnjvcW060WPUM6NUoCygYAKrsnMQZ5X9fFgLo7OIMO2ZWncvP387xisThaAJR333phYk-GHMxgPW-aGtx-A6wQQKIJrq4wtYrxq-4y2wohWZib4GtP9uAfX6VSQ/s1000/20230429_121204.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiCZ9_rxS73rHNUTt2vyzyGD7wg-CUSD44iBzni84V5CjT0graMppnm-yMWpGwp34kdDnjvcW060WPUM6NUoCygYAKrsnMQZ5X9fFgLo7OIMO2ZWncvP387xisThaAJR333phYk-GHMxgPW-aGtx-A6wQQKIJrq4wtYrxq-4y2wohWZib4GtP9uAfX6VSQ/s600/20230429_121204.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Zanimivi prehodi</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgPRvL_VBDRx1vgP2y1J8u9-HWJOO9Jio0UiVUxQ8jgEXQlDKNWY3_mNHS8h1MbY_3nYQykaEvG1acNaH4WO4H-17sf9askHtj8kCLuup33ljSdf3_WcAmHp1ZPyx9HkMzh-70LTU6JrPLfSdwiSkQ1-OeEhd2Akqd5os87MmAOVfGScWpHIfaWv4pRUSM/s1000/20230429_121211.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="4128" data-original-width="3096" data-skip="1" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgPRvL_VBDRx1vgP2y1J8u9-HWJOO9Jio0UiVUxQ8jgEXQlDKNWY3_mNHS8h1MbY_3nYQykaEvG1acNaH4WO4H-17sf9askHtj8kCLuup33ljSdf3_WcAmHp1ZPyx9HkMzh-70LTU6JrPLfSdwiSkQ1-OeEhd2Akqd5os87MmAOVfGScWpHIfaWv4pRUSM/s600/20230429_121211.jpg" width="450"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Zanimivi prehodi | FOTO: Matej
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjPMFuWidVb3FeLskXIp1mzuxnh59DcnqGBXYONMUtMIrUL21L-lBH9E6jx9RpHZ9TK4__oiCb753b1MMXQZqN1US1uao2sEJy7t2oUYHxHNuHYfsmfwAE8Ov4dPJd4-yS_FIRAQrr0IICAfIPSVpPytw9c4FDSeHM1byB0Y83No3H0ZslOaRBe9mitI-4/s1000/20230429_122237.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjPMFuWidVb3FeLskXIp1mzuxnh59DcnqGBXYONMUtMIrUL21L-lBH9E6jx9RpHZ9TK4__oiCb753b1MMXQZqN1US1uao2sEJy7t2oUYHxHNuHYfsmfwAE8Ov4dPJd4-yS_FIRAQrr0IICAfIPSVpPytw9c4FDSeHM1byB0Y83No3H0ZslOaRBe9mitI-4/s600/20230429_122237.jpg" width="600"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEioEUeMx0PdPDqrMUw8xkUl5wJ8VI5WMNdKz-2Y1xLyoPqtSGY_nkQBwIjWPGcUL5fZcXQb-yl8qsaCCGxD4GzGFl9q3ik8u6cHY2PuPiEHsdgzts3WusmmzLlXu0nc0VbihZ-A6Yz5HKqcA2NKsihfQloMZVrwsfXuIYkB5X48nC7S5k9XLTSFeCorfco/s1000/20230429_123337.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEioEUeMx0PdPDqrMUw8xkUl5wJ8VI5WMNdKz-2Y1xLyoPqtSGY_nkQBwIjWPGcUL5fZcXQb-yl8qsaCCGxD4GzGFl9q3ik8u6cHY2PuPiEHsdgzts3WusmmzLlXu0nc0VbihZ-A6Yz5HKqcA2NKsihfQloMZVrwsfXuIYkB5X48nC7S5k9XLTSFeCorfco/s600/20230429_123337.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Naravni most</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiuS84__Xqiq1DxRfjR4JdeubmRL9eFd7Jfsk1xGLLGqZ1cE__LEFA9RN0Q5ro6x-yHfvHgzoYvUJrRltpz-okP-wdq-Ib2CyDqc1ZEBnLC5Q7l6M7ZuDh0ZqXNucnqwP9MDOknKKj9aO-R0VbaUWPf5_Yb4zo7zSnocf6xtvygwzEuasmBozcx8Qoaplk/s1000/20230429_123435.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="1;best" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiuS84__Xqiq1DxRfjR4JdeubmRL9eFd7Jfsk1xGLLGqZ1cE__LEFA9RN0Q5ro6x-yHfvHgzoYvUJrRltpz-okP-wdq-Ib2CyDqc1ZEBnLC5Q7l6M7ZuDh0ZqXNucnqwP9MDOknKKj9aO-R0VbaUWPf5_Yb4zo7zSnocf6xtvygwzEuasmBozcx8Qoaplk/s600/20230429_123435.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Naravni most</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiKCVXf7XsW6k6JF2HlqjhwVKKynXeNU4IJIOiGlXihStdzy5nIXiPSbfKE5bXKOJH_g1LtP_OwnN7BRWCT0_vm-vAwgRu_ybvvziwRcY9gSw__7oNhVIi7VXqGBfj7jwQjsYmTypUl3PkTedmrhZA11-J8AJsxAeJczgu_6m0C6GexnXZLP2J_ZYdSTB8/s1000/20230429_124033.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiKCVXf7XsW6k6JF2HlqjhwVKKynXeNU4IJIOiGlXihStdzy5nIXiPSbfKE5bXKOJH_g1LtP_OwnN7BRWCT0_vm-vAwgRu_ybvvziwRcY9gSw__7oNhVIi7VXqGBfj7jwQjsYmTypUl3PkTedmrhZA11-J8AJsxAeJczgu_6m0C6GexnXZLP2J_ZYdSTB8/s600/20230429_124033.jpg" width="600"/></a>
+</div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjo0j-6dkT5mXMgRVcivJlMr5rXqTQC5RpHnlNT6XpbXNr3Mrd1CZigH0xpbLAmjrAVEvj_a9H1aRHjjouAkrZn5v_tVz7EMGWrUI3bvjXIvbzpyrxC9gq2WQD6loHCayyP3aV-NumtaW7BjSln5S9kzehpyIo_mLVDHtNERidHTRdPAQukpAwXli10gAM/s1000/20230429_124203.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="1" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjo0j-6dkT5mXMgRVcivJlMr5rXqTQC5RpHnlNT6XpbXNr3Mrd1CZigH0xpbLAmjrAVEvj_a9H1aRHjjouAkrZn5v_tVz7EMGWrUI3bvjXIvbzpyrxC9gq2WQD6loHCayyP3aV-NumtaW7BjSln5S9kzehpyIo_mLVDHtNERidHTRdPAQukpAwXli10gAM/s600/20230429_124203.jpg" width="600"/></a>
+</div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiVizR2frSJi9iCbLd6yml_YzLarWTNttochDd_ZJlvb4osgEf1qt37x8g4KRHJ73L7_4iVXHdUEOGcnN1JUtaiM51YjbPyO5DHLCyxY0V47dvHMJMxP3nAwxCSoTKgjOzfh97fZi4wwZPxDDF4c2SUA_ch3s3uL7CEf1qZK4pSoQahD-2Lzp-GLzBQZqY/s1000/20230429_124321.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="4128" data-original-width="3096" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiVizR2frSJi9iCbLd6yml_YzLarWTNttochDd_ZJlvb4osgEf1qt37x8g4KRHJ73L7_4iVXHdUEOGcnN1JUtaiM51YjbPyO5DHLCyxY0V47dvHMJMxP3nAwxCSoTKgjOzfh97fZi4wwZPxDDF4c2SUA_ch3s3uL7CEf1qZK4pSoQahD-2Lzp-GLzBQZqY/s600/20230429_124321.jpg" width="450"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjw10BegOo1axVmsTKrCMOB48JXxd7kOmWKLCwCG5O206EXgJFMy_vAG8kUdDtQoNKq4fJFZlMLm0yGi5aU5WNsH3n6L17eyQBc3hKgUai4y2ancbyWDJvUeBEPpwwkU1BoCnCB8G0ojsDaxhokfF-XHwF03RfsrKG6a6Oj5Hjx6l2OLNVmOk1r4cBbBQE/s1000/20230429_125132.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjw10BegOo1axVmsTKrCMOB48JXxd7kOmWKLCwCG5O206EXgJFMy_vAG8kUdDtQoNKq4fJFZlMLm0yGi5aU5WNsH3n6L17eyQBc3hKgUai4y2ancbyWDJvUeBEPpwwkU1BoCnCB8G0ojsDaxhokfF-XHwF03RfsrKG6a6Oj5Hjx6l2OLNVmOk1r4cBbBQE/s600/20230429_125132.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Pogled nazaj</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj9QdKPxjqONik3V12WQ-UsRUcwquYJn4rxqnA0jgJddGo5Mn0AjQ3XoGGsNAGN2BIAWhNhntZbRts97meeqYCmHo45hVtQIiFKBbDqSz1WdN9RV8S4JjhJmhDU6mRtlFUsR72kbiG64EAhfV-kPflPbWzfEb6FqoriYgJXs_ucF4YakAJLIDH0s6L2YCs/s1000/20230429_125955.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="4128" data-original-width="3096" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj9QdKPxjqONik3V12WQ-UsRUcwquYJn4rxqnA0jgJddGo5Mn0AjQ3XoGGsNAGN2BIAWhNhntZbRts97meeqYCmHo45hVtQIiFKBbDqSz1WdN9RV8S4JjhJmhDU6mRtlFUsR72kbiG64EAhfV-kPflPbWzfEb6FqoriYgJXs_ucF4YakAJLIDH0s6L2YCs/s600/20230429_125955.jpg" width="450"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Pogled nazaj</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiXWRTo5bfBpgecN8XWT-ZHEhRM4wyXknqJt3OGrboi2LCOlwpbAVF3Ch6XrhHm2-pbolfeomK4QcDqzFozWLsi-mCUmqxceHf-GVyYtHWBy3qxgg1lWnFCCkr_FqscFN6tdYtfhKH7ewMsHDC0_M4cevqTDngVuWe3wJiyAyeyd5px1IddFTF7ZGBw5Ic/s1000/20230429_130547.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiXWRTo5bfBpgecN8XWT-ZHEhRM4wyXknqJt3OGrboi2LCOlwpbAVF3Ch6XrhHm2-pbolfeomK4QcDqzFozWLsi-mCUmqxceHf-GVyYtHWBy3qxgg1lWnFCCkr_FqscFN6tdYtfhKH7ewMsHDC0_M4cevqTDngVuWe3wJiyAyeyd5px1IddFTF7ZGBw5Ic/s600/20230429_130547.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Na izravnavi</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj3PFrU4FZehNuqZkvxu_ZYoPr4d90RXzql9b1ZJdhs4YEI2PpWQSg1VEpktunPaC7shbq4aQABk8LTZfzd8ox7IELH21jrFXkGgEdkVBfCSrbyenVvX2Vx4DQJA4N0gyP68G_x1LUt3Eh47V6popqJqBSu5jpFqoI2virEz55W-3JHIAk1HUF3VPczRWU/s1000/20230429_131245.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="1;peak" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj3PFrU4FZehNuqZkvxu_ZYoPr4d90RXzql9b1ZJdhs4YEI2PpWQSg1VEpktunPaC7shbq4aQABk8LTZfzd8ox7IELH21jrFXkGgEdkVBfCSrbyenVvX2Vx4DQJA4N0gyP68G_x1LUt3Eh47V6popqJqBSu5jpFqoI2virEz55W-3JHIAk1HUF3VPczRWU/s600/20230429_131245.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Razgledna točka na kanjon | FOTO: Matej
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEigpYj3iQB4PjpcaKYdEdaPRlmg8JuPoBgHnOFKJVQ_Vgl55qfFh-gYicF4yvcv_PhMgEa1NDLsGFpTUs1T2XX_TyBR6eU9GVZ22KwDvmUXmQPOuBEjSCVlvWmtrs3BEwtzKMWJuLD8jtk91N-Dlg_pWs6Zx-HpoDGV4_op5mkOiHNAtSjhmFbnAKln1sY/s1000/20230429_131343.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEigpYj3iQB4PjpcaKYdEdaPRlmg8JuPoBgHnOFKJVQ_Vgl55qfFh-gYicF4yvcv_PhMgEa1NDLsGFpTUs1T2XX_TyBR6eU9GVZ22KwDvmUXmQPOuBEjSCVlvWmtrs3BEwtzKMWJuLD8jtk91N-Dlg_pWs6Zx-HpoDGV4_op5mkOiHNAtSjhmFbnAKln1sY/s600/20230429_131343.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Razgledna točka na kanjon
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj0Fy5UrB7B1fLkjQPQKH-PGsYSaARUn6y3Pe6863L8a6t9HLm4NvgkT-sEX6JAoBQDpYp4XmaxW8cWjbIWfTIqGsiXG5LOVT3VZRUoE7Uo3Q3NBMavLrj7JjAoFMdtTirM9dwfftqv1zHNHHIE7a4seLe-xceXkpyegk6iLSp3RXhJYOrxfQ7ZZZXlOL0/s1000/20230429_133144.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="1" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj0Fy5UrB7B1fLkjQPQKH-PGsYSaARUn6y3Pe6863L8a6t9HLm4NvgkT-sEX6JAoBQDpYp4XmaxW8cWjbIWfTIqGsiXG5LOVT3VZRUoE7Uo3Q3NBMavLrj7JjAoFMdtTirM9dwfftqv1zHNHHIE7a4seLe-xceXkpyegk6iLSp3RXhJYOrxfQ7ZZZXlOL0/s600/20230429_133144.jpg" width="600"/></a>
+</div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjc6G98xDfQ8rpUVEbr9SOASK2m94jeoDz5drTh9VWxavJfbZ8g_dlwq-dtq8dz9PXAfChyphenhyphennVSp_V3DahOIKwgd2K-JJq6McYz5HjC6FV-2vUlZN5DZoUwRhI6RV7dlGAHKr2K43s9lf6rIYo2A2Iz2EWjXjiFyxNtVfDYASMoV4uKV8Y6ejop5lK_jtoE/s1000/20230429_133759.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjc6G98xDfQ8rpUVEbr9SOASK2m94jeoDz5drTh9VWxavJfbZ8g_dlwq-dtq8dz9PXAfChyphenhyphennVSp_V3DahOIKwgd2K-JJq6McYz5HjC6FV-2vUlZN5DZoUwRhI6RV7dlGAHKr2K43s9lf6rIYo2A2Iz2EWjXjiFyxNtVfDYASMoV4uKV8Y6ejop5lK_jtoE/s600/20230429_133759.jpg" width="600"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhKHEwYJjjhiegfJriu9-FFQFST3PY0iNKBBBNKi7i_suC0YDjmBTC4GL40vIx5ppTDPflEn4BfUv6WKvFdYXPySr3v9BUV6aYSS0BFOHKJIiMvrMmKBuYEeC6PdINXQBvVMMXczcRerMxpnHB2SV0hvXNb6YNCY62P6ApJYqdEGdh8ZTIya0cHvF5Vijs/s1000/20230429_134113.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="1" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhKHEwYJjjhiegfJriu9-FFQFST3PY0iNKBBBNKi7i_suC0YDjmBTC4GL40vIx5ppTDPflEn4BfUv6WKvFdYXPySr3v9BUV6aYSS0BFOHKJIiMvrMmKBuYEeC6PdINXQBvVMMXczcRerMxpnHB2SV0hvXNb6YNCY62P6ApJYqdEGdh8ZTIya0cHvF5Vijs/s600/20230429_134113.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Po stezici pod grebenom
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiDd0oHCMX8zpKP4X2hdy_DraJsXauO_tKQ4-NPace7fjTkJyrEDTRM0bA_3G5DtlkgWTmPeH1LerU4ow1rN0_MZ3eZeP0HJdz_3xV074G4Fm13KljoUdnj6sWHdIIBOJqGJBOzrFLymtIc4kNUvjjl7jWOu6vSqqta2pxsYil2q2lMi7wDFuqOHbe4eGo/s1000/20230429_134459.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiDd0oHCMX8zpKP4X2hdy_DraJsXauO_tKQ4-NPace7fjTkJyrEDTRM0bA_3G5DtlkgWTmPeH1LerU4ow1rN0_MZ3eZeP0HJdz_3xV074G4Fm13KljoUdnj6sWHdIIBOJqGJBOzrFLymtIc4kNUvjjl7jWOu6vSqqta2pxsYil2q2lMi7wDFuqOHbe4eGo/s600/20230429_134459.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">Pogled nazaj</td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgXjXSuIiW60Ji9EQiZGdT0Nityz2qVu7oRZJWIdKpuoxzpsyBjmjwXRMw2APzSNDoI-R1QcME1VjR5vG9JJFU4qGjb0AwomvECRhSFVOIvHx8VMI9w4MQn63YvtIkFw36me1GGQM3vY3Sarze64dpIUUb_CqkvNR8Terrh3LGZzhvFPheOYXbE6CFGCqQ/s1000/20230429_135225.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgXjXSuIiW60Ji9EQiZGdT0Nityz2qVu7oRZJWIdKpuoxzpsyBjmjwXRMw2APzSNDoI-R1QcME1VjR5vG9JJFU4qGjb0AwomvECRhSFVOIvHx8VMI9w4MQn63YvtIkFw36me1GGQM3vY3Sarze64dpIUUb_CqkvNR8Terrh3LGZzhvFPheOYXbE6CFGCqQ/s600/20230429_135225.jpg" width="600"/></a>
+</div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg06D3JZPLlF2RAD161DiyqtAtXvtkZNGgCGoAzAoqQmiGfh9HWG1Vd8Bkyio8q7bmv27FHmHtwUBu9igf4Duhhv6KNMKv99DyCwq2iyy8FJ9S3b2J3cYPK4r4AoOT43GkIyO0OuEAnRSmH-xL4UyHUcwJUp-MwzTxmhLm-t44hr8_KL1MmQDgAGKTrcXI/s1000/20230429_135441.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg06D3JZPLlF2RAD161DiyqtAtXvtkZNGgCGoAzAoqQmiGfh9HWG1Vd8Bkyio8q7bmv27FHmHtwUBu9igf4Duhhv6KNMKv99DyCwq2iyy8FJ9S3b2J3cYPK4r4AoOT43GkIyO0OuEAnRSmH-xL4UyHUcwJUp-MwzTxmhLm-t44hr8_KL1MmQDgAGKTrcXI/s600/20230429_135441.jpg" width="600"/></a>
+</div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg5IdcGPsR_jVVePGijeQrcI8aSZ7k5H3_lcZjAK7oNGMWmcebsocFQy_D2zTdswYNaBAIc-_GIQaJCwgGZrI2aS3ZBCc3Onad75c4GhQd95d8N98oF4-XomYRGqx5xiMNzLW2b3HroDw8UwYzait_IRhs4h5HX7dUT7vb95mZSvki2rwaO1gU0BulE5L8/s1000/20230429_135629.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg5IdcGPsR_jVVePGijeQrcI8aSZ7k5H3_lcZjAK7oNGMWmcebsocFQy_D2zTdswYNaBAIc-_GIQaJCwgGZrI2aS3ZBCc3Onad75c4GhQd95d8N98oF4-XomYRGqx5xiMNzLW2b3HroDw8UwYzait_IRhs4h5HX7dUT7vb95mZSvki2rwaO1gU0BulE5L8/s600/20230429_135629.jpg" width="600"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgXRbm4HJ_Nii39vpTdDqopTSBPrlYRIfHGeP6wYym8yIld__VBfzUgLwS2TX4_5xlC7DGI1NWesAPnMQ6qi7WJ_I7UbJ3xxic_uTj3sllE2U5qlZ7tBDecVW-EFmSpfbAwKjLa36QbLFsc2tR6TN5-RxOGsIK2zHbUn_X-SdApUQZYJ8h1zWxODx1VZGg/s1000/20230429_140200.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgXRbm4HJ_Nii39vpTdDqopTSBPrlYRIfHGeP6wYym8yIld__VBfzUgLwS2TX4_5xlC7DGI1NWesAPnMQ6qi7WJ_I7UbJ3xxic_uTj3sllE2U5qlZ7tBDecVW-EFmSpfbAwKjLa36QbLFsc2tR6TN5-RxOGsIK2zHbUn_X-SdApUQZYJ8h1zWxODx1VZGg/s600/20230429_140200.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Nazaj na markirani poti
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEivdPj66aDzhSYH8YWJzIsOATSz1tg_tlip1vwoovf-dYdkMWGDRgRIjWj7YdZsSZC-deYjalKpNTKdtPb3QlB-KkKeIDgJLrPwmjYE20ePInermWRGQ-9dxrHpxlJN4MqTRa-yIHXeNAh4j3bfa_XObXEiWmVsiocJmKV7qX1ZUb8S5AlLjbIHiTazCRI/s1000/20230429_140848.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEivdPj66aDzhSYH8YWJzIsOATSz1tg_tlip1vwoovf-dYdkMWGDRgRIjWj7YdZsSZC-deYjalKpNTKdtPb3QlB-KkKeIDgJLrPwmjYE20ePInermWRGQ-9dxrHpxlJN4MqTRa-yIHXeNAh4j3bfa_XObXEiWmVsiocJmKV7qX1ZUb8S5AlLjbIHiTazCRI/s600/20230429_140848.jpg" width="600"/></a>
+</div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgkKKbDJP_17CDBPefG8vuNXRI8Bq1RStqA22VQHv0Gk4pZXI78uqrW_9tsAzGD9Oz_coZTR16CECIiBj4i4ZK-whq0WsYqj5Fg7Hx53wSUn9a3GRAY8ADUM3XMhHAyuvsaym7dlRzJqIX5g9VQSnKBr5GT1USCz2p26Co4ztkKUiB_1z690tjTlE4cBk4/s1000/20230429_141500.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgkKKbDJP_17CDBPefG8vuNXRI8Bq1RStqA22VQHv0Gk4pZXI78uqrW_9tsAzGD9Oz_coZTR16CECIiBj4i4ZK-whq0WsYqj5Fg7Hx53wSUn9a3GRAY8ADUM3XMhHAyuvsaym7dlRzJqIX5g9VQSnKBr5GT1USCz2p26Co4ztkKUiB_1z690tjTlE4cBk4/s600/20230429_141500.jpg" width="600"/></a>
+</div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiY01O0ipBK1OAnUNp9jJ7nZtC4hQoKu6PCvW4Zk1RfKc_qIYFI2RrPebURhiY6mvG2WScyRCL5L2kQEyTSA0YOSdmPTV8crycjuDTk3u2oOyXg628Vl4L3cVeDn-8LNtw1A3mKKxMDB5aYvEiyrTCFXyYw8QtN2CxP8OsqOLnyuaRgUqQv_VCCdXEZObo/s1000/20230429_142138.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiY01O0ipBK1OAnUNp9jJ7nZtC4hQoKu6PCvW4Zk1RfKc_qIYFI2RrPebURhiY6mvG2WScyRCL5L2kQEyTSA0YOSdmPTV8crycjuDTk3u2oOyXg628Vl4L3cVeDn-8LNtw1A3mKKxMDB5aYvEiyrTCFXyYw8QtN2CxP8OsqOLnyuaRgUqQv_VCCdXEZObo/s600/20230429_142138.jpg" width="600"/></a>
+</div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjstblZ7eTicnMqbOTI2FCrHoaAc2xv0Q4STRIPRKPHbNwjzFkLaXqudZiJHy4vlduBYXxY7XVgXMeiTEhU-S5J3qQ6IE6e4P6lUeztGNbn9HRIHInDMj1ccAcXM_FlKrYSNLdMLM1qxX7BXGvpVUdH9CV0IoE_hhe0Hw3aIwdLZblrLADXto947qlbbzs/s1000/20230429_142815.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjstblZ7eTicnMqbOTI2FCrHoaAc2xv0Q4STRIPRKPHbNwjzFkLaXqudZiJHy4vlduBYXxY7XVgXMeiTEhU-S5J3qQ6IE6e4P6lUeztGNbn9HRIHInDMj1ccAcXM_FlKrYSNLdMLM1qxX7BXGvpVUdH9CV0IoE_hhe0Hw3aIwdLZblrLADXto947qlbbzs/s600/20230429_142815.jpg" width="600"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj9mociZ0DaTpTKw16HhAjkLl6AsWFxl-f7MeJH7CuIpJIvXYgGMoJRkv93rDEgXbdKal6CaSXd2qEWY17SgIJ_9jvR7i2vMJz4nHFc0SOLaNIXVXNiRa9xSxzSzmxRvZlixqX8OLBCks-bzHsw0N8orSIPTHfam57ZafQ0p8klg5HxOor2FiaRkoyX0XE/s1000/20230429_143002.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="1" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj9mociZ0DaTpTKw16HhAjkLl6AsWFxl-f7MeJH7CuIpJIvXYgGMoJRkv93rDEgXbdKal6CaSXd2qEWY17SgIJ_9jvR7i2vMJz4nHFc0SOLaNIXVXNiRa9xSxzSzmxRvZlixqX8OLBCks-bzHsw0N8orSIPTHfam57ZafQ0p8klg5HxOor2FiaRkoyX0XE/s600/20230429_143002.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Nazaj na prelazu Passo di Genna Silana
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<div class="separator" style="clear: both;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg8Z0yylcrSt1-wDSvVyifS0o-e1gI0si14IhjSVU0nQ2jNwQqJudtcDU1zAz25wE624BZWWTjqKoJWmCD60pEedpudBSyx04Jk2Jy4XE4jWuV7mcgPMSXrxA3VEiftd321AWjkeS-ju2uVFxROeuoLioM04m2kw59moe2FG_r-O4ObJgffXl_mR765enY/s1000/20230429_143055.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg8Z0yylcrSt1-wDSvVyifS0o-e1gI0si14IhjSVU0nQ2jNwQqJudtcDU1zAz25wE624BZWWTjqKoJWmCD60pEedpudBSyx04Jk2Jy4XE4jWuV7mcgPMSXrxA3VEiftd321AWjkeS-ju2uVFxROeuoLioM04m2kw59moe2FG_r-O4ObJgffXl_mR765enY/s600/20230429_143055.jpg" width="600"/></a>
+</div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgkkk9kBEO4IaFFkoEWeHxLLvOUiZo67bl4GIoMgBgDs2RCrl5-sinqW8auXL2XV2EDlVz8bAJpMIdT_WtSPDzSQyDMXu8boHVG6kiLMVHaCbp4_YM8O2tNCHrMELMMxmZrk3xLq2mNtzc1XyB79En2U9Oqr2K23bBwmX-g28O8EoZprcQ1Tx7f5BmiRo8/s1000/20230429_143157.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgkkk9kBEO4IaFFkoEWeHxLLvOUiZo67bl4GIoMgBgDs2RCrl5-sinqW8auXL2XV2EDlVz8bAJpMIdT_WtSPDzSQyDMXu8boHVG6kiLMVHaCbp4_YM8O2tNCHrMELMMxmZrk3xLq2mNtzc1XyB79En2U9Oqr2K23bBwmX-g28O8EoZprcQ1Tx7f5BmiRo8/s600/20230429_143157.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Prelaz Passo di Genna Silana
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align: center;">
+<a data-lightbox="Gallery" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjQy78Y7NQ8ZKqaVa-rHlzVcauCTkl_xQmroQK9OvGakbmZ5n_6enMu3bJuP7JwZ7NBM8ENltKKvStMr8epIzJOh40OVJFna3aG8XwjBeCHegfy_4_v9xjJC0YXE50aAu3M9h-Su1odxixBnqDjj3YAsAEB7-x4npcPlr9WvEB_SeAvX7W_D7BQSdohzhM/s1000/20230429_150929.jpg" style="display: block; margin-left: auto; margin-right: auto; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="3096" data-original-width="4128" data-skip="3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjQy78Y7NQ8ZKqaVa-rHlzVcauCTkl_xQmroQK9OvGakbmZ5n_6enMu3bJuP7JwZ7NBM8ENltKKvStMr8epIzJOh40OVJFna3aG8XwjBeCHegfy_4_v9xjJC0YXE50aAu3M9h-Su1odxixBnqDjj3YAsAEB7-x4npcPlr9WvEB_SeAvX7W_D7BQSdohzhM/s600/20230429_150929.jpg" width="600"/></a>
+</td>
+</tr>
+<tr>
+<td class="tr-caption" style="text-align: center;">
+        Prelaz Passo di Genna Silana
+      </td>
+</tr>
+</tbody>
+</table>
+<div class="separator" style="clear: both;"></div>
+<script>
+  <!-- Insert another post images via ID -->
+  <!-- Post_name -->
+    var postID0 = '';
+</script>
+<script>
+  <!-- Insert image slideshow via title -->
+    var slideshowTitle0 = 'Make post slideshow';
+    var CoverPhoto0 = 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiloupZN_Me3NqAu-SH_FUXKdTPvCXOOOwJZJFY2IrLl5rOG9nLJF0bLPe4dE3IlHQAPrC796S1Bmbbu5PAgnJ8DcabUQUV6xXZfWMChASbSuPEd6fK3u0PRczRcv57WTNhkTsCaftwCYjZesRCv7T5So__Kq8vbV2iTzkHPUc6GJRfIX0Cl7xqqdAUjw4/s1200/20230429_091355.jpg';
+</script>
+<script>
+  <!-- URL of GPX file -->
+  var gpxURL0 = "https://metodlangus.github.io/GPX_tracks/2023-04-29 051536 Silana - Gola su Gorropu__20230429_0515.gpx";
+  var ReliveURL0 = 'https://www.relive.com/view/v4OG9MYE25q'; // Relive URL
+  var StravaURL0 = ''; // Strava URL
+</script>
+<p><b>Nazaj na:</b></p>
+<script>
+  <!-- Insert another post container via title -->
+    <!-- Sardinija  (25. 4. – 2. 5. 2023) -->
+    var postTitle0 = "7471899682960191519";
+    var displayMode0 = "alwaysVisible";
+</script>
+
+      <div class='post-labels'><a class='my-labels' href='../../../search/labels/gornistvo.html'>Gorništvo</a> <a class='my-labels' href='../../../search/labels/sardinija.html'>Sardinija</a> <a class='my-labels' href='../../../search/labels/poldnevni.html'>Poldnevni</a> <a class='my-labels' href='../../../search/labels/kanjon.html'>Kanjon</a> <a class='my-labels' href='../../../search/labels/moji-najljubsi.html'>Moji najljubši</a> <a class='my-labels' href='../../../search/labels/sardinija-2023.html'>Sardinija 2023</a></div>
+      
+        <div class="nav-links-wrapper" style="margin-top: 2em;">
+          <div class="nav-links" style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+        
+            <div class="prev-link" style="text-align: left; max-width: 45%;">
+              <div class="pager-title">Prejšnja objava</div>
+              <a href="../../2023/04/ferrata-di-badde-pentumas.html">&larr; Ferrata di Badde Pentumas</a>
+            </div>
+            
+            <div class="next-link" style="text-align: right; max-width: 45%;">
+              <div class="pager-title">Naslednja objava</div>
+              <a href="../../2023/04/pedra-longa.html">Pedra Longa &rarr;</a>
+            </div>
+            
+          </div>
+        </div>
+        
+    </div>
+  </div>
+
+
+  <script src='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.js'></script>
+  <script src='https://metodlangus.github.io/plugins/togeojson/0.16.0/togeojson.min.js'></script>
+  <script src='https://metodlangus.github.io/plugins/leaflet-gpx/1.6.0/gpx.min.js'></script>
+  <script src='https://metodlangus.github.io/plugins/@raruto/leaflet-elevation/dist/leaflet-elevation.min.js'></script>
+  <script src='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+  <script src='https://metodlangus.github.io/plugins/leaflet-polylinedecorator/1.1.0/leaflet.polylineDecorator.min.js'></script>
+  <script src='https://metodlangus.github.io/scripts/leaflet-download-gpx-button.js'></script>
+  <script src='https://metodlangus.github.io/plugins/lightbox2/2.11.1/js/lightbox-plus-jquery.min.js'></script>
+  <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
+  <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js'></script>
+  <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
+
+  <script src="../../../assets/MyMapScript.js" defer></script>
+  <script src="../../../assets/MySlideshowScript.js" defer></script>
+  <script src="../../../assets/MyPostContainerScript.js" defer></script>
+  <script src="../../../assets/Main.js" defer></script>
+
+</body>
+</html>
