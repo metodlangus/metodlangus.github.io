@@ -1,0 +1,5606 @@
+{
+  "version": "1.0",
+  "encoding": "UTF-8",
+  "feed": {
+    "xmlns": "http://www.w3.org/2005/Atom",
+    "xmlns$openSearch": "http://a9.com/-/spec/opensearchrss/1.0/",
+    "xmlns$blogger": "http://schemas.google.com/blogger/2008",
+    "xmlns$georss": "http://www.georss.org/georss",
+    "xmlns$gd": "http://schemas.google.com/g/2005",
+    "xmlns$thr": "http://purl.org/syndication/thread/1.0",
+    "id": {
+      "$t": "tag:blogger.com,1999:blog-4082335973374435353"
+    },
+    "updated": {
+      "$t": "2025-07-13T10:19:51.592-07:00"
+    },
+    "category": [
+      {
+        "term": "1. Gorništvo"
+      },
+      {
+        "term": "5. Moji najljubši"
+      },
+      {
+        "term": "2. Slovenija"
+      },
+      {
+        "term": "4. Poldnevni"
+      },
+      {
+        "term": "2. Italija"
+      },
+      {
+        "term": "4. Celodnevni"
+      },
+      {
+        "term": "4. Kratki"
+      },
+      {
+        "term": "1. Ferata"
+      },
+      {
+        "term": "5. Greben"
+      },
+      {
+        "term": "3. Julijske Alpe"
+      },
+      {
+        "term": "6. 0. Slovaška 2024"
+      },
+      {
+        "term": "3. Kamniško-Savinjske Alpe"
+      },
+      {
+        "term": "2. Slovaška"
+      },
+      {
+        "term": "3. Dolomiti"
+      },
+      {
+        "term": "5. Brezpotje"
+      },
+      {
+        "term": "1. Pohodništvo"
+      },
+      {
+        "term": "2. Hrvaška"
+      },
+      {
+        "term": "6. 0. Teden na Hrvaškem"
+      },
+      {
+        "term": "1. Potepanja"
+      },
+      {
+        "term": "1. Turno smučanje"
+      },
+      {
+        "term": "6. 0. Sardinija 2023"
+      },
+      {
+        "term": "3. Karnijske Alpe"
+      },
+      {
+        "term": "5. Mesto"
+      },
+      {
+        "term": "1. Sprehod"
+      },
+      {
+        "term": "2. Sardinija"
+      },
+      {
+        "term": "3. Karavanke"
+      },
+      {
+        "term": "6. 0. Teden v Dolomitih"
+      },
+      {
+        "term": "4. Vikend potepanja"
+      },
+      {
+        "term": "1. Gorski tek"
+      },
+      {
+        "term": "2. Avstrija"
+      },
+      {
+        "term": "2. Madžarska"
+      },
+      {
+        "term": "6. 0. Vikend Karnijci"
+      },
+      {
+        "term": "6. 1. Vikend Dolomiti"
+      },
+      {
+        "term": "2. Švica"
+      },
+      {
+        "term": "3. Visoke Tatre"
+      },
+      {
+        "term": "4. Daljša potepanja"
+      },
+      {
+        "term": "5. Soteska"
+      },
+      {
+        "term": "6. 0. Vikend Dolomiti"
+      },
+      {
+        "term": "6. 0. Vikend Švica"
+      },
+      {
+        "term": "6. 1. Vikend Karnijci"
+      },
+      {
+        "term": "1. Alpinizem"
+      },
+      {
+        "term": "3. Biokovo"
+      },
+      {
+        "term": "3. Peninske Alpe"
+      },
+      {
+        "term": "3. Slovaški raj"
+      },
+      {
+        "term": "5. Kanjon"
+      },
+      {
+        "term": "6. 0. Vikend Julijci"
+      },
+      {
+        "term": "6. 0. Vikend KSA"
+      },
+      {
+        "term": "6. 0. Vikend Rezija"
+      },
+      {
+        "term": "1. Plezanje"
+      },
+      {
+        "term": "3. Nizke Ture"
+      },
+      {
+        "term": "3. Velebit"
+      },
+      {
+        "term": "3. Visoke Ture"
+      },
+      {
+        "term": "5. Jama"
+      },
+      {
+        "term": "5. Slap"
+      },
+      {
+        "term": "5.Grad"
+      },
+      {
+        "term": "1. Ostalo"
+      },
+      {
+        "term": "1. Tek"
+      },
+      {
+        "term": "3.  Beneške Predalpe"
+      },
+      {
+        "term": "3. Dinarsko gorstvo"
+      },
+      {
+        "term": "3. Kriške Alpe"
+      },
+      {
+        "term": "3. Mátra"
+      },
+      {
+        "term": "3. Nizke Tatre"
+      },
+      {
+        "term": "3. Tavolara"
+      },
+      {
+        "term": "3. Tribeč"
+      },
+      {
+        "term": "4. Dvodnevni"
+      },
+      {
+        "term": "5. Jezero"
+      },
+      {
+        "term": "5. Otok"
+      },
+      {
+        "term": "5. Polotok"
+      }
+    ],
+    "title": {
+      "type": "text",
+      "$t": "Gorski užitki"
+    },
+    "subtitle": {
+      "type": "html",
+      "$t": ""
+    },
+    "link": [
+      {
+        "rel": "http://schemas.google.com/g/2005#feed",
+        "type": "application/atom+xml",
+        "href": "https://gorski-uzitki.blogspot.com/feeds/posts/default"
+      },
+      {
+        "rel": "self",
+        "type": "application/atom+xml",
+        "href": "https://www.blogger.com/feeds/4082335973374435353/posts/default?alt=json"
+      },
+      {
+        "rel": "alternate",
+        "type": "text/html",
+        "href": "https://gorski-uzitki.blogspot.com/"
+      },
+      {
+        "rel": "hub",
+        "href": "http://pubsubhubbub.appspot.com/"
+      },
+      {
+        "rel": "next",
+        "type": "application/atom+xml",
+        "href": "https://www.blogger.com/feeds/4082335973374435353/posts/default?alt=json&start-index=26&max-results=25"
+      }
+    ],
+    "author": [
+      {
+        "name": {
+          "$t": "Metod"
+        },
+        "uri": {
+          "$t": "http://www.blogger.com/profile/04733648064111132645"
+        },
+        "email": {
+          "$t": "noreply@blogger.com"
+        },
+        "gd$image": {
+          "rel": "http://schemas.google.com/g/2005#thumbnail",
+          "width": "16",
+          "height": "16",
+          "src": "https://img1.blogblog.com/img/b16-rounded.gif"
+        }
+      }
+    ],
+    "generator": {
+      "version": "7.00",
+      "uri": "http://www.blogger.com",
+      "$t": "Blogger"
+    },
+    "openSearch$totalResults": {
+      "$t": "141"
+    },
+    "openSearch$startIndex": {
+      "$t": "1"
+    },
+    "openSearch$itemsPerPage": {
+      "$t": "25"
+    },
+    "entry": [
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-7756792700814336694"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Greben Lonzaköpfl (2317 m) – Vorder Geißlkopf (2974 m)"
+        },
+        "published": {
+          "$t": "2025-06-29T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Avstrija"
+          },
+          {
+            "term": "3. Visoke Ture"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Brezpotje"
+          },
+          {
+            "term": "5. Greben"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/7756792700814336694.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-6033734106822163249"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Hohe Leier (2774 m)"
+        },
+        "published": {
+          "$t": "2025-06-25T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Avstrija"
+          },
+          {
+            "term": "3. Visoke Ture"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Greben"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/6033734106822163249.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-580700727124410937"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Mosermandl (2608 m)"
+        },
+        "published": {
+          "$t": "2025-06-22T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Avstrija"
+          },
+          {
+            "term": "3. Nizke Ture"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Brezpotje"
+          },
+          {
+            "term": "5. Greben"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/580700727124410937.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-2588552979420205139"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Kleine Guglspitze (2570 m) in Speiereck (2411 m) ter še vsaj 15 vrhov vmes"
+        },
+        "published": {
+          "$t": "2025-06-21T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Avstrija"
+          },
+          {
+            "term": "3. Nizke Ture"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Brezpotje"
+          },
+          {
+            "term": "5. Greben"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/2588552979420205139.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-1214045461358366818"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Čez Kriško goro na Storžič (2132 m)"
+        },
+        "published": {
+          "$t": "2025-06-15T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorski tek"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Kamniško-Savinjske Alpe"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Greben"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/1214045461358366818.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-6511537537709253416"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Brezpotni Ravnik (1477 m) ter Brda (2009 m) iz Krme"
+        },
+        "published": {
+          "$t": "2025-06-14T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/6511537537709253416.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-1488309811172188311"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Čez Kofce na stari Ljubelj"
+        },
+        "published": {
+          "$t": "2025-06-08T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorski tek"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Karavanke"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Greben"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/1488309811172188311.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-2389880327064735483"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Za vikend v Karnijce (31. 5. – 1. 6. 2025)"
+        },
+        "published": {
+          "$t": "2025-06-01T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Potepanja"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Karnijske Alpe"
+          },
+          {
+            "term": "4. Vikend potepanja"
+          },
+          {
+            "term": "6. 1. Vikend Karnijci"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/2389880327064735483.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-2473693902462915426"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Creta di Timau (2217 m)"
+        },
+        "published": {
+          "$t": "2025-06-01T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Karnijske Alpe"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Greben"
+          },
+          {
+            "term": "6. 1. Vikend Karnijci"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/2473693902462915426.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-814788955901606888"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Mestece Timau"
+        },
+        "published": {
+          "$t": "2025-05-31T11:00:00.001-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Sprehod"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Karnijske Alpe"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "5. Mesto"
+          },
+          {
+            "term": "6. 1. Vikend Karnijci"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/814788955901606888.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-8547482659237635982"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Cuestalta / Hoher Trieb (2198 m)"
+        },
+        "published": {
+          "$t": "2025-05-31T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Karnijske Alpe"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Greben"
+          },
+          {
+            "term": "6. 1. Vikend Karnijci"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/8547482659237635982.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-231811339115949817"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Rutarski vršič (1699 m), Vanežev rob (1891 m)"
+        },
+        "published": {
+          "$t": "2025-05-25T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Brezpotje"
+          },
+          {
+            "term": "5. Greben"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "5. Slap"
+          },
+          {
+            "term": "5. Soteska"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/231811339115949817.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-3269816315050536168"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Veliki vrh (Križ) (1742 m), slap Čedca"
+        },
+        "published": {
+          "$t": "2025-05-24T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Kamniško-Savinjske Alpe"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Brezpotje"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "5. Slap"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/3269816315050536168.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-2589090595435882517"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Skozi kraljestvo muflonov"
+        },
+        "published": {
+          "$t": "2025-05-18T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Kamniško-Savinjske Alpe"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "5. Brezpotje"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/2589090595435882517.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-4081067818040411722"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Greben Begunjščice (2060 m) čez Potočnikovo planino"
+        },
+        "published": {
+          "$t": "2025-05-17T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Karavanke"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Brezpotje"
+          },
+          {
+            "term": "5. Greben"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/4081067818040411722.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-2950894995106576301"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Visoki Kurjek / Bärenkogel (1973 m), Lepa Plevelnica (1959 m)"
+        },
+        "published": {
+          "$t": "2025-05-11T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Karavanke"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Brezpotje"
+          },
+          {
+            "term": "5. Greben"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/2950894995106576301.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-1779917978000342364"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Potepanje po Hrvaški (26. 4. – 4. 5. 2025)"
+        },
+        "published": {
+          "$t": "2025-05-04T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Potepanja"
+          },
+          {
+            "term": "2. Hrvaška"
+          },
+          {
+            "term": "4. Daljša potepanja"
+          },
+          {
+            "term": "6. 0. Teden na Hrvaškem"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/1779917978000342364.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-4787432999036984428"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Klek (1181 m)"
+        },
+        "published": {
+          "$t": "2025-05-04T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Hrvaška"
+          },
+          {
+            "term": "3. Dinarsko gorstvo"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "6. 0. Teden na Hrvaškem"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/4787432999036984428.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-5060739748459530963"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Split"
+        },
+        "published": {
+          "$t": "2025-05-03T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Pohodništvo"
+          },
+          {
+            "term": "2. Hrvaška"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Mesto"
+          },
+          {
+            "term": "6. 0. Teden na Hrvaškem"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/5060739748459530963.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-1833335527545481796"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Ferata Perunika"
+        },
+        "published": {
+          "$t": "2025-05-03T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Hrvaška"
+          },
+          {
+            "term": "6. 0. Teden na Hrvaškem"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/1833335527545481796.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-4467343109718741629"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Kimet (1536 m)"
+        },
+        "published": {
+          "$t": "2025-05-02T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Hrvaška"
+          },
+          {
+            "term": "3. Biokovo"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Teden na Hrvaškem"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/4467343109718741629.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-7509151407869737257"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Jama Krjava, Vošac (1421 m)"
+        },
+        "published": {
+          "$t": "2025-05-01T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Hrvaška"
+          },
+          {
+            "term": "3. Biokovo"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Jama"
+          },
+          {
+            "term": "6. 0. Teden na Hrvaškem"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/7509151407869737257.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-3197848242990855293"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Veliki Šibenik (1467 m), Sveti Jure (1762 m)"
+        },
+        "published": {
+          "$t": "2025-04-30T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Hrvaška"
+          },
+          {
+            "term": "3. Biokovo"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Teden na Hrvaškem"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/3197848242990855293.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-5322769197371320858"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Omiš (ferata Fortica)"
+        },
+        "published": {
+          "$t": "2025-04-29T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Hrvaška"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "5. Mesto"
+          },
+          {
+            "term": "6. 0. Teden na Hrvaškem"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/5322769197371320858.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-7614499534721676062"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Greben Kozjak"
+        },
+        "published": {
+          "$t": "2025-04-29T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Hrvaška"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "6. 0. Teden na Hrvaškem"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/7614499534721676062.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-1163512523412414476"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Šibenik"
+        },
+        "published": {
+          "$t": "2025-04-28T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Sprehod"
+          },
+          {
+            "term": "2. Hrvaška"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "5. Mesto"
+          },
+          {
+            "term": "6. 0. Teden na Hrvaškem"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/1163512523412414476.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-8248502993126452538"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Kanjon Krupe"
+        },
+        "published": {
+          "$t": "2025-04-27T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Hrvaška"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "5. Kanjon"
+          },
+          {
+            "term": "6. 0. Teden na Hrvaškem"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/8248502993126452538.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-7278835320236591082"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Veliki Bat (1381 m), Bili kuk (1171 m)"
+        },
+        "published": {
+          "$t": "2025-04-27T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Hrvaška"
+          },
+          {
+            "term": "3. Velebit"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Teden na Hrvaškem"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/7278835320236591082.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-9095054306963982054"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Klekovac (898 m)"
+        },
+        "published": {
+          "$t": "2025-04-26T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Hrvaška"
+          },
+          {
+            "term": "3. Velebit"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "6. 0. Teden na Hrvaškem"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/9095054306963982054.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-1711098164195902904"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Kriška gora (1472 m), Vrh Vrata (1591 m)"
+        },
+        "published": {
+          "$t": "2025-04-20T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorski tek"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Kamniško-Savinjske Alpe"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "5. Greben"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/1711098164195902904.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-2079470907784504371"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Šentanski vrh (1635 m), Dobrča (1634 m)"
+        },
+        "published": {
+          "$t": "2025-04-12T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorski tek"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Kamniško-Savinjske Alpe"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "5. Brezpotje"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/2079470907784504371.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-167209217747982456"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Schilchernock (2270 m), Gaipahöhe (2192 m)"
+        },
+        "published": {
+          "$t": "2025-03-30T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Turno smučanje"
+          },
+          {
+            "term": "2. Avstrija"
+          },
+          {
+            "term": "3. Kriške Alpe"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/167209217747982456.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-7032848582078074371"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Mrežce (1965 m)"
+        },
+        "published": {
+          "$t": "2025-03-18T12:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Turno smučanje"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          },
+          {
+            "term": "4. Poldnevni"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/7032848582078074371.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-4443433090251006548"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Možic (1602 m), Slatnik (1599 m), Lajnar (1549 m)"
+        },
+        "published": {
+          "$t": "2025-03-16T12:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Turno smučanje"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/4443433090251006548.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-7556662383360394126"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Veliki Draški vrh (2240 m), Draški rob (1981 m)"
+        },
+        "published": {
+          "$t": "2025-03-02T11:00:00.000-08:00"
+        },
+        "category": [
+          {
+            "term": "1. Turno smučanje"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/7556662383360394126.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-4440127020424780302"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Turno smučanje po Kaninu"
+        },
+        "published": {
+          "$t": "2025-02-22T11:00:00.000-08:00"
+        },
+        "category": [
+          {
+            "term": "1. Turno smučanje"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          },
+          {
+            "term": "4. Poldnevni"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/4440127020424780302.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-2775744475275620655"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Kriška gora (1472 m)"
+        },
+        "published": {
+          "$t": "2025-02-20T11:00:00.000-08:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Kamniško-Savinjske Alpe"
+          },
+          {
+            "term": "4. Kratki"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/2775744475275620655.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-2784199421745254195"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Breška planina"
+        },
+        "published": {
+          "$t": "2025-02-19T11:00:00.000-08:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Kamniško-Savinjske Alpe"
+          },
+          {
+            "term": "4. Kratki"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/2784199421745254195.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-440026550004770500"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Šentanski vrh (1635 m), Dobrča (1634 m)"
+        },
+        "published": {
+          "$t": "2025-02-16T11:00:00.000-08:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Kamniško-Savinjske Alpe"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "5. Brezpotje"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/440026550004770500.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-3954634309677980959"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Turno smučanje po Kaninu"
+        },
+        "published": {
+          "$t": "2025-02-15T11:00:00.000-08:00"
+        },
+        "category": [
+          {
+            "term": "1. Turno smučanje"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/3954634309677980959.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-4600768859425059723"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Turno smučanje po Kaninu"
+        },
+        "published": {
+          "$t": "2025-02-02T11:00:00.000-08:00"
+        },
+        "category": [
+          {
+            "term": "1. Turno smučanje"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          },
+          {
+            "term": "4. Poldnevni"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/4600768859425059723.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-4831172329849696134"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Vošca (1737 m), Zajčnik (1746 m), Trupejevo poldne (1931 m)"
+        },
+        "published": {
+          "$t": "2025-01-19T11:00:00.000-08:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Karavanke"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Greben"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/4831172329849696134.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-7239483972607710611"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Ptičji vrh (1551 m), Korenjščica (1764 m)"
+        },
+        "published": {
+          "$t": "2025-01-11T11:00:00.000-08:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Karavanke"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Greben"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/7239483972607710611.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-1304945139608096800"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Lepenatka (1425 m), Veliki Rogatec (1557 m)"
+        },
+        "published": {
+          "$t": "2025-01-05T11:00:00.000-08:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Kamniško-Savinjske Alpe"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/1304945139608096800.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-6778532249705094424"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Zimska pravljica na Kriški gori"
+        },
+        "published": {
+          "$t": "2025-01-04T11:00:00.000-08:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Kamniško-Savinjske Alpe"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/6778532249705094424.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-7522404626367627917"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Srednji vrh (1796 m), Vrtača / Wertatscha (2180 m)"
+        },
+        "published": {
+          "$t": "2024-11-23T11:00:00.000-08:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Karavanke"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/7522404626367627917.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-5722788170207801169"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Potepanje po Dolomitih (28. 10. – 4. 11. 2024)"
+        },
+        "published": {
+          "$t": "2024-11-04T11:01:00.000-08:00"
+        },
+        "category": [
+          {
+            "term": "1. Potepanja"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Dolomiti"
+          },
+          {
+            "term": "4. Daljša potepanja"
+          },
+          {
+            "term": "6. 0. Teden v Dolomitih"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/5722788170207801169.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-103538095222810435"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Bruneck - Brunico"
+        },
+        "published": {
+          "$t": "2024-11-04T11:00:00.001-08:00"
+        },
+        "category": [
+          {
+            "term": "1. Sprehod"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Dolomiti"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "5. Mesto"
+          },
+          {
+            "term": "6. 0. Teden v Dolomitih"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/103538095222810435.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-6734281574156718122"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Piccolo Cir (2520 m), Gran Cir (2592 m)"
+        },
+        "published": {
+          "$t": "2024-11-04T11:00:00.000-08:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Dolomiti"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Teden v Dolomitih"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/6734281574156718122.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-1124795223500850924"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Mesola (2727 m), Mesolina (2642 m)"
+        },
+        "published": {
+          "$t": "2024-11-03T11:00:00.000-08:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Dolomiti"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Greben"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Teden v Dolomitih"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/1124795223500850924.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-1899092991195790361"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Roda di Vaèl - Rotwand (2806 m)"
+        },
+        "published": {
+          "$t": "2024-11-02T12:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Dolomiti"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Teden v Dolomitih"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/1899092991195790361.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-7176250751012440995"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Cima Costabella (2762 m), Cima dell'Uomo (3010 m)"
+        },
+        "published": {
+          "$t": "2024-11-01T12:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Dolomiti"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Greben"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Teden v Dolomitih"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/7176250751012440995.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-5216453237033858412"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Cima d'Auta Orientale (2645 m)"
+        },
+        "published": {
+          "$t": "2024-10-31T12:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Dolomiti"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Teden v Dolomitih"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/5216453237033858412.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-1643803024865498194"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Cima di Val di Roda (2791 m)"
+        },
+        "published": {
+          "$t": "2024-10-30T12:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Dolomiti"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Teden v Dolomitih"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/1643803024865498194.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-8041442264155822245"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Monte Grappa (1776 m)"
+        },
+        "published": {
+          "$t": "2024-10-29T12:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3.  Beneške Predalpe"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "6. 0. Teden v Dolomitih"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/8041442264155822245.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-3666498168500431677"
+        },
+        "title": {
+          "type": "text",
+          "$t": "NLB 28. Ljubljanski maraton (21 km)"
+        },
+        "published": {
+          "$t": "2024-10-20T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Tek"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "4. Kratki"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/3666498168500431677.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-513839982223713877"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Slovaška, Madžarska  (31. 8. – 12. 9. 2024)"
+        },
+        "published": {
+          "$t": "2024-09-12T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Potepanja"
+          },
+          {
+            "term": "2. Madžarska"
+          },
+          {
+            "term": "2. Slovaška"
+          },
+          {
+            "term": "4. Daljša potepanja"
+          },
+          {
+            "term": "6. 0. Slovaška 2024"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/513839982223713877.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-4408894935173905991"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Budapest - Budimpešta"
+        },
+        "published": {
+          "$t": "2024-09-12T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Pohodništvo"
+          },
+          {
+            "term": "2. Madžarska"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Mesto"
+          },
+          {
+            "term": "6. 0. Slovaška 2024"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/4408894935173905991.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-6023231872971511819"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Kékestető (1014 m) - najvišji vrh Madžarske"
+        },
+        "published": {
+          "$t": "2024-09-11T11:02:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Madžarska"
+          },
+          {
+            "term": "3. Mátra"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "6. 0. Slovaška 2024"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/6023231872971511819.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-8717461120207567476"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Mesto Eger"
+        },
+        "published": {
+          "$t": "2024-09-11T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Sprehod"
+          },
+          {
+            "term": "2. Madžarska"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "6. 0. Slovaška 2024"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/8717461120207567476.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-8949911820429588821"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Bükki Nemzeti Park - madžarski narodni park"
+        },
+        "published": {
+          "$t": "2024-09-11T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Pohodništvo"
+          },
+          {
+            "term": "2. Madžarska"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "6. 0. Slovaška 2024"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/8949911820429588821.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-5673538754942007400"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Košice"
+        },
+        "published": {
+          "$t": "2024-09-10T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Sprehod"
+          },
+          {
+            "term": "2. Slovaška"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Mesto"
+          },
+          {
+            "term": "6. 0. Slovaška 2024"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/5673538754942007400.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-1128725398110011348"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Národní park Slovenský kras"
+        },
+        "published": {
+          "$t": "2024-09-09T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Pohodništvo"
+          },
+          {
+            "term": "2. Slovaška"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5.Grad"
+          },
+          {
+            "term": "6. 0. Slovaška 2024"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/1128725398110011348.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-364766567303497441"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Národný park Muránska planina - Sedlo Zbojská"
+        },
+        "published": {
+          "$t": "2024-09-08T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Pohodništvo"
+          },
+          {
+            "term": "2. Slovaška"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "6. 0. Slovaška 2024"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/364766567303497441.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-5815706977287766605"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Národný park Muránska planina - Grad Muráň"
+        },
+        "published": {
+          "$t": "2024-09-08T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Pohodništvo"
+          },
+          {
+            "term": "2. Slovaška"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "5.Grad"
+          },
+          {
+            "term": "6. 0. Slovaška 2024"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/5815706977287766605.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-5459964152614094625"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Slovenský raj - soteska Zejmarská roklina"
+        },
+        "published": {
+          "$t": "2024-09-07T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Pohodništvo"
+          },
+          {
+            "term": "2. Slovaška"
+          },
+          {
+            "term": "3. Slovaški raj"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "5. Soteska"
+          },
+          {
+            "term": "6. 0. Slovaška 2024"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/5459964152614094625.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-9205590614351195174"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Slovenský raj - soteski Piecky in Veľký Sokol"
+        },
+        "published": {
+          "$t": "2024-09-07T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Pohodništvo"
+          },
+          {
+            "term": "2. Slovaška"
+          },
+          {
+            "term": "3. Slovaški raj"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Soteska"
+          },
+          {
+            "term": "6. 0. Slovaška 2024"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/9205590614351195174.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-1832066811038262454"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Slovenský raj - Slovaški NP številnih kanjonov in sotesk"
+        },
+        "published": {
+          "$t": "2024-09-06T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Pohodništvo"
+          },
+          {
+            "term": "2. Slovaška"
+          },
+          {
+            "term": "3. Slovaški raj"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "5. Soteska"
+          },
+          {
+            "term": "6. 0. Slovaška 2024"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/1832066811038262454.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-8415201834680099757"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Rysy (2499 m) - najvišji vrh Poljske, Kôprovský štít (2367 m)"
+        },
+        "published": {
+          "$t": "2024-09-05T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovaška"
+          },
+          {
+            "term": "3. Visoke Tatre"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Slovaška 2024"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/8415201834680099757.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-6949686772858405004"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Gerlachovský štít (2654 m) - najvišji vrh Slovaške, Východná Vysoká (2429 m)"
+        },
+        "published": {
+          "$t": "2024-09-04T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovaška"
+          },
+          {
+            "term": "3. Visoke Tatre"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Slovaška 2024"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/6949686772858405004.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-2266787076758580865"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Jezero Štrbské Pleso"
+        },
+        "published": {
+          "$t": "2024-09-03T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Pohodništvo"
+          },
+          {
+            "term": "2. Slovaška"
+          },
+          {
+            "term": "3. Visoke Tatre"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "5. Jezero"
+          },
+          {
+            "term": "6. 0. Slovaška 2024"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/2266787076758580865.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-8218977179203243332"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Kriváň (2494 m) - simbol slovaške narodne zavesti"
+        },
+        "published": {
+          "$t": "2024-09-03T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovaška"
+          },
+          {
+            "term": "3. Visoke Tatre"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Slovaška 2024"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/8218977179203243332.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-5564926650057374564"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Nizke Tatre - Dereše (2004 m), Chopok (2024 m), Ďumbier (2043 m)"
+        },
+        "published": {
+          "$t": "2024-09-02T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovaška"
+          },
+          {
+            "term": "3. Nizke Tatre"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Greben"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Slovaška 2024"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/5564926650057374564.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-3271452707759311243"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Jama Harmanecká jaskyňa"
+        },
+        "published": {
+          "$t": "2024-09-01T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Pohodništvo"
+          },
+          {
+            "term": "2. Slovaška"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "5. Jama"
+          },
+          {
+            "term": "6. 0. Slovaška 2024"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/3271452707759311243.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-6465320773801844379"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Park Skalka"
+        },
+        "published": {
+          "$t": "2024-09-01T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "2. Slovaška"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "6. 0. Slovaška 2024"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/6465320773801844379.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-376260634406749502"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Kremnica"
+        },
+        "published": {
+          "$t": "2024-08-31T11:02:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Sprehod"
+          },
+          {
+            "term": "2. Slovaška"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "5. Mesto"
+          },
+          {
+            "term": "6. 0. Slovaška 2024"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/376260634406749502.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-2247742528276683373"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Razgledni stolp Háj, Gupňa (442 m)"
+        },
+        "published": {
+          "$t": "2024-08-31T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Pohodništvo"
+          },
+          {
+            "term": "2. Slovaška"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "6. 0. Slovaška 2024"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/2247742528276683373.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-6485432951112636794"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Zobor (587 m)"
+        },
+        "published": {
+          "$t": "2024-08-31T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Pohodništvo"
+          },
+          {
+            "term": "2. Slovaška"
+          },
+          {
+            "term": "3. Tribeč"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "6. 0. Slovaška 2024"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/6485432951112636794.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-4147148249482145472"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Monte Nabois piccolo (1695 m) in Monte Nabois grande (2301 m)"
+        },
+        "published": {
+          "$t": "2024-08-16T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/4147148249482145472.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-2484624541066229237"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Po grebenu od Visoke Ponce (2274 m) do Mangarta (2679 m)"
+        },
+        "published": {
+          "$t": "2024-08-15T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Greben"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/2484624541066229237.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-3712460721508791412"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Potepanje po Karnijcih (25. – 28. 7. 2024)"
+        },
+        "published": {
+          "$t": "2024-07-28T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Potepanja"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Karnijske Alpe"
+          },
+          {
+            "term": "4. Vikend potepanja"
+          },
+          {
+            "term": "6. 0. Vikend Karnijci"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/3712460721508791412.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-8017045547106989372"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Cimon del Cavallo (2251 m)"
+        },
+        "published": {
+          "$t": "2024-07-28T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Karnijske Alpe"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "6. 0. Vikend Karnijci"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/8017045547106989372.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-8389285634508335517"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Ferrata Rino Costacurta al Teverone"
+        },
+        "published": {
+          "$t": "2024-07-27T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Karnijske Alpe"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "6. 0. Vikend Karnijci"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/8389285634508335517.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-8271329734914910375"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Schiara (2565 m), Pelf (2502 m)"
+        },
+        "published": {
+          "$t": "2024-07-26T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Dolomiti"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Vikend Karnijci"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/8271329734914910375.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-3438719275904954779"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Monte Pramaggiore (2478 m)"
+        },
+        "published": {
+          "$t": "2024-07-25T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Karnijske Alpe"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Vikend Karnijci"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/3438719275904954779.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-3182968482457795166"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Prečenje Mojstrovk in Šit"
+        },
+        "published": {
+          "$t": "2024-07-21T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Brezpotje"
+          },
+          {
+            "term": "5. Greben"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/3182968482457795166.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-3004243609038059968"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Vikend v KSA (6. – 4. 7. 2024)"
+        },
+        "published": {
+          "$t": "2024-07-07T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Potepanja"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Kamniško-Savinjske Alpe"
+          },
+          {
+            "term": "4. Vikend potepanja"
+          },
+          {
+            "term": "6. 0. Vikend KSA"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/3004243609038059968.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-833011297519237755"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Strelovec (1763 m), Krofička (2083 m)"
+        },
+        "published": {
+          "$t": "2024-07-07T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Kamniško-Savinjske Alpe"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Brezpotje"
+          },
+          {
+            "term": "5. Greben"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Vikend KSA"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/833011297519237755.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-1373949133320176219"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Matkova Kopa (1957 m), Krnička gora (2064 m)"
+        },
+        "published": {
+          "$t": "2024-07-06T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Kamniško-Savinjske Alpe"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Brezpotje"
+          },
+          {
+            "term": "5. Greben"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Vikend KSA"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/1373949133320176219.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-5522644566273610716"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Dolina Rezije (29. – 30. 6. 2024)"
+        },
+        "published": {
+          "$t": "2024-06-30T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Potepanja"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          },
+          {
+            "term": "4. Vikend potepanja"
+          },
+          {
+            "term": "6. 0. Vikend Rezija"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/5522644566273610716.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-3988043793260790168"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Baba grande / Velika Baba (2161 m)"
+        },
+        "published": {
+          "$t": "2024-06-30T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Vikend Rezija"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/3988043793260790168.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-4046412181313014421"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Monte Sart (2324 m)"
+        },
+        "published": {
+          "$t": "2024-06-29T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "6. 0. Vikend Rezija"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/4046412181313014421.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-7743532039189378529"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Prečenje Kumlehov"
+        },
+        "published": {
+          "$t": "2024-06-22T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Brezpotje"
+          },
+          {
+            "term": "5. Greben"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/7743532039189378529.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-3471263046239969037"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Mokrica (1853 m) iz Kurje doline"
+        },
+        "published": {
+          "$t": "2024-06-15T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Kamniško-Savinjske Alpe"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Brezpotje"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/3471263046239969037.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-4252469176479121385"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Bistrica - Dobrča (1634 m) - Begunjščica (2060 m) - Vrtača (2180 m) - Ljubelj"
+        },
+        "published": {
+          "$t": "2024-06-09T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorski tek"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Kamniško-Savinjske Alpe"
+          },
+          {
+            "term": "3. Karavanke"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/4252469176479121385.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-8212816774001752315"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Bivak Stebrasta skala in naprej na Mežaklo"
+        },
+        "published": {
+          "$t": "2024-06-08T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          },
+          {
+            "term": "4. Poldnevni"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/8212816774001752315.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-2612738657688049584"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Kriška gora (1472 m), Tolsti vrh (1715 m)"
+        },
+        "published": {
+          "$t": "2024-06-02T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorski tek"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Kamniško-Savinjske Alpe"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "5. Greben"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/2612738657688049584.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-5592995950363413525"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Brezpotje čez Akle (1380 m) in Starca (1426 m)"
+        },
+        "published": {
+          "$t": "2024-05-18T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Kamniško-Savinjske Alpe"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Brezpotje"
+          },
+          {
+            "term": "5. Greben"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/5592995950363413525.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-191227553903706417"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Vrh Ljubeljščice (1705 m)"
+        },
+        "published": {
+          "$t": "2024-04-25T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Turno smučanje"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Karavanke"
+          },
+          {
+            "term": "4. Kratki"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/191227553903706417.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-2898883354007760081"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Vrh Ljubeljščice (1705 m)"
+        },
+        "published": {
+          "$t": "2024-04-24T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Turno smučanje"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Karavanke"
+          },
+          {
+            "term": "4. Kratki"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/2898883354007760081.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-8064417772593423527"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Šentanski vrh (1635 m), Dobrča (1634 m)"
+        },
+        "published": {
+          "$t": "2024-04-21T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorski tek"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Kamniško-Savinjske Alpe"
+          },
+          {
+            "term": "4. Kratki"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/8064417772593423527.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-5236195504461612877"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Po hribčkih nad vasico Chiusaforte, z najvišjim Monte Plananizza (1555 m)"
+        },
+        "published": {
+          "$t": "2024-04-20T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Karnijske Alpe"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/5236195504461612877.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-6896621821737624789"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Od Alpe Piccola (1304 m) do Monte Acuto (1781 m)"
+        },
+        "published": {
+          "$t": "2024-04-14T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Karnijske Alpe"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/6896621821737624789.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-4498487772566607535"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Pot sedmih slapov"
+        },
+        "published": {
+          "$t": "2024-03-24T12:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Plezanje"
+          },
+          {
+            "term": "1. Pohodništvo"
+          },
+          {
+            "term": "2. Hrvaška"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/4498487772566607535.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-6800619318413451259"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Mrežce (1965 m), Okroglež (1965 m)"
+        },
+        "published": {
+          "$t": "2024-03-09T11:00:00.000-08:00"
+        },
+        "category": [
+          {
+            "term": "1. Turno smučanje"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/6800619318413451259.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-6872221956525389172"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Prevala (2067 m) iz Sella Nevea"
+        },
+        "published": {
+          "$t": "2023-12-16T11:00:00.000-08:00"
+        },
+        "category": [
+          {
+            "term": "1. Turno smučanje"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          },
+          {
+            "term": "4. Poldnevni"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/6872221956525389172.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-1514773089763961492"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Dobrča (1634 m) čez travnike"
+        },
+        "published": {
+          "$t": "2023-12-10T11:00:00.000-08:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Kamniško-Savinjske Alpe"
+          },
+          {
+            "term": "4. Kratki"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/1514773089763961492.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-1841230862987308438"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Podaljšan vikend v Dolomitih (28. 9. – 2. 10. 2023)"
+        },
+        "published": {
+          "$t": "2023-10-02T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Potepanja"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Dolomiti"
+          },
+          {
+            "term": "4. Vikend potepanja"
+          },
+          {
+            "term": "6. 1. Vikend Dolomiti"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/1841230862987308438.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-6624555373513395940"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Piz Boè (3152 m)"
+        },
+        "published": {
+          "$t": "2023-10-02T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Dolomiti"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 1. Vikend Dolomiti"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/6624555373513395940.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-4560888180983880622"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Cima Presanella (3556 m)"
+        },
+        "published": {
+          "$t": "2023-10-01T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Dolomiti"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 1. Vikend Dolomiti"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/4560888180983880622.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-3612687055369494909"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Sentiero Alpinistico Claudio Costanzi"
+        },
+        "published": {
+          "$t": "2023-09-30T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Dolomiti"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Greben"
+          },
+          {
+            "term": "6. 1. Vikend Dolomiti"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/3612687055369494909.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-6199440655973056572"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Giro del Brenta"
+        },
+        "published": {
+          "$t": "2023-09-29T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Dolomiti"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 1. Vikend Dolomiti"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/6199440655973056572.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-2913674360447897271"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Crete di Gleris, Monte Chiavals (2098 m)"
+        },
+        "published": {
+          "$t": "2023-09-24T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Karnijske Alpe"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Greben"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/2913674360447897271.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-4399886710167206741"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Podaljšan vikend v Dolomitih  (18. – 21. 8. 2024)"
+        },
+        "published": {
+          "$t": "2023-08-21T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Potepanja"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Dolomiti"
+          },
+          {
+            "term": "4. Vikend potepanja"
+          },
+          {
+            "term": "6. 0. Vikend Dolomiti"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/4399886710167206741.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-5289959343243319877"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Antelao (3264 m) - kralj Dolomitov"
+        },
+        "published": {
+          "$t": "2023-08-21T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Dolomiti"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Vikend Dolomiti"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/5289959343243319877.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-3321040799703211624"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Monte Civetta (3220 m)"
+        },
+        "published": {
+          "$t": "2023-08-20T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Dolomiti"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Vikend Dolomiti"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/3321040799703211624.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-7527896670956528058"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Monte Pelmo (3168 m)"
+        },
+        "published": {
+          "$t": "2023-08-19T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "3. Dolomiti"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Vikend Dolomiti"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/7527896670956528058.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-1665684943412865822"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Za Marijin praznik na Veliki Oltar (2621 m)"
+        },
+        "published": {
+          "$t": "2023-08-15T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/1665684943412865822.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-8700339219321196369"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Mistična Kepa (2145 m)"
+        },
+        "published": {
+          "$t": "2023-08-14T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Avstrija"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Karavanke"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/8700339219321196369.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-7844648273596733145"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Za vikend v Julijce (12. – 13. 8. 2023)"
+        },
+        "published": {
+          "$t": "2023-08-13T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Potepanja"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          },
+          {
+            "term": "4. Vikend potepanja"
+          },
+          {
+            "term": "6. 0. Vikend Julijci"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/7844648273596733145.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-8046493871138462232"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Planika - Triglav (2864 m) - Savica"
+        },
+        "published": {
+          "$t": "2023-08-13T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Vikend Julijci"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/8046493871138462232.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-434146761037364177"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Savica - Špičje - Kanjavčeve police - Planika"
+        },
+        "published": {
+          "$t": "2023-08-12T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Vikend Julijci"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/434146761037364177.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-4955886026003082594"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Izpitna tura smer Ogrin-Omersa v Ojstrici (2350 m)"
+        },
+        "published": {
+          "$t": "2023-07-16T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Alpinizem"
+          },
+          {
+            "term": "1. Plezanje"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Kamniško-Savinjske Alpe"
+          },
+          {
+            "term": "4. Celodnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/4955886026003082594.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-7471899682960191519"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Sardinija  (25. 4. – 2. 5. 2023)"
+        },
+        "published": {
+          "$t": "2023-05-02T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Potepanja"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "2. Sardinija"
+          },
+          {
+            "term": "4. Daljša potepanja"
+          },
+          {
+            "term": "6. 0. Sardinija 2023"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/7471899682960191519.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-4953457779772022997"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Olbia"
+        },
+        "published": {
+          "$t": "2023-05-01T11:02:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Sprehod"
+          },
+          {
+            "term": "2. Sardinija"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "6. 0. Sardinija 2023"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/4953457779772022997.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-632960232615639364"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Ferrata di Giorré"
+        },
+        "published": {
+          "$t": "2023-05-01T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "2. Sardinija"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "6. 0. Sardinija 2023"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/632960232615639364.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-4988707135143727580"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Ferrata della Regina"
+        },
+        "published": {
+          "$t": "2023-05-01T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Pohodništvo"
+          },
+          {
+            "term": "2. Sardinija"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "6. 0. Sardinija 2023"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/4988707135143727580.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-5085043404565588808"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Cagliari, Sella del Diavolo"
+        },
+        "published": {
+          "$t": "2023-04-30T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Sprehod"
+          },
+          {
+            "term": "2. Sardinija"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Mesto"
+          },
+          {
+            "term": "5. Polotok"
+          },
+          {
+            "term": "6. 0. Sardinija 2023"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/5085043404565588808.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-1990092467585831416"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Pedra Longa"
+        },
+        "published": {
+          "$t": "2023-04-29T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Sardinija"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "6. 0. Sardinija 2023"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/1990092467585831416.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-5916413402263066283"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Gola su Gorropu"
+        },
+        "published": {
+          "$t": "2023-04-29T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Sardinija"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Kanjon"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Sardinija 2023"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/5916413402263066283.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-323142902510951807"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Ferrata di Badde Pentumas"
+        },
+        "published": {
+          "$t": "2023-04-28T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "2. Sardinija"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Kanjon"
+          },
+          {
+            "term": "6. 0. Sardinija 2023"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/323142902510951807.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-3196322640438689355"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Ferrata degli Angeli (Tavolara)"
+        },
+        "published": {
+          "$t": "2023-04-27T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Sardinija"
+          },
+          {
+            "term": "3. Tavolara"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "5. Otok"
+          },
+          {
+            "term": "6. 0. Sardinija 2023"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/3196322640438689355.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-5058149366592936178"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Livorno – Olbia"
+        },
+        "published": {
+          "$t": "2023-04-27T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ostalo"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "2. Sardinija"
+          },
+          {
+            "term": "6. 0. Sardinija 2023"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/5058149366592936178.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-345738105295770885"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Pisa"
+        },
+        "published": {
+          "$t": "2023-04-26T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Sprehod"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "5. Mesto"
+          },
+          {
+            "term": "6. 0. Sardinija 2023"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/345738105295770885.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-8568664732810044644"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Ferata Rocca di Badolo"
+        },
+        "published": {
+          "$t": "2023-04-26T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Ferata"
+          },
+          {
+            "term": "2. Italija"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "6. 0. Sardinija 2023"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/8568664732810044644.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-7655292700729384016"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Vrtaški vrh (1898 m), Vrtaško Sleme (2077 m)"
+        },
+        "published": {
+          "$t": "2023-03-11T11:00:00.000-08:00"
+        },
+        "category": [
+          {
+            "term": "1. Gorništvo"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/7655292700729384016.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-5879329394478267483"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Prvi turni smuk"
+        },
+        "published": {
+          "$t": "2023-03-04T11:00:00.000-08:00"
+        },
+        "category": [
+          {
+            "term": "1. Turno smučanje"
+          },
+          {
+            "term": "2. Slovenija"
+          },
+          {
+            "term": "3. Julijske Alpe"
+          },
+          {
+            "term": "4. Poldnevni"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/5879329394478267483.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-5365967105229573557"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Ledeniška tura Saas-Fee (Švica) (24. – 28. 6. 2022)"
+        },
+        "published": {
+          "$t": "2022-06-28T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Potepanja"
+          },
+          {
+            "term": "2. Švica"
+          },
+          {
+            "term": "3. Peninske Alpe"
+          },
+          {
+            "term": "4. Vikend potepanja"
+          },
+          {
+            "term": "6. 0. Vikend Švica"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/5365967105229573557.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-2051723886812285027"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Nadelhorn (4327 m)"
+        },
+        "published": {
+          "$t": "2022-06-27T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Alpinizem"
+          },
+          {
+            "term": "2. Švica"
+          },
+          {
+            "term": "3. Peninske Alpe"
+          },
+          {
+            "term": "4. Dvodnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Vikend Švica"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/2051723886812285027.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-2968132457996083596"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Saas-Fee"
+        },
+        "published": {
+          "$t": "2022-06-25T11:01:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Sprehod"
+          },
+          {
+            "term": "2. Švica"
+          },
+          {
+            "term": "4. Kratki"
+          },
+          {
+            "term": "5. Mesto"
+          },
+          {
+            "term": "6. 0. Vikend Švica"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/2968132457996083596.json"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-4082335973374435353.post-4140963994584390119"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Allalinhorn (4027 m)"
+        },
+        "published": {
+          "$t": "2022-06-25T11:00:00.000-07:00"
+        },
+        "category": [
+          {
+            "term": "1. Alpinizem"
+          },
+          {
+            "term": "2. Švica"
+          },
+          {
+            "term": "3. Peninske Alpe"
+          },
+          {
+            "term": "4. Poldnevni"
+          },
+          {
+            "term": "5. Moji najljubši"
+          },
+          {
+            "term": "6. 0. Vikend Švica"
+          }
+        ],
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "application/json",
+            "href": "posts/4140963994584390119.json"
+          }
+        ]
+      }
+    ]
+  }
+}
