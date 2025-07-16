@@ -1,4 +1,6 @@
 var postDetails = [];
+const WindowBaseUrl = window.location.origin;
+
 document.querySelectorAll('script').forEach(script => {
   var scriptContent = script.innerText;
 
@@ -25,15 +27,13 @@ function getPostByTitle(postTitle, callback) {
 
     if (isNumeric) {
         // If postTitle is a number, treat it as a Post ID
-        apiUrl = `${blogUrl}/feeds/posts/default/${postTitle}?alt=json`;
+        apiUrl = `${WindowBaseUrl}/data/posts/${postTitle}.json`;
     } else {
         // Otherwise, search by title
-        apiUrl = `${blogUrl}/feeds/posts/default?q=${encodeURIComponent(postTitle)}&alt=json`;
+        apiUrl = `${WindowBaseUrl}/data/posts/${encodeURIComponent(postTitle)}.json`;
     }
 
-    const proxiedUrl = `https://corsproxy.io/?${apiUrl}`;
-
-    fetch(proxiedUrl)
+    fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
             if (isNumeric) {

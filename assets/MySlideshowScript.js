@@ -1,4 +1,4 @@
-    const blogUrl = "https://gorski-uzitki.blogspot.com";
+    // const blogUrl = "https://gorski-uzitki.blogspot.com";
     const initPhotos = 1; // Determine range of photos to be shown on slideshows and in posts
     const initMapPhotos = -1; // Determine range of photos to be shown on map
 
@@ -733,18 +733,16 @@
         
         // Determine the feed URL based on the slideshow title
         if (slideshowTitles[index] === "All pictures") {
-            feedUrl = `${blogUrl}feeds/posts/default?start-index=${slideshows[index].startIndex}&max-results=${slideshows[index].maxResults}&alt=json`;
+            feedUrl = `${WindowBaseUrl}/data/all-posts.json`;
         } else if (slideshowTitles[index] === "Make post slideshow" || slideshowTitles[index] === "Make trip slideshow") {
-            feedUrl = `${blogUrl}/feeds/posts/default/${postId}?alt=json`; // Get by postID
+            feedUrl = `${WindowBaseUrl}/data/posts/${postId}.json`; // Get by postID
         } else {
-            feedUrl = `${blogUrl}/feeds/posts/default?q=${encodeURIComponent(slideshowTitles[index])}&alt=json`;
+            feedUrl = `${WindowBaseUrl}/data/posts/${encodeURIComponent(slideshowTitles[index])}.json`;
         }
         // console.log("feedUrl:",feedUrl)
 
-        const proxiedUrl = `https://corsproxy.io/?${feedUrl}`;
-
         // Fetch the data from the constructed feed URL
-        fetch(proxiedUrl)
+        fetch(feedUrl)
             .then(response => response.json())
             .then(async (data) => {
                 // The entries are in data.entry, if retrieving data by postId
@@ -867,11 +865,11 @@
                                     });
                                 } else if (element.type === 'script') {
                                     const additionalPostId = element.postId;
-                                    const additionalPostUrl = `${blogUrl}/feeds/posts/default/${additionalPostId}?alt=json`;
-                                    const proxiedUrl = `https://corsproxy.io/?${additionalPostUrl}`;
+                                    const additionalPostUrl = `${WindowBaseUrl}/data/posts/${additionalPostId}.json`;
+                                    
 
                                     try {
-                                        const additionalPostResponse = await fetch(proxiedUrl);
+                                        const additionalPostResponse = await fetch(additionalPostUrl);
 
                                         if (!additionalPostResponse.ok) {
                                             console.error(`Failed to fetch additional post with ID ${additionalPostId}: HTTP ${additionalPostResponse.status}`);
