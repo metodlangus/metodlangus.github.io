@@ -70,7 +70,9 @@ def main():
 
         local_link = f"posts/{post_id}.json"
 
-        # Save individual post with full Blogger structure (optimized)
+        # Extract media$thumbnail if exists
+        media_thumbnail = post.get("media$thumbnail", None)
+
         post_entry = {
             "version": "1.0",
             "encoding": "UTF-8",
@@ -96,6 +98,9 @@ def main():
             }
         }
 
+        if media_thumbnail:
+            post_entry["entry"]["media$thumbnail"] = media_thumbnail
+
         with open(POSTS_DIR / f"{post_id}.json", "w", encoding="utf-8") as pf:
             json.dump(post_entry, pf, ensure_ascii=False, indent=2)
 
@@ -111,6 +116,9 @@ def main():
                 "href": local_link
             }]
         }
+
+        if media_thumbnail:
+            summary_entry["media$thumbnail"] = media_thumbnail
 
         blogger_feed["feed"]["entry"].append(summary_entry)
 
