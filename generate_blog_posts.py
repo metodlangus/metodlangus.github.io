@@ -361,6 +361,10 @@ def fetch_and_save_all_posts():
       <div class="labels">
         {labels_sidebar_html}
       </div>
+      <h3>Strani</h3>
+      <ul class="strani-list">
+        <li><a href="predvajalnik-nakljucnih-fotografij.html">Predvajalnik naključnih fotografij</a></li>
+      </ul>
     </div>
 
     <div class=\"content-wrapper\" style=\"flex: 1;\">
@@ -464,6 +468,46 @@ def generate_label_pages(label_posts_raw):
         print(f"Generated label page: {filename}")
 
 
+def generate_predvajalnik_page():
+    output_path = OUTPUT_DIR.parent / "predvajalnik-nakljucnih-fotografij.html"
+    html_content = """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Predvajalnik naključnih fotografij</title>
+
+  <script>
+    var postTitle = {title!r};
+    var postId = {postId!r};
+    var author = {author!r};
+  </script>
+
+  <link rel="stylesheet" href="../../assets/Main.css">
+  <link rel="stylesheet" href="../../assets/MyMapScript.css">
+  <link rel="stylesheet" href="../../assets/MySlideshowScript.css">
+  <link rel="stylesheet" href="../../assets/MyPostContainerScript.css">
+
+</head>
+<body>
+  <script> 
+    <!-- Insert image slideshow via title -->
+    var slideshowTitle0 = 'All pictures';
+    var CoverPhoto0 = '';
+  </script>
+
+  <script src="../../assets/MyMapScript.js" defer></script>
+  <script src="../../assets/MySlideshowScript.js" defer></script>
+  <script src="../../assets/MyPostContainerScript.js" defer></script>
+  <script src="../../assets/Main.js" defer></script>
+
+</body>
+</html>"""
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(html_content)
+    print(f"Generated predvajalnik page: {output_path}")
+
+
 if __name__ == "__main__":
     label_posts_raw = fetch_and_save_all_posts()  # This function should return { label: [ {postId, date, html}, ... ] }
     generate_label_pages(label_posts_raw)
+    generate_predvajalnik_page()
