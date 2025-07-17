@@ -18,9 +18,6 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 BASE_SITE_URL = "https://metodlangus.github.io/posts"
 
 
-# def slugify(value):
-#     return re.sub(r'\s+', '-', value.strip().lower())
-
 def fetch_all_entries():
     print("Fetching all paginated posts...")
     all_entries = []
@@ -398,16 +395,21 @@ def fetch_and_save_all_posts():
 
         print(f"Saved: {filename}")
 
-    return label_posts
+    return label_posts_raw
 
 
 
-def generate_label_pages(label_posts):
+def remove_first_prefix(label):
+    return re.sub(r"^\d+\.\s*", "", label)
+
+def generate_label_pages(label_posts_raw):
     labels_dir = OUTPUT_DIR.parent / "search/labels"
     labels_dir.mkdir(parents=True, exist_ok=True)
 
-    for label, posts in label_posts.items():
-        label_slug = slugify(label)
+    for label, posts in label_posts_raw.items():
+        # Remove only the first numeric prefix from label for slug
+        label_slug = slugify(remove_first_prefix(label))
+        label_clean = re.sub(r"^(?:\d+\.\s*)+", "", label)
         filename = labels_dir / f"{label_slug}.html"
 
         # Sort posts by date descending (newest first)
@@ -431,7 +433,7 @@ def generate_label_pages(label_posts):
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Prikaz objav z oznako: {label}</title>
+  <title>Prikaz objav z oznako: {label_clean}</title>
 
   <link rel="stylesheet" href="../../assets/Main.css">
   <link rel="stylesheet" href="../../assets/MyMapScript.css">
@@ -440,7 +442,7 @@ def generate_label_pages(label_posts):
 
 </head>
 <body>
-  <h1>Prikaz objav z oznako: {label}</h1>
+  <h1>Prikaz objav z oznako: {label_clean}</h1>
 
   <div class="blog-posts hfeed container">
     {post_scripts_html}
@@ -463,5 +465,5 @@ def generate_label_pages(label_posts):
 
 
 if __name__ == "__main__":
-    label_posts = fetch_and_save_all_posts()  # This function should return { label: [ {postId, date, html}, ... ] }
-    generate_label_pages(label_posts)
+    label_posts_raw = fetch_and_save_all_posts()  # This function should return { label: [ {postId, date, html}, ... ] }
+    generate_label_pages(label_posts_raw)
