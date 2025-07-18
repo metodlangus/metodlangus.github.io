@@ -67,12 +67,163 @@ def fix_images_for_lightbox(html_content):
         img["src"] = new_src
     return str(soup)
 
+def generate_labels_sidebar_html(feed_url=BASE_FEED_URL):
+    """Fetches labels from a Blogger feed and returns structured sidebar HTML."""
+
+    response = requests.get(feed_url, params={"alt": "json"})
+    feed_data = response.json()
+
+    # Extract label terms
+    labels_raw = [cat["term"] for cat in feed_data["feed"].get("category", [])]
+
+    # Section titles by prefix number
+    prefix_titles = {
+        1: "Kategorija",
+        2: "Država",
+        3: "Gorstvo",
+        4: "Časovno",
+        5: "Ostalo",
+        # 6 intentionally excluded from display
+    }
+
+    # Group labels by prefix
+    label_groups = defaultdict(list)
+    for label in labels_raw:
+        match = re.match(r'^(\d+)', label)
+        prefix = int(match.group(1)) if match else 99
+        label_groups[prefix].append(label)
+
+    # Sort prefixes and skip section 6
+    sorted_prefixes = [p for p in sorted(label_groups.keys()) if p != 6]
+
+    # HTML build
+    label_html_parts = ["<aside class='sidebar-labels'><h3><b>Navigacija</b></h3>"]
+
+    for idx, prefix in enumerate(sorted_prefixes):
+        labels = sorted(label_groups[prefix], key=lambda l: l.lower())
+        section_title = prefix_titles.get(prefix, "Ostalo")
+
+        if idx == 0:
+            label_html_parts.append(f"<div class='first-items'><h3>{section_title}:</h3><ul class='label-list'>")
+        elif idx == 1:
+            label_html_parts.append("<div class='remaining-items hidden' style='height:auto;'>")
+            label_html_parts.append(f"<h3>{section_title}:</h3><ul class='label-list'>")
+        else:
+            label_html_parts.append(f"<h3>{section_title}:</h3><ul class='label-list'>")
+
+        for raw_label in labels:
+            clean_label = re.sub(r'^\d+\.\s*', '', raw_label)
+            slug = slugify(clean_label)
+            label_html_parts.append(
+                f"<li><a class='label-name' href='../../../search/labels/{slug}.html'>{clean_label}</a></li>"
+            )
+
+        label_html_parts.append("</ul>")
+
+    # Closing tags
+    if sorted_prefixes:
+        label_html_parts.append("</div>")
+
+    if len(sorted_prefixes) > 1:
+        label_html_parts.append("""
+        <span class='show-more pill-button'>Pokaži več</span>
+        <span class='show-less pill-button hidden'>Pokaži manj</span>
+        """)
+
+    label_html_parts.append("</aside>")
+
+    return "\n".join(label_html_parts)
+
+def generate_post_navigation_html(entries, slugs, index, local_tz, year, month):
+    """
+    Generates HTML for previous and next post navigation based on the current post index.
+
+    Args:
+        entries (list): List of feed entry dicts.
+        slugs (list): List of slug strings.
+        index (int): Index of the current post.
+        local_tz (tzinfo): Local timezone to convert dates.
+        year (str): Fallback year (usually current post's year).
+        month (str): Fallback month (usually current post's month).
+
+    Returns:
+        str: HTML navigation block.
+    """
+
+    # --- Previous post ---
+    if index < len(entries) - 1:
+        prev_entry = entries[index + 1]
+        prev_title = prev_entry.get("title", {}).get("$t", "")
+        prev_slug = slugs[index + 1]
+        prev_published = prev_entry.get("published", {}).get("$t", "")
+
+        try:
+            prev_parsed_date = parser.isoparse(prev_published).astimezone(local_tz)
+            prev_year = str(prev_parsed_date.year)
+            prev_month = f"{prev_parsed_date.month:02d}"
+        except Exception:
+            prev_year, prev_month = year, month
+    else:
+        prev_slug = prev_title = prev_year = prev_month = ""
+
+    # --- Next post ---
+    if index > 0:
+        next_entry = entries[index - 1]
+        next_title = next_entry.get("title", {}).get("$t", "")
+        next_slug = slugs[index - 1]
+        next_published = next_entry.get("published", {}).get("$t", "")
+
+        try:
+            next_parsed_date = parser.isoparse(next_published).astimezone(local_tz)
+            next_year = str(next_parsed_date.year)
+            next_month = f"{next_parsed_date.month:02d}"
+        except Exception:
+            next_year, next_month = year, month
+    else:
+        next_slug = next_title = next_year = next_month = ""
+
+    # --- HTML navigation block ---
+    nav_html = """
+    <div class="nav-links-wrapper" style="margin-top: 2em;">
+      <div class="nav-links" style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+    """
+
+    if prev_slug:
+        nav_html += f"""
+        <div class="prev-link" style="text-align: left; max-width: 45%;">
+          <div class="pager-title">Prejšnja objava</div>
+          <a href="../../{prev_year}/{prev_month}/{prev_slug}.html">&larr; {prev_title}</a>
+        </div>
+        """
+
+    if next_slug:
+        nav_html += f"""
+        <div class="next-link" style="text-align: right; max-width: 45%;">
+          <div class="pager-title">Naslednja objava</div>
+          <a href="../../{next_year}/{next_month}/{next_slug}.html">{next_title} &rarr;</a>
+        </div>
+        """
+
+    nav_html += """
+      </div>
+    </div>
+    """
+
+    return nav_html
+
+# Helper to remove just the first prefix
+def remove_first_prefix(label):
+    return re.sub(r"^\d+\.\s*", "", label)
+
+# Helper to remove all numeric prefixes
+def remove_all_prefixes(label):
+    return re.sub(r"^(?:\d+\.\s*)+", "", label)
+
 def fetch_and_save_all_posts():
     entries = fetch_all_entries()
     slugs = [slugify(entry.get("title", {}).get("$t", f"untitled-{i}")) or f"post-{i}" for i, entry in enumerate(entries)]
 
     archive_dict = defaultdict(lambda: defaultdict(list))
-    label_posts = defaultdict(list)  # Collect posts by label here
     label_posts_raw = defaultdict(list)  # Collect posts by label here
 
     local_tz = ZoneInfo("Europe/Ljubljana")  # UTC+2 (with daylight saving support)
@@ -93,6 +244,8 @@ def fetch_and_save_all_posts():
 
         archive_dict[year][month].append((slugs[i], title, i))
 
+    # Extract all lables navigation
+    labels_sidebar_html = generate_labels_sidebar_html()
 
     for index, entry in enumerate(entries):
         title = entry.get("title", {}).get("$t", f"untitled-{index}")
@@ -134,68 +287,19 @@ def fetch_and_save_all_posts():
         metadata_html = f"<div class='post-date' data-date='{formatted_date}'></div>"
 
         # Previous and next posts with correct date paths
-        if index < len(entries) - 1:
-            prev_entry = entries[index + 1]
-            prev_title = prev_entry.get("title", {}).get("$t", "")
-            prev_slug = slugs[index + 1]
+        # Assuming: entries, slugs, index, local_tz, year, month are defined
+        nav_html = generate_post_navigation_html(entries, slugs, index, local_tz, year, month)
 
-            prev_published = prev_entry.get("published", {}).get("$t", "")
-            try:
-                prev_parsed_date = parser.isoparse(prev_published).astimezone(local_tz)
-                prev_year = str(prev_parsed_date.year)
-                prev_month = f"{prev_parsed_date.month:02d}"
-            except Exception:
-                prev_year, prev_month = year, month
-        else:
-            prev_slug = prev_title = prev_year = prev_month = ""
-
-        if index > 0:
-            next_entry = entries[index - 1]
-            next_title = next_entry.get("title", {}).get("$t", "")
-            next_slug = slugs[index - 1]
-
-            next_published = next_entry.get("published", {}).get("$t", "")
-            try:
-                next_parsed_date = parser.isoparse(next_published).astimezone(local_tz)
-                next_year = str(next_parsed_date.year)
-                next_month = f"{next_parsed_date.month:02d}"
-            except Exception:
-                next_year, next_month = year, month
-        else:
-            next_slug = next_title = next_year = next_month = ""
-
-        # Navigation HTML
-        nav_html = """
-        <div class=\"nav-links-wrapper\" style=\"margin-top: 2em;\">
-          <div class=\"nav-links\" style=\"display: flex; justify-content: space-between; flex-wrap: wrap;\">
-        """
-        if prev_slug:
-            nav_html += f"""
-            <div class=\"prev-link\" style=\"text-align: left; max-width: 45%;\">
-              <div class=\"pager-title\">Prejšnja objava</div>
-              <a href=\"../../{prev_year}/{prev_month}/{prev_slug}.html\">&larr; {prev_title}</a>
-            </div>
-            """
-        if next_slug:
-            nav_html += f"""
-            <div class=\"next-link\" style=\"text-align: right; max-width: 45%;\">
-              <div class=\"pager-title\">Naslednja objava</div>
-              <a href=\"../../{next_year}/{next_month}/{next_slug}.html\">{next_title} &rarr;</a>
-            </div>
-            """
-        nav_html += """
-          </div>
-        </div>
-        """
 
         # Extract labels/categories
-        labels = []
         labels_raw = []
+
         if "category" in entry and isinstance(entry["category"], list):
             for cat in entry["category"]:
                 label_raw = cat.get("term", "")
-                # Keep original label with prefix
                 labels_raw.append(label_raw)
+
+                # Store raw-labeled post
                 label_posts_raw[label_raw].append({
                     "title": title,
                     "slug": slug,
@@ -204,27 +308,20 @@ def fetch_and_save_all_posts():
                     "date": formatted_date,
                     "postId": postId
                 })
-                label_clean = re.sub(r"^(?:\d+\.\s*)+", "", label_raw)
-                labels.append(label_clean)
-                # Collect post info for label page generation
-                label_posts[label_clean].append({
-                    "title": title,
-                    "slug": slug,
-                    "year": year,
-                    "month": month,
-                    "date": formatted_date,
-                    "postId": postId
-                })
 
-        # Build labels HTML linking to static label pages
-        if labels:
-            label_links = []
-            for label_clean in labels:
-                label_url = f"../../../search/labels/{slugify(label_clean)}.html"
-                label_links.append(f"<a class='my-labels' href='{label_url}'>{label_clean}</a>")
-            labels_html = "<div class='post-labels'>" + " ".join(label_links) + "</div>"
-        else:
-            labels_html = "<div class='post-labels'><em>No labels</em></div>"
+            # Build labels HTML linking to static label pages
+            if labels_raw:
+                label_links = []
+                for label_raw in labels_raw:
+                    slug_part = remove_first_prefix(label_raw)  # Slug keeps only the 2nd prefix if present
+                    label_url = f"../../../search/labels/{slugify(slug_part)}.html"
+                    label_text = remove_all_prefixes(label_raw)  # Text removes all prefixes
+                    label_links.append(f"<a class='my-labels' href='{label_url}'>{label_text}</a>")
+
+                labels_html = "<div class='post-labels'>" + " ".join(label_links) + "</div>"
+            else:
+                labels_html = "<div class='post-labels'><em>No labels</em></div>"
+
 
         # Archive sidebar HTML
         archive_html_parts = ["<aside class='sidebar-archive'><h3>Arhiv</h3>"]
@@ -255,63 +352,6 @@ def fetch_and_save_all_posts():
 
         archive_html_parts.append("</aside>")
         archive_sidebar_html = "\n".join(archive_html_parts)
-
-
-        # Organize labels by prefix
-        label_groups = defaultdict(list)
-
-        for label in label_posts_raw:
-            prefix_match = re.match(r'^(\d+)', label)
-            prefix = int(prefix_match.group(1)) if prefix_match else 99  # 99 = Uncategorized/Other
-            label_groups[prefix].append(label)
-
-        # Sort groups by prefix
-        sorted_prefixes = sorted(label_groups.keys())
-
-        label_html_parts = ["<aside class='sidebar-labels'><h3><b>Navigacija</b></h3>"]
-
-        # Mapping of prefixes to section titles
-        prefix_titles = {
-            1: "Kategorija",
-            2: "Država",
-            3: "Gorstvo",
-            4: "Časovno",
-            5: "Ostalo"
-        }
-
-        # Generate HTML blocks
-        for idx, prefix in enumerate(sorted_prefixes):
-            group_labels = sorted(label_groups[prefix], key=lambda l: l.lower())
-            title_label = prefix_titles.get(prefix, "Ostalo")
-            
-            if idx == 0:
-                label_html_parts.append(f"<div class='first-items'><h3>{title_label}:</h3><ul class='label-list'>")
-            else:
-                if idx == 1:
-                    label_html_parts.append("<div class='remaining-items hidden' style='height:auto;'>")
-                label_html_parts.append(f"<h3>{title_label}:</h3><ul class='label-list'>")
-
-            for label in group_labels:
-                clean_label = re.sub(r'^\d+\.\s*', '', label)
-                slug_label = slugify(clean_label)
-                label_html_parts.append(
-                    f"<li><a class='label-name' href='../../../search/labels/{slug_label}.html'>{clean_label}</a></li>"
-                )
-
-            label_html_parts.append("</ul>")
-
-        # Close remaining-items div if it was added
-        if len(sorted_prefixes) > 1:
-            label_html_parts.append("</div>")  # End of .remaining-items
-
-            label_html_parts.append("""
-            <span class='show-more pill-button'>Pokaži več</span>
-            <span class='show-less pill-button hidden'>Pokaži manj</span>
-            """)
-
-        label_html_parts.append("</aside>")
-        labels_sidebar_html = "\n".join(label_html_parts)
-
 
 
         post_dir = OUTPUT_DIR / year / month
@@ -403,9 +443,6 @@ def fetch_and_save_all_posts():
 
 
 
-def remove_first_prefix(label):
-    return re.sub(r"^\d+\.\s*", "", label)
-
 def generate_label_pages(label_posts_raw):
     labels_dir = OUTPUT_DIR.parent / "search/labels"
     labels_dir.mkdir(parents=True, exist_ok=True)
@@ -457,7 +494,7 @@ def generate_label_pages(label_posts_raw):
   <script src="../../assets/MyPostContainerScript.js" defer></script>
   <script src="../../assets/Main.js" defer></script>
 
-  <p><a href="../search/labels">Back to home</a></p>
+  <p><a href="../../">Back to home</a></p>
 
 </body>
 </html>"""
