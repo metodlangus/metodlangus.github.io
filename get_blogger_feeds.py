@@ -55,7 +55,7 @@ def main():
         "encoding": "UTF-8",
         "feed": {
             **feed_meta,
-            "entry": []  # Will contain minimal summaries
+            "entry": []  # Will contain full content now
         }
     }
 
@@ -69,11 +69,10 @@ def main():
         original_link = next((l["href"] for l in post.get("link", []) if l["rel"] == "alternate"), "")
 
         local_link = f"posts/{post_id}.json"
-
-        # Extract media$thumbnail if exists
         media_thumbnail = post.get("media$thumbnail", None)
 
-        post_entry = {
+        # Save full post as separate file
+        full_post_entry = {
             "version": "1.0",
             "encoding": "UTF-8",
             "entry": {
@@ -99,22 +98,31 @@ def main():
         }
 
         if media_thumbnail:
-            post_entry["entry"]["media$thumbnail"] = media_thumbnail
+            full_post_entry["entry"]["media$thumbnail"] = media_thumbnail
 
         with open(POSTS_DIR / f"{post_id}.json", "w", encoding="utf-8") as pf:
-            json.dump(post_entry, pf, ensure_ascii=False, indent=2)
+            json.dump(full_post_entry, pf, ensure_ascii=False, indent=2)
 
-        # Add minimal info to main feed summary
+        # Add full content directly to feed summary (not just a pointer)
         summary_entry = {
             "id": post["id"],
             "title": post["title"],
             "published": {"$t": published},
+            "updated": {"$t": updated},
             "category": [{"term": lbl} for lbl in labels],
-            "link": [{
-                "rel": "alternate",
-                "type": "application/json",
-                "href": local_link
-            }]
+            "content": {"$t": content},
+            "link": [
+                {
+                    "rel": "alternate",
+                    "type": "text/html",
+                    "href": original_link
+                },
+                {
+                    "rel": "self",
+                    "type": "application/json",
+                    "href": local_link
+                }
+            ]
         }
 
         if media_thumbnail:
@@ -122,7 +130,7 @@ def main():
 
         blogger_feed["feed"]["entry"].append(summary_entry)
 
-    # Save all-posts.json
+    # Save all-posts.json (with full content now)
     with open(DATA_DIR / "all-posts.json", "w", encoding="utf-8") as sf:
         json.dump(blogger_feed, sf, ensure_ascii=False, indent=2)
 
