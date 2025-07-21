@@ -226,7 +226,7 @@ def fetch_and_save_all_posts():
     slug_counts = defaultdict(lambda: defaultdict(int))
     
     slugs = []
-    
+
     archive_dict = defaultdict(lambda: defaultdict(list))
     label_posts_raw = defaultdict(list)  # Collect posts by label here
 
@@ -413,10 +413,11 @@ def fetch_and_save_all_posts():
       <div class="labels">
         {labels_sidebar_html}
       </div>
-      <h3>Strani</h3>
-      <ul class="strani-list">
-        <li><a href="../../../predvajalnik-nakljucnih-fotografij.html">Predvajalnik naključnih fotografij</a></li>
-      </ul>
+      <div class="pages">
+        <aside class='sidebar-pages'><h3>Strani</h3>
+          <li><a href="../../../predvajalnik-nakljucnih-fotografij.html">Predvajalnik naključnih fotografij</a></li>
+        </aside>
+      </div>  
     </div>
 
     <div class=\"content-wrapper\" style=\"flex: 1;\">

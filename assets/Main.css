@@ -49,7 +49,8 @@
     background: white;
     padding: 2rem;
     border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    margin-top: 10px; /* fix typo here */
   }
 
 
@@ -137,57 +138,7 @@
 
 
 
-/*.sidebar-archive {
-  width: 220px;
-  flex-shrink: 0;
-  background: #f7f7f7;
-  padding: 1em;
-  border-right: 1px solid #ccc;
-  font-size: 0.9em;
-}*/
-
-.sidebar-archive h3 {
-  margin-top: 0;
-}
-
-.sidebar-archive ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.sidebar-archive li {
-  margin: 0.3em 0;
-}
-
-.sidebar-archive li a {
-  text-decoration: none;
-  color: #333;
-}
-
-.sidebar-archive li.active-post a {
-  font-weight: bold;
-  color: #007acc;
-}
-
-
-.sidebar-archive .month-group {
-  margin-left: 1em; /* Indents the month block */
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*sidebar Css*/
+/* sidebar archive */
 
 .sidebar-archive {
   font-family: sans-serif;
@@ -297,7 +248,7 @@ a {
 }
 
 
-
+/* Sidebar lables */
 .sidebar-labels {
   margin-top: 2em;
 }
@@ -308,11 +259,15 @@ a {
   list-style: none;
   padding-left: 0;
 }
+
 .label-list li {
-  margin-bottom: 0.3em;
+    background-color: rgba(243, 137, 29, 0.10);
+    border: 1px solid rgba(243, 137, 29, 0.5);
+    border-radius: 15px;
+    display: inline-block;
+    margin: 4px 4px 4px 0;
+    padding: 3px 8px;
 }
-
-
 
 .pill-button {
   background-color: #eee;
@@ -337,84 +292,9 @@ a {
 }
 
 .archive,
-.labels {
+.labels,
+.pages {
   background: #f9f9f9;
   padding: 1rem;
   border-radius: 8px;
 }
-
-
-
-/* Ensures pills appear side by side and wrap */
-ul.label-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-/* Removes vertical spacing between li items */
-ul.label-list li {
-  margin: 0;
-  padding: 0;
-}
-
-/* Styles the pill links
-.label-name {
-  display: inline-block;
-  padding: 6px 12px;
-  border: 1px solid #d97c14;
-  border-radius: 20px;
-  background-color: #fff8f0;
-  color: #d97c14;
-  font-size: 14px;
-  text-decoration: none;
-  transition: all 0.2s ease-in-out;
-  white-space: nowrap;
-}
-
-.label-name:hover {
-  background-color: #ffe5cc;
-  color: #b55700;
-  border-color: #b55700;
-} */
-
-
-ul.label-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: flex-start;
-}
-
-ul.label-list li {
-  margin: 0;
-  padding: 0;
-}
-
-
-li {
-    background-color: rgba(243, 137, 29, 0.10);
-    border: 1px solid rgba(243, 137, 29, 0.5);
-    border-radius: 15px;
-    display: inline-block;
-    margin: 4px 4px 4px 0;
-    padding: 3px 8px;
-}
-
-
-.Label ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-}
-
-
