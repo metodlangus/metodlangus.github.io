@@ -80,13 +80,7 @@ function insertPostContainer(postTitle, displayMode, scriptTag) {
       postLink.classList.add('my-post-link');
 
       // Convert post title to a slug (lowercase, dashes, no special chars)
-      var slug = post.title.$t
-        .toLowerCase()
-        .normalize("NFD")                         // Split accents from letters
-        .replace(/[\u0300-\u036f]/g, '')         // Remove accents (diacritics)
-        .replace(/[^\w\s-]/g, '')                // Remove remaining special characters
-        .replace(/\s+/g, '-')                    // Replace spaces with dashes
-        .replace(/-+/g, '-');                    // Collapse multiple dashes
+      var slug = slugify(post.title.$t)
 
       var publishedDate = new Date(post.published.$t);
 
@@ -213,13 +207,13 @@ function insertPostContainer(postTitle, displayMode, scriptTag) {
 
 function slugify(text) {
   return text
-    .normalize('NFD')                      // Decompose diacritics
-    .replace(/[\u0300-\u036f]/g, '')       // Remove diacritic marks
-    .trim()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/ß/g, 'ss')  // important to replicate python-slugify
     .toLowerCase()
-    .replace(/^\d+\.\s*/, '')              // Remove numeric prefix like "1. "
-    .replace(/\s+/g, '-')                  // Replace spaces with hyphens
-    .replace(/[^\w\-]+/g, '')              // Remove non-word characters
-    .replace(/\-\-+/g, '-');               // Collapse multiple dashes
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
 }
 

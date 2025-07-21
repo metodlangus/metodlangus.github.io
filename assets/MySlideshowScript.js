@@ -766,6 +766,21 @@
                         buildSlides(index);
                         return;
                     }
+
+                    // Set the slideshow quality for the current index
+                    setSlideshowQuality(index);
+
+                    // Process all entries at once (no pagination)
+                    for (let entry of entries) {
+                        processEntry(index, entry);
+                    }
+
+                    console.log('Fetched', slideshows[index].imageBuffer.length, 'images for All pictures');
+
+                    slideshows[index].shuffledImages = shuffleArray(slideshows[index].imageBuffer.slice(), index);
+                    buildSlides(index);
+
+                    return; // Prevent recursive fetch
                 }
 
                 // Set the slideshow quality for the current index
@@ -906,7 +921,7 @@
                 // Handle non-"All pictures" cases
                 if (slideshowTitles[index] !== "All pictures") {
                     if (slideshowTitles[index] === "Make post slideshow" || slideshowTitles[index] === "Make trip slideshow") {
-                        console.log('Fetched', slideshows[index].imageBuffer.length, 'images for title:', postTitle);
+                        console.log('Fetched', slideshows[index].imageBuffer.length, 'images for title:', postId);
                     } else {
                         console.log('Fetched', slideshows[index].imageBuffer.length, 'images for title:', slideshowTitles[index]);
                     }
@@ -915,11 +930,9 @@
                     buildSlides(index);
                 }
 
-                // Recursively fetch more data for "All pictures"
-                if (slideshowTitles[index] === "All pictures") {
-                    slideshows[index].startIndex += slideshows[index].maxResults;
-                    fetchData(index); // Fetch the next batch of pictures
-                }
+                // Recursively fetch more data for "All pictures" (DISABLED: now single JSON file)
+                // slideshows[index].startIndex += slideshows[index].maxResults;
+                // fetchData(index); // Fetch the next batch of pictures
 
             })
             .catch(error => {
@@ -2098,6 +2111,12 @@
             // Find the target div with class 'peak-tag'
             var targetDiv = document.querySelector(".peak-tag");
 
+            // Exit early if target div is not found
+            if (!targetDiv) {
+                console.warn("Target div not found!");
+                return; // Prevent button from being created or displayed
+            }
+
             // Create the container element
             const container = document.createElement("div");
             container.style.display = "flex";
@@ -2140,11 +2159,7 @@
             document.body.appendChild(container);
 
             // Insert the button after the target div
-            if (targetDiv) {
-                targetDiv.insertAdjacentElement("beforebegin", container);
-            } else {
-                console.error("Target div not found!");
-            }
+            targetDiv.insertAdjacentElement("beforebegin", container);
         }
     }
 
@@ -2455,7 +2470,9 @@
             sliderContainer[index].addEventListener('mouseleave', () => refreshAutoHide(index));
             autoQualityCheckbox[index].addEventListener('change', () => autoSetQuality(index));
             preloadAllButton[index].addEventListener('click', () => preloadAllImages(index));
-            toggleButton.addEventListener('click', () => toggleSlideshowOrImageVisibility(index));
+            if (typeof toggleButton !== "undefined" && toggleButton) {
+                toggleButton.addEventListener('click', () => toggleSlideshowOrImageVisibility(index));
+            }
         })
 
         document.addEventListener('fullscreenchange', () => { for (let index = 0; index < slideshows.length; index++) { updateFullscreenIcons(index); } });

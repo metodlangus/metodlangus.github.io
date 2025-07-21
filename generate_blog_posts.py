@@ -15,7 +15,7 @@ MAX_RESULTS = 25
 OUTPUT_DIR = Path(r"C:\Spletna_stran_Github\metodlangus.github.io\posts")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-BASE_SITE_URL = "https://metodlangus.github.io/posts"
+BASE_SITE_URL = "https://metodlangus.github.io"
 
 
 def fetch_all_entries():
@@ -221,8 +221,12 @@ def remove_all_prefixes(label):
 
 def fetch_and_save_all_posts():
     entries = fetch_all_entries()
-    slugs = [slugify(entry.get("title", {}).get("$t", f"untitled-{i}")) or f"post-{i}" for i, entry in enumerate(entries)]
-
+    
+    # Dictionary to track used slugs per year/month
+    slug_counts = defaultdict(lambda: defaultdict(int))
+    
+    slugs = []
+    
     archive_dict = defaultdict(lambda: defaultdict(list))
     label_posts_raw = defaultdict(list)  # Collect posts by label here
 
@@ -232,17 +236,25 @@ def fetch_and_save_all_posts():
         title = entry.get("title", {}).get("$t", f"untitled-{i}")
         published = entry.get("published", {}).get("$t", "")
         try:
-            # Parse with timezone from string
-            parsed_date = parser.isoparse(published)
-            # Convert to your local time zone
-            local_date = parsed_date.astimezone(local_tz)
-            year = str(local_date.year)
-            month = f"{local_date.month:02d}"
+            parsed_date = parser.isoparse(published).astimezone(local_tz)
+            year = str(parsed_date.year)
+            month = f"{parsed_date.month:02d}"
         except Exception as e:
             print(f"Date parse error at index {i}: {e}")
             year, month = "unknown", "unknown"
 
-        archive_dict[year][month].append((slugs[i], title, i))
+        base_slug = slugify(title) or f"post-{i}"
+
+        # Increment slug count for this year/month and base_slug
+        slug_count = slug_counts[year][(month, base_slug)]
+        if slug_count == 0:
+            unique_slug = base_slug
+        else:
+            unique_slug = f"{base_slug}-{slug_count}"
+        slug_counts[year][(month, base_slug)] += 1
+
+        slugs.append(unique_slug)
+        archive_dict[year][month].append((unique_slug, title, i))
 
     # Extract all lables navigation
     labels_sidebar_html = generate_labels_sidebar_html()
@@ -283,7 +295,7 @@ def fetch_and_save_all_posts():
         og_image = first_img_tag["src"] if first_img_tag else "https://metodlangus.github.io/assets/default-og.jpg"
 
         # Construct og:url
-        og_url = f"{BASE_SITE_URL}/{year}/{month}/{slug}.html"
+        og_url = f"{BASE_SITE_URL}/posts/{year}/{month}/{slug}.html"
         metadata_html = f"<div class='post-date' data-date='{formatted_date}'></div>"
 
         # Previous and next posts with correct date paths
@@ -403,7 +415,7 @@ def fetch_and_save_all_posts():
       </div>
       <h3>Strani</h3>
       <ul class="strani-list">
-        <li><a href="predvajalnik-nakljucnih-fotografij.html">Predvajalnik naključnih fotografij</a></li>
+        <li><a href="../../../predvajalnik-nakljucnih-fotografij.html">Predvajalnik naključnih fotografij</a></li>
       </ul>
     </div>
 
@@ -514,15 +526,15 @@ def generate_predvajalnik_page():
   <title>Predvajalnik naključnih fotografij</title>
 
   <script>
-    var postTitle = {title!r};
-    var postId = {postId!r};
-    var author = {author!r};
+    var postTitle = 'Predvajalnik naključnih fotografij';
+    var postId = '8898311262758762797';
+    var author = 'Metod';
   </script>
 
-  <link rel="stylesheet" href="../../assets/Main.css">
-  <link rel="stylesheet" href="../../assets/MyMapScript.css">
-  <link rel="stylesheet" href="../../assets/MySlideshowScript.css">
-  <link rel="stylesheet" href="../../assets/MyPostContainerScript.css">
+  <link rel="stylesheet" href="assets/Main.css">
+  <link rel="stylesheet" href="assets/MyMapScript.css">
+  <link rel="stylesheet" href="assets/MySlideshowScript.css">
+  <link rel="stylesheet" href="assets/MyPostContainerScript.css">
 
 </head>
 <body>
@@ -532,10 +544,10 @@ def generate_predvajalnik_page():
     var CoverPhoto0 = '';
   </script>
 
-  <script src="../../assets/MyMapScript.js" defer></script>
-  <script src="../../assets/MySlideshowScript.js" defer></script>
-  <script src="../../assets/MyPostContainerScript.js" defer></script>
-  <script src="../../assets/Main.js" defer></script>
+  <script src="assets/MyMapScript.js" defer></script>
+  <script src="assets/MySlideshowScript.js" defer></script>
+  <script src="assets/MyPostContainerScript.js" defer></script>
+  <script src="assets/Main.js" defer></script>
 
 </body>
 </html>"""
