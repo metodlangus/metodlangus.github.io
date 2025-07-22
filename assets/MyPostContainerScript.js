@@ -1,6 +1,6 @@
 var postDetails = [];
-const WindowBaseUrl = window.location.origin;
-// const WindowBaseUrl = window.location.origin + "/metodlangus.github.io/";
+// const WindowBaseUrl = window.location.origin;
+const WindowBaseUrl = window.location.origin + "/metodlangus.github.io/";
 
 document.querySelectorAll('script').forEach(script => {
   var scriptContent = script.innerText;
@@ -102,15 +102,17 @@ function insertPostContainer(postTitle, displayMode, scriptTag) {
       
       // Check if post.category exists and has elements
       if (post.category?.length > 0) {
-        // Check if there's a category starting with "1. "
+        // Find a category starting with "1. "
         var titleLabel = post.category.find(category => category.term.startsWith("1. "));
         if (titleLabel) {
+          // Remove the prefix from the term
+          var cleanTerm = titleLabel.term.replace(/^\d+\.\s*/, '');
 
           // Create the new label for "1. " category
           var labelOne = document.createElement('a');
           labelOne.classList.add('my-labels');
-          labelOne.href =  WindowBaseUrl + '/search/labels/' + slugify(titleLabel.term) + '.html';
-          labelOne.textContent = titleLabel.term.replace(/^\d+\.\s*/, ''); // Remove the prefix
+          labelOne.href = WindowBaseUrl + '/search/labels/' + slugify(cleanTerm) + '.html';
+          labelOne.textContent = cleanTerm;
 
           // Append the label to the tag container
           titleContainer.appendChild(labelOne);
@@ -154,9 +156,12 @@ function insertPostContainer(postTitle, displayMode, scriptTag) {
       
       // Check if post.category exists and has elements
       if (post.category?.length > 0) {
-        // Check if there's a category starting with "6."
+        // Check if there's a category starting with "6. "
         var sixCategory = post.category.find(category => category.term.startsWith("6. "));
         if (sixCategory) {
+          // Remove the prefix from the term
+          var cleanTerm = sixCategory.term.replace(/^\d+\.\s*/, '');
+
           // Create the new tag container
           var tagContainer = document.createElement('div');
           tagContainer.classList.add('my-tag-container');
@@ -164,8 +169,8 @@ function insertPostContainer(postTitle, displayMode, scriptTag) {
           // Create the new label for "6. " category
           var labelSix = document.createElement('a');
           labelSix.classList.add('my-labels', 'label-six');
-          labelSix.href = WindowBaseUrl + '/search/labels/' + slugify(sixCategory.term) + '.html';
-          labelSix.textContent = sixCategory.term.replace(/^\d+\.\s*\d+\.\s*/, ''); // Remove the prefix
+          labelSix.href = WindowBaseUrl + '/search/labels/' + slugify(cleanTerm) + '.html';
+          labelSix.textContent = cleanTerm;
 
           // Append the label to the tag container
           tagContainer.appendChild(labelSix);
