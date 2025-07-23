@@ -53,6 +53,14 @@
     margin-top: 10px; /* fix typo here */
   }
 
+  .main-layout {
+    display: flex;
+    gap: 2em;
+  }
+  .content-wrapper {
+    flex: 1;
+  }
+
 
 /* Navigation Buttons Styling */
 .nav-links-wrapper {

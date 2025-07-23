@@ -1,3 +1,7 @@
+from collections import defaultdict
+from dateutil import parser
+from slugify import slugify
+import pytz
 import requests
 import json
 import time
@@ -9,6 +13,7 @@ FEED_URL = f"{BLOG_URL}/feeds/posts/default?alt=json"
 MAX_RESULTS = 25
 DATA_DIR = Path("data")
 POSTS_DIR = DATA_DIR / "posts"
+BASE_SITE_URL = "https://metodlangus.github.io"
 # ==============
 
 def fetch_all_posts():
@@ -43,6 +48,7 @@ def fetch_all_posts():
 def extract_post_id(post_id_url):
     return post_id_url.split("-")[-1] if "-" in post_id_url else post_id_url.split("/")[-1]
 
+
 def main():
     posts, feed_meta = fetch_all_posts()
 
@@ -59,14 +65,44 @@ def main():
         }
     }
 
-    for post in posts:
+    local_tz = pytz.timezone("Europe/Ljubljana")
+    slug_counts = defaultdict(lambda: defaultdict(int))
+
+    for i, post in enumerate(posts):
         post_id = extract_post_id(post["id"]["$t"])
         title = post["title"]["$t"]
         published = post.get("published", {}).get("$t", "")
         updated = post.get("updated", {}).get("$t", "")
         content = post.get("content", {}).get("$t", "")
         labels = [cat["term"] for cat in post.get("category", [])]
+        author_name = post.get("author", [{}])[0].get("name", {}).get("$t", "")
         original_link = next((l["href"] for l in post.get("link", []) if l["rel"] == "alternate"), "")
+
+        try:
+            parsed_date = parser.isoparse(published).astimezone(local_tz)
+            year = str(parsed_date.year)
+            month = f"{parsed_date.month:02d}"
+        except Exception as e:
+            print(f"Date parse error at index {i}: {e}")
+            year, month = "unknown", "unknown"
+
+        base_slug = slugify(title) or f"post-{i}"
+        slug_count = slug_counts[year][(month, base_slug)]
+        unique_slug = base_slug if slug_count == 0 else f"{base_slug}-{slug_count}"
+        slug_counts[year][(month, base_slug)] += 1
+
+        # Update the alternate link with the slug
+        if original_link:
+            parts = original_link.rstrip("/").split("/")
+            # Replace domain and last part with slug.html
+            if len(parts) >= 4:
+                year, month = parts[-3], parts[-2]
+                updated_original_link = f"{BASE_SITE_URL}/posts/{year}/{month}/{unique_slug}.html"
+            else:
+                updated_original_link = f"{BASE_SITE_URL}/{unique_slug}.html"
+        else:
+            updated_original_link = f"{BASE_SITE_URL}/{unique_slug}.html"
+
 
         local_link = f"posts/{post_id}.json"
         media_thumbnail = post.get("media$thumbnail", None)
@@ -78,6 +114,9 @@ def main():
             "entry": {
                 "id": post["id"],
                 "title": post["title"],
+                "author": {
+                    "name": {"$t": author_name},
+                },
                 "published": {"$t": published},
                 "updated": {"$t": updated},
                 "category": [{"term": lbl} for lbl in labels],
@@ -86,7 +125,7 @@ def main():
                     {
                         "rel": "alternate",
                         "type": "text/html",
-                        "href": original_link
+                        "href": updated_original_link
                     },
                     {
                         "rel": "self",
@@ -107,6 +146,9 @@ def main():
         summary_entry = {
             "id": post["id"],
             "title": post["title"],
+            "author": {
+                "name": {"$t": author_name},
+            },
             "published": {"$t": published},
             "updated": {"$t": updated},
             "category": [{"term": lbl} for lbl in labels],
@@ -115,7 +157,7 @@ def main():
                 {
                     "rel": "alternate",
                     "type": "text/html",
-                    "href": original_link
+                    "href": updated_original_link
                 },
                 {
                     "rel": "self",

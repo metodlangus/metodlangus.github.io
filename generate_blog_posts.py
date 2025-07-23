@@ -8,10 +8,13 @@ from zoneinfo import ZoneInfo  # Python 3.9+
 from dateutil import parser  # pip install python-dateutil
 from bs4 import BeautifulSoup
 from collections import defaultdict
+from urllib.parse import urlparse
+import os
+import json
+
 
 # Constants
 BASE_FEED_URL = "https://gorski-uzitki.blogspot.com/feeds/posts/default"
-MAX_RESULTS = 25
 OUTPUT_DIR = Path.cwd() # Current path
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -39,23 +42,30 @@ def parse_entry_date(entry, index=None):
 
 
 
-def generate_unique_slugs(entries, slugify, return_type="slugs"):
+def generate_unique_slugs(entries, return_type="slugs"):
     slugs = []
-    slug_counts = defaultdict(lambda: defaultdict(int))
     archive_dict = defaultdict(lambda: defaultdict(list))
 
     for i, entry in enumerate(entries):
+        # Pridobi href iz linkov
+        links = entry.get("link", [])
+        href = next((l.get("href") for l in links if l.get("rel") == "alternate" and l.get("type") == "text/html"), None)
+
+        if href:
+            path_parts = urlparse(href).path.strip("/").split("/")
+            # Expecting: ['posts', 'year', 'month', 'slugify-title.html']
+            if len(path_parts) >= 4:
+                year = path_parts[1]
+                month = path_parts[2]
+                unique_slug = os.path.splitext(path_parts[3])[0]
+            else:
+                year, month = "unknown", "unknown"
+                unique_slug = f"post-{i}"
+        else:
+            year, month = "unknown", "unknown"
+            unique_slug = f"post-{i}"
+
         title = entry.get("title", {}).get("$t", f"untitled-{i}")
-        
-        # Parse published date
-        _, year, month = parse_entry_date(entry, i)
-
-        base_slug = slugify(title) or f"post-{i}"
-        slug_key = (month, base_slug)
-        slug_count = slug_counts[year][slug_key]
-        unique_slug = base_slug if slug_count == 0 else f"{base_slug}-{slug_count}"
-        slug_counts[year][slug_key] += 1
-
         archive_dict[year][month].append((unique_slug, title))
         slugs.append(unique_slug)
 
@@ -64,28 +74,24 @@ def generate_unique_slugs(entries, slugify, return_type="slugs"):
 def fetch_all_entries():
     print("Fetching all paginated posts...")
     all_entries = []
-    start_index = 1
 
-    while True:
-        url = f"{BASE_FEED_URL}?start-index={start_index}&max-results={MAX_RESULTS}&alt=json"
-        print(f"Fetching: {url}")
-        response = requests.get(url)
-        response.raise_for_status()
+    url = "data/all-posts.json"
+    print(f"Fetching: {url}")
+    
+    # Load JSON directly from local file
+    with open(url, "r", encoding="utf-8") as f:
+        data = json.load(f)
 
-        data = response.json()
-        entries = data.get("feed", {}).get("entry", [])
-
-        if not entries:
-            break
-
-        all_entries.extend(entries)
-        start_index += MAX_RESULTS
+    entries = data.get("feed", {}).get("entry", [])
+    all_entries.extend(entries)
 
     print(f"Total entries fetched: {len(all_entries)}")
     return all_entries
 
 def fix_images_for_lightbox(html_content):
-    # Parse your HTML content
+    """
+    Modify image links in HTML content for lightbox compatibility.
+    """
     soup = BeautifulSoup(html_content, "html.parser")
 
     for a_tag in soup.find_all("a"):
@@ -108,24 +114,25 @@ def fix_images_for_lightbox(html_content):
         src = img.get("src", "")
         new_src = src.replace("/s1200/", "/s600/").replace("/s1600/", "/s1000/")
         img["src"] = new_src
-    return str(soup)
+    return soup.prettify()
 
 def build_archive_sidebar_html(entries, levels_up):
     """
     Generate complete archive sidebar HTML from Blogger entries.
     """
     relative_path = get_relative_path(levels_up)
+    archive_dict = generate_unique_slugs(entries, return_type="archive")
 
-    # To get the archive dictionary
-    archive_dict = generate_unique_slugs(entries, slugify, return_type="archive")
-
-    # Generate archive HTML
-    html_parts = ["<aside class='sidebar-archive'><h3>Arhiv</h3>"]
+    archive_html = """<aside class="sidebar-archive">
+  <h3>Arhiv</h3>
+"""
 
     for y in sorted(archive_dict.keys(), reverse=True):
         year_posts = archive_dict[y]
         year_count = sum(len(posts) for posts in year_posts.values())
-        html_parts.append(f"<details open><summary>{y} ({year_count})</summary>")
+        archive_html += f"""  <details open>
+    <summary>{y} ({year_count})</summary>
+"""
 
         for m in sorted(year_posts.keys(), reverse=True):
             posts = year_posts[m]
@@ -134,26 +141,34 @@ def build_archive_sidebar_html(entries, levels_up):
             except ValueError:
                 month_name = m
             month_label = f"{month_name} {y} ({len(posts)})"
-            html_parts.append(f"<details class='month-group'><summary>{month_label}</summary><ul>")
+
+            archive_html += f"""    <details class="month-group">
+      <summary>{month_label}</summary>
+      <ul>
+"""
 
             for slug, title in posts:
                 safe_title = (
                     title.replace("&", "&amp;")
-                         .replace("<", "&lt;")
-                         .replace(">", "&gt;")
+                         .replace("<", "<")
+                         .replace(">", ">")
                          .replace('"', "&quot;")
                          .replace("'", "&#x27;")
                 )
-                html_parts.append(f"<li><a href='{BASE_SITE_URL}posts/{y}/{m}/{slug}.html'>{safe_title}</a></li>")
+                archive_html += f"""        <li><a href="{relative_path}posts/{y}/{m}/{slug}.html">{safe_title}</a></li>
+"""
 
-            html_parts.append("</ul></details>")
+            archive_html += """      </ul>
+    </details>
+"""
 
-        html_parts.append("</details>")
+        archive_html += "  </details>\n"
 
-    html_parts.append("</aside>")
-    return "\n".join(html_parts)
+    archive_html += "</aside>"
+    return archive_html
 
-def generate_labels_sidebar_html(levels_up, feed_url=BASE_FEED_URL):
+
+def generate_labels_sidebar_html(levels_up, feed_url):
     """Fetches labels from a Blogger feed and returns structured sidebar HTML."""
 
     relative_path = get_relative_path(levels_up)
@@ -203,7 +218,7 @@ def generate_labels_sidebar_html(levels_up, feed_url=BASE_FEED_URL):
             clean_label = re.sub(r'^\d+\.\s*', '', raw_label)
             slug = slugify(clean_label)
             label_html_parts.append(
-                f"<li><a class='label-name' href='{BASE_SITE_URL}search/labels/{slug}.html'>{clean_label}</a></li>"
+                f"<li><a class='label-name' href='{relative_path}search/labels/{slug}.html'>{clean_label}</a></li>"
             )
 
         label_html_parts.append("</ul>")
@@ -222,9 +237,9 @@ def generate_labels_sidebar_html(levels_up, feed_url=BASE_FEED_URL):
 
     return "\n".join(label_html_parts)
 
-def generate_sidebar_html(archive_html, labels_html):
-    return f"""
-    <div class="sidebar">
+def generate_sidebar_html(archive_html, labels_html, levels_up):
+    relative_path = get_relative_path(levels_up)
+    return f"""<div class="sidebar">
       <div class="archive">
         {archive_html}
       </div>
@@ -233,11 +248,11 @@ def generate_sidebar_html(archive_html, labels_html):
       </div>
       <div class="pages">
         <aside class='sidebar-pages'><h3>Strani</h3>
-          <li><a href="../../../predvajalnik-nakljucnih-fotografij.html">Predvajalnik naključnih fotografij</a></li>
+          <li><a href="{relative_path}predvajalnik-nakljucnih-fotografij.html">Predvajalnik naključnih fotografij</a></li>
+          <li><a href="{relative_path}seznam-vrhov.html">Seznam-vrhov</a></li>
         </aside>
       </div>
-    </div>
-    """
+    </div>"""
 
 def generate_post_navigation_html(entries, slugs, index, local_tz, year, month):
     """
@@ -302,11 +317,10 @@ def generate_post_navigation_html(entries, slugs, index, local_tz, year, month):
 
     return nav_html
 
-def generate_labels_html(entry, title, slug, year, month, formatted_date, post_id,
+def generate_labels_html(entry, title, slug, year, month, formatted_date, post_id, label_posts_raw,
                          slugify, remove_first_prefix, remove_all_prefixes,
                          levels_up):
     labels_raw = []
-    label_posts_raw = defaultdict(list)
     labels_html = "<div class='post-labels'><em>No labels</em></div>"
     relative_path = get_relative_path(levels_up)
 
@@ -329,12 +343,12 @@ def generate_labels_html(entry, title, slug, year, month, formatted_date, post_i
             label_links = []
             for label_raw in labels_raw:
                 slug_part = remove_first_prefix(label_raw)
-                label_url = f"{BASE_SITE_URL}search/labels/{slugify(slug_part)}.html"
+                label_url = f"{relative_path}/search/labels/{slugify(slug_part)}.html"
                 label_text = remove_all_prefixes(label_raw)
                 label_links.append(f"<a class='my-labels' href='{label_url}'>{label_text}</a>")
             labels_html = "<div class='post-labels'>" + " ".join(label_links) + "</div>"
 
-    return labels_html, label_posts_raw
+    return labels_html
 
 # Helper to remove just the first prefix
 def remove_first_prefix(label):
@@ -349,14 +363,15 @@ def fetch_and_save_all_posts(entries):
     # Archive and labels sidebar
     levels_up = 3
     archive_sidebar_html = build_archive_sidebar_html(entries, levels_up)
-    levels_up = 3
     labels_sidebar_html = generate_labels_sidebar_html(levels_up, feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, levels_up)
 
     local_tz = ZoneInfo("Europe/Ljubljana")
 
+    label_posts_raw = defaultdict(list)
+
     # Get just the list of slugs
-    slugs = generate_unique_slugs(entries, slugify, local_tz)
+    slugs = generate_unique_slugs(entries, local_tz)
 
     for index, entry in enumerate(entries):
         title = entry.get("title", {}).get("$t", f"untitled-{index}")
@@ -366,10 +381,8 @@ def fetch_and_save_all_posts(entries):
         full_id = entry.get("id", {}).get("$t", "")
         post_id = full_id.split("post-")[-1] if "post-" in full_id else ""
 
-        #  Get the author name
-        author = ""
-        if "author" in entry and isinstance(entry["author"], list) and entry["author"]:
-            author = entry["author"][0].get("name", {}).get("$t", "")
+        # Get the author name
+        author = entry.get("author", {}).get("name", {}).get("$t", "")
 
         # Parse published date
         formatted_date, year, month = parse_entry_date(entry, index)
@@ -390,8 +403,7 @@ def fetch_and_save_all_posts(entries):
         nav_html = generate_post_navigation_html(entries, slugs, index, local_tz, year, month)
 
         # Labels
-        levels_up = 3
-        labels_html, label_posts_raw = generate_labels_html(entry, title, slug, year, month, formatted_date, post_id,
+        labels_html = generate_labels_html(entry, title, slug, year, month, formatted_date, post_id, label_posts_raw,
                                                             slugify, remove_first_prefix, remove_all_prefixes, levels_up)
 
         post_dir = OUTPUT_DIR / "posts" / year / month
@@ -435,7 +447,6 @@ def fetch_and_save_all_posts(entries):
 <body>
   <div class=\"main-layout\" style=\"display: flex; gap: 2em;\">
     {sidebar_html}
-
     <div class=\"content-wrapper\" style=\"flex: 1;\">
       <h2>{title}</h2>
       {metadata_html}
@@ -477,9 +488,8 @@ def generate_label_pages(entries, label_posts_raw):
     # Generate the full archive sidebar from all entries
     levels_up = 2
     archive_sidebar_html = build_archive_sidebar_html(entries, levels_up)
-    levels_up = 2
     labels_sidebar_html = generate_labels_sidebar_html(levels_up, feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, levels_up)
 
     for label, posts in label_posts_raw.items():
         # Remove only the first numeric prefix from label for slug
@@ -516,15 +526,13 @@ def generate_label_pages(entries, label_posts_raw):
   <link rel="stylesheet" href="../../assets/MyPostContainerScript.css">
 </head>
 <body>
-  <div class="main-layout" style="display: flex; gap: 2em;">
+  <div class="main-layout">
     {sidebar_html}
-
-    <div class="content-wrapper" style="flex: 1;">
+    <div class="content-wrapper">
       <h1>Prikaz objav z oznako: {label_clean}</h1>
       <div class="blog-posts hfeed container">
         {post_scripts_html}
       </div>
-      <p><a href="../../">Back to home</a></p>
     </div>
   </div>
 
@@ -548,11 +556,10 @@ def generate_predvajalnik_page():
     output_path = OUTPUT_DIR / "predvajalnik-nakljucnih-fotografij.html"
 
     # Generate the full archive sidebar from all entries
-    levels_up = 1
+    levels_up = 0
     archive_sidebar_html = build_archive_sidebar_html(entries, levels_up)
-    levels_up = 2
     labels_sidebar_html = generate_labels_sidebar_html(levels_up, feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, levels_up)
 
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
@@ -572,10 +579,9 @@ def generate_predvajalnik_page():
   <link rel="stylesheet" href="assets/MyPostContainerScript.css">
 </head>
 <body>
-  <div class="main-layout" style="display: flex; gap: 2em;">
+  <div class="main-layout">
     {sidebar_html}
-
-    <div class="content-wrapper" style="flex: 1;">
+    <div class="content-wrapper">
       <h1>Predvajalnik naključnih fotografij</h1>
       <script> 
         var slideshowTitle0 = 'All pictures';
@@ -596,8 +602,59 @@ def generate_predvajalnik_page():
     print(f"Generated predvajalnik page: {output_path}")
 
 
+def generate_peak_list_page():
+    output_path = OUTPUT_DIR / "seznam-vrhov.html"
+
+    # Generate the full archive sidebar from all entries
+    levels_up = 0
+    archive_sidebar_html = build_archive_sidebar_html(entries, levels_up)
+    labels_sidebar_html = generate_labels_sidebar_html(levels_up, feed_url=BASE_FEED_URL)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, levels_up)
+
+    html_content = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Seznam vrhov</title>
+
+  <script>
+    var postTitle = 'Seznam vrhov';
+    var postId = '1';
+    var author = 'Metod';
+  </script>
+
+  <link rel="stylesheet" href="assets/Main.css">
+  <link rel="stylesheet" href="assets/MyMapScript.css">
+  <link rel="stylesheet" href="assets/MySlideshowScript.css">
+  <link rel="stylesheet" href="assets/MyPostContainerScript.css">
+  <link rel="stylesheet" href="assets/MyPeakListScript.css">
+</head>
+<body>
+  <div class="main-layout">
+    {sidebar_html}
+    <div class="content-wrapper">
+      <h1>Seznam vrhov</h1>
+      <div id='loadingMessage'>Nalaganje ...</div>
+      <div id='mountainContainer'/>
+    </div>
+  </div>
+
+  <script src="assets/MyMapScript.js" defer></script>
+  <script src="assets/MySlideshowScript.js" defer></script>
+  <script src="assets/MyPostContainerScript.js" defer></script>
+  <script src="assets/Main.js" defer></script>
+  <script src="assets/MyPeakListScript.js" defer></script>
+</body>
+</html>"""
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(html_content)
+    print(f"Generated peak list page: {output_path}")
+
+
 if __name__ == "__main__":
     entries = fetch_all_entries()
     label_posts_raw = fetch_and_save_all_posts(entries)  # This function should return { label: [ {postId, date, html}, ... ] }
     generate_label_pages(entries, label_posts_raw)
     generate_predvajalnik_page()
+    generate_peak_list_page()

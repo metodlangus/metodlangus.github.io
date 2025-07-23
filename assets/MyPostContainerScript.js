@@ -1,6 +1,6 @@
 var postDetails = [];
-// const WindowBaseUrl = window.location.origin;
-const WindowBaseUrl = window.location.origin + "/metodlangus.github.io/";
+const WindowBaseUrl = window.location.origin;
+// const WindowBaseUrl = window.location.origin + "/metodlangus.github.io/";
 
 document.querySelectorAll('script').forEach(script => {
   var scriptContent = script.innerText;

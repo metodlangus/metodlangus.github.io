@@ -9,11 +9,16 @@
       "type": "text",
       "$t": "Pedra Longa"
     },
+    "author": {
+      "name": {
+        "$t": "Metod"
+      }
+    },
     "published": {
-      "$t": "2023-04-29T11:01:00.000-07:00"
+      "$t": "2023-04-29T20:01:00.000+02:00"
     },
     "updated": {
-      "$t": "2025-05-24T07:38:58.880-07:00"
+      "$t": "2025-05-24T16:38:58.880+02:00"
     },
     "category": [
       {
@@ -36,7 +41,7 @@
       {
         "rel": "alternate",
         "type": "text/html",
-        "href": "https://gorski-uzitki.blogspot.com/2023/04/pedra-longa.html"
+        "href": "https://metodlangus.github.io/posts/2023/04/pedra-longa.html"
       },
       {
         "rel": "self",
