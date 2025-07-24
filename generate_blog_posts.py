@@ -239,18 +239,22 @@ def generate_labels_sidebar_html(levels_up, feed_url):
 
 def generate_sidebar_html(archive_html, labels_html, levels_up):
     relative_path = get_relative_path(levels_up)
-    return f"""<div class="sidebar">
-      <div class="archive">
-        {archive_html}
-      </div>
-      <div class="labels">
-        {labels_html}
-      </div>
-      <div class="pages">
-        <aside class='sidebar-pages'><h3>Strani</h3>
-          <li><a href="{relative_path}predvajalnik-nakljucnih-fotografij.html">Predvajalnik naključnih fotografij</a></li>
-          <li><a href="{relative_path}seznam-vrhov.html">Seznam-vrhov</a></li>
-        </aside>
+    return f"""
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <div class="sidebar-container">
+      <div class="sidebar" id="sidebar">
+        <div class="archive">
+          {archive_html}
+        </div>
+        <div class="labels">
+          {labels_html}
+        </div>
+        <div class="pages">
+          <aside class='sidebar-pages'><h3>Strani</h3>
+            <li><a href="{relative_path}predvajalnik-nakljucnih-fotografij.html">Predvajalnik naključnih fotografij</a></li>
+            <li><a href="{relative_path}seznam-vrhov.html">Seznam-vrhov</a></li>
+          </aside>
+        </div>
       </div>
     </div>"""
 

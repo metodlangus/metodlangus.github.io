@@ -166,3 +166,10 @@ document.getElementById("searchBox").addEventListener("input", function () {
     resultsContainer.innerHTML = resultHTML;
   }
 });
+
+
+/* Toggle sidebar */
+function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    sidebar.classList.toggle("visible");
+  }

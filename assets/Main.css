@@ -302,7 +302,6 @@ a {
   flex-direction: column; /* Stack vertically */
   gap: 1rem; /* Optional spacing between Archive and Labels */
   width: 310px;
-  min-width: 250px;
 }
 
 .archive,
@@ -327,4 +326,57 @@ a {
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 5px;
+}
+
+
+/* Base styles for menu button (hidden by default) */
+.menu-toggle {
+  display: none;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  width: 48px;
+  height: 48px;
+  background-color: #ffffffdd;
+  color: #333;
+  border: none;
+  border-radius: 10px;
+  font-size: 24px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  z-index: 1001;
+  padding: 0;
+  line-height: 1;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive layout for small screens */
+@media (max-width: 1150px) {
+  .sidebar {
+    display: none;
+    padding: 0;
+  }
+
+  .sidebar.visible {
+    display: block;
+    position: fixed;     /* 👈 overlay it */
+    top: 60px;           /* below the button */
+    left: 0;
+    height: calc(100% - 60px); /* adjust height if needed */
+    padding: 15px;
+    z-index: 1000;
+    background-color: #f0f0f0;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+    overflow-y: auto;
+  }
+
+  .main-layout {
+    gap: 0em;
+    padding: 0em;
+  }
+
+  .menu-toggle {
+    display: flex;
+  }
 }

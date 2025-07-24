@@ -13,9 +13,12 @@
 </head>
 <body>
   <div class="main-layout">
-    <div class="sidebar">
-      <div class="archive">
-        <aside class="sidebar-archive">
+    
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <div class="sidebar-container">
+      <div class="sidebar" id="sidebar">
+        <div class="archive">
+          <aside class="sidebar-archive">
   <h3>Arhiv</h3>
   <details open>
     <summary>2025 (45)</summary>
@@ -291,9 +294,9 @@
     </details>
   </details>
 </aside>
-      </div>
-      <div class="labels">
-        <aside class='sidebar-labels'><h3><b>Navigacija</b></h3>
+        </div>
+        <div class="labels">
+          <aside class='sidebar-labels'><h3><b>Navigacija</b></h3>
 <div class='first-items'><h3>Kategorija:</h3><ul class='label-list'>
 <li><a class='label-name' href='../../search/labels/alpinizem.html'>Alpinizem</a></li>
 <li><a class='label-name' href='../../search/labels/ferata.html'>Ferata</a></li>
@@ -367,14 +370,16 @@
         <span class='show-less pill-button hidden'>Pokaži manj</span>
         
 </aside>
-      </div>
-      <div class="pages">
-        <aside class='sidebar-pages'><h3>Strani</h3>
-          <li><a href="../../predvajalnik-nakljucnih-fotografij.html">Predvajalnik naključnih fotografij</a></li>
-          <li><a href="../../seznam-vrhov.html">Seznam-vrhov</a></li>
-        </aside>
+        </div>
+        <div class="pages">
+          <aside class='sidebar-pages'><h3>Strani</h3>
+            <li><a href="../../predvajalnik-nakljucnih-fotografij.html">Predvajalnik naključnih fotografij</a></li>
+            <li><a href="../../seznam-vrhov.html">Seznam-vrhov</a></li>
+          </aside>
+        </div>
       </div>
     </div>
+    
     <div class="content-wrapper">
       <input type="text" id="searchBox" placeholder="Išči objave..." />
       <div id="searchResults"></div>
