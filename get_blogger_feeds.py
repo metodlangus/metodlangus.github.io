@@ -78,30 +78,38 @@ def main():
         author_name = post.get("author", [{}])[0].get("name", {}).get("$t", "")
         original_link = next((l["href"] for l in post.get("link", []) if l["rel"] == "alternate"), "")
 
+        # Get year/month from published date
         try:
             parsed_date = parser.isoparse(published).astimezone(local_tz)
-            year = str(parsed_date.year)
-            month = f"{parsed_date.month:02d}"
+            pub_year = str(parsed_date.year)
+            pub_month = f"{parsed_date.month:02d}"
         except Exception as e:
             print(f"Date parse error at index {i}: {e}")
-            year, month = "unknown", "unknown"
+            pub_year, pub_month = "unknown", "unknown"
 
+        # Generate slug
         base_slug = slugify(title) or f"post-{i}"
-        slug_count = slug_counts[year][(month, base_slug)]
+        slug_count = slug_counts[pub_year][(pub_month, base_slug)]
         unique_slug = base_slug if slug_count == 0 else f"{base_slug}-{slug_count}"
-        slug_counts[year][(month, base_slug)] += 1
+        slug_counts[pub_year][(pub_month, base_slug)] += 1
 
-        # Update the alternate link with the slug
+        # Extract year/month from original link
         if original_link:
             parts = original_link.rstrip("/").split("/")
-            # Replace domain and last part with slug.html
-            if len(parts) >= 4:
-                year, month = parts[-3], parts[-2]
-                updated_original_link = f"{BASE_SITE_URL}/posts/{year}/{month}/{unique_slug}.html"
+            if len(parts) >= 5:
+                link_year, link_month = parts[-3], parts[-2]
+
+                # Compare and warn if mismatch
+                if link_year != pub_year or link_month != pub_month:
+                    print(f"⚠️ Warning: Date mismatch for post '{title}'")
+                    print(f"  Published: {pub_year}-{pub_month}, Link: {link_year}-{link_month}")
+
+                updated_original_link = f"{BASE_SITE_URL}/posts/{link_year}/{link_month}/{unique_slug}.html"
             else:
                 updated_original_link = f"{BASE_SITE_URL}/{unique_slug}.html"
         else:
             updated_original_link = f"{BASE_SITE_URL}/{unique_slug}.html"
+
 
 
         local_link = f"posts/{post_id}.json"

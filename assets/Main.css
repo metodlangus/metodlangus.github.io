@@ -1,8 +1,7 @@
-<!-- Fancy blog post styling -->
-<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
+/* Fancy blog post styling */
 
   body {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Roboto', sans-serif;
     line-height: 1.6;
     background: #fdfdfd;
     color: #333;
@@ -56,9 +55,15 @@
   .main-layout {
     display: flex;
     gap: 2em;
+    padding: 1em;
+    max-width: 1400px;
+    margin: auto;
+    box-sizing: border-box;
   }
   .content-wrapper {
     flex: 1;
+    margin-left: 15px;
+    position: relative;
   }
 
 
@@ -296,7 +301,8 @@ a {
   display: flex;
   flex-direction: column; /* Stack vertically */
   gap: 1rem; /* Optional spacing between Archive and Labels */
-  width: 310px; /* Adjust as needed */
+  width: 310px;
+  min-width: 250px;
 }
 
 .archive,
@@ -305,4 +311,20 @@ a {
   background: #f9f9f9;
   padding: 1rem;
   border-radius: 8px;
+}
+
+
+/* Searchbox */
+#searchBox {
+  width: 50%;
+  padding: 8px;
+  margin-bottom: 10px;
+  margin-left: auto; /* Pushes the element to the right */
+  display: block;    /* Ensures it behaves like a block element */
+}
+.post-container {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
 }

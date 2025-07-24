@@ -112,3 +112,57 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 });
 
+
+/* Searchbox */
+let posts = [];
+
+fetch("https://metodlangus.github.io/data/all-posts.json")
+  .then(response => response.json())
+  .then(data => {
+    const entries = data.feed.entry || [];
+
+    posts = entries.map((entry, i) => {
+      const title = entry.title?.$t || `untitled-${i}`;
+      const content = entry.content?.$t || "";
+      const link = entry.link.find(l => l.rel === "alternate" && l.type === "text/html")?.href || "#";
+      const thumbnail = entry.media$thumbnail?.url || "";
+
+      return { title, content, link, thumbnail };
+    });
+  })
+  .catch(error => {
+    console.error("Napaka pri nalaganju Blogger feeda:", error);
+  });
+
+document.getElementById("searchBox").addEventListener("input", function () {
+  const keyword = this.value.toLowerCase();
+  const resultsContainer = document.getElementById("searchResults");
+  resultsContainer.innerHTML = "";
+
+  const filtered = posts.filter(post =>
+    post.title.toLowerCase().includes(keyword) ||
+    post.content.toLowerCase().includes(keyword)
+  );
+
+  if (filtered.length > 0) {
+    let resultHTML = `<h1>Prikaz objav, ki vsebujejo: ${keyword}</h1>\n`;
+    resultHTML += `<div class="blog-posts hfeed container">\n`;
+
+
+    filtered.forEach((post, i) => {
+      resultHTML += `
+  <div class="post-container">
+    <a href="${post.link}" class="image-link">
+      <div class="image-wrapper">
+        ${post.thumbnail ? `<img src="${post.thumbnail.replace(/\/s\d+-c/, '/s300')}" alt="Thumbnail for ${post.title}" class="post-thumb">` : ""}
+        <h3 class="overlay-title">${post.title}</h3>
+      </div>
+    </a>
+  </div>\n`;
+
+    });
+
+    resultHTML += `</div>`;
+    resultsContainer.innerHTML = resultHTML;
+  }
+});

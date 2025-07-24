@@ -1,13 +1,10 @@
 /* Custom Blog Posts Design Implementation - start */
 
-.centered {
-    max-width: 1000px;
-}
 
-body:not(.item-view) .blog-posts {
+.blog-posts {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
     margin-top: 60px;
     font-family: "Montserrat", sans-serif;
     color: #eee;
@@ -23,8 +20,8 @@ body:not(.item-view) .blog-posts {
     height: auto;
     object-fit: cover;
     border-radius: 5px;
-	aspect-ratio: 4/3; /* Predefined aspect ratio */
-  display: block;
+    aspect-ratio: 4 / 3;
+    display: block;
 }
 
 .my-post-outer-container .post {
@@ -91,14 +88,14 @@ body:not(.item-view) .blog-posts {
 .my-post-outer-container .post .my-tag-container {
     position: absolute;
     top: 0px;
-	  right: 0px;
+    right: 0px;
     padding: 24px;
     transition: all 400ms ease;
     z-index: 3; /* Ensure titles are above the image */
 }
 
 .my-post-outer-container .post:hover .my-tag-container {
-	  opacity: 0.2;
+    opacity: 0.2;
 }
 
 .my-post-outer-container .post .my-post-link {
@@ -108,7 +105,7 @@ body:not(.item-view) .blog-posts {
 }
 
 .my-post-outer-container .post:hover .my-title-container {
-    transform: translateY(+40px);
+    transform: translateY(40px);
     opacity: 0.2;
 }
 
@@ -117,41 +114,4 @@ body:not(.item-view) .blog-posts {
     transition: all 200ms ease;
 }
 
-@media (max-width: 1000px) {
-    body:not(.item-view) .blog-posts {
-        grid-template-columns: 1fr 1fr;
-    }
-}
-
-@media (max-width: 700px) {
-    body:not(.item-view) .blog-posts {
-        grid-template-columns: 1fr;
-    }
-}
-
 /* Custom Blog Posts Design Implementation - end */
-
-
-
-
-article.my-post-outer-container {
-  margin: 0px auto;
-  padding-top: 15px;
-  padding-bottom: 15px;
-}  
-  
-@media (min-width: 633px) {
-  article.my-post-outer-container {
-    width: 600px;
-  }
-}  
-  
-.post-body .my-post-outer-container {
-  line-height: 1.4;
-  font-family: "Montserrat", sans-serif;
-}
-  
-.my-post-outer-container .my-meta-data {
-  font-family: "Montserrat", sans-serif;
-  color: #eee;
-}  

@@ -373,7 +373,7 @@ def fetch_and_save_all_posts(entries):
     # Get just the list of slugs
     slugs = generate_unique_slugs(entries, local_tz)
 
-    for index, entry in enumerate(entries):
+    for index, entry in enumerate(entries):  # Only first 5 entries entries[:5]
         title = entry.get("title", {}).get("$t", f"untitled-{index}")
         content_html = entry.get("content", {}).get("$t", "")
         slug = slugs[index]
@@ -412,17 +412,17 @@ def fetch_and_save_all_posts(entries):
 
         with open(filename, "w", encoding="utf-8") as f:
             f.write(f"""<!DOCTYPE html>
-<html lang=\"en\">
+<html lang="en">
 <head>
-  <meta charset=\"UTF-8\">
+  <meta charset="UTF-8">
   <title>{title}</title>
 
   <!-- OpenGraph meta tags -->
-  <meta property=\"og:title\" content=\"{title}\">
-  <meta property=\"og:type\" content=\"article\">
-  <meta property=\"og:image\" content=\"{og_image}\">
-  <meta property=\"og:url\" content=\"{og_url}\">
-  <meta property=\"og:description\" content=\"{title}\">
+  <meta property="og:title" content="{title}">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="{og_image}">
+  <meta property="og:url" content="{og_url}">
+  <meta property="og:description" content="{title}">
 
   <script>
     var postTitle = {title!r};
@@ -430,6 +430,8 @@ def fetch_and_save_all_posts(entries):
     var author = {author!r};
   </script>
 
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
+  
   <link href='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.css' rel='stylesheet'>
   <link href='https://metodlangus.github.io/plugins/@raruto/leaflet-elevation/dist/leaflet-elevation.min.css' rel='stylesheet'>
   <link href='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet'>
@@ -445,9 +447,11 @@ def fetch_and_save_all_posts(entries):
   <link rel="stylesheet" href="../../../assets/MyPostContainerScript.css">
 </head>
 <body>
-  <div class=\"main-layout\" style=\"display: flex; gap: 2em;\">
+  <div class="main-layout">
     {sidebar_html}
-    <div class=\"content-wrapper\" style=\"flex: 1;\">
+    <div class="content-wrapper">
+      <input type="text" id="searchBox" placeholder="Išči objave..." />
+      <div id="searchResults"></div>
       <h2>{title}</h2>
       {metadata_html}
       {content_html}
@@ -520,6 +524,8 @@ def generate_label_pages(entries, label_posts_raw):
   <meta charset="UTF-8">
   <title>Prikaz objav z oznako: {label_clean}</title>
 
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="../../assets/Main.css">
   <link rel="stylesheet" href="../../assets/MyMapScript.css">
   <link rel="stylesheet" href="../../assets/MySlideshowScript.css">
@@ -529,6 +535,8 @@ def generate_label_pages(entries, label_posts_raw):
   <div class="main-layout">
     {sidebar_html}
     <div class="content-wrapper">
+      <input type="text" id="searchBox" placeholder="Išči objave..." />
+      <div id="searchResults"></div>
       <h1>Prikaz objav z oznako: {label_clean}</h1>
       <div class="blog-posts hfeed container">
         {post_scripts_html}
@@ -573,7 +581,9 @@ def generate_predvajalnik_page():
     var author = 'Metod';
   </script>
 
-  <link rel="stylesheet" href="assets/Main.css">
+ <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
+
+ <link rel="stylesheet" href="assets/Main.css">
   <link rel="stylesheet" href="assets/MyMapScript.css">
   <link rel="stylesheet" href="assets/MySlideshowScript.css">
   <link rel="stylesheet" href="assets/MyPostContainerScript.css">
@@ -582,6 +592,8 @@ def generate_predvajalnik_page():
   <div class="main-layout">
     {sidebar_html}
     <div class="content-wrapper">
+      <input type="text" id="searchBox" placeholder="Išči objave..." />
+      <div id="searchResults"></div>
       <h1>Predvajalnik naključnih fotografij</h1>
       <script> 
         var slideshowTitle0 = 'All pictures';
@@ -623,6 +635,8 @@ def generate_peak_list_page():
     var author = 'Metod';
   </script>
 
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="assets/Main.css">
   <link rel="stylesheet" href="assets/MyMapScript.css">
   <link rel="stylesheet" href="assets/MySlideshowScript.css">
@@ -633,6 +647,8 @@ def generate_peak_list_page():
   <div class="main-layout">
     {sidebar_html}
     <div class="content-wrapper">
+      <input type="text" id="searchBox" placeholder="Išči objave..." />
+      <div id="searchResults"></div>
       <h1>Seznam vrhov</h1>
       <div id='loadingMessage'>Nalaganje ...</div>
       <div id='mountainContainer'/>
