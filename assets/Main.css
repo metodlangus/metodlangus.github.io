@@ -126,7 +126,7 @@
 }
 
 /* Responsive Adjustments */
-@media (max-width: 700px) {
+@media (max-width: 400px) {
   .nav-links {
     flex-direction: column;
     align-items: center;
@@ -364,6 +364,7 @@ a {
     top: 60px;           /* below the button */
     left: 0;
     height: calc(100% - 60px); /* adjust height if needed */
+    width: 75%;
     padding: 15px;
     z-index: 1000;
     background-color: #f0f0f0;
@@ -376,8 +377,33 @@ a {
     padding: 0em;
   }
 
+  .content-wrapper {
+    margin: auto;
+  }
+
   .menu-toggle {
     display: flex;
+  }
+}
+
+/* Between 800px and 1150px */
+@media (max-width: 1150px) and (min-width: 801px) {
+  body {
+    padding: 1rem;
+  }
+  .content-wrapper {
+    padding: 1rem;
+  }
+}
+
+/* Responsive layout for small screens */
+@media (max-width: 800px) {
+  body {
+    padding: 0px;
+  }
+
+  .content-wrapper {
+    padding: 1rem;
   }
 }
 

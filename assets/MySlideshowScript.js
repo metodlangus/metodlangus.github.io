@@ -1,5 +1,3 @@
-const initPhotos = 1; // Determine range of photos to be shown on slideshows and in posts
-
 const initSpeed = 3;
 const maxSpeed = 10;
 const minSpeed = 1.75; 

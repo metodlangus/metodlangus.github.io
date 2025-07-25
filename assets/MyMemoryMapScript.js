@@ -1,5 +1,3 @@
-const initMapPhotos = -1; // Determine range of photos to be shown on map
-
 // Constants and Variables
 const gpxFolder = 'https://metodlangus.github.io/GPX_tracks/';
 const trackListUrl = 'https://metodlangus.github.io/list_of_tracks.txt';

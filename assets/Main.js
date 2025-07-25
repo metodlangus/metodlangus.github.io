@@ -1,6 +1,9 @@
 const WindowBaseUrl = window.location.origin;
 // const WindowBaseUrl = window.location.origin + "/metodlangus.github.io/";
 
+const initPhotos = 1; // Determine range of photos to be shown on slideshows and in posts
+const initMapPhotos = -1; // Determine range of photos to be shown on map
+
 // Format date
 document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('.post-date').forEach(function (el) {

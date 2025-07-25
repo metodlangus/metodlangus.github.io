@@ -487,6 +487,12 @@ def fetch_and_save_all_posts(entries):
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=400, initial-scale=0.7,  maximum-scale=2.0, user-scalable=yes">
+  <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+  <meta name="description" content="Gorske avanture in nepozabni trenutki: Odkrijte lepote gorskega sveta in se prepustite predvajalnikom slik, ki vas popeljejo skozi dogodivščine." />
+  <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
+  <meta name="author" content="Metod Langus" />
+
   <title>{title}</title>
 
   <!-- OpenGraph meta tags -->
@@ -508,10 +514,10 @@ def fetch_and_save_all_posts(entries):
   <link href='https://metodlangus.github.io/plugins/@raruto/leaflet-elevation/dist/leaflet-elevation.min.css' rel='stylesheet'>
   <link href='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet'>
   <link href='https://metodlangus.github.io/scripts/leaflet-download-gpx-button.css' rel='stylesheet'>
+  <link href='https://metodlangus.github.io/plugins/lightbox2/2.11.1/css/lightbox.min.css' rel='stylesheet'>
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css' rel='stylesheet'>
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css' rel='stylesheet'>
   <link href='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.css' rel='stylesheet'>
-  <link href='https://metodlangus.github.io/plugins/lightbox2/2.11.1/css/lightbox.min.css' rel='stylesheet'>
 
   <link rel="stylesheet" href="../../../assets/Main.css">
   <link rel="stylesheet" href="../../../assets/MyMapScript.css">
@@ -540,10 +546,10 @@ def fetch_and_save_all_posts(entries):
   <script src='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
   <script src='https://metodlangus.github.io/plugins/leaflet-polylinedecorator/1.1.0/leaflet.polylineDecorator.min.js'></script>
   <script src='https://metodlangus.github.io/scripts/leaflet-download-gpx-button.js'></script>
+  <script src='https://metodlangus.github.io/plugins/lightbox2/2.11.1/js/lightbox-plus-jquery.min.js'></script>
   <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
   <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
-  <script src='https://metodlangus.github.io/plugins/lightbox2/2.11.1/js/lightbox-plus-jquery.min.js'></script>
 
   <script src="../../../assets/Main.js" defer></script>
   <script src="../../../assets/MyMapScript.js" defer></script>
@@ -595,6 +601,12 @@ def generate_label_pages(entries, label_posts_raw):
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=400, initial-scale=0.7,  maximum-scale=2.0, user-scalable=yes">
+  <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+  <meta name="description" content="Gorske avanture in nepozabni trenutki: Odkrijte lepote gorskega sveta in se prepustite predvajalnikom slik, ki vas popeljejo skozi dogodivščine." />
+  <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
+  <meta name="author" content="Metod Langus" />
+
   <title>Prikaz objav z oznako: {label_clean}</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
@@ -643,6 +655,17 @@ def generate_predvajalnik_page():
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=400, initial-scale=0.7,  maximum-scale=2.0, user-scalable=yes">
+  <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+  <meta name="description" content="Gorske avanture in nepozabni trenutki: Odkrijte lepote gorskega sveta in se prepustite predvajalnikom slik, ki vas popeljejo skozi dogodivščine." />
+  <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
+  <meta name="author" content="Metod Langus" />
+  <meta property="og:title" content="Predvajalnik naključnih fotografij" />
+  <meta property="og:description" content="Gorske avanture in nepozabni trenutki: Odkrijte lepote gorskega sveta in se prepustite predvajalnikom slik, ki vas popeljejo skozi dogodivščine." />
+  <meta property="og:image:alt" content="Gorski razgledi in narava v slikah" />
+  <meta property="og:url" content="https://metodlangus.github.io/predvajalnik-nakljucnih-fotografij.html" />
+  <meta property="og:type" content="website" />
+
   <title>Predvajalnik naključnih fotografij</title>
 
   <script>
@@ -695,11 +718,22 @@ def generate_peak_list_page():
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=400, initial-scale=0.7,  maximum-scale=2.0, user-scalable=yes">
+  <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+  <meta name="description" content="Gorske avanture in nepozabni trenutki: Odkrijte lepote gorskega sveta in se prepustite predvajalnikom slik, ki vas popeljejo skozi dogodivščine." />
+  <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
+  <meta name="author" content="Metod Langus" />
+  <meta property="og:title" content="Seznam vrhov" />
+  <meta property="og:description" content="Seznam obiskanih vrhov." />
+  <meta property="og:image:alt" content="Seznam obiskanih vrhov" />
+  <meta property="og:url" content="https://metodlangus.github.io/seznam-vrhov.html" />
+  <meta property="og:type" content="website" />
+
   <title>Seznam vrhov</title>
 
   <script>
     var postTitle = 'Seznam vrhov';
-    var postId = '1';
+    var postId = '3182270651807797129';
     var author = 'Metod';
   </script>
 
@@ -745,11 +779,21 @@ def generate_big_map_page():
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=400, initial-scale=0.7,  maximum-scale=2.0, user-scalable=yes">
+  <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+  <meta name="description" content="Gorske avanture in nepozabni trenutki: Odkrijte lepote gorskega sveta in se prepustite predvajalnikom slik, ki vas popeljejo skozi dogodivščine." />
+  <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
+  <meta name="author" content="Metod Langus" />
+  <meta property="og:title" content="Zemljevid spominov" />
+  <meta property="og:description" content="Zemljevid spominov, ki zajema slike ter sledi poti." />
+  <meta property="og:image:alt" content="Zemljevid spominov" />
+  <meta property="og:url" content="https://metodlangus.github.io/zemljevid-spominov.html" />
+  <meta property="og:type" content="website" />
+
   <title>Zemljevid spominov</title>
 
   <script>
     var postTitle = 'Zemljevid spominov';
-    var postId = '2';
     var author = 'Metod';
   </script>
 
@@ -759,10 +803,11 @@ def generate_big_map_page():
   <link href='https://metodlangus.github.io/plugins/@raruto/leaflet-elevation/dist/leaflet-elevation.min.css' rel='stylesheet'>
   <link href='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet'>
   <link href='https://metodlangus.github.io/scripts/leaflet-download-gpx-button.css' rel='stylesheet'>
+  <link href='https://metodlangus.github.io/plugins/lightbox2/2.11.1/css/lightbox.min.css' rel='stylesheet'>
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css' rel='stylesheet'>
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css' rel='stylesheet'>
   <link href='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.css' rel='stylesheet'>
-
+  
   <link rel="stylesheet" href="assets/Main.css">
   <link rel="stylesheet" href="assets/MyMemoryMapScript.css">
 
@@ -785,6 +830,7 @@ def generate_big_map_page():
   <script src='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
   <script src='https://metodlangus.github.io/plugins/leaflet-polylinedecorator/1.1.0/leaflet.polylineDecorator.min.js'></script>
   <script src='https://metodlangus.github.io/scripts/leaflet-download-gpx-button.js'></script>
+  <script src='https://metodlangus.github.io/plugins/lightbox2/2.11.1/js/lightbox-plus-jquery.min.js'></script>
   <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
   <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
@@ -813,7 +859,7 @@ def generate_home_si_page(homepage_html):
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=400, initial-scale=0.7,  maximum-scale=2.0, user-scalable=yes">
     <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
     <meta name="description" content="Gorske avanture in nepozabni trenutki: Odkrijte lepote gorskega sveta in se prepustite predvajalnikom slik, ki vas popeljejo skozi dogodivščine." />
     <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
