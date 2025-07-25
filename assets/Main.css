@@ -380,3 +380,89 @@ a {
     display: flex;
   }
 }
+
+
+/* Mody start - nice picture frame*/
+table.tr-caption-container {
+    max-width: 100%;
+    font-size: 11px;
+    font-style: italic;
+    border-width: 1px;
+    border-style: solid;
+    margin: 5px 15px 10px 0;
+    position: relative;
+}
+
+td.tr-caption {
+    display: block;
+    font-size: 11px;
+    font-style: italic;
+    margin: 0 auto;
+    padding: 3px 10px 5px;
+    text-align: center;
+    font-family: Georgia, times new roman;
+    float: none;
+}
+
+table.tr-caption-container a {
+	  padding: 0px !important;
+}
+
+table.tr-caption-container img {
+    display: block;
+    padding: 5px;
+    margin: 0 auto;
+    max-width: calc(100% - 10px);
+}
+
+.separator:not(:has(.tr-caption-container)) img{
+  /* Apply styles to .separator when .tr-caption-container is not present */
+ padding: 5px;
+    border-width: 1px;
+    border-style: solid;
+    color: gray;
+    max-width: calc(100% - 10px);
+}
+
+/* Mody stop - nice picture frame*/
+
+
+/* TODO Clean up this aditional styling */
+
+/* Disable Text Selection 
+body {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+*/
+/* Ensure padding between page links */
+div#PageList1 ul li {
+    padding: 5px 0px;
+}
+
+/* Adds a thin black border around text for links and pill buttons */
+.sidebar-container a, .pill-button {
+    -webkit-text-stroke: 0.3px black; /* Fallback for Webkit browsers */
+    text-stroke: 0.3px black; /* Thin black border for text */
+}
+
+/* Ensures the SVG titlt scales with its container */
+header.centered-top-container.sticky.animating .widget.Header .svg-title, .left-aligned {
+  max-width: 174.76px;
+  max-height: 28.8px;
+}
+.logo-svg {
+  width: 100%;
+  height: 100%;
+}
+/* Ensures header widget handles logo correctly */
+.header-widget {
+  display: flex;
+  justify-content: center;
+}
+.svg-title-container {
+  display: flex;
+  align-items: center;
+}

@@ -252,8 +252,50 @@ def generate_sidebar_html(archive_html, labels_html, levels_up):
         <div class="pages">
           <aside class='sidebar-pages'><h3>Strani</h3>
             <li><a href="{relative_path}predvajalnik-nakljucnih-fotografij.html">Predvajalnik naključnih fotografij</a></li>
-            <li><a href="{relative_path}seznam-vrhov.html">Seznam-vrhov</a></li>
+            <li><a href="{relative_path}seznam-vrhov.html">Seznam vrhov</a></li>
+            <li><a href="{relative_path}zemljevid-spominov.html">Zemljevid spominov</a></li>
           </aside>
+        </div>
+        <div id='map-settings'>
+          <h3 class='title'>Zemljevid spominov</h3>
+          <!-- Slider Section -->
+          <div style='display: flex; flex-direction: column; margin-left: 5px; margin-top: 5px; margin-bottom: 10px;'>
+              <label for='photosMapSliderElement'>Obseg prikazanih slik: <span id='photosMapValueElement'/></label>
+              <input id='photosMapSliderElement' max='3' min='-2' step='1' style='width: 160px;' type='range' value='initMapPhotos'/>
+          </div>
+
+          <!-- Date and Time Filters -->
+          <div class='form-group'>
+              <label for='dayFilterStart'>Od dne:</label>
+              <input class='input-field' id='dayFilterStart' type='date'/>
+          </div>
+          <div class='form-group'>
+              <label for='timeFilterStart'>od ure:</label>
+              <input class='input-field' id='timeFilterStart' type='time'/>
+          </div>
+          <div class='form-group'>
+              <label for='dayFilterEnd'>Do dne:</label>
+              <input class='input-field' id='dayFilterEnd' type='date'/>
+          </div>
+          <div class='form-group'>
+              <label for='timeFilterEnd'>do ure:</label>
+              <input class='input-field' id='timeFilterEnd' type='time'/>
+          </div>
+
+          <!-- Daily Time Filters -->
+          <div class='form-group'>
+              <label for='dailyTimeFilterStart'>Med:</label>
+              <input class='input-field' id='dailyTimeFilterStart' type='time' value='00:00'/>
+          </div>
+          <div class='form-group'>
+              <label for='dailyTimeFilterEnd'>in:</label>
+              <input class='input-field' id='dailyTimeFilterEnd' type='time' value='23:59'/>
+          </div>
+
+          <!-- Apply Filters Button -->
+          <div class='form-group' style='display: flex; justify-content: center;'>
+              <button class='pill-button' id='applyFilters'>Uporabi filtre</button>
+          </div>
         </div>
       </div>
     </div>"""
@@ -615,7 +657,7 @@ def generate_predvajalnik_page():
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html_content)
-    print(f"Generated predvajalnik page: {output_path}")
+    print(f"Generated random slideshow page: {output_path}")
 
 
 def generate_peak_list_page():
@@ -672,9 +714,85 @@ def generate_peak_list_page():
     print(f"Generated peak list page: {output_path}")
 
 
+def generate_big_map_page():
+    output_path = OUTPUT_DIR / "zemljevid-spominov.html"
+
+    # Generate the full archive sidebar from all entries
+    levels_up = 0
+    archive_sidebar_html = build_archive_sidebar_html(entries, levels_up)
+    labels_sidebar_html = generate_labels_sidebar_html(levels_up, feed_url=BASE_FEED_URL)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, levels_up)
+
+    html_content = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Zemljevid spominov</title>
+
+  <script>
+    var postTitle = 'Zemljevid spominov';
+    var postId = '2';
+    var author = 'Metod';
+  </script>
+
+ <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
+
+  <link href='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.css' rel='stylesheet'>
+  <link href='https://metodlangus.github.io/plugins/@raruto/leaflet-elevation/dist/leaflet-elevation.min.css' rel='stylesheet'>
+  <link href='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet'>
+  <link href='https://metodlangus.github.io/scripts/leaflet-download-gpx-button.css' rel='stylesheet'>
+  <link href='https://metodlangus.github.io/plugins/lightbox2/2.11.1/css/lightbox.min.css' rel='stylesheet'>
+  <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css' rel='stylesheet'>
+  <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css' rel='stylesheet'>
+  <link href='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.css' rel='stylesheet'>
+
+ <link rel="stylesheet" href="assets/Main.css">
+  <link rel="stylesheet" href="assets/MyMapScript.css">
+  <link rel="stylesheet" href="assets/MySlideshowScript.css">
+  <link rel="stylesheet" href="assets/MyPostContainerScript.css">
+  <link rel="stylesheet" href="assets/MyMemoryMapScript.css">
+</head>
+<body>
+  <div class="main-layout">
+    {sidebar_html}
+    <div class="content-wrapper">
+      <input type="text" id="searchBox" placeholder="Išči objave..." />
+      <div id="searchResults"></div>
+      <h1>Zemljevid spominov</h1>
+        <div id='map'></div>
+    </div>
+  </div>
+
+  <script src='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.js'></script>
+  <script src='https://metodlangus.github.io/plugins/togeojson/0.16.0/togeojson.min.js'></script>
+  <script src='https://metodlangus.github.io/plugins/leaflet-gpx/1.6.0/gpx.min.js'></script>
+  <script src='https://metodlangus.github.io/plugins/@raruto/leaflet-elevation/dist/leaflet-elevation.min.js'></script>
+  <script src='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+  <script src='https://metodlangus.github.io/plugins/leaflet-polylinedecorator/1.1.0/leaflet.polylineDecorator.min.js'></script>
+  <script src='https://metodlangus.github.io/scripts/leaflet-download-gpx-button.js'></script>
+  <script src='https://metodlangus.github.io/plugins/lightbox2/2.11.1/js/lightbox-plus-jquery.min.js'></script>
+  <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
+  <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js'></script>
+  <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
+
+  <script src="assets/MyMapScript.js" defer></script>
+  <script src="assets/MySlideshowScript.js" defer></script>
+  <script src="assets/MyPostContainerScript.js" defer></script>
+  <script src="assets/Main.js" defer></script>
+  <script src="assets/MyMemoryMapScript.js" defer></script>
+
+</body>
+</html>"""
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(html_content)
+    print(f"Generated memory map page: {output_path}")
+
+
 if __name__ == "__main__":
     entries = fetch_all_entries()
     label_posts_raw = fetch_and_save_all_posts(entries)  # This function should return { label: [ {postId, date, html}, ... ] }
     generate_label_pages(entries, label_posts_raw)
     generate_predvajalnik_page()
     generate_peak_list_page()
+    generate_big_map_page()
