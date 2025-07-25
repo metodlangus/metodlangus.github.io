@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="sl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,248 +19,1150 @@
     <!-- Favicon -->
     <link rel="icon" href="photos/favicon.ico" type="image/x-icon">
 
-    <style>
-        body {
-            background-color: #333;
-            color: white;
-            font-size: 1vw;
-            text-align: center;
-            position: relative;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent; /* Prevent flashing */
-        }
-
-        .title {
-            white-space: nowrap;
-            position: absolute;
-            top: 15vh;
-            left: 50%;
-            transform: translateX(-50%);
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            font-size: 5vw;
-            z-index: 1;
-        }
-
-        .loading-text {
-            position: absolute;
-            top: 50vh;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 3vw;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            z-index: 1;
-        }
-
-        .image-container {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        /* Prevent blue highlight when clicking links */
-        .image-wrapper a {
-            outline: none;
-            -webkit-tap-highlight-color: transparent; /* Remove highlight on mobile */
-            -webkit-user-select: none; /* Prevent accidental selection */
-            user-select: none;
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-        .image-wrapper {
-            position: relative;
-            width: calc(33.33% - 20px);
-            aspect-ratio: 4 / 3;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .image-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .image-wrapper img:hover {
-            transform: scale(1.05);
-        }
-
-        .image-title {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            font-size: 3vw;
-            text-align: center;
-            padding: 5px; /* Padding inside instead of margin */
-            margin: 0; /* Remove margin to avoid overflow */
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-            box-sizing: border-box; /* Ensures padding is included in width */
-
-            /* Ensure whole words move to the next line */
-            white-space: normal; 
-            overflow-wrap: break-word; /* Allows breaking long words if needed */
-            word-wrap: break-word; /* Ensures compatibility */
-        }
-
-        .image-wrapper:hover .image-title {
-            opacity: 1;
-        }
-
-        @media screen and (max-width: 768px) {
-            .title {
-                font-size: 6vw;
-            }
-
-            .loading-text {
-                font-size: 4vw;
-            }
-
-            .image-wrapper {
-                width: calc(50% - 10px);
-            }
-        }
-
-        @media screen and (min-width: 768px) {
-            .image-title {
-                font-size: 2vw;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="assets/Main.css">
+    <link rel="stylesheet" href="assets/MyPostContainerScript.css">
+    <link rel="stylesheet" href="assets/MyHomepageScript.css">
 </head>
 <body>
-    <h1 class="title">
-      <a href="https://gorski-uzitki.blogspot.com/" target="_blank" rel="noopener noreferrer" style="color: white; text-decoration: none;">
-        GORSKI UŽITKI
-      </a>
-    </h1>
-    <div class="loading-text">S klikom vstopi v svet dogodivščin</div>
-    <div class="image-container" id="image-container"></div>
+  <div class="main-layout">
+    
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <div class="sidebar-container">
+      <div class="sidebar" id="sidebar">
+        <div class="archive">
+          <aside class="sidebar-archive">
+  <h3>Arhiv</h3>
+  <details open>
+    <summary>2025 (45)</summary>
+    <details class="month-group">
+      <summary>June 2025 (9)</summary>
+      <ul>
+        <li><a href="posts/2025/06/greben-lonzakopfl-2317-m-vorder-geisslkopf-2974-m.html">Greben Lonzaköpfl (2317 m) – Vorder Geißlkopf (2974 m)</a></li>
+        <li><a href="posts/2025/06/hohe-leier-2774-m.html">Hohe Leier (2774 m)</a></li>
+        <li><a href="posts/2025/06/mosermandl-2608-m.html">Mosermandl (2608 m)</a></li>
+        <li><a href="posts/2025/06/kleine-guglspitze-2570-m-in-speiereck-2411-m-ter-se-vsaj-15-vrhov-vmes.html">Kleine Guglspitze (2570 m) in Speiereck (2411 m) ter še vsaj 15 vrhov vmes</a></li>
+        <li><a href="posts/2025/06/cez-krisko-goro-na-storzic-2132-m.html">Čez Kriško goro na Storžič (2132 m)</a></li>
+        <li><a href="posts/2025/06/brezpotni-ravnik-1477-m-ter-brda-2009-m-iz-krme.html">Brezpotni Ravnik (1477 m) ter Brda (2009 m) iz Krme</a></li>
+        <li><a href="posts/2025/06/cez-kofce-na-stari-ljubelj.html">Čez Kofce na stari Ljubelj</a></li>
+        <li><a href="posts/2025/06/za-vikend-v-karnijce-31-5-1-6-2025.html">Za vikend v Karnijce (31. 5. – 1. 6. 2025)</a></li>
+        <li><a href="posts/2025/06/creta-di-timau-2217-m.html">Creta di Timau (2217 m)</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary>May 2025 (13)</summary>
+      <ul>
+        <li><a href="posts/2025/05/mestece-timau.html">Mestece Timau</a></li>
+        <li><a href="posts/2025/05/cuestalta-hoher-trieb-2198-m.html">Cuestalta / Hoher Trieb (2198 m)</a></li>
+        <li><a href="posts/2025/05/rutarski-vrsic-1699-m-vanezev-rob-1891-m.html">Rutarski vršič (1699 m), Vanežev rob (1891 m)</a></li>
+        <li><a href="posts/2025/05/veliki-vrh-kriz-1742-m-slap-cedca.html">Veliki vrh (Križ) (1742 m), slap Čedca</a></li>
+        <li><a href="posts/2025/05/skozi-kraljestvo-muflonov.html">Skozi kraljestvo muflonov</a></li>
+        <li><a href="posts/2025/05/greben-begunjscice-2060-m-cez-potocnikovo-planino.html">Greben Begunjščice (2060 m) čez Potočnikovo planino</a></li>
+        <li><a href="posts/2025/05/visoki-kurjek-barenkogel-1973-m-lepa-plevelnica-1959-m.html">Visoki Kurjek / Bärenkogel (1973 m), Lepa Plevelnica (1959 m)</a></li>
+        <li><a href="posts/2025/05/potepanje-po-hrvaski-26-4-4-5-2025.html">Potepanje po Hrvaški (26. 4. – 4. 5. 2025)</a></li>
+        <li><a href="posts/2025/05/klek-1181-m.html">Klek (1181 m)</a></li>
+        <li><a href="posts/2025/05/split.html">Split</a></li>
+        <li><a href="posts/2025/05/ferata-perunika.html">Ferata Perunika</a></li>
+        <li><a href="posts/2025/05/kimet-1536-m.html">Kimet (1536 m)</a></li>
+        <li><a href="posts/2025/05/jama-krjava-vosac-1421-m.html">Jama Krjava, Vošac (1421 m)</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary>April 2025 (9)</summary>
+      <ul>
+        <li><a href="posts/2025/04/veliki-sibenik-1467-m-sveti-jure-1762-m.html">Veliki Šibenik (1467 m), Sveti Jure (1762 m)</a></li>
+        <li><a href="posts/2025/04/omis-ferata-fortica.html">Omiš (ferata Fortica)</a></li>
+        <li><a href="posts/2025/04/greben-kozjak.html">Greben Kozjak</a></li>
+        <li><a href="posts/2025/04/sibenik.html">Šibenik</a></li>
+        <li><a href="posts/2025/04/kanjon-krupe.html">Kanjon Krupe</a></li>
+        <li><a href="posts/2025/04/veliki-bat-1381-m-bili-kuk-1171-m.html">Veliki Bat (1381 m), Bili kuk (1171 m)</a></li>
+        <li><a href="posts/2025/04/klekovac-898-m.html">Klekovac (898 m)</a></li>
+        <li><a href="posts/2025/04/kriska-gora-1472-m-vrh-vrata-1591-m.html">Kriška gora (1472 m), Vrh Vrata (1591 m)</a></li>
+        <li><a href="posts/2025/04/sentanski-vrh-1635-m-dobrca-1634-m.html">Šentanski vrh (1635 m), Dobrča (1634 m)</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary>March 2025 (4)</summary>
+      <ul>
+        <li><a href="posts/2025/03/schilchernock-2270-m-gaipahohe-2192-m.html">Schilchernock (2270 m), Gaipahöhe (2192 m)</a></li>
+        <li><a href="posts/2025/03/mrezce-1965-m.html">Mrežce (1965 m)</a></li>
+        <li><a href="posts/2025/03/mozic-1602-m-slatnik-1599-m-lajnar-1549-m.html">Možic (1602 m), Slatnik (1599 m), Lajnar (1549 m)</a></li>
+        <li><a href="posts/2025/03/veliki-draski-vrh-2240-m-draski-rob-1981-m.html">Veliki Draški vrh (2240 m), Draški rob (1981 m)</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary>February 2025 (6)</summary>
+      <ul>
+        <li><a href="posts/2025/02/turno-smucanje-po-kaninu.html">Turno smučanje po Kaninu</a></li>
+        <li><a href="posts/2025/02/kriska-gora-1472-m.html">Kriška gora (1472 m)</a></li>
+        <li><a href="posts/2025/02/breska-planina.html">Breška planina</a></li>
+        <li><a href="posts/2025/02/sentanski-vrh-1635-m-dobrca-1634-m.html">Šentanski vrh (1635 m), Dobrča (1634 m)</a></li>
+        <li><a href="posts/2025/02/turno-smucanje-po-kaninu-1.html">Turno smučanje po Kaninu</a></li>
+        <li><a href="posts/2025/02/turno-smucanje-po-kaninu-2.html">Turno smučanje po Kaninu</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary>January 2025 (4)</summary>
+      <ul>
+        <li><a href="posts/2025/01/vosca-1737-m-zajcnik-1746-m-trupejevo-poldne-1931-m.html">Vošca (1737 m), Zajčnik (1746 m), Trupejevo poldne (1931 m)</a></li>
+        <li><a href="posts/2025/01/pticji-vrh-1551-m-korenjscica-1764-m.html">Ptičji vrh (1551 m), Korenjščica (1764 m)</a></li>
+        <li><a href="posts/2025/01/lepenatka-1425-m-veliki-rogatec-1557-m.html">Lepenatka (1425 m), Veliki Rogatec (1557 m)</a></li>
+        <li><a href="posts/2025/01/zimska-pravljica-na-kriski-gori.html">Zimska pravljica na Kriški gori</a></li>
+      </ul>
+    </details>
+  </details>
+  <details open>
+    <summary>2024 (60)</summary>
+    <details class="month-group">
+      <summary>November 2024 (7)</summary>
+      <ul>
+        <li><a href="posts/2024/11/srednji-vrh-1796-m-vrtaca-wertatscha-2180-m.html">Srednji vrh (1796 m), Vrtača / Wertatscha (2180 m)</a></li>
+        <li><a href="posts/2024/11/potepanje-po-dolomitih-28-10-4-11-2024.html">Potepanje po Dolomitih (28. 10. – 4. 11. 2024)</a></li>
+        <li><a href="posts/2024/11/bruneck-brunico.html">Bruneck - Brunico</a></li>
+        <li><a href="posts/2024/11/piccolo-cir-2520-m-gran-cir-2592-m.html">Piccolo Cir (2520 m), Gran Cir (2592 m)</a></li>
+        <li><a href="posts/2024/11/mesola-2727-m-mesolina-2642-m.html">Mesola (2727 m), Mesolina (2642 m)</a></li>
+        <li><a href="posts/2024/11/roda-di-vael-rotwand-2806-m.html">Roda di Vaèl - Rotwand (2806 m)</a></li>
+        <li><a href="posts/2024/11/cima-costabella-2762-m-cima-dell-uomo-3010-m.html">Cima Costabella (2762 m), Cima dell&#x27;Uomo (3010 m)</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary>October 2024 (4)</summary>
+      <ul>
+        <li><a href="posts/2024/10/cima-d-auta-orientale-2645-m.html">Cima d&#x27;Auta Orientale (2645 m)</a></li>
+        <li><a href="posts/2024/10/cima-di-val-di-roda-2791-m.html">Cima di Val di Roda (2791 m)</a></li>
+        <li><a href="posts/2024/10/monte-grappa-1776-m.html">Monte Grappa (1776 m)</a></li>
+        <li><a href="posts/2024/10/nlb-28-ljubljanski-maraton-21-km.html">NLB 28. Ljubljanski maraton (21 km)</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary>September 2024 (19)</summary>
+      <ul>
+        <li><a href="posts/2024/09/slovaska-madzarska-31-8-12-9-2024.html">Slovaška, Madžarska  (31. 8. – 12. 9. 2024)</a></li>
+        <li><a href="posts/2024/09/budapest-budimpesta.html">Budapest - Budimpešta</a></li>
+        <li><a href="posts/2024/09/kekesteto-1014-m-najvisji-vrh-madzarske.html">Kékestető (1014 m) - najvišji vrh Madžarske</a></li>
+        <li><a href="posts/2024/09/mesto-eger.html">Mesto Eger</a></li>
+        <li><a href="posts/2024/09/bukki-nemzeti-park-madzarski-narodni-park.html">Bükki Nemzeti Park - madžarski narodni park</a></li>
+        <li><a href="posts/2024/09/kosice.html">Košice</a></li>
+        <li><a href="posts/2024/09/narodni-park-slovensky-kras.html">Národní park Slovenský kras</a></li>
+        <li><a href="posts/2024/09/narodny-park-muranska-planina-sedlo-zbojska.html">Národný park Muránska planina - Sedlo Zbojská</a></li>
+        <li><a href="posts/2024/09/narodny-park-muranska-planina-grad-muran.html">Národný park Muránska planina - Grad Muráň</a></li>
+        <li><a href="posts/2024/09/slovensky-raj-soteska-zejmarska-roklina.html">Slovenský raj - soteska Zejmarská roklina</a></li>
+        <li><a href="posts/2024/09/slovensky-raj-soteski-piecky-in-velky-sokol.html">Slovenský raj - soteski Piecky in Veľký Sokol</a></li>
+        <li><a href="posts/2024/09/slovensky-raj-slovaski-np-stevilnih-kanjonov-in-sotesk.html">Slovenský raj - Slovaški NP številnih kanjonov in sotesk</a></li>
+        <li><a href="posts/2024/09/rysy-2499-m-najvisji-vrh-poljske-koprovsky-stit-2367-m.html">Rysy (2499 m) - najvišji vrh Poljske, Kôprovský štít (2367 m)</a></li>
+        <li><a href="posts/2024/09/gerlachovsky-stit-2654-m-najvisji-vrh-slovaske-vychodna-vysoka-2429-m.html">Gerlachovský štít (2654 m) - najvišji vrh Slovaške, Východná Vysoká (2429 m)</a></li>
+        <li><a href="posts/2024/09/jezero-strbske-pleso.html">Jezero Štrbské Pleso</a></li>
+        <li><a href="posts/2024/09/krivan-2494-m-simbol-slovaske-narodne-zavesti.html">Kriváň (2494 m) - simbol slovaške narodne zavesti</a></li>
+        <li><a href="posts/2024/09/nizke-tatre-derese-2004-m-chopok-2024-m-dumbier-2043-m.html">Nizke Tatre - Dereše (2004 m), Chopok (2024 m), Ďumbier (2043 m)</a></li>
+        <li><a href="posts/2024/09/jama-harmanecka-jaskyna.html">Jama Harmanecká jaskyňa</a></li>
+        <li><a href="posts/2024/09/park-skalka.html">Park Skalka</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary>August 2024 (5)</summary>
+      <ul>
+        <li><a href="posts/2024/08/kremnica.html">Kremnica</a></li>
+        <li><a href="posts/2024/08/razgledni-stolp-haj-gupna-442-m.html">Razgledni stolp Háj, Gupňa (442 m)</a></li>
+        <li><a href="posts/2024/08/zobor-587-m.html">Zobor (587 m)</a></li>
+        <li><a href="posts/2024/08/monte-nabois-piccolo-1695-m-in-monte-nabois-grande-2301-m.html">Monte Nabois piccolo (1695 m) in Monte Nabois grande (2301 m)</a></li>
+        <li><a href="posts/2024/08/po-grebenu-od-visoke-ponce-2274-m-do-mangarta-2679-m.html">Po grebenu od Visoke Ponce (2274 m) do Mangarta (2679 m)</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary>July 2024 (9)</summary>
+      <ul>
+        <li><a href="posts/2024/07/potepanje-po-karnijcih-25-28-7-2024.html">Potepanje po Karnijcih (25. – 28. 7. 2024)</a></li>
+        <li><a href="posts/2024/07/cimon-del-cavallo-2251-m.html">Cimon del Cavallo (2251 m)</a></li>
+        <li><a href="posts/2024/07/ferrata-rino-costacurta-al-teverone.html">Ferrata Rino Costacurta al Teverone</a></li>
+        <li><a href="posts/2024/07/schiara-2565-m-pelf-2502-m.html">Schiara (2565 m), Pelf (2502 m)</a></li>
+        <li><a href="posts/2024/07/monte-pramaggiore-2478-m.html">Monte Pramaggiore (2478 m)</a></li>
+        <li><a href="posts/2024/07/precenje-mojstrovk-in-sit.html">Prečenje Mojstrovk in Šit</a></li>
+        <li><a href="posts/2024/07/vikend-v-ksa-6-4-7-2024.html">Vikend v KSA (6. – 4. 7. 2024)</a></li>
+        <li><a href="posts/2024/07/strelovec-1763-m-kroficka-2083-m.html">Strelovec (1763 m), Krofička (2083 m)</a></li>
+        <li><a href="posts/2024/07/matkova-kopa-1957-m-krnicka-gora-2064-m.html">Matkova Kopa (1957 m), Krnička gora (2064 m)</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary>June 2024 (8)</summary>
+      <ul>
+        <li><a href="posts/2024/06/dolina-rezije-29-30-6-2024.html">Dolina Rezije (29. – 30. 6. 2024)</a></li>
+        <li><a href="posts/2024/06/baba-grande-velika-baba-2161-m.html">Baba grande / Velika Baba (2161 m)</a></li>
+        <li><a href="posts/2024/06/monte-sart-2324-m.html">Monte Sart (2324 m)</a></li>
+        <li><a href="posts/2024/06/precenje-kumlehov.html">Prečenje Kumlehov</a></li>
+        <li><a href="posts/2024/06/mokrica-1853-m-iz-kurje-doline.html">Mokrica (1853 m) iz Kurje doline</a></li>
+        <li><a href="posts/2024/06/bistrica-dobrca-1634-m-begunjscica-2060-m-vrtaca-2180-m-ljubelj.html">Bistrica - Dobrča (1634 m) - Begunjščica (2060 m) - Vrtača (2180 m) - Ljubelj</a></li>
+        <li><a href="posts/2024/06/bivak-stebrasta-skala-in-naprej-na-mezaklo.html">Bivak Stebrasta skala in naprej na Mežaklo</a></li>
+        <li><a href="posts/2024/06/kriska-gora-1472-m-tolsti-vrh-1715-m.html">Kriška gora (1472 m), Tolsti vrh (1715 m)</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary>May 2024 (1)</summary>
+      <ul>
+        <li><a href="posts/2024/05/brezpotje-cez-akle-1380-m-in-starca-1426-m.html">Brezpotje čez Akle (1380 m) in Starca (1426 m)</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary>April 2024 (5)</summary>
+      <ul>
+        <li><a href="posts/2024/04/vrh-ljubeljscice-1705-m.html">Vrh Ljubeljščice (1705 m)</a></li>
+        <li><a href="posts/2024/04/vrh-ljubeljscice-1705-m-1.html">Vrh Ljubeljščice (1705 m)</a></li>
+        <li><a href="posts/2024/04/sentanski-vrh-1635-m-dobrca-1634-m.html">Šentanski vrh (1635 m), Dobrča (1634 m)</a></li>
+        <li><a href="posts/2024/04/po-hribckih-nad-vasico-chiusaforte-z-najvisjim-monte-plananizza-1555-m.html">Po hribčkih nad vasico Chiusaforte, z najvišjim Monte Plananizza (1555 m)</a></li>
+        <li><a href="posts/2024/04/od-alpe-piccola-1304-m-do-monte-acuto-1781-m.html">Od Alpe Piccola (1304 m) do Monte Acuto (1781 m)</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary>March 2024 (2)</summary>
+      <ul>
+        <li><a href="posts/2024/03/pot-sedmih-slapov.html">Pot sedmih slapov</a></li>
+        <li><a href="posts/2024/03/mrezce-1965-m-okroglez-1965-m.html">Mrežce (1965 m), Okroglež (1965 m)</a></li>
+      </ul>
+    </details>
+  </details>
+  <details open>
+    <summary>2023 (32)</summary>
+    <details class="month-group">
+      <summary>December 2023 (2)</summary>
+      <ul>
+        <li><a href="posts/2023/12/prevala-2067-m-iz-sella-nevea.html">Prevala (2067 m) iz Sella Nevea</a></li>
+        <li><a href="posts/2023/12/dobrca-1634-m-cez-travnike.html">Dobrča (1634 m) čez travnike</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary>October 2023 (3)</summary>
+      <ul>
+        <li><a href="posts/2023/10/podaljsan-vikend-v-dolomitih-28-9-2-10-2023.html">Podaljšan vikend v Dolomitih (28. 9. – 2. 10. 2023)</a></li>
+        <li><a href="posts/2023/10/piz-boe-3152-m.html">Piz Boè (3152 m)</a></li>
+        <li><a href="posts/2023/10/cima-presanella-3556-m.html">Cima Presanella (3556 m)</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary>September 2023 (3)</summary>
+      <ul>
+        <li><a href="posts/2023/09/sentiero-alpinistico-claudio-costanzi.html">Sentiero Alpinistico Claudio Costanzi</a></li>
+        <li><a href="posts/2023/09/giro-del-brenta.html">Giro del Brenta</a></li>
+        <li><a href="posts/2023/09/crete-di-gleris-monte-chiavals-2098-m.html">Crete di Gleris, Monte Chiavals (2098 m)</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary>August 2023 (9)</summary>
+      <ul>
+        <li><a href="posts/2023/08/podaljsan-vikend-v-dolomitih-18-21-8-2024.html">Podaljšan vikend v Dolomitih  (18. – 21. 8. 2024)</a></li>
+        <li><a href="posts/2023/08/antelao-3264-m-kralj-dolomitov.html">Antelao (3264 m) - kralj Dolomitov</a></li>
+        <li><a href="posts/2023/08/monte-civetta-3220-m.html">Monte Civetta (3220 m)</a></li>
+        <li><a href="posts/2023/08/monte-pelmo-3168-m.html">Monte Pelmo (3168 m)</a></li>
+        <li><a href="posts/2023/08/za-marijin-praznik-na-veliki-oltar-2621-m.html">Za Marijin praznik na Veliki Oltar (2621 m)</a></li>
+        <li><a href="posts/2023/08/misticna-kepa-2145-m.html">Mistična Kepa (2145 m)</a></li>
+        <li><a href="posts/2023/08/za-vikend-v-julijce-12-13-8-2023.html">Za vikend v Julijce (12. – 13. 8. 2023)</a></li>
+        <li><a href="posts/2023/08/planika-triglav-2864-m-savica.html">Planika - Triglav (2864 m) - Savica</a></li>
+        <li><a href="posts/2023/08/savica-spicje-kanjavceve-police-planika.html">Savica - Špičje - Kanjavčeve police - Planika</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary>July 2023 (1)</summary>
+      <ul>
+        <li><a href="posts/2023/07/izpitna-tura-smer-ogrin-omersa-v-ojstrici-2350-m.html">Izpitna tura smer Ogrin-Omersa v Ojstrici (2350 m)</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary>May 2023 (4)</summary>
+      <ul>
+        <li><a href="posts/2023/05/sardinija-25-4-2-5-2023.html">Sardinija  (25. 4. – 2. 5. 2023)</a></li>
+        <li><a href="posts/2023/05/olbia.html">Olbia</a></li>
+        <li><a href="posts/2023/05/ferrata-di-giorre.html">Ferrata di Giorré</a></li>
+        <li><a href="posts/2023/05/ferrata-della-regina.html">Ferrata della Regina</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary>April 2023 (8)</summary>
+      <ul>
+        <li><a href="posts/2023/04/cagliari-sella-del-diavolo.html">Cagliari, Sella del Diavolo</a></li>
+        <li><a href="posts/2023/04/pedra-longa.html">Pedra Longa</a></li>
+        <li><a href="posts/2023/04/gola-su-gorropu.html">Gola su Gorropu</a></li>
+        <li><a href="posts/2023/04/ferrata-di-badde-pentumas.html">Ferrata di Badde Pentumas</a></li>
+        <li><a href="posts/2023/04/ferrata-degli-angeli-tavolara.html">Ferrata degli Angeli (Tavolara)</a></li>
+        <li><a href="posts/2023/04/livorno-olbia.html">Livorno – Olbia</a></li>
+        <li><a href="posts/2023/04/pisa.html">Pisa</a></li>
+        <li><a href="posts/2023/04/ferata-rocca-di-badolo.html">Ferata Rocca di Badolo</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary>March 2023 (2)</summary>
+      <ul>
+        <li><a href="posts/2023/03/vrtaski-vrh-1898-m-vrtasko-sleme-2077-m.html">Vrtaški vrh (1898 m), Vrtaško Sleme (2077 m)</a></li>
+        <li><a href="posts/2023/03/prvi-turni-smuk.html">Prvi turni smuk</a></li>
+      </ul>
+    </details>
+  </details>
+  <details open>
+    <summary>2022 (4)</summary>
+    <details class="month-group">
+      <summary>June 2022 (4)</summary>
+      <ul>
+        <li><a href="posts/2022/06/ledeniska-tura-saas-fee-svica-24-28-6-2022.html">Ledeniška tura Saas-Fee (Švica) (24. – 28. 6. 2022)</a></li>
+        <li><a href="posts/2022/06/nadelhorn-4327-m.html">Nadelhorn (4327 m)</a></li>
+        <li><a href="posts/2022/06/saas-fee.html">Saas-Fee</a></li>
+        <li><a href="posts/2022/06/allalinhorn-4027-m.html">Allalinhorn (4027 m)</a></li>
+      </ul>
+    </details>
+  </details>
+</aside>
+        </div>
+        <div class="labels">
+          <aside class='sidebar-labels'><h3><b>Navigacija</b></h3>
+<div class='first-items'><h3>Kategorija:</h3><ul class='label-list'>
+<li><a class='label-name' href='search/labels/alpinizem.html'>Alpinizem</a></li>
+<li><a class='label-name' href='search/labels/ferata.html'>Ferata</a></li>
+<li><a class='label-name' href='search/labels/gornistvo.html'>Gorništvo</a></li>
+<li><a class='label-name' href='search/labels/gorski-tek.html'>Gorski tek</a></li>
+<li><a class='label-name' href='search/labels/ostalo.html'>Ostalo</a></li>
+<li><a class='label-name' href='search/labels/plezanje.html'>Plezanje</a></li>
+<li><a class='label-name' href='search/labels/pohodnistvo.html'>Pohodništvo</a></li>
+<li><a class='label-name' href='search/labels/potepanja.html'>Potepanja</a></li>
+<li><a class='label-name' href='search/labels/sprehod.html'>Sprehod</a></li>
+<li><a class='label-name' href='search/labels/tek.html'>Tek</a></li>
+<li><a class='label-name' href='search/labels/turno-smucanje.html'>Turno smučanje</a></li>
+</ul>
+<div class='remaining-items hidden' style='height:auto;'>
+<h3>Država:</h3><ul class='label-list'>
+<li><a class='label-name' href='search/labels/avstrija.html'>Avstrija</a></li>
+<li><a class='label-name' href='search/labels/hrvaska.html'>Hrvaška</a></li>
+<li><a class='label-name' href='search/labels/italija.html'>Italija</a></li>
+<li><a class='label-name' href='search/labels/madzarska.html'>Madžarska</a></li>
+<li><a class='label-name' href='search/labels/sardinija.html'>Sardinija</a></li>
+<li><a class='label-name' href='search/labels/slovaska.html'>Slovaška</a></li>
+<li><a class='label-name' href='search/labels/slovenija.html'>Slovenija</a></li>
+<li><a class='label-name' href='search/labels/svica.html'>Švica</a></li>
+</ul>
+<h3>Gorstvo:</h3><ul class='label-list'>
+<li><a class='label-name' href='search/labels/beneske-predalpe.html'>Beneške Predalpe</a></li>
+<li><a class='label-name' href='search/labels/biokovo.html'>Biokovo</a></li>
+<li><a class='label-name' href='search/labels/dinarsko-gorstvo.html'>Dinarsko gorstvo</a></li>
+<li><a class='label-name' href='search/labels/dolomiti.html'>Dolomiti</a></li>
+<li><a class='label-name' href='search/labels/julijske-alpe.html'>Julijske Alpe</a></li>
+<li><a class='label-name' href='search/labels/kamnisko-savinjske-alpe.html'>Kamniško-Savinjske Alpe</a></li>
+<li><a class='label-name' href='search/labels/karavanke.html'>Karavanke</a></li>
+<li><a class='label-name' href='search/labels/karnijske-alpe.html'>Karnijske Alpe</a></li>
+<li><a class='label-name' href='search/labels/kriske-alpe.html'>Kriške Alpe</a></li>
+<li><a class='label-name' href='search/labels/matra.html'>Mátra</a></li>
+<li><a class='label-name' href='search/labels/nizke-tatre.html'>Nizke Tatre</a></li>
+<li><a class='label-name' href='search/labels/nizke-ture.html'>Nizke Ture</a></li>
+<li><a class='label-name' href='search/labels/peninske-alpe.html'>Peninske Alpe</a></li>
+<li><a class='label-name' href='search/labels/slovaski-raj.html'>Slovaški raj</a></li>
+<li><a class='label-name' href='search/labels/tavolara.html'>Tavolara</a></li>
+<li><a class='label-name' href='search/labels/tribec.html'>Tribeč</a></li>
+<li><a class='label-name' href='search/labels/velebit.html'>Velebit</a></li>
+<li><a class='label-name' href='search/labels/visoke-tatre.html'>Visoke Tatre</a></li>
+<li><a class='label-name' href='search/labels/visoke-ture.html'>Visoke Ture</a></li>
+</ul>
+<h3>Časovno:</h3><ul class='label-list'>
+<li><a class='label-name' href='search/labels/celodnevni.html'>Celodnevni</a></li>
+<li><a class='label-name' href='search/labels/daljsa-potepanja.html'>Daljša potepanja</a></li>
+<li><a class='label-name' href='search/labels/dvodnevni.html'>Dvodnevni</a></li>
+<li><a class='label-name' href='search/labels/kratki.html'>Kratki</a></li>
+<li><a class='label-name' href='search/labels/poldnevni.html'>Poldnevni</a></li>
+<li><a class='label-name' href='search/labels/vikend-potepanja.html'>Vikend potepanja</a></li>
+</ul>
+<h3>Ostalo:</h3><ul class='label-list'>
+<li><a class='label-name' href='search/labels/brezpotje.html'>Brezpotje</a></li>
+<li><a class='label-name' href='search/labels/greben.html'>Greben</a></li>
+<li><a class='label-name' href='search/labels/jama.html'>Jama</a></li>
+<li><a class='label-name' href='search/labels/jezero.html'>Jezero</a></li>
+<li><a class='label-name' href='search/labels/kanjon.html'>Kanjon</a></li>
+<li><a class='label-name' href='search/labels/mesto.html'>Mesto</a></li>
+<li><a class='label-name' href='search/labels/moji-najljubsi.html'>Moji najljubši</a></li>
+<li><a class='label-name' href='search/labels/otok.html'>Otok</a></li>
+<li><a class='label-name' href='search/labels/polotok.html'>Polotok</a></li>
+<li><a class='label-name' href='search/labels/slap.html'>Slap</a></li>
+<li><a class='label-name' href='search/labels/soteska.html'>Soteska</a></li>
+<li><a class='label-name' href='search/labels/grad.html'>Grad</a></li>
+</ul>
+</div>
 
-    <script type="application/ld+json">
-    {
-      "@context": "http://schema.org",
-      "@type": "WebPage",
-      "name": "Gorski Užitki",
-      "url": "https://metodlangus.github.io",
-      "description": "Odkrijte gorske avanture in fotografije narave v blogu Gorski Užitki Metoda Langusa."
-    }
-    </script>
+        <span class='show-more pill-button'>Pokaži več</span>
+        <span class='show-less pill-button hidden'>Pokaži manj</span>
+        
+</aside>
+        </div>
+        <div class="pages">
+          <aside class='sidebar-pages'><h3>Strani</h3>
+            <li><a href="predvajalnik-nakljucnih-fotografij.html">Predvajalnik naključnih fotografij</a></li>
+            <li><a href="seznam-vrhov.html">Seznam vrhov</a></li>
+            <li><a href="zemljevid-spominov.html">Zemljevid spominov</a></li>
+          </aside>
+        </div>
+        <h2 class="title">Nastavitve</h2>
+        <h3 class="title">Objave in predvajalniki slik</h3>
+        <div style="display: flex; flex-direction: column; margin-left: 5px; margin-top: 5px; margin-bottom: 10px;">
+            <label for='photosSliderElement'>Obseg prikazanih slik: <span id='photosValueElement'></span></label>
+            <input id='photosSliderElement' max='3' min='0' step='1' type='range' value='initPhotos' style="width: 160px;"/>
+        </div>
+        <div id='map-settings'>
+          <h3 class='title'>Zemljevid spominov</h3>
+          <!-- Slider Section -->
+          <div style='display: flex; flex-direction: column; margin-left: 5px; margin-top: 5px; margin-bottom: 10px;'>
+              <label for='photosMapSliderElement'>Obseg prikazanih slik: <span id='photosMapValueElement'/></label>
+              <input id='photosMapSliderElement' max='3' min='-2' step='1' style='width: 160px;' type='range' value='initMapPhotos'/>
+          </div>
 
+          <!-- Date and Time Filters -->
+          <div class='form-group'>
+              <label for='dayFilterStart'>Od dne:</label>
+              <input class='input-field' id='dayFilterStart' type='date'/>
+          </div>
+          <div class='form-group'>
+              <label for='timeFilterStart'>od ure:</label>
+              <input class='input-field' id='timeFilterStart' type='time'/>
+          </div>
+          <div class='form-group'>
+              <label for='dayFilterEnd'>Do dne:</label>
+              <input class='input-field' id='dayFilterEnd' type='date'/>
+          </div>
+          <div class='form-group'>
+              <label for='timeFilterEnd'>do ure:</label>
+              <input class='input-field' id='timeFilterEnd' type='time'/>
+          </div>
+
+          <!-- Daily Time Filters -->
+          <div class='form-group'>
+              <label for='dailyTimeFilterStart'>Med:</label>
+              <input class='input-field' id='dailyTimeFilterStart' type='time' value='00:00'/>
+          </div>
+          <div class='form-group'>
+              <label for='dailyTimeFilterEnd'>in:</label>
+              <input class='input-field' id='dailyTimeFilterEnd' type='time' value='23:59'/>
+          </div>
+
+          <!-- Apply Filters Button -->
+          <div class='form-group' style='display: flex; justify-content: center;'>
+              <button class='pill-button' id='applyFilters'>Uporabi filtre</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="content-wrapper">
+      <input type="text" id="searchBox" placeholder="Išči objave..." />
+      <div id="searchResults"></div>
+      <svg class='logo-svg' height='67' version='1.0' viewBox='0 0 1350 168' width='540' xmlns='http://www.w3.org/2000/svg'>
+        <g fill='#666'>
+          <path d='m945 4-14 6h-13c-10-6-10-6-22-5-12 0-12 0-16 3l-5 3c-2 0-5 4-5 6s4 7 14 16l13 16-9 1c-7 0-8 0-11 3s-10 6-12 6c-1 0-2 4-2 9s-1 7-2 5l-2-8c0-7-2-12-5-14l-22-1c-17 0-20 0-23 2l-3 2-4 2-4 2-4-4-5-5-23 1h-23l-3 3c-2 2-4 5-6 5-2 2-2 2-3 16l-1 18a253 253 0 0 0 1 32c0 5 3 14 6 17l1 3c0 2 6 8 12 12 3 3 5 3 16 4h12l21-2 26 1c25 0 29 0 32-4 2-3 4-2 6 1 3 3 12 5 17 3h29a494 494 0 0 1 51-1l6-1 8-2 4-2 2 2 8 4h18c12 0 19-1 21-2l8-3c6-2 7-4 7-18l1-26V95h7l8-1 1 17c1 14 1 18 4 24 2 6 3 9 8 13 5 5 9 6 23 10a164 164 0 0 0 52-2c3-2 3-2 7 1 3 2 4 2 22 2 20-1 30-2 34-4 2-1 3-1 7 1 6 3 6 3 24 3l21-1c3-1 18-2 20 0 2 1 39 2 40 0l8-2c3-1 7-3 8-5l3-2V56l-3-2c-3-3-3-4-1-8l1-18c-1-21 1-20-24-20-19 0-19 0-23 3l-6 3-4 3c-2 3-2 4-2 17l1 16 5 2c5 0 5 2 0 4s-7 2-7 1l-5-4c-4-3-5-3-15-3-16 0-28 2-34 4l-7 3c-3 2-5 1-5-4l2-17V22l-3-4-4-4h-39l-3 3-4 3-4 2c-3 2-4 3-5 9l-1 11v8c0 5-2 5-6 3l-12-3-10-1-1-14c0-14-1-17-8-19-8-3-40-1-40 2l-4 2c-4 0-10 5-10 7v13l-1 12-4 2c-8 4-10 4-14 0-3-3-4-6-2-8l2-16V14l-3-3-3-3h-38l-4 3-5 3-4 2c-2 2-3 12-2 26v8l4 1c6 2 7 3 2 5-6 3-7 4-8 9v44l1 5c0 4 0 4-3 4l-3-1-13-1c-10-1-12-2-12-3 0-2 2-4 7-8l12-10 5-5 1-15-1-18c-2-4-5-5-18-6l-14-1c-3-1-3-4 0-4 4-2 25-26 27-32 2-5 0-9-5-10h-18zm12 8 2 2-14 16-7 8h-26l-11-11-11-13 3-2c5-1 13 1 21 5l10 4 11-4c12-6 18-7 22-5zm74 4 1 12c0 15 1 14-16 14l-14-2c-3-1-4-7-4-15 0-7 0-8 2-9h31zm297 1 1 12c0 10 0 11-2 12-3 2-27 0-29-1l-2-8c-3-17-2-17 17-17l15 2zm-217 7c2 1 2 3 2 17 0 18-1 17 14 17 13 0 13 0 13 13l-1 12c0 2-10 3-18 1s-8-1-8 14c0 19 2 21 18 23 10 0 11 0 12 2 1 4 2 22 1 24-1 1-4 2-18 2l-22-1c-8-2-23-16-25-23l-2-20c-2-24 0-22-11-22h-8l-1-10c0-13 0-13 11-13l7-1 2-15c0-16 1-20 4-20 6-2 27-1 30 0zm93-1v19c-2 25-1 45 0 47 3 2 5 1 8-4a88 88 0 0 1 6-10c6-8 11-15 13-15l19-2c19 0 19 0 14 8a81 81 0 0 1-4 7l-3 5-3 4-5 8-4 8 5 9 9 16a99 99 0 0 0 10 17l2 2c2 2 1 6-1 6l-20 1c-21 0-20 1-26-12-5-10-12-21-14-22h-3c-2 1-2 4-2 17 0 14 0 15-2 16h-34v-17c-1-21 1-104 1-107 1-2 1-2 17-2l17 1zM786 59l2 30c1 28 1 28 3 31 6 7 15 7 20 1 3-3 3-4 4-15 0-9-1-27-3-40-1-7 0-7 20-7l17 1 1 3a664 664 0 0 1 1 86l-17 1c-18 0-19 0-19-6 0-3 0-3-3-3-2 0-4 1-7 4-7 8-25 9-37 3-8-4-18-18-20-29a460 460 0 0 1 1-60h37zm167 1 11 2c1 1 2 24 1 26l-6 5a536 536 0 0 0-27 23c-3 2-4 5-1 6l20 2 19 2 1 11c0 8 0 10-2 12l-42 1-44-2c-2-1-2-1-2-12 0-13 0-12 13-24 16-13 25-22 25-24l-2-2c-2-1-4-2-8-1h-27l-1-12c0-8 0-11 2-12 1-2 5-2 30-2l40 1zm81 2a654 654 0 0 1-1 84c-2 2-31 2-34 0l-2-1v-40l1-42c1-2 2-2 18-2l18 1zm297 4v80c-1 2-2 2-18 2l-17-1a963 963 0 0 1 1-85l18-1h16v5zm-55 6 1 16v22c1 4 0 23-1 23-2 0-7-8-11-16l-7-12-3-6 16-27c4-5 6-5 6 0zm-126 19c-1 3-1 5 1 9v14c0 2 0 2-2 2l-4-1-6-1c-9 0-16-1-17-3l-1-8c0-5 0-6 2-7h4l5-1 5-1c3 0 10-4 11-6s1-2 2-1v4zm-287-1c0 4 2 5 15 5 9 0 14 1 14 2s-11 12-21 20c-4 4-7 7-7 9l-2 2c-2 0-2-3-2-19l1-20c1-1 2 0 2 1zM637 11l-5 3c-5 0-7 9-6 23s1 14 5 14c6 1 6 3 1 5-5 3-6 3-8 0-6-5-7-6-19-6-21 0-30 2-40 7-3 2-5 1-5-1V20c-2-5-5-6-26-6-18 0-19 0-21 2l-7 5c-8 4-8 4-8 33a782 782 0 0 0 0 40v10c1 5-2 5-6 1l-9-8c-4-3-5-5-4-6l5-1c10 0 14-13 6-23-3-3-11-10-16-12-10-5-14-5-32-5-17 0-17 0-23 3l-15 7-17 7-1-5-1-7c-2-7-25-7-38 0-5 2-5 2-8 0-5-5-7-5-26-5-17 0-17 0-20 2-1 2-4 4-7 5-6 2-6 4-7 16l-1 13c0 2-3-1-4-5l-1-5-3-6c-2-6-6-10-12-13l-6-3-5-1-6-1c-6-2-45-3-47-1l-4 2c-6 1-20 11-28 19s-10 9-10 5l-2-5-3-3 3-4c2-4 2-5 1-10-1-7-5-12-12-19a50 50 0 0 0-32-18l-26-1c-17 0-18 0-25 2l-10 4-10 5-12 6-6 7-4 5-6 13-1 3a321 321 0 0 0 1 59l2 6 2 6c0 2 12 16 15 17l5 3a141 141 0 0 0 40 8c11 0 35-4 39-6 2-1 8-4 11-4 5-2 16-10 21-16 9-12 7-11 10-6l2 6 6 8c6 8 11 11 25 15a175 175 0 0 0 41 1l10-2 7-2 3-1 17-9c4-4 9-12 11-16l2-4c2 0 2 4 2 19l1 9c2 6 4 6 26 6a167 167 0 0 0 28-2l7-3 2-2v-25c0-28-1-26 15-27l14-1c6-3 8-2 9 1l6 9 6 7c0 1-6 7-10 9-3 1-5 3-5 6 0 4 3 11 7 14 4 4 15 11 16 11l5 2 14 2 13 1a119 119 0 0 0 38-8l3-2 8-7 10-6c5-4 6-3 6 7 0 7 0 8 3 11l3 3h19c20-1 31-2 33-4 2-1 8 0 11 3 2 1 37 1 50-1h11c4 2 39 3 43 0l4-1 5-2c8-3 7-2 8-52 0-45-1-48-5-50v-6c1-2 2-7 2-18V14l-3-3-3-3h-39l-3 3zm39 6 1 12c0 11 0 11-2 12-3 1-27 0-29-1-1-1-2-4-2-10-1-11 0-14 2-14 2-1 29 0 30 1zM552 55v34c2 2 5 1 7-3l2-4a1412 1412 0 0 0 17-22l20-2h16v2l-4 9-8 13-6 9-3 6 6 13 7 11c0 1 3 7 9 15 5 9 6 11 3 12a201 201 0 0 1-40 0l-6-9c-5-11-13-24-15-25l-3 1-2 17-1 16h-32c-2 0-2-1-3-7l3-118 16-1h17v33zM97 25l11 2c11 2 13 3 25 15 8 7 10 11 10 16v4h-43l-4-5-10-5c-7 0-12 1-16 5-5 4-5 7-4 31 0 22 1 24 7 30 3 2 4 3 11 3 8 0 13-2 16-7 5-7 4-13-3-13-6 0-7-1-7-12-1-13-3-13 23-12h25l5 2c2 1 2 34 0 39-2 8-12 19-20 23l-21 8c-8 2-20 3-27 2-14-2-18-3-24-7l-7-4c-1 0-12-10-13-13-4-8-8-27-7-35V73c1-22 7-35 22-41l7-3 3-1 4-1 6-2h31zm130 33c13 1 20 2 26 6 4 2 10 7 10 10l2 5 2 6 1 3c3 3 4 22 2 30-1 5-5 14-8 18-3 3-12 9-19 11-4 2-8 2-15 2l-12 1h-5l-6-1-17-5c-4-3-10-10-15-19-3-6-3-7-3-12a229 229 0 0 1 8-36c1-4 4-9 6-11 2-3 13-8 16-8h26zm96 0c8 1 10 2 10 7 0 6 6 6 11 2 6-6 14-8 23-9l10 1v28c-1 2-2 2-14 2-15 0-21 2-25 7l-3 3v23l1 25c-1 2-2 2-18 2l-18-1c-2-1-2-2-2-22a1560 1560 0 0 0 2-68h23zm139 1 4 1c4 1 13 7 17 12l3 6v3l-17 1c-16 0-16 0-20-3s-7-3-11 0c-7 5-1 13 12 15 12 1 18 3 25 8 10 7 16 13 17 17 1 6-1 9-7 13-7 6-8 6-19 12-8 4-10 4-20 5-7 1-11 1-16-1l-11-2c-9-2-18-7-22-13-3-6-2-7 6-7l15-1c8-1 8-1 15 2 8 3 11 3 15 0 3-2 4-4 1-8-2-3-6-5-16-7-12-3-14-3-20-6l-10-7c-5-5-5-5-5-11v-7l8-8c12-10 18-15 25-15 7-1 30 0 31 1zm217 18c1 19 0 67-1 68-2 2-31 2-34 1l-1-43c-1-36 0-41 1-42l18-1h16l1 16zM80 67l3 5-8 4c-2-1-3-7-1-10 1-3 4-2 6 1zm544 1 1 54c-1 9-1 9-3 9l-8-11c-1-5-4-9-8-15l-4-7 6-9 14-22 2 1z'/>
+          <path d='m213 82-3 4c-1 5-2 20-1 28 1 7 1 9 3 11 5 3 10 3 15-1 3-3 3-5 3-8l1-10c2-7 0-18-4-22-3-4-9-5-14-2z'/>
+        </g>
+      </svg>
+      <div class="blog-posts hfeed container">
+         
     <script>
-        async function fetchAndDisplayImages() {
-            const CACHE_KEY = "cover_photos_cache";
-            const CACHE_EXPIRY = 60 * 60 * 1000; // 1 hour in milliseconds
-
-            let cachedData = localStorage.getItem(CACHE_KEY);
-            let images = [];
-
-            if (cachedData) {
-                const parsedData = JSON.parse(cachedData);
-                const now = Date.now();
-
-                if (now - parsedData.timestamp < CACHE_EXPIRY) {
-                    console.log("Using cached images...");
-                    images = parsedData.images;
-                    displayImages(images);
-                    return;
-                }
-            }
-
-            try {
-                console.log("Fetching new images...");
-                const response = await fetch("https://metodlangus.github.io/extracted_photos_with_gps_data.txt");
-                const text = await response.text();
-
-                const regex = /(.+?), Link: (.+?), data-skip=(.+?), "(.+?)", (.+?),/g;
-                let match;
-
-                while ((match = regex.exec(text)) !== null) {
-                    const [, title, link, dataSkip, postTitle, postLink] = match;
-                    if (dataSkip.includes("cover")) {
-                        images.push({ title, link, postTitle, postLink });
-                    }
-                }
-
-                images.sort((a, b) => extractDateFromTitle(b.title) - extractDateFromTitle(a.title));
-
-                // Cache the fetched data
-                localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), images }));
-
-                displayImages(images);
-            } catch (error) {
-                console.error("Error fetching images:", error);
-                if (cachedData) {
-                    console.log("Using stale cache data...");
-                    displayImages(JSON.parse(cachedData).images);
-                }
-            }
-        }
-
-        function displayImages(images) {
-            const container = document.getElementById("image-container");
-            container.innerHTML = "";
-
-            images.forEach(({ link, postTitle, postLink }) => {
-                const wrapper = document.createElement("div");
-                wrapper.className = "image-wrapper";
-
-                const anchor = document.createElement("a");
-                anchor.href = `https://gorski-uzitki.blogspot.com/${postLink}`;
-                anchor.target = "_blank";
-                anchor.rel = "noopener noreferrer";
-
-                const img = document.createElement("img");
-                img.src = link;
-                img.alt = postTitle;
-                img.loading = "lazy"; // Lazy load for performance
-
-                const titleDiv = document.createElement("div");
-                titleDiv.className = "image-title";
-                titleDiv.textContent = postTitle;
-
-                anchor.appendChild(img);
-                wrapper.appendChild(anchor);
-                wrapper.appendChild(titleDiv);
-                container.appendChild(wrapper);
-            });
-        }
-
-        function extractDateFromTitle(title) {
-            const match = title.match(/(\d{8}_\d{6}|\d{14})/); // e.g., 20240511_144501 or 20240511144501
-            if (!match) return 0;
-
-            let dateStr = match[0];
-
-            // Handle format: 20240511_144501
-            if (dateStr.includes('_')) {
-                const [datePart, timePart] = dateStr.split('_');
-                const year = parseInt(datePart.substring(0, 4));
-                const month = parseInt(datePart.substring(4, 6)) - 1;
-                const day = parseInt(datePart.substring(6, 8));
-                const hour = parseInt(timePart.substring(0, 2));
-                const minute = parseInt(timePart.substring(2, 4));
-                const second = parseInt(timePart.substring(4, 6));
-                return new Date(year, month, day, hour, minute, second).getTime();
-            }
-
-            // Handle format: 20240511144501
-            const year = parseInt(dateStr.substring(0, 4));
-            const month = parseInt(dateStr.substring(4, 6)) - 1;
-            const day = parseInt(dateStr.substring(6, 8));
-            const hour = parseInt(dateStr.substring(8, 10));
-            const minute = parseInt(dateStr.substring(10, 12));
-            const second = parseInt(dateStr.substring(12, 14));
-            return new Date(year, month, day, hour, minute, second).getTime();
-        }
-
-        fetchAndDisplayImages();
+      var postTitle0 = "7756792700814336694";
+      var displayMode0 = "alwaysVisible";
     </script>
+ 
+    <script>
+      var postTitle1 = "6033734106822163249";
+      var displayMode1 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle2 = "580700727124410937";
+      var displayMode2 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle3 = "2588552979420205139";
+      var displayMode3 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle4 = "1214045461358366818";
+      var displayMode4 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle5 = "6511537537709253416";
+      var displayMode5 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle6 = "1488309811172188311";
+      var displayMode6 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle7 = "2389880327064735483";
+      var displayMode7 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle8 = "2473693902462915426";
+      var displayMode8 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle9 = "814788955901606888";
+      var displayMode9 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle10 = "8547482659237635982";
+      var displayMode10 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle11 = "231811339115949817";
+      var displayMode11 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle12 = "3269816315050536168";
+      var displayMode12 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle13 = "2589090595435882517";
+      var displayMode13 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle14 = "4081067818040411722";
+      var displayMode14 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle15 = "2950894995106576301";
+      var displayMode15 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle16 = "1779917978000342364";
+      var displayMode16 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle17 = "4787432999036984428";
+      var displayMode17 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle18 = "5060739748459530963";
+      var displayMode18 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle19 = "1833335527545481796";
+      var displayMode19 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle20 = "4467343109718741629";
+      var displayMode20 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle21 = "7509151407869737257";
+      var displayMode21 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle22 = "3197848242990855293";
+      var displayMode22 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle23 = "5322769197371320858";
+      var displayMode23 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle24 = "7614499534721676062";
+      var displayMode24 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle25 = "1163512523412414476";
+      var displayMode25 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle26 = "8248502993126452538";
+      var displayMode26 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle27 = "7278835320236591082";
+      var displayMode27 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle28 = "9095054306963982054";
+      var displayMode28 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle29 = "1711098164195902904";
+      var displayMode29 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle30 = "2079470907784504371";
+      var displayMode30 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle31 = "167209217747982456";
+      var displayMode31 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle32 = "7032848582078074371";
+      var displayMode32 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle33 = "4443433090251006548";
+      var displayMode33 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle34 = "7556662383360394126";
+      var displayMode34 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle35 = "4440127020424780302";
+      var displayMode35 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle36 = "2775744475275620655";
+      var displayMode36 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle37 = "2784199421745254195";
+      var displayMode37 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle38 = "440026550004770500";
+      var displayMode38 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle39 = "3954634309677980959";
+      var displayMode39 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle40 = "4600768859425059723";
+      var displayMode40 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle41 = "4831172329849696134";
+      var displayMode41 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle42 = "7239483972607710611";
+      var displayMode42 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle43 = "1304945139608096800";
+      var displayMode43 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle44 = "6778532249705094424";
+      var displayMode44 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle45 = "7522404626367627917";
+      var displayMode45 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle46 = "5722788170207801169";
+      var displayMode46 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle47 = "103538095222810435";
+      var displayMode47 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle48 = "6734281574156718122";
+      var displayMode48 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle49 = "1124795223500850924";
+      var displayMode49 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle50 = "1899092991195790361";
+      var displayMode50 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle51 = "7176250751012440995";
+      var displayMode51 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle52 = "5216453237033858412";
+      var displayMode52 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle53 = "1643803024865498194";
+      var displayMode53 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle54 = "8041442264155822245";
+      var displayMode54 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle55 = "3666498168500431677";
+      var displayMode55 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle56 = "513839982223713877";
+      var displayMode56 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle57 = "4408894935173905991";
+      var displayMode57 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle58 = "6023231872971511819";
+      var displayMode58 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle59 = "8717461120207567476";
+      var displayMode59 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle60 = "8949911820429588821";
+      var displayMode60 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle61 = "5673538754942007400";
+      var displayMode61 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle62 = "1128725398110011348";
+      var displayMode62 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle63 = "364766567303497441";
+      var displayMode63 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle64 = "5815706977287766605";
+      var displayMode64 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle65 = "5459964152614094625";
+      var displayMode65 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle66 = "9205590614351195174";
+      var displayMode66 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle67 = "1832066811038262454";
+      var displayMode67 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle68 = "8415201834680099757";
+      var displayMode68 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle69 = "6949686772858405004";
+      var displayMode69 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle70 = "2266787076758580865";
+      var displayMode70 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle71 = "8218977179203243332";
+      var displayMode71 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle72 = "5564926650057374564";
+      var displayMode72 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle73 = "3271452707759311243";
+      var displayMode73 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle74 = "6465320773801844379";
+      var displayMode74 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle75 = "376260634406749502";
+      var displayMode75 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle76 = "2247742528276683373";
+      var displayMode76 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle77 = "6485432951112636794";
+      var displayMode77 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle78 = "4147148249482145472";
+      var displayMode78 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle79 = "2484624541066229237";
+      var displayMode79 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle80 = "3712460721508791412";
+      var displayMode80 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle81 = "8017045547106989372";
+      var displayMode81 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle82 = "8389285634508335517";
+      var displayMode82 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle83 = "8271329734914910375";
+      var displayMode83 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle84 = "3438719275904954779";
+      var displayMode84 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle85 = "3182968482457795166";
+      var displayMode85 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle86 = "3004243609038059968";
+      var displayMode86 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle87 = "833011297519237755";
+      var displayMode87 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle88 = "1373949133320176219";
+      var displayMode88 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle89 = "5522644566273610716";
+      var displayMode89 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle90 = "3988043793260790168";
+      var displayMode90 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle91 = "4046412181313014421";
+      var displayMode91 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle92 = "7743532039189378529";
+      var displayMode92 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle93 = "3471263046239969037";
+      var displayMode93 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle94 = "4252469176479121385";
+      var displayMode94 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle95 = "8212816774001752315";
+      var displayMode95 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle96 = "2612738657688049584";
+      var displayMode96 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle97 = "5592995950363413525";
+      var displayMode97 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle98 = "191227553903706417";
+      var displayMode98 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle99 = "2898883354007760081";
+      var displayMode99 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle100 = "8064417772593423527";
+      var displayMode100 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle101 = "5236195504461612877";
+      var displayMode101 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle102 = "6896621821737624789";
+      var displayMode102 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle103 = "4498487772566607535";
+      var displayMode103 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle104 = "6800619318413451259";
+      var displayMode104 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle105 = "6872221956525389172";
+      var displayMode105 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle106 = "1514773089763961492";
+      var displayMode106 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle107 = "1841230862987308438";
+      var displayMode107 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle108 = "6624555373513395940";
+      var displayMode108 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle109 = "4560888180983880622";
+      var displayMode109 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle110 = "3612687055369494909";
+      var displayMode110 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle111 = "6199440655973056572";
+      var displayMode111 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle112 = "2913674360447897271";
+      var displayMode112 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle113 = "4399886710167206741";
+      var displayMode113 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle114 = "5289959343243319877";
+      var displayMode114 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle115 = "3321040799703211624";
+      var displayMode115 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle116 = "7527896670956528058";
+      var displayMode116 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle117 = "1665684943412865822";
+      var displayMode117 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle118 = "8700339219321196369";
+      var displayMode118 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle119 = "7844648273596733145";
+      var displayMode119 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle120 = "8046493871138462232";
+      var displayMode120 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle121 = "434146761037364177";
+      var displayMode121 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle122 = "4955886026003082594";
+      var displayMode122 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle123 = "7471899682960191519";
+      var displayMode123 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle124 = "4953457779772022997";
+      var displayMode124 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle125 = "632960232615639364";
+      var displayMode125 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle126 = "4988707135143727580";
+      var displayMode126 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle127 = "5085043404565588808";
+      var displayMode127 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle128 = "1990092467585831416";
+      var displayMode128 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle129 = "5916413402263066283";
+      var displayMode129 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle130 = "323142902510951807";
+      var displayMode130 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle131 = "3196322640438689355";
+      var displayMode131 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle132 = "5058149366592936178";
+      var displayMode132 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle133 = "345738105295770885";
+      var displayMode133 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle134 = "8568664732810044644";
+      var displayMode134 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle135 = "7655292700729384016";
+      var displayMode135 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle136 = "5879329394478267483";
+      var displayMode136 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle137 = "5365967105229573557";
+      var displayMode137 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle138 = "2051723886812285027";
+      var displayMode138 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle139 = "2968132457996083596";
+      var displayMode139 = "alwaysVisible";
+    </script>
+ 
+    <script>
+      var postTitle140 = "4140963994584390119";
+      var displayMode140 = "alwaysVisible";
+    </script>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/MyMapScript.js" defer></script>
+  <script src="assets/MySlideshowScript.js" defer></script>
+  <script src="assets/MyPostContainerScript.js" defer></script>
+  <script src="assets/Main.js" defer></script>
+
 </body>
 </html>
