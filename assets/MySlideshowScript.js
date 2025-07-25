@@ -1,7 +1,4 @@
-    // const blogUrl = "https://gorski-uzitki.blogspot.com";
     const initPhotos = 1; // Determine range of photos to be shown on slideshows and in posts
-    const initMapPhotos = -1; // Determine range of photos to be shown on map
-
 
     const initSpeed = 3;
     const maxSpeed = 10;

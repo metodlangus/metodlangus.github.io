@@ -374,12 +374,53 @@
         <div class="pages">
           <aside class='sidebar-pages'><h3>Strani</h3>
             <li><a href="../../predvajalnik-nakljucnih-fotografij.html">Predvajalnik naključnih fotografij</a></li>
-            <li><a href="../../seznam-vrhov.html">Seznam-vrhov</a></li>
+            <li><a href="../../seznam-vrhov.html">Seznam vrhov</a></li>
+            <li><a href="../../zemljevid-spominov.html">Zemljevid spominov</a></li>
           </aside>
+        </div>
+        <div id='map-settings'>
+          <h3 class='title'>Zemljevid spominov</h3>
+          <!-- Slider Section -->
+          <div style='display: flex; flex-direction: column; margin-left: 5px; margin-top: 5px; margin-bottom: 10px;'>
+              <label for='photosMapSliderElement'>Obseg prikazanih slik: <span id='photosMapValueElement'/></label>
+              <input id='photosMapSliderElement' max='3' min='-2' step='1' style='width: 160px;' type='range' value='initMapPhotos'/>
+          </div>
+
+          <!-- Date and Time Filters -->
+          <div class='form-group'>
+              <label for='dayFilterStart'>Od dne:</label>
+              <input class='input-field' id='dayFilterStart' type='date'/>
+          </div>
+          <div class='form-group'>
+              <label for='timeFilterStart'>od ure:</label>
+              <input class='input-field' id='timeFilterStart' type='time'/>
+          </div>
+          <div class='form-group'>
+              <label for='dayFilterEnd'>Do dne:</label>
+              <input class='input-field' id='dayFilterEnd' type='date'/>
+          </div>
+          <div class='form-group'>
+              <label for='timeFilterEnd'>do ure:</label>
+              <input class='input-field' id='timeFilterEnd' type='time'/>
+          </div>
+
+          <!-- Daily Time Filters -->
+          <div class='form-group'>
+              <label for='dailyTimeFilterStart'>Med:</label>
+              <input class='input-field' id='dailyTimeFilterStart' type='time' value='00:00'/>
+          </div>
+          <div class='form-group'>
+              <label for='dailyTimeFilterEnd'>in:</label>
+              <input class='input-field' id='dailyTimeFilterEnd' type='time' value='23:59'/>
+          </div>
+
+          <!-- Apply Filters Button -->
+          <div class='form-group' style='display: flex; justify-content: center;'>
+              <button class='pill-button' id='applyFilters'>Uporabi filtre</button>
+          </div>
         </div>
       </div>
     </div>
-    
     <div class="content-wrapper">
       <input type="text" id="searchBox" placeholder="Išči objave..." />
       <div id="searchResults"></div>
