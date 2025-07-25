@@ -173,6 +173,16 @@ document.getElementById("searchBox").addEventListener("input", function () {
   }
 });
 
+/* Searchbox button */
+document.addEventListener("DOMContentLoaded", function () {
+  const toggleButton = document.getElementById("searchToggle");
+  const searchContainer = document.getElementById("searchContainer");
+
+  toggleButton.addEventListener("click", () => {
+    searchContainer.classList.toggle("visible");
+  });
+});
+
 
 /* Toggle sidebar */
 function toggleSidebar() {

@@ -457,7 +457,21 @@
       </div>
     </div>
     <div class="content-wrapper">
-      <input type="text" id="searchBox" placeholder="Išči objave..." />
+      <!-- Search Toggle Button -->
+      <button id="searchToggle" class="search-toggle" aria-label="Search">
+        <svg xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 24 24" 
+            width="24" height="24" 
+            fill="none" stroke="#000" stroke-width="2" 
+            stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </button>
+      <!-- Search Box -->
+      <div id="searchContainer">
+        <input type="text" id="searchBox" placeholder="Išči objave...">
+      </div>
       <div id="searchResults"></div>
       <h2>Kimet (1536 m)</h2>
       <div class='post-date' data-date='2025-05-02T20:00:00+02:00'></div>
