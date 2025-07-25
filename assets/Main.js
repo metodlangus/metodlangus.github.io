@@ -1,3 +1,6 @@
+const WindowBaseUrl = window.location.origin;
+// const WindowBaseUrl = window.location.origin + "/metodlangus.github.io/";
+
 // Format date
 document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('.post-date').forEach(function (el) {

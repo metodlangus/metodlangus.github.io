@@ -508,15 +508,16 @@ def fetch_and_save_all_posts(entries):
   <link href='https://metodlangus.github.io/plugins/@raruto/leaflet-elevation/dist/leaflet-elevation.min.css' rel='stylesheet'>
   <link href='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet'>
   <link href='https://metodlangus.github.io/scripts/leaflet-download-gpx-button.css' rel='stylesheet'>
-  <link href='https://metodlangus.github.io/plugins/lightbox2/2.11.1/css/lightbox.min.css' rel='stylesheet'>
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css' rel='stylesheet'>
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css' rel='stylesheet'>
   <link href='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.css' rel='stylesheet'>
+  <link href='https://metodlangus.github.io/plugins/lightbox2/2.11.1/css/lightbox.min.css' rel='stylesheet'>
 
   <link rel="stylesheet" href="../../../assets/Main.css">
   <link rel="stylesheet" href="../../../assets/MyMapScript.css">
   <link rel="stylesheet" href="../../../assets/MySlideshowScript.css">
   <link rel="stylesheet" href="../../../assets/MyPostContainerScript.css">
+
 </head>
 <body>
   <div class="main-layout">
@@ -539,15 +540,15 @@ def fetch_and_save_all_posts(entries):
   <script src='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
   <script src='https://metodlangus.github.io/plugins/leaflet-polylinedecorator/1.1.0/leaflet.polylineDecorator.min.js'></script>
   <script src='https://metodlangus.github.io/scripts/leaflet-download-gpx-button.js'></script>
-  <script src='https://metodlangus.github.io/plugins/lightbox2/2.11.1/js/lightbox-plus-jquery.min.js'></script>
   <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
   <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
+  <script src='https://metodlangus.github.io/plugins/lightbox2/2.11.1/js/lightbox-plus-jquery.min.js'></script>
 
+  <script src="../../../assets/Main.js" defer></script>
   <script src="../../../assets/MyMapScript.js" defer></script>
   <script src="../../../assets/MySlideshowScript.js" defer></script>
   <script src="../../../assets/MyPostContainerScript.js" defer></script>
-  <script src="../../../assets/Main.js" defer></script>
 
 </body>
 </html>""")
@@ -599,9 +600,8 @@ def generate_label_pages(entries, label_posts_raw):
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="../../assets/Main.css">
-  <link rel="stylesheet" href="../../assets/MyMapScript.css">
-  <link rel="stylesheet" href="../../assets/MySlideshowScript.css">
   <link rel="stylesheet" href="../../assets/MyPostContainerScript.css">
+
 </head>
 <body>
   <div class="main-layout">
@@ -616,12 +616,10 @@ def generate_label_pages(entries, label_posts_raw):
     </div>
   </div>
 
-  <script src="../../assets/MyMapScript.js" defer></script>
-  <script src="../../assets/MySlideshowScript.js" defer></script>
-  <script src="../../assets/MyPostContainerScript.js" defer></script>
-  <script src="../../assets/Main.js" defer></script>
-
   <p><a href="../../">Back to home</a></p>
+
+  <script src="../../assets/Main.js" defer></script>
+  <script src="../../assets/MyPostContainerScript.js" defer></script>
 
 </body>
 </html>"""
@@ -653,12 +651,11 @@ def generate_predvajalnik_page():
     var author = 'Metod';
   </script>
 
- <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
 
- <link rel="stylesheet" href="assets/Main.css">
-  <link rel="stylesheet" href="assets/MyMapScript.css">
+  <link rel="stylesheet" href="assets/Main.css">
   <link rel="stylesheet" href="assets/MySlideshowScript.css">
-  <link rel="stylesheet" href="assets/MyPostContainerScript.css">
+
 </head>
 <body>
   <div class="main-layout">
@@ -674,10 +671,9 @@ def generate_predvajalnik_page():
     </div>
   </div>
 
-  <script src="assets/MyMapScript.js" defer></script>
-  <script src="assets/MySlideshowScript.js" defer></script>
-  <script src="assets/MyPostContainerScript.js" defer></script>
   <script src="assets/Main.js" defer></script>
+  <script src="assets/MySlideshowScript.js" defer></script>
+
 </body>
 </html>"""
 
@@ -710,10 +706,8 @@ def generate_peak_list_page():
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="assets/Main.css">
-  <link rel="stylesheet" href="assets/MyMapScript.css">
-  <link rel="stylesheet" href="assets/MySlideshowScript.css">
-  <link rel="stylesheet" href="assets/MyPostContainerScript.css">
   <link rel="stylesheet" href="assets/MyPeakListScript.css">
+
 </head>
 <body>
   <div class="main-layout">
@@ -727,11 +721,9 @@ def generate_peak_list_page():
     </div>
   </div>
 
-  <script src="assets/MyMapScript.js" defer></script>
-  <script src="assets/MySlideshowScript.js" defer></script>
-  <script src="assets/MyPostContainerScript.js" defer></script>
   <script src="assets/Main.js" defer></script>
   <script src="assets/MyPeakListScript.js" defer></script>
+
 </body>
 </html>"""
 
@@ -761,22 +753,19 @@ def generate_big_map_page():
     var author = 'Metod';
   </script>
 
- <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
 
   <link href='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.css' rel='stylesheet'>
   <link href='https://metodlangus.github.io/plugins/@raruto/leaflet-elevation/dist/leaflet-elevation.min.css' rel='stylesheet'>
   <link href='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet'>
   <link href='https://metodlangus.github.io/scripts/leaflet-download-gpx-button.css' rel='stylesheet'>
-  <link href='https://metodlangus.github.io/plugins/lightbox2/2.11.1/css/lightbox.min.css' rel='stylesheet'>
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css' rel='stylesheet'>
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css' rel='stylesheet'>
   <link href='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.css' rel='stylesheet'>
 
   <link rel="stylesheet" href="assets/Main.css">
-  <link rel="stylesheet" href="assets/MyMapScript.css">
-  <link rel="stylesheet" href="assets/MySlideshowScript.css">
-  <link rel="stylesheet" href="assets/MyPostContainerScript.css">
   <link rel="stylesheet" href="assets/MyMemoryMapScript.css">
+
 </head>
 <body>
   <div class="main-layout">
@@ -796,14 +785,10 @@ def generate_big_map_page():
   <script src='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
   <script src='https://metodlangus.github.io/plugins/leaflet-polylinedecorator/1.1.0/leaflet.polylineDecorator.min.js'></script>
   <script src='https://metodlangus.github.io/scripts/leaflet-download-gpx-button.js'></script>
-  <script src='https://metodlangus.github.io/plugins/lightbox2/2.11.1/js/lightbox-plus-jquery.min.js'></script>
   <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
   <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
 
-  <script src="assets/MyMapScript.js" defer></script>
-  <script src="assets/MySlideshowScript.js" defer></script>
-  <script src="assets/MyPostContainerScript.js" defer></script>
   <script src="assets/Main.js" defer></script>
   <script src="assets/MyMemoryMapScript.js" defer></script>
 
@@ -845,9 +830,12 @@ def generate_home_si_page(homepage_html):
     <!-- Favicon -->
     <link rel="icon" href="photos/favicon.ico" type="image/x-icon">
 
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="assets/Main.css">
     <link rel="stylesheet" href="assets/MyPostContainerScript.css">
     <link rel="stylesheet" href="assets/MyHomepageScript.css">
+
 </head>
 <body>
   <div class="main-layout">
@@ -867,10 +855,8 @@ def generate_home_si_page(homepage_html):
     </div>
   </div>
 
-  <script src="assets/MyMapScript.js" defer></script>
-  <script src="assets/MySlideshowScript.js" defer></script>
-  <script src="assets/MyPostContainerScript.js" defer></script>
   <script src="assets/Main.js" defer></script>
+  <script src="assets/MyPostContainerScript.js" defer></script>
 
 </body>
 </html>"""
