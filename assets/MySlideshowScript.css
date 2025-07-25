@@ -418,3 +418,26 @@
   background-color: #ddd;
   transition: height 0.3s ease; /* Smooth animation for height change */
 }
+
+
+
+/* Make label and input stay in one line */
+.form-group {
+    display: flex;
+    justify-content: space-between; /* Aligns label and input field on opposite ends */
+    align-items: center; /* Vertically center the label and input */
+    margin-bottom: 15px;
+    max-width: 200px;
+    margin-left: 5px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: bold;
+    margin-right: 10px; /* Add space between label and input */
+    flex: 1; /* Allow label to take up remaining space */
+}
+
+.form-group input[type="date"] {
+    width: 125px;
+}

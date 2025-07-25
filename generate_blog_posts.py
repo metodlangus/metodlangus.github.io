@@ -256,6 +256,12 @@ def generate_sidebar_html(archive_html, labels_html, levels_up):
             <li><a href="{relative_path}zemljevid-spominov.html">Zemljevid spominov</a></li>
           </aside>
         </div>
+        <h2 class="title">Nastavitve</h2>
+        <h3 class="title">Objave in predvajalniki slik</h3>
+        <div style="display: flex; flex-direction: column; margin-left: 5px; margin-top: 5px; margin-bottom: 10px;">
+            <label for='photosSliderElement'>Obseg prikazanih slik: <span id='photosValueElement'></span></label>
+            <input id='photosSliderElement' max='3' min='0' step='1' type='range' value='initPhotos' style="width: 160px;"/>
+        </div>
         <div id='map-settings'>
           <h3 class='title'>Zemljevid spominov</h3>
           <!-- Slider Section -->
