@@ -37,19 +37,80 @@
     max-width: 100%;
     height: auto;
     display: block;
-    margin: 1rem auto;
+    /* margin: 1rem auto; */
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   }
 
+
+/* Header */
+.top-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  margin: 30px 0 10px 0;
+  /* background-color: #f4f4f4; */
+  /* border-bottom: 1px solid #ccc; */
+}
+
+/* Ensures the SVG titlt scales with its container */
+.logo-svg {
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  max-width: 540px; /* adjust as needed */
+}
+
+/* Ensures the SVG titlt scales with its container */
+.logo-svg a{
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  max-width: 540px; /* adjust as needed */
+}
+
+.home .logo-svg {
+  pointer-events: none;
+  cursor: default;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Footer */
+.site-footer {
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  margin-bottom: -50vw;
+  width: 100vw;
+
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 1rem;
+  text-align: center;
+  border-top: 1px solid #ccc;
+}
+
+.site-footer p {
+    color: #626262;
+}
+
+
   .content-wrapper {
     max-width: 960px;
-    margin: auto;
+    /* margin: auto; */
     background: white;
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    margin-top: 10px; /* fix typo here */
+    /* margin-top: 10px; fix typo here */
   }
 
   .main-layout {
@@ -62,7 +123,7 @@
   }
   .content-wrapper {
     flex: 1;
-    margin-left: 15px;
+    /* margin-left: 15px; */
     position: relative;
   }
 
@@ -306,7 +367,8 @@ a {
 
 .archive,
 .labels,
-.pages {
+.pages,
+.settings {
   background: #f9f9f9;
   padding: 1rem;
   border-radius: 8px;
@@ -315,7 +377,7 @@ a {
 
 /* Searchbox */
 /* Container for the search box - starts offscreen to the right */
-#searchContainer {
+.search-container {
   position: fixed;
   top: 10px;
   right: -60%;               /* hidden off the screen */
@@ -325,7 +387,7 @@ a {
 }
 
 /* Visible state – slides into view */
-#searchContainer.visible {
+.search-container.visible {
   right: 10px;               /* on screen */
 }
 
@@ -396,7 +458,7 @@ a {
     top: 60px;           /* below the button */
     left: 0;
     height: calc(100% - 60px); /* adjust height if needed */
-    width: 75%;
+    width: 310px;
     padding: 15px;
     z-index: 1000;
     background-color: #f0f0f0;
@@ -407,6 +469,7 @@ a {
   .main-layout {
     gap: 0em;
     padding: 0em;
+    padding-top: 1em;
   }
 
   .content-wrapper {
@@ -415,6 +478,11 @@ a {
 
   .menu-toggle {
     display: flex;
+  }
+
+  .logo-svg {
+    width: 80%;
+    max-width: 540px; /* adjust as needed */
   }
 }
 
@@ -432,10 +500,16 @@ a {
 @media (max-width: 800px) {
   body {
     padding: 0px;
+    padding-top: 2rem;
   }
 
   .content-wrapper {
     padding: 1rem;
+  }
+
+  .logo-svg {
+    width: 80%;
+    max-width: 540px; /* adjust as needed */
   }
 }
 
@@ -504,23 +578,4 @@ div#PageList1 ul li {
 .sidebar-container a, .pill-button {
     -webkit-text-stroke: 0.3px black; /* Fallback for Webkit browsers */
     text-stroke: 0.3px black; /* Thin black border for text */
-}
-
-/* Ensures the SVG titlt scales with its container */
-header.centered-top-container.sticky.animating .widget.Header .svg-title, .left-aligned {
-  max-width: 174.76px;
-  max-height: 28.8px;
-}
-.logo-svg {
-  width: 100%;
-  height: 100%;
-}
-/* Ensures header widget handles logo correctly */
-.header-widget {
-  display: flex;
-  justify-content: center;
-}
-.svg-title-container {
-  display: flex;
-  align-items: center;
 }
