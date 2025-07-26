@@ -524,7 +524,7 @@ def fetch_and_save_all_posts(entries):
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=400, initial-scale=0.7,  maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
   <meta name="description" content="Gorske avanture in nepozabni trenutki: Odkrijte lepote gorskega sveta in se prepustite predvajalnikom slik, ki vas popeljejo skozi dogodivščine." />
   <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
@@ -653,7 +653,7 @@ def generate_label_pages(entries, label_posts_raw):
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=400, initial-scale=0.7,  maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
   <meta name="description" content="Gorske avanture in nepozabni trenutki: Odkrijte lepote gorskega sveta in se prepustite predvajalnikom slik, ki vas popeljejo skozi dogodivščine." />
   <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
@@ -720,7 +720,7 @@ def generate_predvajalnik_page():
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=400, initial-scale=0.7,  maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
   <meta name="description" content="Gorske avanture in nepozabni trenutki: Odkrijte lepote gorskega sveta in se prepustite predvajalnikom slik, ki vas popeljejo skozi dogodivščine." />
   <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
@@ -798,7 +798,7 @@ def generate_peak_list_page():
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=400, initial-scale=0.7,  maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
   <meta name="description" content="Gorske avanture in nepozabni trenutki: Odkrijte lepote gorskega sveta in se prepustite predvajalnikom slik, ki vas popeljejo skozi dogodivščine." />
   <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
@@ -874,7 +874,7 @@ def generate_big_map_page():
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=400, initial-scale=0.7,  maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
   <meta name="description" content="Gorske avanture in nepozabni trenutki: Odkrijte lepote gorskega sveta in se prepustite predvajalnikom slik, ki vas popeljejo skozi dogodivščine." />
   <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
@@ -969,7 +969,7 @@ def generate_home_si_page(homepage_html):
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=400, initial-scale=0.7,  maximum-scale=2.0, user-scalable=yes">
+    <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
     <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
     <meta name="description" content="Gorske avanture in nepozabni trenutki: Odkrijte lepote gorskega sveta in se prepustite predvajalnikom slik, ki vas popeljejo skozi dogodivščine." />
     <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
