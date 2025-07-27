@@ -449,7 +449,7 @@ def generate_labels_html(entry, title, slug, year, month, formatted_date, post_i
     return labels_html
 
 def generate_homepage_html(entries):
-    """Generates <script> blocks for each post using its Blogger post ID."""
+    """Generates complete HTML <article> containers (instead of just <script> blocks) for each Blogger post."""
     homepage_html = ""
 
     for i, entry in enumerate(entries):
@@ -457,14 +457,53 @@ def generate_homepage_html(entries):
         match = re.search(r'post-(\d+)$', full_id)
         post_id = match.group(1) if match else ""
 
-        if post_id:
-            homepage_html += f""" 
-    <script>
-      var postTitle{i} = "{post_id}";
-      var displayMode{i} = "alwaysVisible";
-    </script>\n"""
-        else:
+        if not post_id:
             print(f"Warning: Post at index {i} missing valid 'postId'")
+            continue
+
+        title = entry.get("title", {}).get("$t", f"untitled-{i}")
+        published = entry.get("published", {}).get("$t", "1970-01-01T00:00:00Z")
+        thumbnail = entry.get("media$thumbnail", {}).get("url", "")
+        link_list = entry.get("link", [])
+        alternate_link = next((l["href"] for l in link_list if l.get("rel") == "alternate"), "#")
+        categories = entry.get("category", [])
+
+        # Extract label starting with "1. " and "6. "
+        label_one = next((c["term"].replace("1. ", "") for c in categories if c["term"].startswith("1. ")), "")
+        label_six = next((c["term"].replace("6. ", "") for c in categories if c["term"].startswith("6. ")), "")
+
+        def slugify(text):
+            text = re.sub(r'[\u0300-\u036f]', '', text.lower())
+            text = re.sub(r'[^a-z0-9\s-]', '', text)
+            text = re.sub(r'\s+', '-', text)
+            text = re.sub(r'-+', '-', text)
+            return text.strip('-')
+
+        label_one_link = f"/search/labels/{slugify(label_one)}.html" if label_one else ""
+        label_six_link = f"/search/labels/{slugify(label_six)}.html" if label_six else ""
+
+        homepage_html += f'''
+<article class="my-post-outer-container">
+  <div class="post">
+    {'<div class="my-tag-container"><a href="' + label_six_link + '" class="my-labels label-six">' + label_six + '</a></div>' if label_six else ""}
+    <a href="{alternate_link}" class="my-post-link" aria-label="{title}">
+      <div class="my-title-container">
+        {'<a href="' + label_one_link + '" class="my-labels">' + label_one + '</a>' if label_one else ""}
+        <h2 class="my-title">{title}</h2>
+      </div>
+    </a>
+    <div class="my-meta-data">
+      <div class="author-date">Dne {published.split("T")[0]}</div>
+    </div>
+    <div class="my-thumbnail" id="post-snippet-{post_id}">
+      <div class="my-snippet-thumbnail">
+        {'<img src="' + thumbnail.replace('/s72-c', '/s800') + '" alt="Thumbnail image for post: ' + title + '">' if thumbnail else ""}
+      </div>
+    </div>
+    <a href="{alternate_link}" aria-label="{title}"></a>
+  </div>
+</article>
+'''
 
     return homepage_html
 
@@ -1033,7 +1072,6 @@ def generate_home_si_page(homepage_html):
   </footer>
 
   <script src="assets/Main.js" defer></script>
-  <script src="assets/MyPostContainerScript.js" defer></script>
 
 </body>
 </html>"""
