@@ -72,6 +72,13 @@
       </button>
       <div id="searchContainer" class="search-container">
         <input type="text" id="searchBox" placeholder="Išči objave...">
+
+        <!-- Close button inside the search container -->
+        <button id="searchClose" aria-label="Close search" 
+          style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+                background: transparent; border: none; font-size: 20px; cursor: pointer;">
+          ×
+        </button>
       </div>
     </div>
   </header>
@@ -494,7 +501,8 @@
       </div>
     </div>
     <div class="content-wrapper">
-      <div id="searchResults"></div>
+      
+    <div id="searchResults"></div>
       <h2>Rysy (2499 m) - najvišji vrh Poljske, Kôprovský štít (2367 m)</h2>
       <div class='post-date' data-date='2024-09-05T20:00:00+02:00'></div>
       <div style="display: none;">

@@ -140,47 +140,86 @@ fetch("https://metodlangus.github.io/data/all-posts.json")
     console.error("Napaka pri nalaganju Blogger feeda:", error);
   });
 
-document.getElementById("searchBox").addEventListener("input", function () {
-  const keyword = this.value.toLowerCase();
-  const resultsContainer = document.getElementById("searchResults");
-  resultsContainer.innerHTML = "";
-
-  const filtered = posts.filter(post =>
-    post.title.toLowerCase().includes(keyword) ||
-    post.content.toLowerCase().includes(keyword)
-  );
-
-  if (filtered.length > 0) {
-    let resultHTML = `<h1>Prikaz objav, ki vsebujejo: ${keyword}</h1>\n`;
-    resultHTML += `<div class="blog-posts hfeed container">\n`;
-
-
-    filtered.forEach((post, i) => {
-      resultHTML += `
-  <div class="post-container">
-    <a href="${post.link}" class="image-link">
-      <div class="image-wrapper">
-        ${post.thumbnail ? `<img src="${post.thumbnail.replace(/\/s\d+-c/, '/s300')}" alt="Thumbnail for ${post.title}" class="post-thumb">` : ""}
-        <h3 class="overlay-title">${post.title}</h3>
-      </div>
-    </a>
-  </div>\n`;
-
-    });
-
-    resultHTML += `</div>`;
-    resultsContainer.innerHTML = resultHTML;
-  }
-});
-
-/* Searchbox button */
 document.addEventListener("DOMContentLoaded", function () {
-  const toggleButton = document.getElementById("searchToggle");
+  const searchToggle = document.getElementById("searchToggle");
   const searchContainer = document.getElementById("searchContainer");
+  const searchClose = document.getElementById("searchClose");
+  const searchBox = document.getElementById("searchBox");
+  const resultsContainer = document.getElementById("searchResults");
 
-  toggleButton.addEventListener("click", () => {
-    searchContainer.classList.toggle("visible");
+  // Toggle search container visibility
+  searchToggle.addEventListener("click", () => {
+    const isVisible = searchContainer.classList.toggle("visible");
+    if (!isVisible) {
+      closeSearchOverlay();
+    } else {
+      // Optionally focus input when opened
+      searchBox.focus();
+    }
   });
+
+  // Close button inside search container clears and closes search
+  searchClose.addEventListener("click", () => {
+    closeSearchOverlay();
+  });
+
+  // Search input event
+  searchBox.addEventListener("input", function () {
+    const keyword = this.value.toLowerCase();
+    resultsContainer.innerHTML = "";
+
+    if (!keyword) {
+      // If input cleared, hide results overlay
+      resultsContainer.classList.add("overlay-hidden");
+      resultsContainer.classList.remove("overlay-visible");
+      return;
+    }
+
+    const filtered = posts.filter(post =>
+      post.title.toLowerCase().includes(keyword) ||
+      post.content.toLowerCase().includes(keyword)
+    );
+
+    if (filtered.length > 0) {
+      let resultHTML = `
+        <button class="close-button" onclick="closeSearchOverlay()">×</button>
+        <h1>Prikaz objav, ki vsebujejo: ${keyword}</h1>
+        <div class="search-posts-container">`;
+
+      filtered.forEach(post => {
+        resultHTML += `
+          <div class="post-container">
+            <a href="${post.link}" class="image-link">
+              <div class="image-wrapper">
+                ${post.thumbnail ? `<img src="${post.thumbnail.replace(/\/s\d+-c/, '/s300')}" alt="Thumbnail for ${post.title}" class="post-thumb">` : ""}
+                <h3 class="overlay-title">${post.title}</h3>
+              </div>
+            </a>
+          </div>`;
+      });
+
+      resultHTML += `</div>`;
+      resultsContainer.innerHTML = resultHTML;
+
+      // Show results overlay
+      resultsContainer.classList.remove("overlay-hidden");
+      resultsContainer.classList.add("overlay-visible");
+    } else {
+      // No results - hide overlay
+      resultsContainer.classList.add("overlay-hidden");
+      resultsContainer.classList.remove("overlay-visible");
+    }
+  });
+
+  // Define closeSearchOverlay globally so button inside results can call it
+  window.closeSearchOverlay = function () {
+    resultsContainer.innerHTML = "";
+    resultsContainer.classList.add("overlay-hidden");
+    resultsContainer.classList.remove("overlay-visible");
+
+    searchBox.value = "";
+    searchContainer.classList.remove("visible");
+  };
 });
 
 

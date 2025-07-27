@@ -334,12 +334,23 @@ def generate_header_html():
       </button>
       <div id="searchContainer" class="search-container">
         <input type="text" id="searchBox" placeholder="Išči objave...">
+
+        <!-- Close button inside the search container -->
+        <button id="searchClose" aria-label="Close search" 
+          style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+                background: transparent; border: none; font-size: 20px; cursor: pointer;">
+          ×
+        </button>
       </div>
     </div>"""
 
 def generate_footer_html():
     return f"""
     <p>© 2025 Metod Langus. Vse pravice pridržane.</p>"""
+
+def generate_searchbox_html():
+    return f"""
+    <div id="searchResults"></div>"""
 
 def generate_post_navigation_html(entries, slugs, index, local_tz, year, month):
     """
@@ -473,6 +484,7 @@ def fetch_and_save_all_posts(entries):
     labels_sidebar_html = generate_labels_sidebar_html(levels_up, feed_url=BASE_FEED_URL)
     sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, levels_up)
     header_html = generate_header_html()
+    searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
 
     local_tz = ZoneInfo("Europe/Ljubljana")
@@ -575,7 +587,7 @@ def fetch_and_save_all_posts(entries):
   <div class="main-layout">
     {sidebar_html}
     <div class="content-wrapper">
-      <div id="searchResults"></div>
+      {searchbox_html}
       <h2>{title}</h2>
       {metadata_html}
       {content_html}
@@ -624,6 +636,7 @@ def generate_label_pages(entries, label_posts_raw):
     labels_sidebar_html = generate_labels_sidebar_html(levels_up, feed_url=BASE_FEED_URL)
     sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, levels_up)
     header_html = generate_header_html()
+    searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
 
     for label, posts in label_posts_raw.items():
@@ -680,7 +693,7 @@ def generate_label_pages(entries, label_posts_raw):
   <div class="main-layout">
     {sidebar_html}
     <div class="content-wrapper">
-      <div id="searchResults"></div>
+      {searchbox_html}
       <h1>Prikaz objav z oznako: {label_clean}</h1>
       <div class="blog-posts hfeed container">
         {post_scripts_html}
@@ -714,6 +727,7 @@ def generate_predvajalnik_page():
     labels_sidebar_html = generate_labels_sidebar_html(levels_up, feed_url=BASE_FEED_URL)
     sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, levels_up)
     header_html = generate_header_html()
+    searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
 
     html_content = f"""<!DOCTYPE html>
@@ -758,7 +772,7 @@ def generate_predvajalnik_page():
   <div class="main-layout">
     {sidebar_html}
     <div class="content-wrapper">
-      <div id="searchResults"></div>
+      {searchbox_html}
       <h1>Predvajalnik naključnih fotografij</h1>
       <script> 
         var slideshowTitle0 = 'All pictures';
@@ -792,6 +806,7 @@ def generate_peak_list_page():
     labels_sidebar_html = generate_labels_sidebar_html(levels_up, feed_url=BASE_FEED_URL)
     sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, levels_up)
     header_html = generate_header_html()
+    searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
 
     html_content = f"""<!DOCTYPE html>
@@ -836,10 +851,10 @@ def generate_peak_list_page():
   <div class="main-layout">
     {sidebar_html}
     <div class="content-wrapper">
-      <div id="searchResults"></div>
+      {searchbox_html}
       <h1>Seznam vrhov</h1>
       <div id='loadingMessage'>Nalaganje ...</div>
-      <div id='mountainContainer'/>
+      <div id='mountainContainer'/></div>
     </div>
   </div>
 
@@ -868,6 +883,7 @@ def generate_big_map_page():
     labels_sidebar_html = generate_labels_sidebar_html(levels_up, feed_url=BASE_FEED_URL)
     sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, levels_up)
     header_html = generate_header_html()
+    searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
 
     html_content = f"""<!DOCTYPE html>
@@ -920,7 +936,7 @@ def generate_big_map_page():
   <div class="main-layout">
     {sidebar_html}
     <div class="content-wrapper">
-      <div id="searchResults"></div>
+      {searchbox_html}
       <h1>Zemljevid spominov</h1>
         <div id='map'></div>
     </div>
@@ -963,6 +979,7 @@ def generate_home_si_page(homepage_html):
     labels_sidebar_html = generate_labels_sidebar_html(levels_up, feed_url=BASE_FEED_URL)
     sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, levels_up)
     header_html = generate_header_html()
+    searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
 
     html_content = f"""<!DOCTYPE html>
@@ -990,7 +1007,6 @@ def generate_home_si_page(homepage_html):
 
     <link rel="stylesheet" href="assets/Main.css">
     <link rel="stylesheet" href="assets/MyPostContainerScript.css">
-    <link rel="stylesheet" href="assets/MyHomepageScript.css">
 
 </head>
 
@@ -1004,7 +1020,7 @@ def generate_home_si_page(homepage_html):
   <div class="main-layout">
     {sidebar_html}
     <div class="content-wrapper">
-      <div id="searchResults"></div>
+      {searchbox_html}
       <div class="blog-posts hfeed container home">
         {homepage_html}
       </div>
