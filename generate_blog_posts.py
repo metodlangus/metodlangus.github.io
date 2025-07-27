@@ -617,21 +617,23 @@ def fetch_and_save_all_posts(entries):
 
 </head>
 <body>
-  <!-- Top Header -->
-  <header class="top-header">
-    {header_html}
-  </header>
+  <div class="page-wrapper">
+    <!-- Top Header -->
+    <header class="top-header">
+      {header_html}
+    </header>
 
-  <!-- Main Layout -->
-  <div class="main-layout">
-    {sidebar_html}
-    <div class="content-wrapper">
-      {searchbox_html}
-      <h2>{title}</h2>
-      {metadata_html}
-      {content_html}
-      {labels_html}
-      {nav_html}
+    <!-- Main Layout -->
+    <div class="main-layout">
+      {sidebar_html}
+      <div class="content-wrapper">
+        {searchbox_html}
+        <h2>{title}</h2>
+        {metadata_html}
+        {content_html}
+        {labels_html}
+        {nav_html}
+      </div>
     </div>
   </div>
 
@@ -723,19 +725,21 @@ def generate_label_pages(entries, label_posts_raw):
 
 </head>
 <body>
-  <!-- Top Header -->
-  <header class="top-header">
-    {header_html}
-  </header>
+  <div class="page-wrapper">
+    <!-- Top Header -->
+    <header class="top-header">
+      {header_html}
+    </header>
 
-  <!-- Main Layout -->
-  <div class="main-layout">
-    {sidebar_html}
-    <div class="content-wrapper">
-      {searchbox_html}
-      <h1>Prikaz objav z oznako: {label_clean}</h1>
-      <div class="blog-posts hfeed container">
-        {post_scripts_html}
+    <!-- Main Layout -->
+    <div class="main-layout">
+      {sidebar_html}
+      <div class="content-wrapper">
+        {searchbox_html}
+        <h1>Prikaz objav z oznako: {label_clean}</h1>
+        <div class="blog-posts hfeed container">
+          {post_scripts_html}
+        </div>
       </div>
     </div>
   </div>
@@ -802,21 +806,23 @@ def generate_predvajalnik_page():
 
 </head>
 <body>
-  <!-- Top Header -->
-  <header class="top-header">
-    {header_html}
-  </header>
+  <div class="page-wrapper">
+    <!-- Top Header -->
+    <header class="top-header">
+      {header_html}
+    </header>
 
-  <!-- Main Layout -->
-  <div class="main-layout">
-    {sidebar_html}
-    <div class="content-wrapper">
-      {searchbox_html}
-      <h1>Predvajalnik naključnih fotografij</h1>
-      <script> 
-        var slideshowTitle0 = 'All pictures';
-        var CoverPhoto0 = '';
-      </script>
+    <!-- Main Layout -->
+    <div class="main-layout">
+      {sidebar_html}
+      <div class="content-wrapper">
+        {searchbox_html}
+        <h1>Predvajalnik naključnih fotografij</h1>
+        <script> 
+          var slideshowTitle0 = 'All pictures';
+          var CoverPhoto0 = '';
+        </script>
+      </div>
     </div>
   </div>
 
@@ -881,19 +887,21 @@ def generate_peak_list_page():
 
 </head>
 <body>
-  <!-- Top Header -->
-  <header class="top-header">
-    {header_html}
-  </header>
+  <div class="page-wrapper">
+    <!-- Top Header -->
+    <header class="top-header">
+      {header_html}
+    </header>
 
-  <!-- Main Layout -->
-  <div class="main-layout">
-    {sidebar_html}
-    <div class="content-wrapper">
-      {searchbox_html}
-      <h1>Seznam vrhov</h1>
-      <div id='loadingMessage'>Nalaganje ...</div>
-      <div id='mountainContainer'/></div>
+    <!-- Main Layout -->
+    <div class="main-layout">
+      {sidebar_html}
+      <div class="content-wrapper">
+        {searchbox_html}
+        <h1>Seznam vrhov</h1>
+        <div id='loadingMessage'>Nalaganje ...</div>
+        <div id='mountainContainer'/></div>
+      </div>
     </div>
   </div>
 
@@ -966,18 +974,20 @@ def generate_big_map_page():
 
 </head>
 <body>
-  <!-- Top Header -->
-  <header class="top-header">
-    {header_html}
-  </header>
+  <div class="page-wrapper">
+    <!-- Top Header -->
+    <header class="top-header">
+      {header_html}
+    </header>
 
-  <!-- Main Layout -->
-  <div class="main-layout">
-    {sidebar_html}
-    <div class="content-wrapper">
-      {searchbox_html}
-      <h1>Zemljevid spominov</h1>
-        <div id='map'></div>
+    <!-- Main Layout -->
+    <div class="main-layout">
+      {sidebar_html}
+      <div class="content-wrapper">
+        {searchbox_html}
+        <h1>Zemljevid spominov</h1>
+          <div id='map'></div>
+      </div>
     </div>
   </div>
 
@@ -1050,18 +1060,20 @@ def generate_home_si_page(homepage_html):
 </head>
 
 <body>
-  <!-- Top Header -->
-  <header class="top-header home">
-    {header_html}
-  </header>
+  <div class="page-wrapper">
+    <!-- Top Header -->
+    <header class="top-header home">
+      {header_html}
+    </header>
 
-  <!-- Main Layout -->
-  <div class="main-layout">
-    {sidebar_html}
-    <div class="content-wrapper">
-      {searchbox_html}
-      <div class="blog-posts hfeed container home">
-        {homepage_html}
+    <!-- Main Layout -->
+    <div class="main-layout">
+      {sidebar_html}
+      <div class="content-wrapper">
+        {searchbox_html}
+        <div class="blog-posts hfeed container home">
+          {homepage_html}
+        </div>
       </div>
     </div>
   </div>

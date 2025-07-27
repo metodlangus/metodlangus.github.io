@@ -5,7 +5,9 @@
     line-height: 1.6;
     background: #fdfdfd;
     color: #333;
+    height: 100%;
     margin: 0;
+    padding: 0;
   }
 
   h2 {
@@ -33,6 +35,10 @@
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   }
 
+
+.page-wrapper {
+  min-height: 100vh;
+}
 
 /* Header */
 .top-header {
@@ -633,4 +639,34 @@ div#PageList1 ul li {
   z-index: 1000;
   padding: 10px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+
+.close-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  font-weight: bold;
+  line-height: 1;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: #d33;
+  outline: none;
+  transform: scale(1.2);
+  background-color: rgba(255, 0, 0, 0.1);
 }
