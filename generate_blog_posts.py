@@ -1005,7 +1005,7 @@ def generate_home_si_page(homepage_html):
     {sidebar_html}
     <div class="content-wrapper">
       <div id="searchResults"></div>
-      <div class="blog-posts hfeed container">
+      <div class="blog-posts hfeed container home">
         {homepage_html}
       </div>
     </div>

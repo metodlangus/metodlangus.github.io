@@ -77,17 +77,24 @@ function insertPostContainer(postTitle, displayMode, scriptTag) {
       var postLink = document.createElement('a');
       postLink.classList.add('my-post-link');
 
-      // Convert post title to a slug (lowercase, dashes, no special chars)
-      var slug = slugify(post.title.$t)
-
       var publishedDate = new Date(post.published.$t);
 
       // Extract year and month
       var year = publishedDate.getUTCFullYear().toString();
       var month = (publishedDate.getUTCMonth() + 1).toString().padStart(2, '0');
 
-      // Prepend domain to the slug-based path
-      var fullUrl = `${WindowBaseUrl}/posts/${year}/${month}/${slug}.html`;
+      // Find the 'alternate' link from the feed
+      var alternateLink = post.link.find(link => link.rel === 'alternate' && link.type === 'text/html');
+
+      if (alternateLink && alternateLink.href) {
+        // Replace domain part with your local WindowBaseUrl and adjust path to /data/posts/...
+        const urlParts = new URL(alternateLink.href);
+        const path = urlParts.pathname.replace(/^\/posts/, '/posts');
+        var fullUrl = `${WindowBaseUrl}${path}`;
+      } else {
+        console.error("Alternate link not found in post.");
+        return; // Exit early
+      }
 
       postLink.href = fullUrl;
 
@@ -147,7 +154,7 @@ function insertPostContainer(postTitle, displayMode, scriptTag) {
       thumbnailImg.src = post.media$thumbnail.url.replace(/\/s\d+(?:-w\d+-h\d+)?-c\//, '/s800/');
 
       var linkElement = document.createElement('a');
-      linkElement.href = `${WindowBaseUrl}/posts/${year}/${month}/${slug}.html`;
+      linkElement.href  = fullUrl;
       
       // Set aria-label for the link
       linkElement.setAttribute('aria-label', `${post.title.$t}`);

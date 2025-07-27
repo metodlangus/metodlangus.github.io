@@ -10,6 +10,15 @@
     color: #eee;
 }
 
+.home.blog-posts {
+    margin: 0px;
+}
+
+article.my-post-outer-container {
+    max-width: 600px;
+    margin: auto;
+}
+
 .my-post-outer-container a {
     color: #fff;
     text-decoration: none;
