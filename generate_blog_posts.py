@@ -3,7 +3,8 @@ import requests
 from pathlib import Path
 from slugify import slugify
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
+from xml.etree.ElementTree import Element, SubElement, ElementTree
 from zoneinfo import ZoneInfo  # Python 3.9+
 from dateutil import parser  # pip install python-dateutil
 from bs4 import BeautifulSoup
@@ -18,7 +19,9 @@ BASE_FEED_URL = "https://gorski-uzitki.blogspot.com/feeds/posts/default"
 OUTPUT_DIR = Path.cwd() # Current path
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
+# Nastavitve
 BASE_SITE_URL = "https://metodlangus.github.io"
+SITEMAP_FILE = "sitemap.txt"
 
 entries_per_page = 12 # Set pagination on home and label pages
 
@@ -521,6 +524,49 @@ def remove_first_prefix(label):
 def remove_all_prefixes(label):
     return re.sub(r"^(?:\d+\.\s*)+", "", label)
 
+
+
+def generate_url_element(loc, lastmod=None):
+    """Ustvari en <url> element za sitemap brez changefreq in priority."""
+    url = Element("url")
+    SubElement(url, "loc").text = loc
+    if lastmod:
+        SubElement(url, "lastmod").text = lastmod
+    return url
+
+def generate_sitemap(entries):
+    """Ustvari sitemap.xml iz Blogger vnosov in vključi domačo stran."""
+    urlset = Element("urlset", {
+        "xmlns": "http://www.sitemaps.org/schemas/sitemap/0.9"
+    })
+
+    # Dodaj domačo stran
+    homepage_url = BASE_SITE_URL
+    homepage_lastmod = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    homepage_element = generate_url_element(homepage_url, homepage_lastmod)
+    urlset.append(homepage_element)
+
+    # Dodaj ostale vnose
+    for entry in entries:
+        published = entry.get("published", {}).get("$t", "")
+        try:
+            dt = datetime.strptime(published, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
+        except ValueError:
+            dt = datetime.now(timezone.utc)
+        year = dt.strftime("%Y")
+        month = dt.strftime("%m")
+        lastmod = dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+        title = entry.get("title", {}).get("$t", "untitled")
+        slug = title.lower().replace(" ", "-").replace(":", "").replace("/", "")
+        url = f"{BASE_SITE_URL}/posts/{year}/{month}/{slug}.html"
+
+        url_element = generate_url_element(url, lastmod)
+        urlset.append(url_element)
+
+    tree = ElementTree(urlset)
+    tree.write(SITEMAP_FILE, encoding="utf-8", xml_declaration=True)
+    print(f"Sitemap je bil ustvarjen in shranjen kot {SITEMAP_FILE}")
 
 def fetch_and_save_all_posts(entries):
     # Archive and labels sidebar
@@ -1114,3 +1160,5 @@ if __name__ == "__main__":
 
     homepage_html = generate_homepage_html(entries)
     generate_home_si_page(homepage_html)
+
+    generate_sitemap(entries)
