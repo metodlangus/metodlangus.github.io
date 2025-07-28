@@ -351,7 +351,14 @@ def generate_header_html():
 
 def generate_footer_html():
     return f"""
-    <p>© 2025 Metod Langus. Vse pravice pridržane.</p>"""
+    <p>
+      Poganja 
+      <a href="https://github.com" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+        <i class="fab fa-github" style="margin-right: 4px;"></i>GitHub
+      </a>
+    </p>
+    <p>© 2025 Metod Langus. Vse pravice pridržane.</p>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">"""
 
 def generate_searchbox_html():
     return f"""
@@ -476,13 +483,6 @@ def generate_homepage_html(entries):
         # Extract label starting with "1. " and "6. "
         label_one = next((c["term"].replace("1. ", "") for c in categories if c["term"].startswith("1. ")), "")
         label_six = next((c["term"].replace("6. ", "") for c in categories if c["term"].startswith("6. ")), "")
-
-        def slugify(text):
-            text = re.sub(r'[\u0300-\u036f]', '', text.lower())
-            text = re.sub(r'[^a-z0-9\s-]', '', text)
-            text = re.sub(r'\s+', '-', text)
-            text = re.sub(r'-+', '-', text)
-            return text.strip('-')
 
         label_one_link = f"/search/labels/{slugify(label_one)}.html" if label_one else ""
         label_six_link = f"/search/labels/{slugify(label_six)}.html" if label_six else ""
@@ -794,8 +794,8 @@ def generate_label_pages(entries, label_posts_raw):
         <h1>Prikaz objav z oznako: {label_clean}</h1>
         <div class="blog-posts hfeed container">
           {post_scripts_html}
-          <div id="blog-pager" class="blog-pager"></div>
         </div>
+        <div id="blog-pager" class="blog-pager"></div>
       </div>
     </div>
   </div>
@@ -1129,8 +1129,8 @@ def generate_home_si_page(homepage_html):
         {searchbox_html}
         <div class="blog-posts hfeed container home">
           {homepage_html}
-          <div id="blog-pager" class="blog-pager"></div>
         </div>
+        <div id="blog-pager" class="blog-pager"></div>
       </div>
     </div>
   </div>
