@@ -228,3 +228,87 @@ function toggleSidebar() {
     const sidebar = document.getElementById("sidebar");
     sidebar.classList.toggle("visible");
   }
+
+
+/* Pagination */
+document.addEventListener("DOMContentLoaded", function () {
+    const entries = document.querySelectorAll(".photo-entry");
+    const entriesPerPage = 12;
+    const totalPages = Math.ceil(entries.length / entriesPerPage);
+    const pager = document.getElementById("blog-pager");
+    let currentPage = 1;
+
+    if (!pager) {
+        console.error("Pagination container with ID 'blog-pager' not found.");
+        return;
+    }
+
+    function redirectpage(page) {
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        showPage(currentPage);
+    }
+
+    function showPage(page) {
+        entries.forEach(entry => {
+            entry.style.display = entry.getAttribute("data-page") == page ? "block" : "none";
+        });
+        renderPager(page);
+    }
+
+    function renderPager(page) {
+        // Hide pager if only one page
+        if (totalPages <= 1) {
+            pager.style.display = "none";
+            return;
+        } else {
+            pager.style.display = "flex";
+        }
+
+        pager.innerHTML = '';
+
+        // Previous button
+        pager.innerHTML += `<span class="displaypageNum"><a href="#" onclick="redirectpage(${page - 1}); return false" ${page === 1 ? 'style="pointer-events:none;opacity:0.5;"' : ''}>&laquo;</a></span>`;
+
+        // First page
+        if (page === 1) {
+            pager.innerHTML += `<span class="pagecurrent">1</span>`;
+        } else {
+            pager.innerHTML += `<span class="displaypageNum"><a href="#" onclick="redirectpage(1); return false">1</a></span>`;
+        }
+
+        // Ellipsis before current range
+        if (page > 3) {
+            pager.innerHTML += `<span class="showpage ellipsis">...</span>`;
+        }
+
+        // Pages around current
+        for (let i = page - 1; i <= page + 1; i++) {
+            if (i > 1 && i < totalPages) {
+                if (i === page) {
+                    pager.innerHTML += `<span class="pagecurrent">${i}</span>`;
+                } else {
+                    pager.innerHTML += `<span class="displaypageNum"><a href="#" onclick="redirectpage(${i}); return false">${i}</a></span>`;
+                }
+            }
+        }
+
+        // Ellipsis after current range
+        if (page < totalPages - 2) {
+            pager.innerHTML += `<span class="showpage ellipsis">...</span>`;
+        }
+
+        // Last page
+        if (page === totalPages) {
+            pager.innerHTML += `<span class="pagecurrent">${totalPages}</span>`;
+        } else {
+            pager.innerHTML += `<span class="displaypageNum"><a href="#" onclick="redirectpage(${totalPages}); return false">${totalPages}</a></span>`;
+        }
+
+        // Next button
+        pager.innerHTML += `<span class="displaypageNum"><a href="#" onclick="redirectpage(${page + 1}); return false" ${page === totalPages ? 'style="pointer-events:none;opacity:0.5;"' : ''}>&raquo;</a></span>`;
+    }
+
+    window.redirectpage = redirectpage;
+    showPage(currentPage);
+});

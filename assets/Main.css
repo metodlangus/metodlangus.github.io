@@ -670,3 +670,52 @@ div#PageList1 ul li {
   transform: scale(1.2);
   background-color: rgba(255, 0, 0, 0.1);
 }
+
+
+/* Pagination */
+.blog-pager {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin: 30px auto;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  font-size: 24px;
+}
+
+.blog-pager span {
+  display: inline-block;
+}
+
+.blog-pager a,
+.blog-pager .pagecurrent {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-decoration: none;
+  color: #333;
+  background-color: #f9f9f9;
+  transition: background-color 0.2s, color 0.2s;
+  min-width: 36px;
+  text-align: center;
+}
+
+.blog-pager a:hover {
+  background-color: #e0e0e0;
+}
+
+.blog-pager .pagecurrent {
+  background-color: #333;
+  color: white;
+  font-weight: bold;
+  cursor: default;
+}
+
+.blog-pager .ellipsis {
+  padding: 6px 10px;
+  color: #999;
+  font-size: 18px;
+  pointer-events: none;
+}

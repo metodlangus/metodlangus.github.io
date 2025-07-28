@@ -20,6 +20,8 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 BASE_SITE_URL = "https://metodlangus.github.io"
 
+entries_per_page = 12 # Set pagination on home and label pages
+
 
 def get_relative_path(levels_up):
     return '../' * levels_up
@@ -449,7 +451,7 @@ def generate_labels_html(entry, title, slug, year, month, formatted_date, post_i
     return labels_html
 
 def generate_homepage_html(entries):
-    """Generates complete HTML <article> containers (instead of just <script> blocks) for each Blogger post."""
+    """Generates complete HTML <article> containers with Blogger-style pagination."""
     homepage_html = ""
 
     for i, entry in enumerate(entries):
@@ -482,27 +484,31 @@ def generate_homepage_html(entries):
         label_one_link = f"/search/labels/{slugify(label_one)}.html" if label_one else ""
         label_six_link = f"/search/labels/{slugify(label_six)}.html" if label_six else ""
 
+        page_number = i // entries_per_page + 1
+
         homepage_html += f'''
-<article class="my-post-outer-container">
-  <div class="post">
-    {'<div class="my-tag-container"><a href="' + label_six_link + '" class="my-labels label-six">' + label_six + '</a></div>' if label_six else ""}
-    <a href="{alternate_link}" class="my-post-link" aria-label="{title}">
-      <div class="my-title-container">
-        {'<a href="' + label_one_link + '" class="my-labels">' + label_one + '</a>' if label_one else ""}
-        <h2 class="my-title">{title}</h2>
+<div class="photo-entry" data-page="{page_number}" style="display:none;">
+  <article class="my-post-outer-container">
+    <div class="post">
+      {'<div class="my-tag-container"><a href="' + label_six_link + '" class="my-labels label-six">' + label_six + '</a></div>' if label_six else ""}
+      <a href="{alternate_link}" class="my-post-link" aria-label="{title}">
+        <div class="my-title-container">
+          {'<a href="' + label_one_link + '" class="my-labels">' + label_one + '</a>' if label_one else ""}
+          <h2 class="my-title">{title}</h2>
+        </div>
+      </a>
+      <div class="my-meta-data">
+        <div class="author-date">Dne {published.split("T")[0]}</div>
       </div>
-    </a>
-    <div class="my-meta-data">
-      <div class="author-date">Dne {published.split("T")[0]}</div>
-    </div>
-    <div class="my-thumbnail" id="post-snippet-{post_id}">
-      <div class="my-snippet-thumbnail">
-        {'<img src="' + thumbnail.replace('/s72-c', '/s800') + '" alt="Thumbnail image for post: ' + title + '">' if thumbnail else ""}
+      <div class="my-thumbnail" id="post-snippet-{post_id}">
+        <div class="my-snippet-thumbnail">
+          {'<img src="' + thumbnail.replace('/s72-c', '/s800') + '" alt="Thumbnail image for post: ' + title + '">' if thumbnail else ""}
+        </div>
       </div>
+      <a href="{alternate_link}" aria-label="{title}"></a>
     </div>
-    <a href="{alternate_link}" aria-label="{title}"></a>
-  </div>
-</article>
+  </article>
+</div>
 '''
 
     return homepage_html
@@ -694,12 +700,15 @@ def generate_label_pages(entries, label_posts_raw):
         post_scripts_html = ""
         for i, post in enumerate(posts_sorted):
             post_id = str(post.get('postId', '')).strip()
+            page_number = i // entries_per_page + 1
             if post_id:
-                post_scripts_html += f""" 
-    <script>
-      var postTitle{i} = "{post_id}";
-      var displayMode{i} = "alwaysVisible";
-    </script>\n"""
+                post_scripts_html += f'''
+    <div class="photo-entry" data-page="{page_number}" style="display:none;">
+      <script>
+        var postTitle{i} = "{post_id}";
+        var displayMode{i} = "alwaysVisible";
+      </script>
+    </div>'''
             else:
                 print(f"Warning: Post at index {i} missing 'postId'")
 
@@ -739,6 +748,7 @@ def generate_label_pages(entries, label_posts_raw):
         <h1>Prikaz objav z oznako: {label_clean}</h1>
         <div class="blog-posts hfeed container">
           {post_scripts_html}
+          <div id="blog-pager" class="blog-pager"></div>
         </div>
       </div>
     </div>
@@ -1073,6 +1083,7 @@ def generate_home_si_page(homepage_html):
         {searchbox_html}
         <div class="blog-posts hfeed container home">
           {homepage_html}
+          <div id="blog-pager" class="blog-pager"></div>
         </div>
       </div>
     </div>
