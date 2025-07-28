@@ -129,7 +129,7 @@ def build_archive_sidebar_html(entries, levels_up):
     archive_dict = generate_unique_slugs(entries, return_type="archive")
 
     archive_html = """<aside class="sidebar-archive">
-  <h3>Arhiv</h3>
+  <h2>Arhiv</h2>
 """
 
     for y in sorted(archive_dict.keys(), reverse=True):
@@ -205,7 +205,7 @@ def generate_labels_sidebar_html(levels_up, feed_url):
     sorted_prefixes = [p for p in sorted(label_groups.keys()) if p != 6]
 
     # HTML build
-    label_html_parts = ["<aside class='sidebar-labels'><h3><b>Navigacija</b></h3>"]
+    label_html_parts = ["<aside class='sidebar-labels'><h2>Navigacija</h2>"]
 
     for idx, prefix in enumerate(sorted_prefixes):
         labels = sorted(label_groups[prefix], key=lambda l: l.lower())
@@ -247,21 +247,21 @@ def generate_sidebar_html(archive_html, labels_html, levels_up):
     return f"""
     <div class="sidebar-container">
       <div class="sidebar" id="sidebar">
-        <div class="archive">
-          {archive_html}
-        </div>
-        <div class="labels">
-          {labels_html}
-        </div>
         <div class="pages">
-          <aside class='sidebar-pages'><h3>Strani</h3>
+          <aside class='sidebar-pages'><h2>Strani</h2>
             <li><a href="{relative_path}predvajalnik-nakljucnih-fotografij.html">Predvajalnik naključnih fotografij</a></li>
             <li><a href="{relative_path}seznam-vrhov.html">Seznam vrhov</a></li>
             <li><a href="{relative_path}zemljevid-spominov.html">Zemljevid spominov</a></li>
           </aside>
         </div>
+        <div class="labels">
+          {labels_html}
+        </div>
+        <div class="archive">
+          {archive_html}
+        </div>
         <div class="settings ">
-          <h3><b>Nastavitve</b></h3>
+          <h2>Nastavitve</h2>
           <h3 class="title">Objave in predvajalniki slik</h3>
           <div style="display: flex; flex-direction: column; margin-left: 5px; margin-top: 5px; margin-bottom: 10px;">
               <label for='photosSliderElement'>Obseg prikazanih slik: <span id='photosValueElement'></span></label>

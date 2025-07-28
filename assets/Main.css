@@ -193,13 +193,6 @@
 
 
 /* sidebar archive */
-
-.sidebar-archive {
-  font-family: sans-serif;
-  font-size: 14px;
-  color: #444;
-}
-
 .sidebar-archive h3 {
   font-size: 1.2em;
   margin-bottom: 0.5em;
@@ -546,12 +539,19 @@ div#PageList1 ul li {
     padding: 5px 0px;
 }
 
+.sidebar-container {
+    color: #444;
+}
+
+.sidebar-container h2 {
+    font-size: 25px;
+}
+
 /* Adds a thin black border around text for links and pill buttons */
 .sidebar-container a, .pill-button {
     -webkit-text-stroke: 0.3px black; /* Fallback for Webkit browsers */
     text-stroke: 0.3px black; /* Thin black border for text */
 }
-
 
 /* Search results layout */
 .search-posts-container {
