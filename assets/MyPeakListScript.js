@@ -5,14 +5,32 @@ async function fetchJSON(url) {
     return data;
 }
 
-// Function to sort peaks alphabetically within a group
+// Function to sort peaks alphabetically; ensure 'Ostalo' is always last in label2 and label3
 function sortPeaksAlphabetically(labelMap) {
-    for (const [label2, label3Map] of Object.entries(labelMap)) {
-        for (const [label3, peaks] of Object.entries(label3Map)) {
-            labelMap[label2][label3] = peaks.sort((a, b) => a.peakName.localeCompare(b.peakName));
-        }
-    }
-    return labelMap;
+    const sortedLabelMap = {};
+    const label2Keys = Object.keys(labelMap).sort((a, b) => {
+        if (a === "Ostalo") return 1;
+        if (b === "Ostalo") return -1;
+        return a.localeCompare(b);
+    });
+
+    label2Keys.forEach(label2 => {
+        const label3Map = labelMap[label2];
+        const sortedLabel3Map = {};
+        const label3Keys = Object.keys(label3Map).sort((a, b) => {
+            if (a === "Ostalo") return 1;
+            if (b === "Ostalo") return -1;
+            return a.localeCompare(b);
+        });
+
+        label3Keys.forEach(label3 => {
+            sortedLabel3Map[label3] = label3Map[label3].sort((a, b) => a.peakName.localeCompare(b.peakName));
+        });
+
+        sortedLabelMap[label2] = sortedLabel3Map;
+    });
+
+    return sortedLabelMap;
 }
 
 // Function to render the sorted peaks
@@ -71,10 +89,15 @@ async function main() {
 
             // Helper function to process peaks
             function processPeaks(peakTagMatch, label3Index) {
-                // Modified regex to capture text between <span> and </span> tags more reliably
-                const mountainNamesAndHeights = peakTagMatch.match(/<b><span[^>]*>(.*?)<\/span><\/?\s*b\s*>/s);
-                if (mountainNamesAndHeights) {
-                    const namesAndHeights = mountainNamesAndHeights[1].split(',').map(nameAndHeight => nameAndHeight.trim());
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(peakTagMatch, 'text/html');
+                const span = doc.querySelector('b span');
+
+                if (span && span.textContent) {
+                    const namesAndHeights = span.textContent
+                        .split(',')
+                        .map(nameAndHeight => nameAndHeight.trim());
+
                     namesAndHeights.forEach(nameAndHeight => {
                         const peakName = nameAndHeight;
                         const fullUrl = entry.link.find(link => link.rel === 'alternate').href;
@@ -84,28 +107,28 @@ async function main() {
                         const label2 = entry.category ? entry.category.find(cat => cat.term.startsWith('2.')) : null;
                         const label3Categories = entry.category ? entry.category.filter(cat => cat.term.startsWith('3.')) : [];
 
-                        if (label2 && label3Categories.length > label3Index) {
-                            const labelText2 = label2.term.slice(2); // Remove "2." prefix
-                            const labelText3 = label3Categories[label3Index].term.slice(2); // Remove "3." prefix
+                        const labelText2 = label2 ? label2.term.slice(2) : "Ostalo";
+                        const labelText3 = label3Categories.length > label3Index
+                            ? label3Categories[label3Index].term.slice(2)
+                            : "Ostalo";
 
-                            if (!labelMap[labelText2]) {
-                                labelMap[labelText2] = {};
-                            }
+                        if (!labelMap[labelText2]) {
+                            labelMap[labelText2] = {};
+                        }
 
-                            if (!labelMap[labelText2][labelText3]) {
-                                labelMap[labelText2][labelText3] = [];
-                            }
+                        if (!labelMap[labelText2][labelText3]) {
+                            labelMap[labelText2][labelText3] = [];
+                        }
 
-                            const publishedDate = new Date(entry.published.$t);
-                            const formattedDate = `${publishedDate.getDate()}/${publishedDate.getMonth() + 1}/${publishedDate.getFullYear()}`;
+                        const publishedDate = new Date(entry.published.$t);
+                        const formattedDate = `${publishedDate.getDate()}/${publishedDate.getMonth() + 1}/${publishedDate.getFullYear()}`;
 
-                            // Check if the peak already exists in the list
-                            const existingPeak = labelMap[labelText2][labelText3].find(peak => peak.peakName === peakName);
-                            if (existingPeak) {
-                                existingPeak.publishedDates.push({ date: formattedDate, link: postLink });
-                            } else {
-                                labelMap[labelText2][labelText3].push({ peakName, publishedDates: [{ date: formattedDate, link: postLink }] });
-                            }
+                        // Check if the peak already exists in the list
+                        const existingPeak = labelMap[labelText2][labelText3].find(peak => peak.peakName === peakName);
+                        if (existingPeak) {
+                            existingPeak.publishedDates.push({ date: formattedDate, link: postLink });
+                        } else {
+                            labelMap[labelText2][labelText3].push({ peakName, publishedDates: [{ date: formattedDate, link: postLink }] });
                         }
                     });
                 }
