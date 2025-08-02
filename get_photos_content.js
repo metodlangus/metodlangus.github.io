@@ -2,43 +2,17 @@ const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 const fs = require('fs');
 
-const blogUrl = 'https://gorski-uzitki.blogspot.com/'; // Blog URL
-const maxResults = 10;  // Number of results to fetch in one request
-let startIndex = 1;
+const blogUrl = 'https://metodlangus.github.io'; // Blog URL
 let imageDetailsBuffer = []; // Array to store image details
 
 // Function to fetch data from the blog feed
 function fetchData() {
-    const feedUrl = `${blogUrl}feeds/posts/default?start-index=${startIndex}&max-results=${maxResults}&alt=json`;
+    const feedUrl = `${blogUrl}/data/all-posts.json`;
 
     fetch(feedUrl)
         .then(response => response.json())
         .then(data => {
             const entries = data.feed.entry;
-
-            if (!entries || entries.length === 0) {
-                // Once all entries are fetched, process duplicates and save results
-                console.log('Fetching complete. Processing duplicates...');
-
-                // Process duplicates in a single pass
-                const { uniqueImages, duplicates } = processDuplicates(imageDetailsBuffer);
-
-                if (duplicates.length > 0) {
-                    console.log('Duplicate image filenames found:');
-                    duplicates.forEach(dup => {
-                        console.log(`${dup.imageName} (Count: ${dup.count})`);
-                    });
-                } else {
-                    console.log('No duplicate image filenames found.');
-                }
-
-                // Save the unique image details (with no duplicates) to a file
-                const output = uniqueImages
-                    .map(img => `${img.imageName} Link: ${img.imgUrl} data-skip=${img.dataSkip} "${img.postTitle}" ${img.postUrl}`)
-                    .join('\n');
-                fs.writeFileSync('./list_of_photos.txt', output);
-                return;
-            }
 
             entries.forEach(entry => {
                 const postTitle = entry.title.$t;
@@ -58,8 +32,26 @@ function fetchData() {
                 });
             });
 
-            startIndex += maxResults;
-            fetchData(); // Continue fetching the next set of images
+            // Once all entries are fetched, process duplicates and save results
+            console.log('Fetching complete. Processing duplicates...');
+
+            // Process duplicates in a single pass
+            const { uniqueImages, duplicates } = processDuplicates(imageDetailsBuffer);
+
+            if (duplicates.length > 0) {
+                console.log('Duplicate image filenames found:');
+                duplicates.forEach(dup => {
+                    console.log(`${dup.imageName} (Count: ${dup.count})`);
+                });
+            } else {
+                console.log('No duplicate image filenames found.');
+            }
+
+            // Save the unique image details (with no duplicates) to a file
+            const output = uniqueImages
+                .map(img => `${img.imageName} Link: ${img.imgUrl} data-skip=${img.dataSkip} "${img.postTitle}" ${img.postUrl}`)
+                .join('\n');
+            fs.writeFileSync('./list_of_photos.txt', output);
         })
         .catch(error => console.error('Error fetching data:', error));
 }

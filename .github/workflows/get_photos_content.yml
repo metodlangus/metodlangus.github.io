@@ -38,7 +38,7 @@ jobs:
           git push
 
       - name: Upload image names (optional)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: image-names
           path: ./list_of_photos.txt
