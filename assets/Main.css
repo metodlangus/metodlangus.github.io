@@ -48,6 +48,14 @@
   margin: 50px 0 10px 0;
 }
 
+.top-header h1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1; /* makes it grow to fill available space */
+  margin: 0; /* remove default h1 margin */
+}
+
 /* Ensures the SVG titlt scales with its container */
 .logo-svg {
   width: 100%;
