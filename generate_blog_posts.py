@@ -22,7 +22,7 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # Nastavitve
 BASE_SITE_URL = "https://metodlangus.github.io"
-SITEMAP_FILE = "sitemap.txt"
+SITEMAP_FILE = "sitemap.xml"
 
 entries_per_page = 12 # Set pagination on home and label pages
 
@@ -563,16 +563,18 @@ def generate_sitemap(entries):
             dt = datetime.strptime(published, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
         except ValueError:
             dt = datetime.now(timezone.utc)
-        year = dt.strftime("%Y")
-        month = dt.strftime("%m")
         lastmod = dt.strftime("%Y-%m-%dT%H:%M:%SZ")
 
-        title = entry.get("title", {}).get("$t", "untitled")
-        slug = title.lower().replace(" ", "-").replace(":", "").replace("/", "")
-        url = f"{BASE_SITE_URL}/posts/{year}/{month}/{slug}.html"
+        # Extract the actual post URL from the entry's "link" list
+        post_url = None
+        for link in entry.get("link", []):
+            if link.get("rel") == "alternate" and link.get("type") == "text/html":
+                post_url = link.get("href")
+                break
 
-        url_element = generate_url_element(url, lastmod)
-        urlset.append(url_element)
+        if post_url:
+            url_element = generate_url_element(post_url, lastmod)
+            urlset.append(url_element)
 
     tree = ElementTree(urlset)
     tree.write(SITEMAP_FILE, encoding="utf-8", xml_declaration=True)
