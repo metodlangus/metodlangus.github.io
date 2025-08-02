@@ -79,7 +79,7 @@ function addMarkers(data) {
         var imageLink = match[2];   // Extract image link
         var dataSkip = match[3] || null; // Extract data-skip value
         var postTitle = match[4];   // Extract post title
-        var postLink = WindowBaseUrl + (match[5] || ""); // Construct full post link from extracted link part
+        var postLink = WindowBaseUrl + "/posts/" +(match[5] || ""); // Construct full post link from extracted link part
         var latitude = parseFloat(match[6]); // Extract latitude
         var longitude = parseFloat(match[7]); // Extract longitude
 
@@ -206,20 +206,20 @@ function addMarkers(data) {
         // Validate time range for the specific day
         if (captureTimeOnly < dailyStartTime || captureTimeOnly > dailyEndTime) return; // Skip if outside time range
 
-        // Create popup content with a clickable image and caption
-        // var popupContent = `         TODO: make image link to post
-        //     <div class="popup-container">
-        //         <a href="${postLink}" target="_blank">
-        //             <img src="${imageLink}" alt="${postTitle}" class="popup-image">
-        //         </a>
-        //         <div class="popup-caption">${postTitle}</div>
-        //     </div>`;
-        
+        // Create popup content with a clickable image and caption  <a href="${postLink}" target="_blank">
         var popupContent = `
             <div class="popup-container">
-                <img src="${imageLink}" alt="${postTitle}" class="popup-image">
+                <a href="${postLink}">  
+                    <img src="${imageLink}" alt="${postTitle}" class="popup-image">
+                </a>
                 <div class="popup-caption">${postTitle}</div>
             </div>`;
+        
+        // var popupContent = `
+        //     <div class="popup-container">
+        //         <img src="${imageLink}" alt="${postTitle}" class="popup-image">
+        //         <div class="popup-caption">${postTitle}</div>
+        //     </div>`;
 
         // Create and bind marker for valid entries
         const photoMarker = L.marker([latitude, longitude], { icon: photoMarkerIcon })
