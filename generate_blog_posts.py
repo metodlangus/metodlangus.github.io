@@ -4,6 +4,7 @@ from pathlib import Path
 from slugify import slugify
 from collections import defaultdict
 from datetime import datetime, timezone
+import locale
 from xml.etree.ElementTree import Element, SubElement, ElementTree
 from zoneinfo import ZoneInfo  # Python 3.9+
 from dateutil import parser  # pip install python-dateutil
@@ -473,8 +474,17 @@ def generate_homepage_html(entries):
             print(f"Warning: Post at index {i} missing valid 'postId'")
             continue
 
+        # Set Slovenian locale (may require system support)
+        try:
+            locale.setlocale(locale.LC_TIME, 'sl_SI.UTF-8')
+        except locale.Error:
+            locale.setlocale(locale.LC_TIME, '')  # fallback
+
+        published_raw = entry.get("published", {}).get("$t", "1970-01-01T00:00:00Z")
+        published_dt = datetime.strptime(published_raw, "%Y-%m-%dT%H:%M:%S.%f%z")
+        published = published_dt.strftime("%A, %d. %B %Y")
+
         title = entry.get("title", {}).get("$t", f"untitled-{i}")
-        published = entry.get("published", {}).get("$t", "1970-01-01T00:00:00Z")
         thumbnail = entry.get("media$thumbnail", {}).get("url", "")
         link_list = entry.get("link", [])
         alternate_link = next((l["href"] for l in link_list if l.get("rel") == "alternate"), "#")
@@ -501,7 +511,7 @@ def generate_homepage_html(entries):
         </div>
       </a>
       <div class="my-meta-data">
-        <div class="author-date">Dne {published.split("T")[0]}</div>
+        <div class="author-date">Dne {published}</div>
       </div>
       <div class="my-thumbnail" id="post-snippet-{post_id}">
         <div class="my-snippet-thumbnail">
