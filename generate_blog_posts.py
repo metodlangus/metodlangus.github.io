@@ -164,6 +164,55 @@ def fix_images_for_lightbox(html_content, post_title):
 
     return soup.prettify()
 
+def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
+    # Set Slovenian locale
+    try:
+        locale.setlocale(locale.LC_TIME, 'sl_SI.UTF-8')
+    except locale.Error:
+        locale.setlocale(locale.LC_TIME, '')  # fallback
+
+    published_raw = entry.get("published", {}).get("$t", "1970-01-01T00:00:00Z")
+    published_dt = datetime.strptime(published_raw, "%Y-%m-%dT%H:%M:%S.%f%z")
+    published = published_dt.strftime("%A, %d. %B %Y")
+
+    title = entry.get("title", {}).get("$t", f"untitled-{index}")
+    thumbnail = entry.get("media$thumbnail", {}).get("url", "")
+    link_list = entry.get("link", [])
+    alternate_link = next((l["href"] for l in link_list if l.get("rel") == "alternate"), "#")
+    categories = entry.get("category", [])
+
+    label_one = next((c["term"].replace("1. ", "") for c in categories if c["term"].startswith("1. ")), "")
+    label_six = next((c["term"].replace("6. ", "") for c in categories if c["term"].startswith("6. ")), "")
+
+    label_one_link = f"/search/labels/{slugify_func(label_one)}.html" if label_one else ""
+    label_six_link = f"/search/labels/{slugify_func(label_six)}.html" if label_six else ""
+
+    page_number = index // entries_per_page + 1
+
+    return f'''
+          <div class="photo-entry" data-page="{page_number}" style="display:none;">
+            <article class="my-post-outer-container">
+              <div class="post">
+                {'<div class="my-tag-container"><a href="' + label_six_link + '" class="my-labels label-six">' + label_six + '</a></div>' if label_six else ""}
+                <a href="{alternate_link}" class="my-post-link" aria-label="{title}">
+                  <div class="my-title-container">
+                    {'<a href="' + label_one_link + '" class="my-labels">' + label_one + '</a>' if label_one else ""}
+                    <h2 class="my-title">{title}</h2>
+                  </div>
+                </a>
+                <div class="my-meta-data">
+                  <div class="author-date">Dne {published}</div>
+                </div>
+                <div class="my-thumbnail" id="post-snippet-{post_id}">
+                  <div class="my-snippet-thumbnail">
+                    {'<img src="' + thumbnail.replace('/s72-c', '/s600-rw') + '" alt="Thumbnail image for post: ' + title + '">' if thumbnail else ""}
+                  </div>
+                </div>
+                <a href="{alternate_link}" aria-label="{title}"></a>
+              </div>
+            </article>
+          </div>'''
+
 def build_archive_sidebar_html(entries, levels_up):
     """
     Generate complete archive sidebar HTML from Blogger entries.
@@ -524,55 +573,7 @@ def generate_homepage_html(entries):
             print(f"Warning: Post at index {i} missing valid 'postId'")
             continue
 
-        # Set Slovenian locale (may require system support)
-        try:
-            locale.setlocale(locale.LC_TIME, 'sl_SI.UTF-8')
-        except locale.Error:
-            locale.setlocale(locale.LC_TIME, '')  # fallback
-
-        published_raw = entry.get("published", {}).get("$t", "1970-01-01T00:00:00Z")
-        published_dt = datetime.strptime(published_raw, "%Y-%m-%dT%H:%M:%S.%f%z")
-        published = published_dt.strftime("%A, %d. %B %Y")
-
-        title = entry.get("title", {}).get("$t", f"untitled-{i}")
-        thumbnail = entry.get("media$thumbnail", {}).get("url", "")
-        link_list = entry.get("link", [])
-        alternate_link = next((l["href"] for l in link_list if l.get("rel") == "alternate"), "#")
-        categories = entry.get("category", [])
-
-        # Extract label starting with "1. " and "6. "
-        label_one = next((c["term"].replace("1. ", "") for c in categories if c["term"].startswith("1. ")), "")
-        label_six = next((c["term"].replace("6. ", "") for c in categories if c["term"].startswith("6. ")), "")
-
-        label_one_link = f"/search/labels/{slugify(label_one)}.html" if label_one else ""
-        label_six_link = f"/search/labels/{slugify(label_six)}.html" if label_six else ""
-
-        page_number = i // entries_per_page + 1
-
-        homepage_html += f'''
-<div class="photo-entry" data-page="{page_number}" style="display:none;">
-  <article class="my-post-outer-container">
-    <div class="post">
-      {'<div class="my-tag-container"><a href="' + label_six_link + '" class="my-labels label-six">' + label_six + '</a></div>' if label_six else ""}
-      <a href="{alternate_link}" class="my-post-link" aria-label="{title}">
-        <div class="my-title-container">
-          {'<a href="' + label_one_link + '" class="my-labels">' + label_one + '</a>' if label_one else ""}
-          <h2 class="my-title">{title}</h2>
-        </div>
-      </a>
-      <div class="my-meta-data">
-        <div class="author-date">Dne {published}</div>
-      </div>
-      <div class="my-thumbnail" id="post-snippet-{post_id}">
-        <div class="my-snippet-thumbnail">
-          {'<img src="' + thumbnail.replace('/s72-c', '/s600-rw') + '" alt="Thumbnail image for post: ' + title + '">' if thumbnail else ""}
-        </div>
-      </div>
-      <a href="{alternate_link}" aria-label="{title}"></a>
-    </div>
-  </article>
-</div>
-'''
+        homepage_html += render_post_html(entry, i, entries_per_page, slugify, post_id)
 
     return homepage_html
 
@@ -785,7 +786,7 @@ def generate_label_pages(entries, label_posts_raw):
     labels_dir = OUTPUT_DIR / "search/labels"
     labels_dir.mkdir(parents=True, exist_ok=True)
 
-    # Generate the full archive sidebar from all entries
+    # Generate sidebar, header, footer, etc.
     levels_up = 2
     archive_sidebar_html = build_archive_sidebar_html(entries, levels_up)
     labels_sidebar_html = generate_labels_sidebar_html(levels_up, feed_url=BASE_FEED_URL)
@@ -794,31 +795,36 @@ def generate_label_pages(entries, label_posts_raw):
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
 
-    for label, posts in label_posts_raw.items():
-        # Remove only the first numeric prefix from label for slug
-        label_slug = slugify(remove_first_prefix(label))
-        # Clean label text by removing numeric prefixes etc.
-        label_clean = re.sub(r"^(?:\d+\.\s*)+", "", label)
+    # Build lookup dictionary
+    entry_lookup = {}
+    for entry in entries:
+        full_id = entry.get("id", {}).get("$t", "")
+        match = re.search(r'post-(\d+)$', full_id)
+        post_id = match.group(1) if match else ""
+        if post_id:
+            entry_lookup[post_id] = entry
 
+    for label, posts in label_posts_raw.items():
+        label_slug = slugify(remove_first_prefix(label))
+        label_clean = re.sub(r"^(?:\d+\.\s*)+", "", label)
         filename = labels_dir / f"{label_slug}.html"
 
-        # Sort posts by date descending (newest first)
+        # Sort posts by date descending
         posts_sorted = sorted(posts, key=lambda x: x['date'], reverse=True)
 
         post_scripts_html = ""
         for i, post in enumerate(posts_sorted):
             post_id = str(post.get('postId', '')).strip()
-            page_number = i // entries_per_page + 1
-            if post_id:
-                post_scripts_html += f'''
-    <div class="photo-entry" data-page="{page_number}" style="display:none;">
-      <script>
-        var postTitle{i} = "{post_id}";
-        var displayMode{i} = "alwaysVisible";
-      </script>
-    </div>'''
-            else:
+            if not post_id:
                 print(f"Warning: Post at index {i} missing 'postId'")
+                continue
+
+            entry = entry_lookup.get(post_id)
+            if not entry:
+                print(f"Warning: Entry with postId {post_id} not found in entries")
+                continue
+
+            post_scripts_html += render_post_html(entry, i, entries_per_page, slugify, post_id)
 
         html_content = f"""<!DOCTYPE html>
 <html lang="en">
@@ -868,7 +874,6 @@ def generate_label_pages(entries, label_posts_raw):
   </footer>
 
   <script src="../../assets/Main.js" defer></script>
-  <script src="../../assets/MyPostContainerScript.js" defer></script>
 
 </body>
 </html>"""
