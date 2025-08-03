@@ -298,11 +298,10 @@ function updateImageSources(size) {
     for (let i = 0; i < images.length; i++) {
         let imgSrc = images[i].getAttribute('src');
 
-        // Use regex to change the src link
-        // This regex will replace /s<digits>/ or /s<digits>-<any character>/ with /s<size>/
-        const newSrc = imgSrc.replace(/\/s\d+(-rw)?\//, `/s${size}/`);
+        // Replace /sXXX/ or /sXXX-rw/ with /s<size>-rw/ to use WebP format (-rw suffix enables WebP)
+        const newSrc = imgSrc.replace(/\/s\d+(-rw)?\//, `/s${size}-rw/`);
 
-        // Update the src attribute
+        // Update the src attribute with the new WebP-enabled image URL
         images[i].setAttribute('src', newSrc);
     }
 }
@@ -658,9 +657,9 @@ function autoSetQuality(index) {
         // Assign the bigger value to a third variable
         const containerSize = Math.max(containerWidth, containerHeight); // Determine the larger value
 
-        // Update size of images according container size
+        // Update size of images according to container size using WebP (-rw)
         slideshows[index].shuffledImages.forEach(img => {
-            img.src = img.src.replace(/\/s\d+\/|\/w\d+-h\d+\//, `/s${containerSize}/`);
+            img.src = img.src.replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//, `/s${containerSize}-rw/`);
         });
 
         // Update the quality slider value based on the container width
@@ -1292,9 +1291,11 @@ function processEntry(index, entry) {
 
         // Perform the desired action based on the range check
         if (isWithinRange) {
-            // Process and add the image if data-skip is within range
-            let imgSrc = images[i].getAttribute('src').replace(/\/s\d+\/|\/w\d+-h\d+\//, `/s${containerSize}/`);
-                const caption = captions[i] || '';
+            // Replace image size with WebP-enabled format using -rw
+            let imgSrc = images[i].getAttribute('src')
+                .replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//, `/s${containerSize}-rw/`);
+            
+            const caption = captions[i] || '';
             slideshows[index].imageBuffer.push({ src: imgSrc, caption, title: postTitle });
         }
     }        
@@ -2205,9 +2206,12 @@ function updateImageQuality(index) {
     qualityValueElement[index].textContent = slideshows[index].qualityValue;
 
     slideshows[index].imageBuffer.forEach(img => {
-        // If slideshows[index].qualityValue === 11 set quality to max
-        const newQuality = (slideshows[index].qualityValue === '11') ? '/s0/' : `/s${slideshows[index].qualityValue * 400}/`;
-        img.src = img.src.replace(/\/s\d+\/|\/w\d+-h\d+\//, newQuality);
+        // If qualityValue === '11', set quality to max with WebP (-rw) suffix
+        const newQuality = (slideshows[index].qualityValue === '11') 
+            ? '/s0-rw/' 
+            : `/s${slideshows[index].qualityValue * 400}-rw/`;
+        
+        img.src = img.src.replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//, newQuality);
     });
 }
 

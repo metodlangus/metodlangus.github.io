@@ -97,52 +97,70 @@ def fetch_all_entries():
 def fix_images_for_lightbox(html_content, post_title):
     """
     Modify image links in HTML content for lightbox compatibility.
-    Also generates meaningful alt tags based on image context and data-skip rules.
+    Uses WebP only, adds alt tags, <picture> elements, and loading attributes.
     """
     soup = BeautifulSoup(html_content, "html.parser")
+    image_index = 0  # Track image count for loading priority
 
     for a_tag in soup.find_all("a"):
         img = a_tag.find("img")
         if not img:
             continue
 
-        # Step 1: Determine and fix <img> alt attribute
+        # Step 1: Determine <img> alt text
         data_skip = img.get("data-skip", "").lower()
         skip_keywords = [k.strip() for k in data_skip.split(";") if k.strip()]
-
         alt_text = ""
+
         if "peak" in skip_keywords:
             table = img.find_parent("table", class_="tr-caption-container")
             if table:
                 caption_td = table.find("td", class_="tr-caption")
                 if caption_td and caption_td.get_text(strip=True):
                     alt_text = caption_td.get_text(strip=True)
-
         elif any(k in skip_keywords for k in ["best", "cover", "1"]):
             alt_text = post_title
-
         elif all(k in ["2", "3", "na"] for k in skip_keywords):
             alt_text = ""
-
         else:
-            # Fallback to empty alt
             alt_text = ""
 
         img["alt"] = alt_text
 
-        # Step 2: Fix the <img> src resolution
+        # Step 2: Fix image src resolution
         src = img.get("src", "")
-        new_src = src.replace("/s1200/", "/s600/").replace("/s1600/", "/s1000/")
+        new_src = src.replace("/s1600/", "/s1000/").replace("/s1200/", "/s600/")
+        new_src = re.sub(r"(/s\d+)(/)", r"\1-rw\2", new_src)  # Add -rw for WebP
         img["src"] = new_src
 
-        # Step 3: Fix the <a> tag href
+        # Step 3: Fix <a> href resolution
         href = a_tag.get("href", "")
-        new_href = href.replace("/s1200/", "/s600/").replace("/s1600/", "/s1000/")
+        new_href = href.replace("/s1600/", "/s1000/").replace("/s1200/", "/s600/")
+        new_href = re.sub(r"(/s\d+)(/)", r"\1-rw\2", new_href)  # Add -rw for WebP
         a_tag["href"] = new_href
 
-        # Step 4: Add lightbox attributes
+        # Step 4: Add lightbox attribute
         a_tag["data-lightbox"] = "Gallery"
-        # a_tag["data-title"] = alt_text  # Prepared for one kind of lightbox
+
+        # Step 5: Add loading attributes
+        if image_index == 0:
+            img["loading"] = "eager"
+            img["fetchpriority"] = "high"
+        else:
+            img["loading"] = "lazy"
+            img["fetchpriority"] = "low"
+        image_index += 1
+
+        # Step 5: Wrap in <picture> with WebP only (no JPEG fallback)
+        picture = soup.new_tag("picture")
+        source = soup.new_tag("source", srcset=new_src, type="image/webp")
+        picture.append(source)
+
+        img.extract()
+        picture.append(img)
+
+        a_tag.clear()
+        a_tag.append(picture)
 
     return soup.prettify()
 
@@ -547,7 +565,7 @@ def generate_homepage_html(entries):
       </div>
       <div class="my-thumbnail" id="post-snippet-{post_id}">
         <div class="my-snippet-thumbnail">
-          {'<img src="' + thumbnail.replace('/s72-c', '/s800') + '" alt="Thumbnail image for post: ' + title + '">' if thumbnail else ""}
+          {'<img src="' + thumbnail.replace('/s72-c', '/s600-rw') + '" alt="Thumbnail image for post: ' + title + '">' if thumbnail else ""}
         </div>
       </div>
       <a href="{alternate_link}" aria-label="{title}"></a>

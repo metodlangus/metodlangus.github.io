@@ -149,10 +149,10 @@ function insertPostContainer(postTitle, displayMode, scriptTag) {
       var thumbnail = document.createElement('div');
       thumbnail.classList.add('my-snippet-thumbnail');
 
-      var thumbnailImg = document.createElement('img');
-      thumbnailImg.alt = `Thumbnail image for post: ${post.title.$t}`;  // Descriptive alt text
-      thumbnailImg.src = post.media$thumbnail.url.replace(/\/s\d+(?:-w\d+-h\d+)?-c\//, '/s800/');
-
+    var thumbnailImg = document.createElement('img');
+    thumbnailImg.alt = `Thumbnail image for post: ${post.title.$t}`;  // Descriptive alt text
+    // Use WebP format (-rw) and resize image to s800 for better performance and compatibility
+    thumbnailImg.src = post.media$thumbnail.url.replace(/\/s\d+(?:-w\d+-h\d+)?-c\//, '/s600-rw/');
       var linkElement = document.createElement('a');
       linkElement.href  = fullUrl;
       
