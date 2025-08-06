@@ -416,31 +416,21 @@ def generate_labels_sidebar_html(feed_url):
 
     return "\n".join(label_html_parts)
 
-def generate_sidebar_html(archive_html, labels_html):
-    return f"""
-    <div class="sidebar-container">
-      <div class="sidebar" id="sidebar">
-        <div class="pages">
-          <aside class='sidebar-pages'><h2>Strani</h2>
-            <li><a href="{BASE_SITE_URL}/predvajalnik-nakljucnih-fotografij.html">Predvajalnik naključnih fotografij</a></li>
-            <li><a href="{BASE_SITE_URL}/seznam-vrhov.html">Seznam vrhov</a></li>
-            <li><a href="{BASE_SITE_URL}/zemljevid-spominov.html">Zemljevid spominov</a></li>
-          </aside>
-        </div>
-        <div class="labels">
-          {labels_html}
-        </div>
-        <div class="archive">
-          {archive_html}
-        </div>
-        <div class="settings ">
-          <h2>Nastavitve</h2>
-          <h3 class="title">Objave in predvajalniki slik</h3>
+def render_sidebar_settings(picture_settings=True, map_settings=True):
+    sections = []
+
+    # Always include the main heading once
+    heading = "<h2>Nastavitve</h2>"
+
+    if picture_settings:
+        sections.append("""          <h3 class="title">Objave in predvajalniki slik</h3>
           <div style="display: flex; flex-direction: column; margin-left: 5px; margin-top: 5px; margin-bottom: 10px;">
               <label for='photosSliderElement'>Obseg prikazanih slik: <span id='photosValueElement'></span></label>
               <input id='photosSliderElement' max='3' min='0' step='1' type='range' value='initPhotos' style="width: 160px;"/>
-          </div>
-          <div id='map-settings'>
+          </div>""")
+
+    if map_settings:
+        sections.append("""          <div id='map-settings'>
             <h3 class='title'>Zemljevid spominov</h3>
             <!-- Slider Section -->
             <div style='display: flex; flex-direction: column; margin-left: 5px; margin-top: 5px; margin-bottom: 10px;'>
@@ -480,7 +470,36 @@ def generate_sidebar_html(archive_html, labels_html):
             <div class='form-group' style='display: flex; justify-content: center;'>
                 <button class='pill-button' id='applyFilters'>Uporabi filtre</button>
             </div>
-          </div>
+          </div>""")
+
+    if not sections:
+        return ""
+
+    return "\n".join([heading] + sections)
+
+
+def generate_sidebar_html(archive_html, labels_html, picture_settings, map_settings):
+    
+    settings_html = render_sidebar_settings(picture_settings, map_settings)
+
+    return f"""
+    <div class="sidebar-container">
+      <div class="sidebar" id="sidebar">
+        <div class="pages">
+          <aside class='sidebar-pages'><h2>Strani</h2>
+            <li><a href="{BASE_SITE_URL}/predvajalnik-nakljucnih-fotografij.html">Predvajalnik naključnih fotografij</a></li>
+            <li><a href="{BASE_SITE_URL}/seznam-vrhov.html">Seznam vrhov</a></li>
+            <li><a href="{BASE_SITE_URL}/zemljevid-spominov.html">Zemljevid spominov</a></li>
+          </aside>
+        </div>
+        <div class="labels">
+          {labels_html}
+        </div>
+        <div class="archive">
+          {archive_html}
+        </div>
+        <div class="settings ">
+          {settings_html}
         </div>
       </div>
     </div>"""
@@ -714,7 +733,7 @@ def fetch_and_save_all_posts(entries):
     # Archive and labels sidebar
     archive_sidebar_html = build_archive_sidebar_html(entries)
     labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, picture_settings=True, map_settings=False)
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -875,7 +894,7 @@ def generate_label_pages(entries, label_posts_raw):
     # Generate sidebar, header, footer, etc.
     archive_sidebar_html = build_archive_sidebar_html(entries)
     labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, picture_settings=True, map_settings=False)
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -975,7 +994,7 @@ def generate_predvajalnik_page():
     # Generate the full archive sidebar from all entries
     archive_sidebar_html = build_archive_sidebar_html(entries)
     labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, picture_settings=True, map_settings=False)
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -1055,7 +1074,7 @@ def generate_peak_list_page():
     # Generate the full archive sidebar from all entries
     archive_sidebar_html = build_archive_sidebar_html(entries)
     labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, picture_settings=False, map_settings=False)
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -1133,7 +1152,7 @@ def generate_big_map_page():
     # Generate the full archive sidebar from all entries
     archive_sidebar_html = build_archive_sidebar_html(entries)
     labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, picture_settings=False, map_settings=True)
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -1230,7 +1249,7 @@ def generate_home_si_page(homepage_html):
     # Generate the full archive sidebar from all entries
     archive_sidebar_html = build_archive_sidebar_html(entries)
     labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, picture_settings=False, map_settings=False)
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
