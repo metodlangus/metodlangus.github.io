@@ -10,25 +10,40 @@ from zoneinfo import ZoneInfo  # Python 3.9+
 from dateutil import parser  # pip install python-dateutil
 from bs4 import BeautifulSoup
 from collections import defaultdict
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse
 import os
 import json
 
+
+# Nastavitve
+BASE_SITE_URL = "https://metodlangus.github.io"
+# BASE_SITE_URL = "http://127.0.0.1:5500/metodlangus.github.io"
+SITEMAP_FILE = "sitemap.xml"
 
 # Constants
 BASE_FEED_URL = "https://gorski-uzitki.blogspot.com/feeds/posts/default"
 OUTPUT_DIR = Path.cwd() # Current path
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# Nastavitve
-BASE_SITE_URL = "https://metodlangus.github.io"
-SITEMAP_FILE = "sitemap.xml"
-
 entries_per_page = 12 # Set pagination on home and label pages
 
 
-def get_relative_path(levels_up):
-    return '../' * levels_up
+def override_domain(url, base_site_url):
+    """
+    Replaces the domain of the given URL with base_site_url.
+    Keeps the path, query, and fragment from the original URL.
+    """
+    parsed_original = urlparse(url)
+    parsed_base = urlparse(base_site_url)
+
+    return urlunparse((
+        parsed_base.scheme or 'https',
+        parsed_base.netloc,
+        parsed_original.path,
+        parsed_original.params,
+        parsed_original.query,
+        parsed_original.fragment
+    ))
 
 def parse_entry_date(entry, index=None):
     published = entry.get("published", {}).get("$t", "")
@@ -178,18 +193,21 @@ def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
     title = entry.get("title", {}).get("$t", f"untitled-{index}")
     thumbnail = entry.get("media$thumbnail", {}).get("url", "")
     link_list = entry.get("link", [])
-    alternate_link = next((l["href"] for l in link_list if l.get("rel") == "alternate"), "#")
+    raw_link = next((l["href"] for l in link_list if l.get("rel") == "alternate"), "#")
+    alternate_link = override_domain(raw_link, BASE_SITE_URL)
     categories = entry.get("category", [])
 
     label_one = next((c["term"].replace("1. ", "") for c in categories if c["term"].startswith("1. ")), "")
     label_six = next((c["term"].replace("6. ", "") for c in categories if c["term"].startswith("6. ")), "")
 
-    label_one_link = f"/search/labels/{slugify_func(label_one)}.html" if label_one else ""
-    label_six_link = f"/search/labels/{slugify_func(label_six)}.html" if label_six else ""
+    label_one_link = f"{BASE_SITE_URL}/search/labels/{slugify_func(label_one)}.html" if label_one else ""
+    label_six_link = f"{BASE_SITE_URL}/search/labels/{slugify_func(label_six)}.html" if label_six else ""
 
     page_number = 1 if entries_per_page == 0 else (index // entries_per_page + 1)
 
     style_attr = "" if entries_per_page == 0 else ' style="display:none;"'
+
+    base_site_url = BASE_SITE_URL
 
     return f"""
           <div class="photo-entry" data-page="{page_number}"{style_attr}>
@@ -280,11 +298,10 @@ def replace_mypost_scripts_with_rendered_posts(content_html, entries, entries_pe
 
     return soup.prettify()
 
-def build_archive_sidebar_html(entries, levels_up):
+def build_archive_sidebar_html(entries):
     """
     Generate complete archive sidebar HTML from Blogger entries.
     """
-    relative_path = get_relative_path(levels_up)
     archive_dict = generate_unique_slugs(entries, return_type="archive")
 
     archive_html = """<aside class="sidebar-archive">
@@ -319,7 +336,7 @@ def build_archive_sidebar_html(entries, levels_up):
                          .replace('"', "&quot;")
                          .replace("'", "&#x27;")
                 )
-                archive_html += f"""        <li><a href="{relative_path}posts/{y}/{m}/{slug}.html">{safe_title}</a></li>
+                archive_html += f"""        <li><a href="{BASE_SITE_URL}/posts/{y}/{m}/{slug}.html">{safe_title}</a></li>
 """
 
             archive_html += """      </ul>
@@ -332,10 +349,8 @@ def build_archive_sidebar_html(entries, levels_up):
     return archive_html
 
 
-def generate_labels_sidebar_html(levels_up, feed_url):
+def generate_labels_sidebar_html(feed_url):
     """Fetches labels from a Blogger feed and returns structured sidebar HTML."""
-
-    relative_path = get_relative_path(levels_up)
 
     response = requests.get(feed_url, params={"alt": "json"})
     feed_data = response.json()
@@ -382,7 +397,7 @@ def generate_labels_sidebar_html(levels_up, feed_url):
             clean_label = re.sub(r'^\d+\.\s*', '', raw_label)
             slug = slugify(clean_label)
             label_html_parts.append(
-                f"<li><a class='label-name' href='{relative_path}search/labels/{slug}.html'>{clean_label}</a></li>"
+                f"<li><a class='label-name' href='{BASE_SITE_URL}/search/labels/{slug}.html'>{clean_label}</a></li>"
             )
 
         label_html_parts.append("</ul>")
@@ -401,16 +416,15 @@ def generate_labels_sidebar_html(levels_up, feed_url):
 
     return "\n".join(label_html_parts)
 
-def generate_sidebar_html(archive_html, labels_html, levels_up):
-    relative_path = get_relative_path(levels_up)
+def generate_sidebar_html(archive_html, labels_html):
     return f"""
     <div class="sidebar-container">
       <div class="sidebar" id="sidebar">
         <div class="pages">
           <aside class='sidebar-pages'><h2>Strani</h2>
-            <li><a href="{relative_path}predvajalnik-nakljucnih-fotografij.html">Predvajalnik naključnih fotografij</a></li>
-            <li><a href="{relative_path}seznam-vrhov.html">Seznam vrhov</a></li>
-            <li><a href="{relative_path}zemljevid-spominov.html">Zemljevid spominov</a></li>
+            <li><a href="{BASE_SITE_URL}/predvajalnik-nakljucnih-fotografij.html">Predvajalnik naključnih fotografij</a></li>
+            <li><a href="{BASE_SITE_URL}/seznam-vrhov.html">Seznam vrhov</a></li>
+            <li><a href="{BASE_SITE_URL}/zemljevid-spominov.html">Zemljevid spominov</a></li>
           </aside>
         </div>
         <div class="labels">
@@ -477,7 +491,7 @@ def generate_header_html():
       <span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;">
         Gorski Užitki
       </span>
-      <a class='logo-svg' href="https://metodlangus.github.io/gorski-uzitki.html">
+      <a class='logo-svg' href="{BASE_SITE_URL}/gorski-uzitki.html">
         <svg class='logo-svg' height='67' version='1.0' viewBox='0 0 1350 168' width='540' xmlns='http://www.w3.org/2000/svg'>
           <g fill='#666'>
             <path d='m945 4-14 6h-13c-10-6-10-6-22-5-12 0-12 0-16 3l-5 3c-2 0-5 4-5 6s4 7 14 16l13 16-9 1c-7 0-8 0-11 3s-10 6-12 6c-1 0-2 4-2 9s-1 7-2 5l-2-8c0-7-2-12-5-14l-22-1c-17 0-20 0-23 2l-3 2-4 2-4 2-4-4-5-5-23 1h-23l-3 3c-2 2-4 5-6 5-2 2-2 2-3 16l-1 18a253 253 0 0 0 1 32c0 5 3 14 6 17l1 3c0 2 6 8 12 12 3 3 5 3 16 4h12l21-2 26 1c25 0 29 0 32-4 2-3 4-2 6 1 3 3 12 5 17 3h29a494 494 0 0 1 51-1l6-1 8-2 4-2 2 2 8 4h18c12 0 19-1 21-2l8-3c6-2 7-4 7-18l1-26V95h7l8-1 1 17c1 14 1 18 4 24 2 6 3 9 8 13 5 5 9 6 23 10a164 164 0 0 0 52-2c3-2 3-2 7 1 3 2 4 2 22 2 20-1 30-2 34-4 2-1 3-1 7 1 6 3 6 3 24 3l21-1c3-1 18-2 20 0 2 1 39 2 40 0l8-2c3-1 7-3 8-5l3-2V56l-3-2c-3-3-3-4-1-8l1-18c-1-21 1-20-24-20-19 0-19 0-23 3l-6 3-4 3c-2 3-2 4-2 17l1 16 5 2c5 0 5 2 0 4s-7 2-7 1l-5-4c-4-3-5-3-15-3-16 0-28 2-34 4l-7 3c-3 2-5 1-5-4l2-17V22l-3-4-4-4h-39l-3 3-4 3-4 2c-3 2-4 3-5 9l-1 11v8c0 5-2 5-6 3l-12-3-10-1-1-14c0-14-1-17-8-19-8-3-40-1-40 2l-4 2c-4 0-10 5-10 7v13l-1 12-4 2c-8 4-10 4-14 0-3-3-4-6-2-8l2-16V14l-3-3-3-3h-38l-4 3-5 3-4 2c-2 2-3 12-2 26v8l4 1c6 2 7 3 2 5-6 3-7 4-8 9v44l1 5c0 4 0 4-3 4l-3-1-13-1c-10-1-12-2-12-3 0-2 2-4 7-8l12-10 5-5 1-15-1-18c-2-4-5-5-18-6l-14-1c-3-1-3-4 0-4 4-2 25-26 27-32 2-5 0-9-5-10h-18zm12 8 2 2-14 16-7 8h-26l-11-11-11-13 3-2c5-1 13 1 21 5l10 4 11-4c12-6 18-7 22-5zm74 4 1 12c0 15 1 14-16 14l-14-2c-3-1-4-7-4-15 0-7 0-8 2-9h31zm297 1 1 12c0 10 0 11-2 12-3 2-27 0-29-1l-2-8c-3-17-2-17 17-17l15 2zm-217 7c2 1 2 3 2 17 0 18-1 17 14 17 13 0 13 0 13 13l-1 12c0 2-10 3-18 1s-8-1-8 14c0 19 2 21 18 23 10 0 11 0 12 2 1 4 2 22 1 24-1 1-4 2-18 2l-22-1c-8-2-23-16-25-23l-2-20c-2-24 0-22-11-22h-8l-1-10c0-13 0-13 11-13l7-1 2-15c0-16 1-20 4-20 6-2 27-1 30 0zm93-1v19c-2 25-1 45 0 47 3 2 5 1 8-4a88 88 0 0 1 6-10c6-8 11-15 13-15l19-2c19 0 19 0 14 8a81 81 0 0 1-4 7l-3 5-3 4-5 8-4 8 5 9 9 16a99 99 0 0 0 10 17l2 2c2 2 1 6-1 6l-20 1c-21 0-20 1-26-12-5-10-12-21-14-22h-3c-2 1-2 4-2 17 0 14 0 15-2 16h-34v-17c-1-21 1-104 1-107 1-2 1-2 17-2l17 1zM786 59l2 30c1 28 1 28 3 31 6 7 15 7 20 1 3-3 3-4 4-15 0-9-1-27-3-40-1-7 0-7 20-7l17 1 1 3a664 664 0 0 1 1 86l-17 1c-18 0-19 0-19-6 0-3 0-3-3-3-2 0-4 1-7 4-7 8-25 9-37 3-8-4-18-18-20-29a460 460 0 0 1 1-60h37zm167 1 11 2c1 1 2 24 1 26l-6 5a536 536 0 0 0-27 23c-3 2-4 5-1 6l20 2 19 2 1 11c0 8 0 10-2 12l-42 1-44-2c-2-1-2-1-2-12 0-13 0-12 13-24 16-13 25-22 25-24l-2-2c-2-1-4-2-8-1h-27l-1-12c0-8 0-11 2-12 1-2 5-2 30-2l40 1zm81 2a654 654 0 0 1-1 84c-2 2-31 2-34 0l-2-1v-40l1-42c1-2 2-2 18-2l18 1zm297 4v80c-1 2-2 2-18 2l-17-1a963 963 0 0 1 1-85l18-1h16v5zm-55 6 1 16v22c1 4 0 23-1 23-2 0-7-8-11-16l-7-12-3-6 16-27c4-5 6-5 6 0zm-126 19c-1 3-1 5 1 9v14c0 2 0 2-2 2l-4-1-6-1c-9 0-16-1-17-3l-1-8c0-5 0-6 2-7h4l5-1 5-1c3 0 10-4 11-6s1-2 2-1v4zm-287-1c0 4 2 5 15 5 9 0 14 1 14 2s-11 12-21 20c-4 4-7 7-7 9l-2 2c-2 0-2-3-2-19l1-20c1-1 2 0 2 1zM637 11l-5 3c-5 0-7 9-6 23s1 14 5 14c6 1 6 3 1 5-5 3-6 3-8 0-6-5-7-6-19-6-21 0-30 2-40 7-3 2-5 1-5-1V20c-2-5-5-6-26-6-18 0-19 0-21 2l-7 5c-8 4-8 4-8 33a782 782 0 0 0 0 40v10c1 5-2 5-6 1l-9-8c-4-3-5-5-4-6l5-1c10 0 14-13 6-23-3-3-11-10-16-12-10-5-14-5-32-5-17 0-17 0-23 3l-15 7-17 7-1-5-1-7c-2-7-25-7-38 0-5 2-5 2-8 0-5-5-7-5-26-5-17 0-17 0-20 2-1 2-4 4-7 5-6 2-6 4-7 16l-1 13c0 2-3-1-4-5l-1-5-3-6c-2-6-6-10-12-13l-6-3-5-1-6-1c-6-2-45-3-47-1l-4 2c-6 1-20 11-28 19s-10 9-10 5l-2-5-3-3 3-4c2-4 2-5 1-10-1-7-5-12-12-19a50 50 0 0 0-32-18l-26-1c-17 0-18 0-25 2l-10 4-10 5-12 6-6 7-4 5-6 13-1 3a321 321 0 0 0 1 59l2 6 2 6c0 2 12 16 15 17l5 3a141 141 0 0 0 40 8c11 0 35-4 39-6 2-1 8-4 11-4 5-2 16-10 21-16 9-12 7-11 10-6l2 6 6 8c6 8 11 11 25 15a175 175 0 0 0 41 1l10-2 7-2 3-1 17-9c4-4 9-12 11-16l2-4c2 0 2 4 2 19l1 9c2 6 4 6 26 6a167 167 0 0 0 28-2l7-3 2-2v-25c0-28-1-26 15-27l14-1c6-3 8-2 9 1l6 9 6 7c0 1-6 7-10 9-3 1-5 3-5 6 0 4 3 11 7 14 4 4 15 11 16 11l5 2 14 2 13 1a119 119 0 0 0 38-8l3-2 8-7 10-6c5-4 6-3 6 7 0 7 0 8 3 11l3 3h19c20-1 31-2 33-4 2-1 8 0 11 3 2 1 37 1 50-1h11c4 2 39 3 43 0l4-1 5-2c8-3 7-2 8-52 0-45-1-48-5-50v-6c1-2 2-7 2-18V14l-3-3-3-3h-39l-3 3zm39 6 1 12c0 11 0 11-2 12-3 1-27 0-29-1-1-1-2-4-2-10-1-11 0-14 2-14 2-1 29 0 30 1zM552 55v34c2 2 5 1 7-3l2-4a1412 1412 0 0 0 17-22l20-2h16v2l-4 9-8 13-6 9-3 6 6 13 7 11c0 1 3 7 9 15 5 9 6 11 3 12a201 201 0 0 1-40 0l-6-9c-5-11-13-24-15-25l-3 1-2 17-1 16h-32c-2 0-2-1-3-7l3-118 16-1h17v33zM97 25l11 2c11 2 13 3 25 15 8 7 10 11 10 16v4h-43l-4-5-10-5c-7 0-12 1-16 5-5 4-5 7-4 31 0 22 1 24 7 30 3 2 4 3 11 3 8 0 13-2 16-7 5-7 4-13-3-13-6 0-7-1-7-12-1-13-3-13 23-12h25l5 2c2 1 2 34 0 39-2 8-12 19-20 23l-21 8c-8 2-20 3-27 2-14-2-18-3-24-7l-7-4c-1 0-12-10-13-13-4-8-8-27-7-35V73c1-22 7-35 22-41l7-3 3-1 4-1 6-2h31zm130 33c13 1 20 2 26 6 4 2 10 7 10 10l2 5 2 6 1 3c3 3 4 22 2 30-1 5-5 14-8 18-3 3-12 9-19 11-4 2-8 2-15 2l-12 1h-5l-6-1-17-5c-4-3-10-10-15-19-3-6-3-7-3-12a229 229 0 0 1 8-36c1-4 4-9 6-11 2-3 13-8 16-8h26zm96 0c8 1 10 2 10 7 0 6 6 6 11 2 6-6 14-8 23-9l10 1v28c-1 2-2 2-14 2-15 0-21 2-25 7l-3 3v23l1 25c-1 2-2 2-18 2l-18-1c-2-1-2-2-2-22a1560 1560 0 0 0 2-68h23zm139 1 4 1c4 1 13 7 17 12l3 6v3l-17 1c-16 0-16 0-20-3s-7-3-11 0c-7 5-1 13 12 15 12 1 18 3 25 8 10 7 16 13 17 17 1 6-1 9-7 13-7 6-8 6-19 12-8 4-10 4-20 5-7 1-11 1-16-1l-11-2c-9-2-18-7-22-13-3-6-2-7 6-7l15-1c8-1 8-1 15 2 8 3 11 3 15 0 3-2 4-4 1-8-2-3-6-5-16-7-12-3-14-3-20-6l-10-7c-5-5-5-5-5-11v-7l8-8c12-10 18-15 25-15 7-1 30 0 31 1zm217 18c1 19 0 67-1 68-2 2-31 2-34 1l-1-43c-1-36 0-41 1-42l18-1h16l1 16zM80 67l3 5-8 4c-2-1-3-7-1-10 1-3 4-2 6 1zm544 1 1 54c-1 9-1 9-3 9l-8-11c-1-5-4-9-8-15l-4-7 6-9 14-22 2 1z'/>
@@ -575,7 +589,7 @@ def generate_post_navigation_html(entries, slugs, index, local_tz, year, month):
         nav_html += f"""
         <div class="prev-link" style="text-align: left; max-width: 45%;">
           <div class="pager-title">Prejšnja objava</div>
-          <a href="../../{prev_year}/{prev_month}/{prev_slug}.html">&larr; {prev_title}</a>
+          <a href="{BASE_SITE_URL}/posts/{year}{prev_year}/{prev_month}/{prev_slug}.html">&larr; {prev_title}</a>
         </div>
         """
 
@@ -583,7 +597,7 @@ def generate_post_navigation_html(entries, slugs, index, local_tz, year, month):
         nav_html += f"""
         <div class="next-link" style="text-align: right; max-width: 45%;">
           <div class="pager-title">Naslednja objava</div>
-          <a href="../../{next_year}/{next_month}/{next_slug}.html">{next_title} &rarr;</a>
+          <a href="{BASE_SITE_URL}/posts/{next_year}/{next_month}/{next_slug}.html">{next_title} &rarr;</a>
         </div>
         """
 
@@ -595,11 +609,9 @@ def generate_post_navigation_html(entries, slugs, index, local_tz, year, month):
     return nav_html
 
 def generate_labels_html(entry, title, slug, year, month, formatted_date, post_id, label_posts_raw,
-                         slugify, remove_first_prefix, remove_all_prefixes,
-                         levels_up):
+                         slugify, remove_first_prefix, remove_all_prefixes):
     labels_raw = []
     labels_html = "<div class='post-labels'><em>No labels</em></div>"
-    relative_path = get_relative_path(levels_up)
 
     if "category" in entry and isinstance(entry["category"], list):
         for cat in entry["category"]:
@@ -620,7 +632,7 @@ def generate_labels_html(entry, title, slug, year, month, formatted_date, post_i
             label_links = []
             for label_raw in labels_raw:
                 slug_part = remove_first_prefix(label_raw)
-                label_url = f"{relative_path}/search/labels/{slugify(slug_part)}.html"
+                label_url = f"{BASE_SITE_URL}/search/labels/{slugify(slug_part)}.html"
                 label_text = remove_all_prefixes(label_raw)
                 label_links.append(f"<a class='my-labels' href='{label_url}'>{label_text}</a>")
             labels_html = "<div class='post-labels'>" + " ".join(label_links) + "</div>"
@@ -700,10 +712,9 @@ def generate_sitemap(entries):
 
 def fetch_and_save_all_posts(entries):
     # Archive and labels sidebar
-    levels_up = 3
-    archive_sidebar_html = build_archive_sidebar_html(entries, levels_up)
-    labels_sidebar_html = generate_labels_sidebar_html(levels_up, feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, levels_up)
+    archive_sidebar_html = build_archive_sidebar_html(entries)
+    labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html)
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -755,7 +766,7 @@ def fetch_and_save_all_posts(entries):
 
         # Labels
         labels_html = generate_labels_html(entry, title, slug, year, month, formatted_date, post_id, label_posts_raw,
-                                                            slugify, remove_first_prefix, remove_all_prefixes, levels_up)
+                                                            slugify, remove_first_prefix, remove_all_prefixes)
 
         post_dir = OUTPUT_DIR / "posts" / year / month
         post_dir.mkdir(parents=True, exist_ok=True)
@@ -788,7 +799,7 @@ def fetch_and_save_all_posts(entries):
   </script>
 
   <!-- Favicon -->
-  <link rel="icon" href="../../../photos/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
 
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
   
@@ -801,10 +812,10 @@ def fetch_and_save_all_posts(entries):
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css' rel='stylesheet'>
   <link href='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.css' rel='stylesheet'>
 
-  <link rel="stylesheet" href="../../../assets/Main.css">
-  <link rel="stylesheet" href="../../../assets/MyMapScript.css">
-  <link rel="stylesheet" href="../../../assets/MySlideshowScript.css">
-  <link rel="stylesheet" href="../../../assets/MyPostContainerScript.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyMapScript.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MySlideshowScript.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPostContainerScript.css">
 
 </head>
 <body>
@@ -845,9 +856,9 @@ def fetch_and_save_all_posts(entries):
   <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
 
-  <script src="../../../assets/Main.js" defer></script>
-  <script src="../../../assets/MyMapScript.js" defer></script>
-  <script src="../../../assets/MySlideshowScript.js" defer></script>
+  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/assets/MyMapScript.js" defer></script>
+  <script src="{BASE_SITE_URL}/assets/MySlideshowScript.js" defer></script>
 
 </body>
 </html>""")
@@ -862,10 +873,9 @@ def generate_label_pages(entries, label_posts_raw):
     labels_dir.mkdir(parents=True, exist_ok=True)
 
     # Generate sidebar, header, footer, etc.
-    levels_up = 2
-    archive_sidebar_html = build_archive_sidebar_html(entries, levels_up)
-    labels_sidebar_html = generate_labels_sidebar_html(levels_up, feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, levels_up)
+    archive_sidebar_html = build_archive_sidebar_html(entries)
+    labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html)
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -914,12 +924,12 @@ def generate_label_pages(entries, label_posts_raw):
   <title>Prikaz objav z oznako: {label_clean}</title>
 
   <!-- Favicon -->
-  <link rel="icon" href="../../photos/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
 
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="../../assets/Main.css">
-  <link rel="stylesheet" href="../../assets/MyPostContainerScript.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPostContainerScript.css">
 
 </head>
 <body>
@@ -948,7 +958,7 @@ def generate_label_pages(entries, label_posts_raw):
     {footer_html}
   </footer>
 
-  <script src="../../assets/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
 
 </body>
 </html>"""
@@ -963,10 +973,9 @@ def generate_predvajalnik_page():
     output_path = OUTPUT_DIR / "predvajalnik-nakljucnih-fotografij.html"
 
     # Generate the full archive sidebar from all entries
-    levels_up = 0
-    archive_sidebar_html = build_archive_sidebar_html(entries, levels_up)
-    labels_sidebar_html = generate_labels_sidebar_html(levels_up, feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, levels_up)
+    archive_sidebar_html = build_archive_sidebar_html(entries)
+    labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html)
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -995,12 +1004,12 @@ def generate_predvajalnik_page():
   </script>
 
   <!-- Favicon -->
-  <link rel="icon" href="photos/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
 
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="assets/Main.css">
-  <link rel="stylesheet" href="assets/MySlideshowScript.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MySlideshowScript.css">
 
 </head>
 <body>
@@ -1044,10 +1053,9 @@ def generate_peak_list_page():
     output_path = OUTPUT_DIR / "seznam-vrhov.html"
 
     # Generate the full archive sidebar from all entries
-    levels_up = 0
-    archive_sidebar_html = build_archive_sidebar_html(entries, levels_up)
-    labels_sidebar_html = generate_labels_sidebar_html(levels_up, feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, levels_up)
+    archive_sidebar_html = build_archive_sidebar_html(entries)
+    labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html)
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -1076,12 +1084,12 @@ def generate_peak_list_page():
   </script>
 
   <!-- Favicon -->
-  <link rel="icon" href="photos/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
 
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="assets/Main.css">
-  <link rel="stylesheet" href="assets/MyPeakListScript.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPeakListScript.css">
 
 </head>
 <body>
@@ -1123,10 +1131,9 @@ def generate_big_map_page():
     output_path = OUTPUT_DIR / "zemljevid-spominov.html"
 
     # Generate the full archive sidebar from all entries
-    levels_up = 0
-    archive_sidebar_html = build_archive_sidebar_html(entries, levels_up)
-    labels_sidebar_html = generate_labels_sidebar_html(levels_up, feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, levels_up)
+    archive_sidebar_html = build_archive_sidebar_html(entries)
+    labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html)
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -1154,7 +1161,7 @@ def generate_big_map_page():
   </script>
 
   <!-- Favicon -->
-  <link rel="icon" href="photos/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
 
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
 
@@ -1167,8 +1174,8 @@ def generate_big_map_page():
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css' rel='stylesheet'>
   <link href='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.css' rel='stylesheet'>
   
-  <link rel="stylesheet" href="assets/Main.css">
-  <link rel="stylesheet" href="assets/MyMemoryMapScript.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyMemoryMapScript.css">
 
 </head>
 <body>
@@ -1221,10 +1228,9 @@ def generate_home_si_page(homepage_html):
     output_path = OUTPUT_DIR / "gorski-uzitki.html"
 
     # Generate the full archive sidebar from all entries
-    levels_up = 0
-    archive_sidebar_html = build_archive_sidebar_html(entries, levels_up)
-    labels_sidebar_html = generate_labels_sidebar_html(levels_up, feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, levels_up)
+    archive_sidebar_html = build_archive_sidebar_html(entries)
+    labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html)
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -1248,12 +1254,12 @@ def generate_home_si_page(homepage_html):
     <title>Gorski Užitki | Gorske pustolovščine skozi slike | Metod Langus</title>
 
     <!-- Favicon -->
-    <link rel="icon" href="photos/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
 
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="assets/Main.css">
-    <link rel="stylesheet" href="assets/MyPostContainerScript.css">
+    <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
+    <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPostContainerScript.css">
 
 </head>
 
