@@ -1475,7 +1475,7 @@ function toggleProgressBarVisibility(index, height, mode) {
 *          or images based on the current visibility state. It also updates the button's SVG and text to indicate
 *          the current mode (either "Presentation" mode with slideshows or "Image" mode with images). The function
 *          will also pause the slideshow and hide all slideshows when switching to image view, and resume the slideshow
-*          when switching back to presentation mode. The function utilizes a set of DOM elements (e.g., separators, tables)
+*          when switching back to presentation mode. The function utilizes a set of DOM elements (e.g., myPostContainers, separators, tables)
 *          to toggle their visibility accordingly.
 *
 * @param   index  The index of the current slideshow to manage (used for pausing the slideshow).
@@ -1484,6 +1484,7 @@ function toggleProgressBarVisibility(index, height, mode) {
 */
 function toggleSlideshowOrImageVisibility(index) {
     const separators = document.querySelectorAll('.separator');
+    const myPostContainers = document.querySelectorAll('.my-post-container');
     const tables = document.querySelectorAll('table.tr-caption-container');
 
     // Update image sources to normal size
@@ -1507,6 +1508,9 @@ function toggleSlideshowOrImageVisibility(index) {
         // Hide all slideshows and show images
         mySlideshowContainer.forEach(function(slideshowDiv) {
             slideshowDiv.style.display = "none"; // Hide all slideshows
+        });
+        myPostContainers.forEach(function(myPostContainer) {
+            myPostContainer.style.display = 'block'; // Show post containers
         });
         separators.forEach(function(separator) {
             separator.style.display = 'block'; // Show separators
@@ -1533,6 +1537,9 @@ function toggleSlideshowOrImageVisibility(index) {
         // Show all slideshows and hide images
         mySlideshowContainer.forEach(function(slideshowDiv) {
             slideshowDiv.style.display = "block"; // Show all slideshows
+        });
+        myPostContainers.forEach(function(myPostContainer) {
+            myPostContainer.style.display = 'none'; // Hide post containers
         });
         separators.forEach(function(separator) {
             separator.style.display = 'none'; // Hide separators
@@ -2173,8 +2180,13 @@ function hideAllImages() {
     // Check if mySlideshowContainer is not empty
     if (mySlideshowContainer.length > 0) {
         // Find all separators and tables
+        const myPostContainers = document.querySelectorAll('.my-post-container');
         const separators = document.querySelectorAll('.separator');
         const tables = document.querySelectorAll('table.tr-caption-container');
+
+        myPostContainers.forEach(function(myPostContainer) {
+            myPostContainer.style.display = 'none'; // Hide post containers
+        });
 
         // Set display to 'none' for all separators (images in divs)
         separators.forEach(function(separator) {

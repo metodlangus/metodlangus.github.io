@@ -124,3 +124,20 @@ article.my-post-outer-container {
 }
 
 /* Custom Blog Posts Design Implementation - end */
+
+
+.my-post-container .photo-entry article.my-post-outer-container {
+  margin: 0px auto;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+  
+.post-body .my-post-outer-container {
+  line-height: 1.4;
+  font-family: "Montserrat", sans-serif;
+}
+  
+.my-post-outer-container .my-meta-data {
+  font-family: "Montserrat&", sans-serif;
+  color: #eee;
+}  

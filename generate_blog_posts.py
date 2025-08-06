@@ -167,7 +167,7 @@ def fix_images_for_lightbox(html_content, post_title):
 def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
     # Set Slovenian locale
     try:
-        locale.setlocale(locale.LC_TIME, 'sl_SI.UTF-8')
+        locale.setlocale(locale.LC_TIME, 'Slovenian_Slovenia.1250')
     except locale.Error:
         locale.setlocale(locale.LC_TIME, '')  # fallback
 
@@ -187,10 +187,12 @@ def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
     label_one_link = f"/search/labels/{slugify_func(label_one)}.html" if label_one else ""
     label_six_link = f"/search/labels/{slugify_func(label_six)}.html" if label_six else ""
 
-    page_number = index // entries_per_page + 1
+    page_number = 1 if entries_per_page == 0 else (index // entries_per_page + 1)
 
-    return f'''
-          <div class="photo-entry" data-page="{page_number}" style="display:none;">
+    style_attr = "" if entries_per_page == 0 else ' style="display:none;"'
+
+    return f"""
+          <div class="photo-entry" data-page="{page_number}"{style_attr}>
             <article class="my-post-outer-container">
               <div class="post">
                 {'<div class="my-tag-container"><a href="' + label_six_link + '" class="my-labels label-six">' + label_six + '</a></div>' if label_six else ""}
@@ -211,7 +213,72 @@ def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
                 <a href="{alternate_link}" aria-label="{title}"></a>
               </div>
             </article>
-          </div>'''
+          </div>"""
+
+def replace_mypost_scripts_with_rendered_posts(content_html, entries, entries_per_page, slugify_func, render_func):
+    """
+    Replace <script> blocks containing one var postTitleX and optional var displayModeX
+    with rendered post HTML from entries.
+
+    Each <script> has one declaration like:
+      var postTitle0 = '1234567890';
+      var displayMode0 = 'alwaysVisible';
+
+    If displayMode is not 'alwaysVisible', wraps content in a hidden div.
+
+    Returns prettified updated HTML.
+    """
+
+    soup = BeautifulSoup(content_html, 'html.parser')
+
+    # Build lookup of post_id -> (index, entry)
+    post_id_to_entry = {}
+    for idx, entry in enumerate(entries):
+        full_id = entry.get("id", {}).get("$t", "")
+        match = re.search(r'post-(\d+)$', full_id)
+        if match:
+            post_id = match.group(1)
+            post_id_to_entry[post_id] = (idx, entry)
+
+    for script in soup.find_all("script"):
+        if not script.string:
+            continue
+
+        content = script.string
+
+        # Match one postTitleX and one displayModeX in this script block
+        m_title = re.search(r"var\s+postTitle(\d+)\s*=\s*['\"](\d+)['\"]\s*;", content)
+        if not m_title:
+            continue
+
+        idx = m_title.group(1)
+        post_id = m_title.group(2)
+
+        # Find displayMode for the same index, default if missing
+        m_mode = re.search(rf"var\s+displayMode{idx}\s*=\s*['\"]([^'\"]+)['\"]\s*;", content)
+        display_mode = m_mode.group(1) if m_mode else "default"
+
+        if post_id not in post_id_to_entry:
+            continue
+
+        post_index, post_entry = post_id_to_entry[post_id]
+
+        rendered_html = render_func(
+            post_entry,
+            post_index,
+            entries_per_page,
+            slugify_func,
+            post_id
+        )
+
+        if display_mode != "alwaysVisible":
+            rendered_html = f'<div class="my-post-container" style="display:none;">{rendered_html}</div>'
+
+        # Insert rendered HTML after script and remove the script tag
+        script.insert_after(BeautifulSoup(rendered_html, "html.parser"))
+        script.decompose()
+
+    return soup.prettify()
 
 def build_archive_sidebar_html(entries, levels_up):
     """
@@ -662,6 +729,15 @@ def fetch_and_save_all_posts(entries):
         # Parse published date
         formatted_date, year, month = parse_entry_date(entry, index)
 
+        # Insert MyPostContainer divs
+        content_html = replace_mypost_scripts_with_rendered_posts(
+                            content_html,
+                            entries,
+                            entries_per_page=0, #Always visible page
+                            slugify_func=slugify,
+                            render_func=render_post_html
+                        )
+
         # Fix images
         content_html = fix_images_for_lightbox(content_html, title)
 
@@ -772,7 +848,6 @@ def fetch_and_save_all_posts(entries):
   <script src="../../../assets/Main.js" defer></script>
   <script src="../../../assets/MyMapScript.js" defer></script>
   <script src="../../../assets/MySlideshowScript.js" defer></script>
-  <script src="../../../assets/MyPostContainerScript.js" defer></script>
 
 </body>
 </html>""")
