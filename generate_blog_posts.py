@@ -10,7 +10,7 @@ from zoneinfo import ZoneInfo  # Python 3.9+
 from dateutil import parser  # pip install python-dateutil
 from bs4 import BeautifulSoup
 from collections import defaultdict
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import urlparse, urlunparse, urljoin
 import os
 import json
 
@@ -30,20 +30,19 @@ entries_per_page = 12 # Set pagination on home and label pages
 
 def override_domain(url, base_site_url):
     """
-    Replaces the domain of the given URL with base_site_url.
-    Keeps the path, query, and fragment from the original URL.
+    Overrides the domain and base path from base_site_url,
+    preserving the path, query, and fragment from the original URL.
     """
     parsed_original = urlparse(url)
-    parsed_base = urlparse(base_site_url)
-
-    return urlunparse((
-        parsed_base.scheme or 'https',
-        parsed_base.netloc,
-        parsed_original.path,
-        parsed_original.params,
-        parsed_original.query,
-        parsed_original.fragment
-    ))
+    
+    # Ensure the path does not start with a leading slash
+    relative_path = urlunparse(('', '', parsed_original.path.lstrip('/'),
+                                parsed_original.params,
+                                parsed_original.query,
+                                parsed_original.fragment))
+    
+    # Safely join
+    return urljoin(base_site_url.rstrip('/') + '/', relative_path)
 
 def parse_entry_date(entry, index=None):
     published = entry.get("published", {}).get("$t", "")
@@ -608,7 +607,7 @@ def generate_post_navigation_html(entries, slugs, index, local_tz, year, month):
         nav_html += f"""
         <div class="prev-link" style="text-align: left; max-width: 45%;">
           <div class="pager-title">Prejšnja objava</div>
-          <a href="{BASE_SITE_URL}/posts/{year}{prev_year}/{prev_month}/{prev_slug}.html">&larr; {prev_title}</a>
+          <a href="{BASE_SITE_URL}/posts/{prev_year}/{prev_month}/{prev_slug}.html">&larr; {prev_title}</a>
         </div>
         """
 

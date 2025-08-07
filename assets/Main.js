@@ -239,7 +239,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentPage = 1;
 
     if (!pager) {
-        console.error("Pagination container with ID 'blog-pager' not found.");
+        // console.error("Pagination container with ID 'blog-pager' not found.");
         return;
     }
 

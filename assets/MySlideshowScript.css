@@ -131,7 +131,7 @@
   color: #333; /* Dark text for light theme */
 }
 
-.my-slideshow-container input[type=&quot;range&quot;] {
+.my-slideshow-container input[type="range"] {
   width: 100%;
 }
 
@@ -346,7 +346,7 @@
   font-size: 3em; /* Font-size as percentage of parent height */
   line-height: 1.2;
   font-weight: 600;
-  font-family: &quot;Montserrat&quot;;
+  font-family: "Montserrat";
   color: #fff;
   text-shadow: 2px 2px 4px #000; /* Shadow for readability */
   margin: 0;
@@ -356,7 +356,7 @@
   font-size: 2em; /* Font-size as percentage of parent height */
   line-height: 1.2;
   font-weight: 600;
-  font-family: &quot;Montserrat&quot;;
+  font-family: "Montserrat";
   text-shadow: 2px 2px 4px #000; /* Shadow for readability */
   margin: 0;
 }
@@ -440,4 +440,9 @@
 
 .form-group input[type="date"] {
     width: 125px;
+}
+
+h2.my-title {
+    border-bottom: none;
+    padding-bottom: 0px;
 }
