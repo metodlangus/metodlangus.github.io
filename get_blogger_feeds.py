@@ -7,6 +7,9 @@ import json
 import time
 from pathlib import Path
 
+##### Commit message: #####
+# Update blog feeds
+
 # === CONFIG ===
 BLOG_URL = "https://gorski-uzitki.blogspot.com"
 FEED_URL = f"{BLOG_URL}/feeds/posts/default?alt=json"
