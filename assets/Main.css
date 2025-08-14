@@ -725,3 +725,7 @@ div#PageList1 ul li {
   font-size: 18px;
   pointer-events: none;
 }
+
+.tracker img {
+  display: none;
+}

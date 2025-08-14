@@ -415,18 +415,49 @@ def generate_labels_sidebar_html(feed_url):
 
     return "\n".join(label_html_parts)
 
-def render_sidebar_settings(picture_settings=True, map_settings=True):
+def render_sidebar_settings(picture_settings=True, map_settings=True, current_page=""):
     sections = []
 
     # Always include the main heading once
     heading = "<h2>Nastavitve</h2>"
 
     if picture_settings:
-        sections.append("""          <h3 class="title">Objave in predvajalniki slik</h3>
-          <div style="display: flex; flex-direction: column; margin-left: 5px; margin-top: 5px; margin-bottom: 10px;">
-              <label for='photosSliderElement'>Obseg prikazanih slik: <span id='photosValueElement'></span></label>
-              <input id='photosSliderElement' max='3' min='0' step='1' type='range' value='initPhotos' style="width: 160px;"/>
-          </div>""")
+        label_filter_html = generate_label_filter_section(feed_url=BASE_FEED_URL)
+
+        # Base section
+        section_html = f"""
+        <h3 class="title">Objave in predvajalniki slik</h3>
+        <div style="display: inline-block; border-style: double; margin-left: 5px; padding: 5px;">
+            <b>Število slik:</b> <span id="imagesLoadedCount">0</span>
+        </div>
+        <div style="display: flex; flex-direction: column; margin-left: 5px; margin-top: 15px; margin-bottom: 10px;">
+            <label for='photosSliderElement'>
+                <b>Obseg prikazanih slik:</b> <span id='photosValueElement'></span>
+            </label>
+            <input id='photosSliderElement' max='3' min='0' step='1' type='range' value='initPhotos' style="width: 160px;"/>
+        </div>
+        """
+
+        # Add the conditional section if the page matches
+        if current_page == "slideshow":
+            section_html += f"""
+        <div style="display: flex; align-items: center; gap: 5px; margin-left: 5px;">
+            <span><b>Naključno prikazovanje:</b></span>
+            <button id="toggleRandomButton" style="padding: 5px;">DA</button>
+        </div>
+        <div style="margin-top: 10px; margin-left: 5px;">
+            <div><b>Slike iz objav:</b></div>
+            <div style="margin-top: 5px; margin-left: 20px;">
+                <b>med:</b> <input type="date" id="startDateInput">
+            </div>
+            <div style="margin-top: 5px; margin-left: 20px;">
+                <b>in:</b> <input type="date" id="endDateInput">
+            </div>
+        </div>
+        {label_filter_html}
+        """
+
+        sections.append(section_html)
 
     if map_settings:
         sections.append("""          <div id='map-settings'>
@@ -474,34 +505,122 @@ def render_sidebar_settings(picture_settings=True, map_settings=True):
     if not sections:
         return ""
 
-    return "\n".join([heading] + sections)
-
-
-def generate_sidebar_html(archive_html, labels_html, picture_settings, map_settings):
-    
-    settings_html = render_sidebar_settings(picture_settings, map_settings)
-
+    settings_html = "\n".join([heading] + sections)
     return f"""
-    <div class="sidebar-container">
-      <div class="sidebar" id="sidebar">
-        <div class="pages">
-          <aside class='sidebar-pages'><h2>Strani</h2>
-            <li><a href="{BASE_SITE_URL}/predvajalnik-nakljucnih-fotografij.html">Predvajalnik naključnih fotografij</a></li>
-            <li><a href="{BASE_SITE_URL}/seznam-vrhov.html">Seznam vrhov</a></li>
-            <li><a href="{BASE_SITE_URL}/zemljevid-spominov.html">Zemljevid spominov</a></li>
-          </aside>
-        </div>
+    <div class="settings">
+      {settings_html}
+    </div>
+    """
+
+def generate_label_filter_section(feed_url):
+    """
+    Fetches labels from the Blogger feed and returns HTML for
+    a selectable label filter section with collapsible checkboxes (play button style)
+    and a Clear Filters button.
+    """
+
+    response = requests.get(feed_url, params={"alt": "json"})
+    feed_data = response.json()
+
+    labels_raw = [cat["term"] for cat in feed_data["feed"].get("category", [])]
+
+    prefix_titles = {
+        1: "Kategorija",
+        2: "Država",
+        3: "Gorstvo",
+        4: "Časovno",
+        5: "Ostalo",
+    }
+
+    label_groups = defaultdict(list)
+    for label in labels_raw:
+        match = re.match(r'^(\d+)', label)
+        prefix = int(match.group(1)) if match else 99
+        label_groups[prefix].append(label)
+
+    sorted_prefixes = [p for p in sorted(label_groups.keys()) if p != 6]
+
+    html_parts = [
+        "<section class='label-filter-section' style='display: flex; flex-direction: column; margin-left: 5px; margin-top: 15px;'>"
+    ]
+    html_parts.append("<b>Prikaz slik iz objav z izbranimi oznakami:</b>")
+
+    for prefix in sorted_prefixes:
+        labels = sorted(label_groups[prefix], key=lambda l: l.lower())
+        section_title = prefix_titles.get(prefix, "Ostalo")
+        section_id = f"section_{prefix}"
+
+        # Collapsible section with ▶ icon initially
+        html_parts.append(f"""
+        <div style="margin-bottom: 10px;">
+            <button type="button" class="collapse-btn" 
+                onclick="toggleSection('{section_id}', this)" 
+                style="background:none;border:none;cursor:pointer;font-weight:bold;display:flex;align-items:center;gap:5px;">
+                <span class="arrow-icon">▶</span> {section_title}
+            </button>
+            <div id="{section_id}" style="display:none; margin-top: 5px;">
+                <ul class='label-filter-list'>
+        """)
+
+        for raw_label in labels:
+            clean_label = re.sub(r'^\d+\.\s*', '', raw_label)
+            html_parts.append(
+                f"<li>"
+                f"<label>"
+                f"<input type='checkbox' class='label-filter-checkbox' data-prefix='{prefix}' value='{clean_label}'> {clean_label}"
+                f"</label>"
+                f"</li>"
+            )
+
+        html_parts.append("</ul></div></div>")
+
+    # Add Clear Filters button
+    html_parts.append("""
+    <div style="margin-top: 10px;">
+        <button type="button" id="clear-filters-btn" 
+            style="background:#eee; border:1px solid #ccc; padding:5px 10px; cursor:pointer; border-radius:4px;">
+            🗑️ Počisti filtre
+        </button>
+    </div>
+    """)
+
+    html_parts.append("</section>")
+
+    return "\n".join(html_parts)
+
+def generate_sidebar_html(archive_html, labels_html, picture_settings, map_settings, current_page):
+    # Render settings section (includes conditional logic for photo player page)
+    settings_html = render_sidebar_settings(picture_settings, map_settings, current_page)
+
+    # Include labels and archive only if current page is posts or labels
+    posts_sections = ""
+    if current_page in ["posts", "labels"]:
+        posts_sections = f"""
         <div class="labels">
           {labels_html}
         </div>
         <div class="archive">
           {archive_html}
         </div>
-        <div class="settings ">
-          {settings_html}
+        """
+
+    # Full sidebar HTML
+    return f"""
+    <div class="sidebar-container">
+      <div class="sidebar" id="sidebar">
+        <div class="pages">
+          <aside class='sidebar-pages'><h2>Strani</h2>
+            <li><a href="{BASE_SITE_URL}/gorski-uzitki.html">Dnevnik</a></li>
+            <li><a href="{BASE_SITE_URL}/predvajalnik-nakljucnih-fotografij.html">Predvajalnik naključnih fotografij</a></li>
+            <li><a href="{BASE_SITE_URL}/seznam-vrhov.html">Seznam vrhov</a></li>
+            <li><a href="{BASE_SITE_URL}/zemljevid-spominov.html">Zemljevid spominov</a></li>
+          </aside>
         </div>
+        {settings_html}
+        {posts_sections}
       </div>
-    </div>"""
+    </div>
+    """
 
 def generate_header_html():
     return f"""
@@ -547,6 +666,10 @@ def generate_header_html():
 
 def generate_footer_html():
     return f"""
+    <footer class="site-footer" style="position: relative;">
+      <!-- Tracker overlay -->
+      <div class="tracker" style="position: absolute; top: 5px; right: 5px; z-index: 10;"></div>
+
       <p>
         Poganja 
         <a href="https://github.com" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
@@ -557,7 +680,8 @@ def generate_footer_html():
           GitHub
         </a>
       </p>
-      <p>© 2025 Metod Langus. Vse pravice pridržane.</p>"""
+      <p>© 2025 Metod Langus. Vse pravice pridržane.</p>
+    </footer>"""
 
 def generate_searchbox_html():
     return f"""
@@ -732,7 +856,7 @@ def fetch_and_save_all_posts(entries):
     # Archive and labels sidebar
     archive_sidebar_html = build_archive_sidebar_html(entries)
     labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, picture_settings=True, map_settings=False)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, picture_settings=True, map_settings=False, current_page="posts")
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -858,9 +982,7 @@ def fetch_and_save_all_posts(entries):
   </div>
 
   <!-- Footer -->
-  <footer class="site-footer">
-    {footer_html}
-  </footer>
+  {footer_html}
 
   <script src='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.js'></script>
   <script src='https://metodlangus.github.io/plugins/togeojson/0.16.0/togeojson.min.js'></script>
@@ -893,7 +1015,7 @@ def generate_label_pages(entries, label_posts_raw):
     # Generate sidebar, header, footer, etc.
     archive_sidebar_html = build_archive_sidebar_html(entries)
     labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, picture_settings=True, map_settings=False)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, picture_settings=True, map_settings=False, current_page="labels")
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -972,9 +1094,7 @@ def generate_label_pages(entries, label_posts_raw):
   </div>
 
   <!-- Footer -->
-  <footer class="site-footer">
-    {footer_html}
-  </footer>
+  {footer_html}
 
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
 
@@ -987,13 +1107,13 @@ def generate_label_pages(entries, label_posts_raw):
         print(f"Generated label page: {filename}")
 
 
-def generate_predvajalnik_page():
+def generate_predvajalnik_page(current_page):
     output_path = OUTPUT_DIR / "predvajalnik-nakljucnih-fotografij.html"
 
     # Generate the full archive sidebar from all entries
     archive_sidebar_html = build_archive_sidebar_html(entries)
     labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, picture_settings=True, map_settings=False)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, picture_settings=True, map_settings=False, current_page="slideshow")
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -1052,9 +1172,7 @@ def generate_predvajalnik_page():
   </div>
 
   <!-- Footer -->
-  <footer class="site-footer">
-    {footer_html}
-  </footer>
+  {footer_html}
 
   <script src="assets/Main.js" defer></script>
   <script src="assets/MySlideshowScript.js" defer></script>
@@ -1073,7 +1191,7 @@ def generate_peak_list_page():
     # Generate the full archive sidebar from all entries
     archive_sidebar_html = build_archive_sidebar_html(entries)
     labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, picture_settings=False, map_settings=False)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, picture_settings=False, map_settings=False, current_page="peak-list")
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -1130,9 +1248,7 @@ def generate_peak_list_page():
   </div>
 
   <!-- Footer -->
-  <footer class="site-footer">
-    {footer_html}
-  </footer>
+  {footer_html}
 
   <script src="assets/Main.js" defer></script>
   <script src="assets/MyPeakListScript.js" defer></script>
@@ -1151,7 +1267,7 @@ def generate_big_map_page():
     # Generate the full archive sidebar from all entries
     archive_sidebar_html = build_archive_sidebar_html(entries)
     labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, picture_settings=False, map_settings=True)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, picture_settings=False, map_settings=True, current_page="map")
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -1215,9 +1331,7 @@ def generate_big_map_page():
   </div>
 
   <!-- Footer -->
-  <footer class="site-footer">
-    {footer_html}
-  </footer>
+  {footer_html}
 
   <script src='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.js'></script>
   <script src='https://metodlangus.github.io/plugins/togeojson/0.16.0/togeojson.min.js'></script>
@@ -1248,7 +1362,7 @@ def generate_home_si_page(homepage_html):
     # Generate the full archive sidebar from all entries
     archive_sidebar_html = build_archive_sidebar_html(entries)
     labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, picture_settings=False, map_settings=False)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, picture_settings=False, map_settings=False, current_page="home")
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -1302,9 +1416,7 @@ def generate_home_si_page(homepage_html):
   </div>
 
   <!-- Footer -->
-  <footer class="site-footer">
-    {footer_html}
-  </footer>
+  {footer_html}
 
   <script src="assets/Main.js" defer></script>
 
@@ -1320,7 +1432,7 @@ if __name__ == "__main__":
     entries = fetch_all_entries()
     label_posts_raw = fetch_and_save_all_posts(entries)  # This function should return { label: [ {postId, date, html}, ... ] }
     generate_label_pages(entries, label_posts_raw)
-    generate_predvajalnik_page()
+    generate_predvajalnik_page(current_page="predvajalnik-nakljucnih-fotografij.html")
     generate_peak_list_page()
     generate_big_map_page()
 

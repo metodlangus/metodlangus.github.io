@@ -446,3 +446,9 @@ h2.my-title {
     border-bottom: none;
     padding-bottom: 0px;
 }
+
+.arrow-icon {
+    font-size: 0.8em; /* smaller than default text */
+    display: inline-block;
+    width: 1em; /* keep alignment nice */
+}

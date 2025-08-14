@@ -6,6 +6,7 @@ const initQuality = 4;
 const SLIDESHOW_HIDDEN = true;
 const SLIDESHOW_VISIBLE = false;
 
+let randomizeImages = true; // default ON
 let slideshowIndex = 0;
 var slideshowTitles = [];
 var numberOfSlideshows = [];
@@ -753,28 +754,71 @@ function fetchData(index) {
 
             // Process "All pictures" scenario
             if (slideshowTitles[index] === "All pictures") {
-                if (!entries || entries.length === 0) {
-                    console.log('Fetched all', slideshows[index].imageBuffer.length, 'images from blog');
+                setSlideshowQuality(index);
 
-                    slideshows[index].shuffledImages = shuffleArray(slideshows[index].imageBuffer.slice(), index);
-                    buildSlides(index);
+                if (!entries || entries.length === 0) {
+                    console.log('No new entries, using existing imageBuffer:', slideshows[index].imageBuffer.length);
+                    document.getElementById('imagesLoadedCount').textContent = slideshows[index].imageBuffer.length;
+                } else {
+                    // Date and labels filter
+                    const startDate = localStorage.getItem('startDateRange'),
+                          endDate = localStorage.getItem('endDateRange'),
+                          selectedLabels = JSON.parse(localStorage.getItem('selectedLabels') || '{}'); // object grouped by prefix
+
+                    // Log currently applied filters
+                    console.log("Applied Filters:", {
+                        startDate: startDate || 'none',
+                        endDate: endDate || 'none',
+                        selectedLabels: selectedLabels
+                    });
+
+                    if (startDate || endDate || Object.keys(selectedLabels).length > 0) {
+                        entries = entries.filter(entry => {
+                            const entryDate = new Date(entry.published?.$t || entry.published);
+
+                            // Date filter
+                            if (startDate && entryDate < new Date(startDate)) return false;
+                            if (endDate && entryDate > new Date(endDate)) return false;
+
+                            // Label filter (group-based AND logic)
+                            if (Object.keys(selectedLabels).length > 0) {
+                                const entryLabels = (entry.category || []).map(cat => cat.term.replace(/^\d+\.\s*/, ''));
+
+                                for (const group in selectedLabels) {
+                                    const groupLabels = selectedLabels[group];
+                                    if (!groupLabels.some(label => entryLabels.includes(label))) {
+                                        return false;
+                                    }
+                                }
+                            }
+
+                            return true;
+                        });
+                    }
+
+                    // Procesiraj filtrirane vnose
+                    for (let entry of entries) {
+                        processEntry(index, entry);
+                    }
+                }
+
+                const imgCount = slideshows[index].imageBuffer.length;
+
+                if (imgCount === 0) {
+                    // ✅ Ni slik po filtrih → prikaži sporočilo
+                    const container = document.getElementById(`slideShow-${index}`);
+                    container.innerHTML = `<p style="text-align:center; font-size:18px; padding:20px;">Ni slik za izbrane filtre</p>`;
+                    console.warn('No images to display for selected filters');
                     return;
                 }
 
-                // Set the slideshow quality for the current index
-                setSlideshowQuality(index);
-
-                // Process all entries at once (no pagination)
-                for (let entry of entries) {
-                    processEntry(index, entry);
-                }
-
-                console.log('Fetched', slideshows[index].imageBuffer.length, 'images for All pictures');
+                // Če slike obstajajo → zgradi slideshow
+                console.log('Fetched', imgCount, 'images for All pictures');
+                document.getElementById('imagesLoadedCount').textContent = imgCount;
 
                 slideshows[index].shuffledImages = shuffleArray(slideshows[index].imageBuffer.slice(), index);
                 buildSlides(index);
-
-                return; // Prevent recursive fetch
+                return;
             }
 
             // Set the slideshow quality for the current index
@@ -916,8 +960,10 @@ function fetchData(index) {
             if (slideshowTitles[index] !== "All pictures") {
                 if (slideshowTitles[index] === "Make post slideshow" || slideshowTitles[index] === "Make trip slideshow") {
                     console.log('Fetched', slideshows[index].imageBuffer.length, 'images for title:', postId);
+                    document.getElementById('imagesLoadedCount').textContent = slideshows[index].imageBuffer.length;
                 } else {
                     console.log('Fetched', slideshows[index].imageBuffer.length, 'images for title:', slideshowTitles[index]);
+                    document.getElementById('imagesLoadedCount').textContent = slideshows[index].imageBuffer.length;
                 }
 
                 slideshows[index].shuffledImages = shuffleArray(slideshows[index].imageBuffer.slice(), index);
@@ -959,6 +1005,187 @@ function getPostIdFromAnchor() {
     return null;
 }
 
+/**
+ * Initializes a toggle button that persists its ON/OFF state and reloads page when changed.
+ * @param {string} buttonId - The ID of the toggle button element.
+ * @param {string} storageKey - The key to use for storing the toggle state in localStorage.
+ */
+function initializePersistentToggle(buttonId, storageKey) {
+    const button = document.getElementById(buttonId);
+    if (!button) {
+        console.warn(`Button not found for ID: ${buttonId}`);
+        return;
+    }
+
+    // Load saved state or default to true (ON)
+    let randomizeImages = localStorage.getItem(storageKey);
+    randomizeImages = (randomizeImages === null) ? true : (randomizeImages === 'true');
+
+    // Apply initial label
+    button.textContent = randomizeImages ? 'DA' : 'NE';
+
+    // Add click listener
+    button.addEventListener('click', function () {
+        // Toggle state
+        randomizeImages = !randomizeImages;
+
+        // Save to localStorage
+        localStorage.setItem(storageKey, randomizeImages);
+
+        // Update label
+        button.textContent = randomizeImages ? 'DA' : 'NE';
+
+        // Reload after short delay (same style as slider)
+        clearTimeout(reloadTimeout);
+        reloadTimeout = setTimeout(function () {
+            location.reload();
+        }, 2000);
+    });
+}
+
+function toggleRandomize() {
+    randomizeImages = !randomizeImages;
+    document.getElementById('toggleRandomButton').innerText = randomizeImages
+        ? 'DA'
+        : 'NE';
+}
+
+function initializePersistentDateRange(startId, endId, storageKeyStart, storageKeyEnd) {
+    const startInput = document.getElementById(startId);
+    const endInput = document.getElementById(endId);
+
+    if (!startInput || !endInput) return;
+
+    // Load saved values
+    const savedStart = localStorage.getItem(storageKeyStart);
+    const savedEnd = localStorage.getItem(storageKeyEnd);
+
+    if (savedStart) startInput.value = savedStart;
+    if (savedEnd) endInput.value = savedEnd;
+
+    // Save and reload on change
+    [startInput, endInput].forEach(input => {
+        input.addEventListener('change', () => {
+            localStorage.setItem(storageKeyStart, startInput.value);
+            localStorage.setItem(storageKeyEnd, endInput.value);
+            clearTimeout(reloadTimeout);
+            reloadTimeout = setTimeout(() => location.reload(), 2000);
+        });
+    });
+}
+
+function initializePersistentDateRange(startId, endId, storageKeyStart, storageKeyEnd) {
+    const startInput = document.getElementById(startId);
+    const endInput = document.getElementById(endId);
+
+    if (!startInput || !endInput) {
+        console.warn(`Date range inputs not found`);
+        return;
+    }
+
+    // Load saved values
+    const savedStart = localStorage.getItem(storageKeyStart);
+    const savedEnd = localStorage.getItem(storageKeyEnd);
+
+    if (savedStart) startInput.value = savedStart;
+    if (savedEnd) endInput.value = savedEnd;
+
+    // Save and reload on change
+    [startInput, endInput].forEach(input => {
+        input.addEventListener('change', () => {
+            localStorage.setItem(storageKeyStart, startInput.value);
+            localStorage.setItem(storageKeyEnd, endInput.value);
+            clearTimeout(reloadTimeout);
+            reloadTimeout = setTimeout(() => location.reload(), 2000);
+        });
+    });
+}
+
+function initializePersistentLabelFilter() {
+    const checkboxes = document.querySelectorAll('.label-filter-checkbox');
+    if (!checkboxes.length) return;
+
+    // Load saved grouped labels (object like { "2": ["Slovenia"], "4": ["2023"] })
+    const savedLabels = JSON.parse(localStorage.getItem('selectedLabels') || '{}');
+
+    // Restore checked state based on savedLabels
+    checkboxes.forEach(cb => {
+        const prefix = cb.dataset.prefix;
+        if (savedLabels[prefix] && savedLabels[prefix].includes(cb.value)) {
+            cb.checked = true;
+        }
+
+        cb.addEventListener('change', () => {
+            const selected = {};
+
+            // Collect all checked labels grouped by prefix
+            checkboxes.forEach(c => {
+                if (c.checked) {
+                    const p = c.dataset.prefix;
+                    if (!selected[p]) selected[p] = [];
+                    selected[p].push(c.value);
+                }
+            });
+
+            // Save grouped structure to localStorage
+            localStorage.setItem('selectedLabels', JSON.stringify(selected));
+
+            // Reload after slight delay to allow multiple selections
+            clearTimeout(window.reloadTimeout);
+            window.reloadTimeout = setTimeout(() => location.reload(), 2000);
+        });
+    });
+}
+
+
+// Toggle collapsible label sections and remember state
+function toggleSection(id, btn) {
+    const el = document.getElementById(id);
+    const icon = btn.querySelector('.arrow-icon');
+    const isHidden = el.style.display === "none";
+
+    el.style.display = isHidden ? "block" : "none";
+    icon.textContent = isHidden ? "▼" : "▶";
+
+    // Save state to localStorage
+    localStorage.setItem("collapse_" + id, isHidden ? "open" : "closed");
+}
+
+// Restore collapsible section state on page load
+function restoreCollapseState() {
+    document.querySelectorAll(".collapse-btn").forEach(function(btn) {
+        const sectionId = btn.getAttribute("onclick").match(/'(.*?)'/)[1];
+        const savedState = localStorage.getItem("collapse_" + sectionId);
+        const sectionEl = document.getElementById(sectionId);
+        const icon = btn.querySelector(".arrow-icon");
+
+        if (savedState === "open") {
+            sectionEl.style.display = "block";
+            icon.textContent = "▼";
+        } else {
+            sectionEl.style.display = "none";
+            icon.textContent = "▶";
+        }
+    });
+}
+
+// Setup "Clear Filters" button
+function setupClearFiltersButton() {
+    const btn = document.getElementById('clear-filters-btn');
+    if (!btn) return;
+
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.label-filter-checkbox').forEach(cb => cb.checked = false);
+        localStorage.removeItem('selectedLabels');
+        localStorage.removeItem('startDateRange');
+        localStorage.removeItem('endDateRange');
+
+        console.log('[filters cleared]');
+        
+        setTimeout(() => location.reload(), 500);
+    });
+}
+
 
 /**
  * @brief   Shuffles an array of images or modifies the array based on slideshow type.
@@ -973,14 +1200,22 @@ function getPostIdFromAnchor() {
  * @return  Returns the shuffled or modified array.
  */
 function shuffleArray(array, index) {
+    const randomizeImages = localStorage.getItem('randomizeImages') === 'true';
+
     if (slideshowTitles[index] === "All pictures") {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
+        if (randomizeImages) {
+            // Fisher–Yates shuffle
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        } else {
+            // Reverse so oldest comes first
+            // array.reverse();
         }
     } else {
-        // Set endImage as last element
-        array.unshift(endImage); // Append a new image at the start
+        // Set endImage as first element
+        array.unshift(endImage);
     }
     return array;
 }
@@ -2573,4 +2808,9 @@ function initializePersistentSlider(sliderId, valueDisplayId, storageKey) {
 // Initialize the slider when the page is loaded
 document.addEventListener('DOMContentLoaded', function () {
     initializePersistentSlider('photosSliderElement', 'photosValueElement', 'photosSliderValue');
+    initializePersistentToggle('toggleRandomButton', 'randomizeImages');
+    initializePersistentDateRange('startDateInput', 'endDateInput', 'startDateRange', 'endDateRange');
+    restoreCollapseState();
+    initializePersistentLabelFilter();
+    setupClearFiltersButton();
 });

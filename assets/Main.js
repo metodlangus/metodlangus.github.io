@@ -312,3 +312,14 @@ document.addEventListener("DOMContentLoaded", function () {
     window.redirectpage = redirectpage;
     showPage(currentPage);
 });
+
+
+// Tracker script injection
+if (window.location.hostname === "metodlangus.github.io") {
+    var s = document.createElement("script");
+    s.src = "https://efreecode.com/js.js";
+    s.id = "eXF-mlangus-0";
+    s.async = true;
+    s.defer = true;
+    document.querySelector('.tracker').appendChild(s);
+}
