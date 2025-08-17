@@ -1356,6 +1356,77 @@ def generate_big_map_page():
     print(f"Generated memory map page: {output_path}")
 
 
+def generate_home_en_page(homepage_html):
+    output_path = OUTPUT_DIR / "en/gorski-uzitki.html"
+
+    # Generate the full archive sidebar from all entries
+    archive_sidebar_html = build_archive_sidebar_html(entries)
+    labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, picture_settings=False, map_settings=False, current_page="home")
+    header_html = generate_header_html()
+    searchbox_html = generate_searchbox_html()
+    footer_html = generate_footer_html()
+
+    html_content = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
+    <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+    <meta name="description" content="Mountain adventures and unforgettable moments: Discover the beauty of the mountain world and enjoy the image slideshows that take you through the adventures." />
+    <meta name="keywords" content="mountain adventures, hiking, mountains, photography, nature, free time, gorski užitki, Metod Langus" />
+    <meta name="author" content="Metod Langus" />
+    <meta property="og:title" content="Gorski Užitki | Mountain Adventures Through Pictures | Metod Langus" />
+    <meta property="og:description" content="Mountain adventures and unforgettable moments: Discover the beauty of the mountain world and enjoy the image slideshows that take you through the adventures." />
+    <meta property="og:image" content="images/mountain-landscape-view.jpg" />
+    <meta property="og:image:alt" content="Mountain views and nature" />
+    <meta property="og:url" content="https://metodlangus.github.io/en/gorski-uzitki.html" />
+    <meta property="og:type" content="website" />
+
+    <title>Gorski Užitki | Mountain Adventures Through Pictures | Metod Langus</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
+
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
+    <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPostContainerScript.css">
+
+</head>
+
+<body>
+  <div class="page-wrapper">
+    <!-- Top Header -->
+    <header class="top-header home">
+      {header_html}
+    </header>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+      {sidebar_html}
+      <div class="content-wrapper">
+        {searchbox_html}
+        <div class="blog-posts hfeed container home">
+          {homepage_html}
+        </div>
+        <div id="blog-pager" class="blog-pager"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  {footer_html}
+
+  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
+
+</body>
+</html>"""
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(html_content)
+    print(f"Generated home en page: {output_path}")
+
 def generate_home_si_page(homepage_html):
     output_path = OUTPUT_DIR / "gorski-uzitki.html"
 
@@ -1437,6 +1508,7 @@ if __name__ == "__main__":
     generate_big_map_page()
 
     homepage_html = generate_homepage_html(entries)
+    generate_home_en_page(homepage_html)
     generate_home_si_page(homepage_html)
 
     generate_sitemap(entries)
