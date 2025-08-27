@@ -594,7 +594,7 @@ def generate_sidebar_html(archive_html, labels_html, picture_settings, map_setti
 
     # Include labels and archive only if current page is posts or labels
     posts_sections = ""
-    if current_page in ["posts", "labels"]:
+    if current_page in ["posts", "labels", "home"]:
         posts_sections = f"""
         <div class="labels">
           {labels_html}
