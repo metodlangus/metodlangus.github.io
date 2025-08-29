@@ -4,6 +4,7 @@ from pathlib import Path
 from slugify import slugify
 from collections import defaultdict
 from datetime import datetime, timezone
+from babel.dates import format_datetime
 import locale
 from xml.etree.ElementTree import Element, SubElement, ElementTree
 from zoneinfo import ZoneInfo  # Python 3.9+
@@ -179,15 +180,13 @@ def fix_images_for_lightbox(html_content, post_title):
     return soup.prettify()
 
 def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
-    # Set Slovenian locale
-    try:
-        locale.setlocale(locale.LC_TIME, 'Slovenian_Slovenia.1250')
-    except locale.Error:
-        locale.setlocale(locale.LC_TIME, '')  # fallback
 
     published_raw = entry.get("published", {}).get("$t", "1970-01-01T00:00:00Z")
     published_dt = datetime.strptime(published_raw, "%Y-%m-%dT%H:%M:%S.%f%z")
-    published = published_dt.strftime("%A, %d. %B %Y")
+
+    # Format published date in Slovenian (Unicode-safe)
+    published = format_datetime(published_dt, "EEEE, d. MMMM y", locale="sl")
+
 
     title = entry.get("title", {}).get("$t", f"untitled-{index}")
     thumbnail = entry.get("media$thumbnail", {}).get("url", "")
@@ -317,7 +316,10 @@ def build_archive_sidebar_html(entries):
         for m in sorted(year_posts.keys(), reverse=True):
             posts = year_posts[m]
             try:
-                month_name = datetime.strptime(m, '%m').strftime('%B')
+                # Use a dummy date to get the month name
+                dummy_date = datetime.strptime(m, '%m')
+                # Format month name in Slovenian
+                month_name = format_datetime(dummy_date, "LLLL", locale="sl")  # 'LLLL' = full month name
             except ValueError:
                 month_name = m
             month_label = f"{month_name} {y} ({len(posts)})"
@@ -1049,7 +1051,7 @@ def generate_label_pages(entries, label_posts_raw):
     # Generate sidebar, header, footer, etc.
     archive_sidebar_html = build_archive_sidebar_html(entries)
     labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, picture_settings=True, map_settings=False, current_page="labels")
+    sidebar_html = generate_sidebar_html(archive_sidebar_html, labels_sidebar_html, picture_settings=False, map_settings=False, current_page="labels")
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
