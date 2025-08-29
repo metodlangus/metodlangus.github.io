@@ -899,6 +899,40 @@ def fetch_and_save_all_posts(entries):
         first_img_tag = soup.find("img")
         og_image = first_img_tag["src"] if first_img_tag else "https://metodlangus.github.io/assets/default-og.jpg"
 
+
+
+        # Normalize helper: strip, collapse whitespace, lowercase
+        def normalize(text):
+            return ' '.join(text.split()).strip().lower()
+
+        # Unwanted descriptions (normalized)
+        unwanted_descriptions = [
+            normalize("Summary, only on the post-container view."),
+            normalize("Kaj češ lepšega, kot biti v naravi.")
+        ]
+
+        # Try <summary> first
+        summary_tag = soup.find("summary")
+        if summary_tag:
+            summary_text = summary_tag.get_text()
+            if normalize(summary_text) not in unwanted_descriptions:
+                description = summary_text.strip()
+            else:
+                description = title # Use title instead generic text
+        else:
+            # Fallback to <meta name="description">
+            meta_tag = soup.find("meta", attrs={"name": "description"})
+            if meta_tag and meta_tag.get("content"):
+                meta_content = meta_tag["content"]
+                if normalize(meta_content) not in unwanted_descriptions:
+                    description = meta_content.strip()
+                else:
+                    description = title # Use title instead generic text
+            else:
+                description = ""
+
+
+
         # Construct og:url
         og_url = f"{BASE_SITE_URL}/posts/{year}/{month}/{slug}.html"
         metadata_html = f"<div class='post-date' data-date='{formatted_date}'></div>"
@@ -921,7 +955,7 @@ def fetch_and_save_all_posts(entries):
   <meta charset="UTF-8">
   <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
-  <meta name="description" content="Gorske avanture in nepozabni trenutki: Odkrijte lepote gorskega sveta in se prepustite predvajalnikom slik, ki vas popeljejo skozi dogodivščine." />
+  <meta name="description" content="{description}" />
   <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
   <meta name="author" content="Metod Langus" />
 
@@ -1057,7 +1091,7 @@ def generate_label_pages(entries, label_posts_raw):
   <meta charset="UTF-8">
   <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
-  <meta name="description" content="Gorske avanture in nepozabni trenutki: Odkrijte lepote gorskega sveta in se prepustite predvajalnikom slik, ki vas popeljejo skozi dogodivščine." />
+  <meta name="description" content="Gorske avanture in nepozabni trenutki: Prikaz objav z oznako: {label_clean}" />
   <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
   <meta name="author" content="Metod Langus" />
 
@@ -1124,11 +1158,11 @@ def generate_predvajalnik_page(current_page):
   <meta charset="UTF-8">
   <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
-  <meta name="description" content="Gorske avanture in nepozabni trenutki: Odkrijte lepote gorskega sveta in se prepustite predvajalnikom slik, ki vas popeljejo skozi dogodivščine." />
+  <meta name="description" content="Gorske avanture in nepozabni trenutki: Predvajalnik naključnih fotografij." />
   <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
   <meta name="author" content="Metod Langus" />
   <meta property="og:title" content="Predvajalnik naključnih fotografij" />
-  <meta property="og:description" content="Gorske avanture in nepozabni trenutki: Odkrijte lepote gorskega sveta in se prepustite predvajalnikom slik, ki vas popeljejo skozi dogodivščine." />
+  <meta property="og:description" content="Predvajalnik naključnih fotografij" />
   <meta property="og:image:alt" content="Gorski razgledi in narava v slikah" />
   <meta property="og:url" content="https://metodlangus.github.io/predvajalnik-nakljucnih-fotografij.html" />
   <meta property="og:type" content="website" />
@@ -1202,7 +1236,7 @@ def generate_peak_list_page():
   <meta charset="UTF-8">
   <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
-  <meta name="description" content="Gorske avanture in nepozabni trenutki: Odkrijte lepote gorskega sveta in se prepustite predvajalnikom slik, ki vas popeljejo skozi dogodivščine." />
+  <meta name="description" content="Seznam obiskanih vrhov" />
   <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
   <meta name="author" content="Metod Langus" />
   <meta property="og:title" content="Seznam vrhov" />
@@ -1278,7 +1312,7 @@ def generate_big_map_page():
   <meta charset="UTF-8">
   <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
-  <meta name="description" content="Gorske avanture in nepozabni trenutki: Odkrijte lepote gorskega sveta in se prepustite predvajalnikom slik, ki vas popeljejo skozi dogodivščine." />
+  <meta name="description" content="Gorske avanture in nepozabni trenutki na zemljevidu spominov." />
   <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
   <meta name="author" content="Metod Langus" />
   <meta property="og:title" content="Zemljevid spominov" />
@@ -1444,11 +1478,11 @@ def generate_home_si_page(homepage_html):
     <meta charset="UTF-8">
     <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
     <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
-    <meta name="description" content="Gorske avanture in nepozabni trenutki: Odkrijte lepote gorskega sveta in se prepustite predvajalnikom slik, ki vas popeljejo skozi dogodivščine." />
+    <meta name="description" content="Gorske avanture in nepozabni trenutki: Lepote gorskega sveta in predvajalniki slik, ki vas popeljejo skozi dogodivščine." />
     <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
     <meta name="author" content="Metod Langus" />
     <meta property="og:title" content="Gorski Užitki | Gorske pustolovščine skozi slike | Metod Langus" />
-    <meta property="og:description" content="Gorske avanture in nepozabni trenutki: Odkrijte lepote gorskega sveta in se prepustite predvajalnikom slik, ki vas popeljejo skozi dogodivščine." />
+    <meta property="og:description" content="Gorske avanture in nepozabni trenutki: Lepote gorskega sveta in predvajalniki slik, ki vas popeljejo skozi dogodivščine." />
     <meta property="og:image" content="slike/gore-pokrajina-razgled.jpg" />
     <meta property="og:image:alt" content="Gorski razgledi in narava" />
     <meta property="og:url" content="https://metodlangus.github.io/gorski-uzitki.html" />
