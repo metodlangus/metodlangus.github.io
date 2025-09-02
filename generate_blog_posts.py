@@ -15,6 +15,8 @@ from urllib.parse import urlparse, urlunparse, urljoin
 import os
 import json
 
+##### Commit message: #####
+# Update blog posts
 
 # Nastavitve
 BASE_SITE_URL = "https://metodlangus.github.io"
