@@ -352,7 +352,7 @@ def build_archive_sidebar_html(entries):
     return archive_html
 
 
-def save_archive_as_js(archive_html, output_path="archive.js"):
+def save_archive_as_js(archive_html, output_path="assets/archive.js"):
     # Escape backticks so JS template literal doesn’t break
     safe_html = archive_html.replace("`", "\\`")
 
@@ -636,14 +636,38 @@ def generate_sidebar_html(labels_html, picture_settings, map_settings, current_p
           {labels_html}
         </div>
         <div class="archive" id="archive-placeholder">
-          <script src="{BASE_SITE_URL}/archive.js"></script>
+          <script src="{BASE_SITE_URL}/assets/archive.js"></script>
         </div>
         """
+
+    # Include random image only on home page
+    random_photo_sections = ""
+    if current_page in ["home"]:
+        random_photo_sections = f"""
+        <div class="random-photo">
+          <h2 class="title">Naključna fotografija</h2>
+          <a href="https://metodlangus.github.io/predvajalnik-nakljucnih-fotografij.html">
+          <div class="slideshow-container">
+            <!-- First image (initial) -->
+            <div class="mySlides slide1" style="opacity: 1;">
+              <div class="uppertext">Tavolara</div>
+              <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgOeImsdWR0X78A0DBrMxPaz8JnOzELaQisEXya9i1FR0IJRLKxk-aqHFnA7evS4gqsbyvfKr0KuXrXTP6uZ8F10bYls4zfDU7qOgD9dG7HZBm3UJRsFc9nv4jXscecg0hbLt1V4vG8Px4hemML8-HAnkmYITUeOyP-PrIChGugMmX6UtRca6zgq1LFCIbm/s600/20230427_132541.jpg" alt="Initial Image" />
+              <div class="text">Ferrata degli Angeli</div>
+            </div>
+            <div class="mySlides slide2">
+              <div class="uppertext"></div>
+              <img src="" alt="" />
+              <div class="text"></div>
+            </div>
+          </div>
+        </a>
+      </div>"""
 
     # Full sidebar HTML
     return f"""
     <div class="sidebar-container">
       <div class="sidebar" id="sidebar">
+        {random_photo_sections}
         <div class="pages">
           <aside class='sidebar-pages'><h2>Strani</h2>
             <li><a href="{BASE_SITE_URL}/gorski-uzitki.html">Dnevnik</a></li>
@@ -890,7 +914,6 @@ def generate_sitemap(entries):
 
 def fetch_and_save_all_posts(entries):
     # Archive and labels sidebar
-    archive_sidebar_html = build_archive_sidebar_html(entries)
     labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
     sidebar_html = generate_sidebar_html(labels_sidebar_html, picture_settings=True, map_settings=False, current_page="posts")
     header_html = generate_header_html()
@@ -1083,7 +1106,6 @@ def generate_label_pages(entries, label_posts_raw):
     labels_dir.mkdir(parents=True, exist_ok=True)
 
     # Generate sidebar, header, footer, etc.
-    archive_sidebar_html = build_archive_sidebar_html(entries)
     labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
     sidebar_html = generate_sidebar_html(labels_sidebar_html, picture_settings=False, map_settings=False, current_page="labels")
     header_html = generate_header_html()
@@ -1181,7 +1203,6 @@ def generate_predvajalnik_page(current_page):
     output_path = OUTPUT_DIR / "predvajalnik-nakljucnih-fotografij.html"
 
     # Generate the full archive sidebar from all entries
-    archive_sidebar_html = build_archive_sidebar_html(entries)
     labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
     sidebar_html = generate_sidebar_html(labels_sidebar_html, picture_settings=True, map_settings=False, current_page="slideshow")
     header_html = generate_header_html()
@@ -1244,7 +1265,7 @@ def generate_predvajalnik_page(current_page):
   <!-- Footer -->
   {footer_html}
 
-  <script src="assets/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="assets/MySlideshowScript.js" defer></script>
 
 </body>
@@ -1259,7 +1280,6 @@ def generate_peak_list_page():
     output_path = OUTPUT_DIR / "seznam-vrhov.html"
 
     # Generate the full archive sidebar from all entries
-    archive_sidebar_html = build_archive_sidebar_html(entries)
     labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
     sidebar_html = generate_sidebar_html(labels_sidebar_html, picture_settings=False, map_settings=False, current_page="peak-list")
     header_html = generate_header_html()
@@ -1320,7 +1340,7 @@ def generate_peak_list_page():
   <!-- Footer -->
   {footer_html}
 
-  <script src="assets/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="assets/MyPeakListScript.js" defer></script>
 
 </body>
@@ -1335,7 +1355,6 @@ def generate_big_map_page():
     output_path = OUTPUT_DIR / "zemljevid-spominov.html"
 
     # Generate the full archive sidebar from all entries
-    archive_sidebar_html = build_archive_sidebar_html(entries)
     labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
     sidebar_html = generate_sidebar_html(labels_sidebar_html, picture_settings=False, map_settings=True, current_page="map")
     header_html = generate_header_html()
@@ -1415,7 +1434,7 @@ def generate_big_map_page():
   <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
 
-  <script src="assets/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="assets/MyMemoryMapScript.js" defer></script>
 
 </body>
@@ -1430,7 +1449,6 @@ def generate_home_en_page(homepage_html):
     output_path = OUTPUT_DIR / "en/gorski-uzitki.html"
 
     # Generate the full archive sidebar from all entries
-    archive_sidebar_html = build_archive_sidebar_html(entries)
     labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
     sidebar_html = generate_sidebar_html(labels_sidebar_html, picture_settings=False, map_settings=False, current_page="home")
     header_html = generate_header_html()
@@ -1461,6 +1479,7 @@ def generate_home_en_page(homepage_html):
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
+    <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyRandomPhoto.css">
     <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPostContainerScript.css">
 
 </head>
@@ -1489,6 +1508,7 @@ def generate_home_en_page(homepage_html):
   {footer_html}
 
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/assets/MyRandomPhoto.js" defer></script>
 
 </body>
 </html>"""
@@ -1501,7 +1521,6 @@ def generate_home_si_page(homepage_html):
     output_path = OUTPUT_DIR / "gorski-uzitki.html"
 
     # Generate the full archive sidebar from all entries
-    archive_sidebar_html = build_archive_sidebar_html(entries)
     labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
     sidebar_html = generate_sidebar_html(labels_sidebar_html, picture_settings=False, map_settings=False, current_page="home")
     header_html = generate_header_html()
@@ -1532,6 +1551,7 @@ def generate_home_si_page(homepage_html):
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
+    <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyRandomPhoto.css">
     <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPostContainerScript.css">
 
 </head>
@@ -1559,7 +1579,8 @@ def generate_home_si_page(homepage_html):
   <!-- Footer -->
   {footer_html}
 
-  <script src="assets/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/assets/MyRandomPhoto.js" defer></script>
 
 </body>
 </html>"""
@@ -1575,8 +1596,8 @@ if __name__ == "__main__":
 
     # 1. Build the archive HTML from entries
     archive_html = build_archive_sidebar_html(entries)
-    # 2. Save it as archive.js
-    save_archive_as_js(archive_html, "archive.js")
+    # 2. Save it as assets/archive.js
+    save_archive_as_js(archive_html, "assets/archive.js")
 
     generate_label_pages(entries, label_posts_raw)
     generate_predvajalnik_page(current_page="predvajalnik-nakljucnih-fotografij.html")
