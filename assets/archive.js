@@ -4,10 +4,11 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("archive-placeholder").innerHTML = `<aside class="sidebar-archive">
   <h2>Arhiv</h2>
   <details open>
-    <summary>2025 (56)</summary>
+    <summary>2025 (57)</summary>
     <details class="month-group">
-      <summary>september 2025 (1)</summary>
+      <summary>september 2025 (2)</summary>
       <ul>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/maroko-9-25-9-2025.html">Maroko (9. – 25. 9. 2025)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/09/dolkova-spica-2591-m-skrlatica-2740-m-kriz-2410-m.html">Dolkova špica (2591 m), Škrlatica (2740 m), Križ (2410 m)</a></li>
       </ul>
     </details>
