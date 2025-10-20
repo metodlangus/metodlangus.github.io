@@ -383,6 +383,36 @@ document.addEventListener("DOMContentLoaded", function() {{
         f.write(js_code)
 
 
+def save_navigation_as_js(labels_html, output_path="assets/navigation.js"):
+    # Escape backticks so JS template literal doesn’t break
+    safe_html = labels_html.replace("`", "\\`")
+
+    js_code = f"""
+document.addEventListener("DOMContentLoaded", function() {{
+  // Insert labels HTML into placeholder
+  document.getElementById("navigation-placeholder").innerHTML = `{safe_html}`;
+
+  // Add state remembering for all <details>
+  document.querySelectorAll("#navigation-placeholder details").forEach(function(det, idx) {{
+    var key = "navigation-state-" + idx;
+
+    // Restore state from sessionStorage
+    if (sessionStorage.getItem(key) === "open") {{
+      det.setAttribute("open", "");
+    }} else if (sessionStorage.getItem(key) === "closed") {{
+      det.removeAttribute("open");
+    }}
+
+    // Save state when toggled
+    det.addEventListener("toggle", function() {{
+      sessionStorage.setItem(key, det.open ? "open" : "closed");
+    }});
+  }});
+}});
+"""
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(js_code)
+
 
 def generate_labels_sidebar_html(feed_url):
     """Fetches labels from a Blogger feed and returns structured sidebar HTML."""
@@ -624,7 +654,7 @@ def generate_label_filter_section(feed_url):
 
     return "\n".join(html_parts)
 
-def generate_sidebar_html(labels_html, picture_settings, map_settings, current_page):
+def generate_sidebar_html(picture_settings, map_settings, current_page):
     # Render settings section (includes conditional logic for photo player page)
     settings_html = render_sidebar_settings(picture_settings, map_settings, current_page)
 
@@ -632,8 +662,8 @@ def generate_sidebar_html(labels_html, picture_settings, map_settings, current_p
     posts_sections = ""
     if current_page in ["posts", "labels", "home"]:
         posts_sections = f"""
-        <div class="labels">
-          {labels_html}
+        <div class="labels" id="navigation-placeholder">
+          <script src="{BASE_SITE_URL}/assets/navigation.js"></script>
         </div>
         <div class="archive" id="archive-placeholder">
           <script src="{BASE_SITE_URL}/assets/archive.js"></script>
@@ -913,9 +943,8 @@ def generate_sitemap(entries):
     print(f"Sitemap je bil ustvarjen in shranjen kot {SITEMAP_FILE}")
 
 def fetch_and_save_all_posts(entries):
-    # Archive and labels sidebar
-    labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(labels_sidebar_html, picture_settings=True, map_settings=False, current_page="posts")
+    # Labels sidebar
+    sidebar_html = generate_sidebar_html(picture_settings=True, map_settings=False, current_page="posts")
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -1106,8 +1135,7 @@ def generate_label_pages(entries, label_posts_raw):
     labels_dir.mkdir(parents=True, exist_ok=True)
 
     # Generate sidebar, header, footer, etc.
-    labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(labels_sidebar_html, picture_settings=False, map_settings=False, current_page="labels")
+    sidebar_html = generate_sidebar_html(picture_settings=False, map_settings=False, current_page="labels")
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -1203,8 +1231,7 @@ def generate_predvajalnik_page(current_page):
     output_path = OUTPUT_DIR / "predvajalnik-nakljucnih-fotografij.html"
 
     # Generate the full archive sidebar from all entries
-    labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(labels_sidebar_html, picture_settings=True, map_settings=False, current_page="slideshow")
+    sidebar_html = generate_sidebar_html(picture_settings=True, map_settings=False, current_page="slideshow")
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -1280,8 +1307,7 @@ def generate_peak_list_page():
     output_path = OUTPUT_DIR / "seznam-vrhov.html"
 
     # Generate the full archive sidebar from all entries
-    labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(labels_sidebar_html, picture_settings=False, map_settings=False, current_page="peak-list")
+    sidebar_html = generate_sidebar_html(picture_settings=False, map_settings=False, current_page="peak-list")
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -1355,8 +1381,7 @@ def generate_big_map_page():
     output_path = OUTPUT_DIR / "zemljevid-spominov.html"
 
     # Generate the full archive sidebar from all entries
-    labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(labels_sidebar_html, picture_settings=False, map_settings=True, current_page="map")
+    sidebar_html = generate_sidebar_html(picture_settings=False, map_settings=True, current_page="map")
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -1449,8 +1474,7 @@ def generate_home_en_page(homepage_html):
     output_path = OUTPUT_DIR / "en/gorski-uzitki.html"
 
     # Generate the full archive sidebar from all entries
-    labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(labels_sidebar_html, picture_settings=False, map_settings=False, current_page="home")
+    sidebar_html = generate_sidebar_html(picture_settings=False, map_settings=False, current_page="home")
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -1521,8 +1545,7 @@ def generate_home_si_page(homepage_html):
     output_path = OUTPUT_DIR / "gorski-uzitki.html"
 
     # Generate the full archive sidebar from all entries
-    labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
-    sidebar_html = generate_sidebar_html(labels_sidebar_html, picture_settings=False, map_settings=False, current_page="home")
+    sidebar_html = generate_sidebar_html(picture_settings=False, map_settings=False, current_page="home")
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
@@ -1598,6 +1621,11 @@ if __name__ == "__main__":
     archive_html = build_archive_sidebar_html(entries)
     # 2. Save it as assets/archive.js
     save_archive_as_js(archive_html, "assets/archive.js")
+
+    # 1. Generate the labels HTML
+    labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
+    # 2. Save it as assets/navigation.js
+    save_navigation_as_js(labels_sidebar_html, "assets/navigation.js")
 
     generate_label_pages(entries, label_posts_raw)
     generate_predvajalnik_page(current_page="predvajalnik-nakljucnih-fotografij.html")
