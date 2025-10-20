@@ -13,7 +13,7 @@ from pathlib import Path
 # === CONFIG ===
 BLOG_URL = "https://gorski-uzitki.blogspot.com"
 FEED_URL = f"{BLOG_URL}/feeds/posts/default?alt=json"
-MAX_RESULTS = 25
+MAX_RESULTS = 20
 DATA_DIR = Path("data")
 POSTS_DIR = DATA_DIR / "posts"
 BASE_SITE_URL = "https://metodlangus.github.io"
