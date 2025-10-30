@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Justified Gallery (Aspect Ratio Preserved)</title>
+<style>
+  body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 20px;
+  }
+  .gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+  .row {
+    display: flex;
+    gap: 8px;
+  }
+  .gallery-item {
+    position: relative;
+    overflow: hidden;
+  }
+  .gallery-item img {
+    display: block;
+    object-fit: cover;
+  }
+  .caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-size: 0.9em;
+    padding: 5px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .gallery-item:hover .caption {
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+<h2>Justified Lazy Load Gallery</h2>
+<div class="gallery" id="gallery"></div>
+
+<script>
+const PhotosRange = 3;
+const gap = 8;
+const maxRowImages = 4; // koliko slik na vrstico
+
+async function loadGallery() {
+  const response = await fetch('https://metodlangus.github.io/list_of_photos.txt');
+  const text = await response.text();
+  const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+
+  const gallery = document.getElementById('gallery');
+  const containerWidth = gallery.clientWidth || window.innerWidth - 40;
+
+  const images = [];
+
+  // Parse file
+  lines.forEach(line => {
+    const urlMatch = line.match(/Link:\s*(https:\/\/[^\s]+)/);
+    const captionMatch = line.match(/"([^"]+)"/);
+    const postMatch = line.match(/(\/posts\/[^\s]+)/);
+    const skipMatch = line.match(/data-skip=(\d+)/);
+
+    if (urlMatch && skipMatch) {
+      const imgUrl = urlMatch[1];
+      const caption = captionMatch ? captionMatch[1] : '';
+      const postUrl = postMatch ? postMatch[1] : null;
+      let dataSkip = skipMatch[1];
+
+      let numericValue = parseFloat(dataSkip);
+      if (numericValue === -2 && dataSkip.length === 1) return;
+      if (numericValue > PhotosRange) return;
+
+      images.push({ imgUrl, caption, postUrl });
+    }
+  });
+
+  // Load images and calculate ratios
+  const promises = images.map(imgData => new Promise(resolve => {
+    const img = new Image();
+    img.src = imgData.imgUrl;
+    img.onload = () => resolve({ ...imgData, ratio: img.width / img.height });
+    img.onerror = () => resolve(null);
+  }));
+
+  const loadedImages = (await Promise.all(promises)).filter(Boolean);
+
+  // Build rows
+  for (let i = 0; i < loadedImages.length; i += maxRowImages) {
+    const rowImages = loadedImages.slice(i, i + maxRowImages);
+    const rowRatioSum = rowImages.reduce((sum, img) => sum + img.ratio, 0);
+    const rowHeight = (containerWidth - (gap * (rowImages.length - 1))) / rowRatioSum;
+
+    const rowDiv = document.createElement('div');
+    rowDiv.className = 'row';
+
+    rowImages.forEach(item => {
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'gallery-item';
+
+      const img = document.createElement('img');
+      img.src = item.imgUrl;
+      img.loading = 'lazy';
+      img.alt = item.caption;
+      img.style.width = (item.ratio * rowHeight) + 'px';
+      img.style.height = rowHeight + 'px';
+
+      const captionDiv = document.createElement('div');
+      captionDiv.className = 'caption';
+      captionDiv.innerHTML = item.caption;
+
+      if (item.postUrl) {
+        const link = document.createElement('a');
+        link.href = item.postUrl;
+        link.target = '_blank';
+        link.appendChild(img);
+        itemDiv.appendChild(link);
+      } else {
+        itemDiv.appendChild(img);
+      }
+
+      itemDiv.appendChild(captionDiv);
+      rowDiv.appendChild(itemDiv);
+    });
+
+    gallery.appendChild(rowDiv);
+  }
+}
+
+loadGallery();
+</script>
+</body>
+</html>
