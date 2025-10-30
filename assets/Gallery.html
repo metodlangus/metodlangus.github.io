@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Justified Gallery Lazy Loading</title>
+<title>Justified Gallery Auto Adjust</title>
 <style>
   body {
     font-family: sans-serif;
@@ -51,19 +52,14 @@
 <script>
 const PhotosRange = 3;
 const gap = 8;
-const maxRowImages = 4;
+let images = [];
 
-async function loadGallery() {
+async function fetchImages() {
   const response = await fetch('https://metodlangus.github.io/list_of_photos.txt');
   const text = await response.text();
   const lines = text.split('\n').map(line => line.trim()).filter(line => line);
 
-  const gallery = document.getElementById('gallery');
-  const containerWidth = gallery.clientWidth || window.innerWidth - 40;
-
-  const images = [];
-
-  // Parse file
+  images = [];
   lines.forEach(line => {
     const urlMatch = line.match(/Link:\s*(https:\/\/[^\s]+)/);
     const captionMatch = line.match(/"([^"]+)"/);
@@ -83,12 +79,22 @@ async function loadGallery() {
       images.push({ imgUrl, caption, postUrl });
     }
   });
+}
 
-  // Lazy load rows
-  for (let i = 0; i < images.length; i += maxRowImages) {
-    const rowImages = images.slice(i, i + maxRowImages);
+async function renderGallery() {
+  const gallery = document.getElementById('gallery');
+  gallery.innerHTML = ''; // Clear previous content
+  const containerWidth = gallery.clientWidth || window.innerWidth - 40;
 
-    // Load only this batch
+  // Calculate images per row dynamically
+  const imagesPerRow = Math.max(2, Math.floor(containerWidth / 300));
+
+  let index = 0;
+  while (index < images.length) {
+    const rowImages = images.slice(index, index + imagesPerRow);
+    index += imagesPerRow;
+
+    // Load batch
     const loadedBatch = await Promise.all(rowImages.map(imgData => new Promise(resolve => {
       const img = new Image();
       img.src = imgData.imgUrl;
@@ -135,13 +141,23 @@ async function loadGallery() {
     });
 
     gallery.appendChild(rowDiv);
-
-    // Small delay for visual effect
-    await new Promise(r => setTimeout(r, 200));
   }
 }
 
-loadGallery();
+// Initial load
+(async () => {
+  await fetchImages();
+  renderGallery();
+})();
+
+// Debounced resize handler
+let resizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => {
+    renderGallery();
+  }, 300);
+});
 </script>
 </body>
 </html>
