@@ -155,7 +155,27 @@ let resizeTimeout;
 window.addEventListener('resize', () => {
   clearTimeout(resizeTimeout);
   resizeTimeout = setTimeout(() => {
-    renderGallery();
+    const gallery = document.getElementById('gallery');
+    const containerWidth = gallery.clientWidth || window.innerWidth - 40;
+    const rows = gallery.querySelectorAll('.row');
+
+    rows.forEach(row => {
+      const items = row.querySelectorAll('.gallery-item img');
+      let ratios = [];
+      items.forEach(img => {
+        const width = parseFloat(img.style.width);
+        const height = parseFloat(img.style.height);
+        ratios.push(width / height);
+      });
+
+      const rowRatioSum = ratios.reduce((sum, r) => sum + r, 0);
+      const rowHeight = (containerWidth - (gap * (items.length - 1))) / rowRatioSum;
+
+      items.forEach((img, i) => {
+        img.style.width = (ratios[i] * rowHeight) + 'px';
+        img.style.height = rowHeight + 'px';
+      });
+    });
   }, 300);
 });
 </script>
