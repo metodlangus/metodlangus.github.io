@@ -1,183 +1,217 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Justified Gallery Auto Adjust</title>
-<style>
-  body {
-    font-family: sans-serif;
-    margin: 0;
-    padding: 20px;
-  }
-  .gallery {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
-  }
-  .row {
-    display: flex;
-    gap: 8px;
-  }
-  .gallery-item {
-    position: relative;
-    overflow: hidden;
-  }
-  .gallery-item img {
-    display: block;
-    object-fit: cover;
-  }
-  .caption {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.6);
-    color: white;
-    font-size: 0.9em;
-    padding: 5px;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .gallery-item:hover .caption {
-    opacity: 1;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Justified Gallery Auto Adjust</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    .gallery {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+    }
+    .row {
+      display: flex;
+      gap: 8px;
+    }
+    .gallery-item {
+      position: relative;
+      overflow: hidden;
+    }
+    .gallery-item img {
+      display: block;
+      object-fit: cover;
+    }
+    .caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      font-size: 0.9em;
+      padding: 5px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .gallery-item:hover .caption {
+      opacity: 1;
+    }
+    .slider-container {
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body>
-<h2>Justified Lazy Load Gallery</h2>
-<div class="gallery" id="gallery"></div>
+  <h2>Justified Lazy Load Gallery</h2>
 
-<script>
-const PhotosRange = 3;
-const gap = 8;
-let images = [];
+  <div class="slider-container">
+    <label for="rangeSlider">Filter by data-skip (range -1 to 3): </label>
+    <input type="range" id="rangeSlider" min="-1" max="3" step="1" value="3">
+    <span id="rangeValue">3</span>
+  </div>
 
-async function fetchImages() {
-  const response = await fetch('https://metodlangus.github.io/list_of_photos.txt');
-  const text = await response.text();
-  const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+  <div class="gallery" id="gallery"></div>
 
-  images = [];
-  lines.forEach(line => {
-    const urlMatch = line.match(/Link:\s*(https:\/\/[^\s]+)/);
-    const captionMatch = line.match(/"([^"]+)"/);
-    const postMatch = line.match(/(\/posts\/[^\s]+)/);
-    const skipMatch = line.match(/data-skip=(\d+)/);
+  <script>
+    let PhotosRange = 3;
+    const gap = 8;
+    let images = [];
 
-    if (urlMatch && skipMatch) {
-      const imgUrl = urlMatch[1];
-      const caption = captionMatch ? captionMatch[1] : '';
-      const postUrl = postMatch ? postMatch[1] : null;
-      let dataSkip = skipMatch[1];
+    const slider = document.getElementById('rangeSlider');
+    const rangeValue = document.getElementById('rangeValue');
 
-      let numericValue = parseFloat(dataSkip);
-      if (numericValue === -2 && dataSkip.length === 1) return;
-      if (numericValue > PhotosRange) return;
+    slider.addEventListener('input', async () => {
+      PhotosRange = parseInt(slider.value);
+      rangeValue.textContent = PhotosRange;
+      await fetchImages();
+      renderGallery();
+    });
 
-      images.push({ imgUrl, caption, postUrl });
-    }
-  });
-}
-
-async function renderGallery() {
-  const gallery = document.getElementById('gallery');
-  gallery.innerHTML = ''; // Clear previous content
-  const containerWidth = gallery.clientWidth || window.innerWidth - 40;
-
-  // Calculate images per row dynamically
-  const imagesPerRow = Math.max(2, Math.floor(containerWidth / 300));
-
-  let index = 0;
-  while (index < images.length) {
-    const rowImages = images.slice(index, index + imagesPerRow);
-    index += imagesPerRow;
-
-    // Load batch
-    const loadedBatch = await Promise.all(rowImages.map(imgData => new Promise(resolve => {
-      const img = new Image();
-      img.src = imgData.imgUrl;
-      img.onload = () => resolve({ ...imgData, ratio: img.width / img.height });
-      img.onerror = () => resolve(null);
-    })));
-
-    const validImages = loadedBatch.filter(Boolean);
-    if (!validImages.length) continue;
-
-    const rowRatioSum = validImages.reduce((sum, img) => sum + img.ratio, 0);
-    const rowHeight = (containerWidth - (gap * (validImages.length - 1))) / rowRatioSum;
-
-    const rowDiv = document.createElement('div');
-    rowDiv.className = 'row';
-
-    validImages.forEach(item => {
-      const itemDiv = document.createElement('div');
-      itemDiv.className = 'gallery-item';
-
-      const img = document.createElement('img');
-      img.src = item.imgUrl;
-      img.loading = 'lazy';
-      img.alt = item.caption;
-      img.style.width = (item.ratio * rowHeight) + 'px';
-      img.style.height = rowHeight + 'px';
-
-      const captionDiv = document.createElement('div');
-      captionDiv.className = 'caption';
-      captionDiv.innerHTML = item.caption;
-
-      if (item.postUrl) {
-        const link = document.createElement('a');
-        link.href = item.postUrl;
-        link.target = '_blank';
-        link.appendChild(img);
-        itemDiv.appendChild(link);
-      } else {
-        itemDiv.appendChild(img);
+    function isWithinRange(dataSkip) {
+      if (dataSkip === "NA" || dataSkip === null || dataSkip === undefined) {
+        dataSkip = "3";
       }
 
-      itemDiv.appendChild(captionDiv);
-      rowDiv.appendChild(itemDiv);
-    });
+      dataSkip = dataSkip
+        .replace(/best/g, "0")
+        .replace(/cover/g, "-1")
+        .replace(/peak/g, "-2");
 
-    gallery.appendChild(rowDiv);
-  }
-}
+      const dataSkipValues = dataSkip.split(";");
 
-// Initial load
-(async () => {
-  await fetchImages();
-  renderGallery();
-})();
+      const numericValues = dataSkipValues
+        .map(value => parseFloat(value))
+        .filter(value => !isNaN(value));
 
-// Debounced resize handler
-let resizeTimeout;
-window.addEventListener('resize', () => {
-  clearTimeout(resizeTimeout);
-  resizeTimeout = setTimeout(() => {
-    const gallery = document.getElementById('gallery');
-    const containerWidth = gallery.clientWidth || window.innerWidth - 40;
-    const rows = gallery.querySelectorAll('.row');
+      const minValue = Math.min(...numericValues.filter(value => value !== -2));
 
-    rows.forEach(row => {
-      const items = row.querySelectorAll('.gallery-item img');
-      let ratios = [];
-      items.forEach(img => {
-        const width = parseFloat(img.style.width);
-        const height = parseFloat(img.style.height);
-        ratios.push(width / height);
+      return minValue <= PhotosRange;
+    }
+
+    async function fetchImages() {
+      const response = await fetch('https://metodlangus.github.io/list_of_photos.txt');
+      const text = await response.text();
+      const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+
+      images = [];
+      lines.forEach(line => {
+        const urlMatch = line.match(/Link:\s*(https:\/\/[^\s]+)/);
+        const captionMatch = line.match(/"([^"]+)"/);
+        const postMatch = line.match(/(\/posts\/[^\s]+)/);
+        const skipMatch = line.match(/data-skip=([^\s]+)/);
+
+        if (urlMatch && skipMatch) {
+          const imgUrl = urlMatch[1];
+          const caption = captionMatch ? captionMatch[1] : '';
+          const postUrl = postMatch ? postMatch[1] : null;
+          let dataSkip = skipMatch[1];
+
+          if (!isWithinRange(dataSkip)) return;
+
+          images.push({ imgUrl, caption, postUrl });
+        }
       });
+    }
 
-      const rowRatioSum = ratios.reduce((sum, r) => sum + r, 0);
-      const rowHeight = (containerWidth - (gap * (items.length - 1))) / rowRatioSum;
+    async function renderGallery() {
+      const gallery = document.getElementById('gallery');
+      gallery.innerHTML = '';
+      const containerWidth = gallery.clientWidth || window.innerWidth - 40;
 
-      items.forEach((img, i) => {
-        img.style.width = (ratios[i] * rowHeight) + 'px';
-        img.style.height = rowHeight + 'px';
-      });
+      const imagesPerRow = Math.max(2, Math.floor(containerWidth / 300));
+
+      let index = 0;
+      while (index < images.length) {
+        const rowImages = images.slice(index, index + imagesPerRow);
+        index += imagesPerRow;
+
+        const loadedBatch = await Promise.all(rowImages.map(imgData => new Promise(resolve => {
+          const img = new Image();
+          img.src = imgData.imgUrl;
+          img.onload = () => resolve({ ...imgData, ratio: img.width / img.height });
+          img.onerror = () => resolve(null);
+        })));
+
+        const validImages = loadedBatch.filter(Boolean);
+        if (!validImages.length) continue;
+
+        const rowRatioSum = validImages.reduce((sum, img) => sum + img.ratio, 0);
+        const rowHeight = (containerWidth - (gap * (validImages.length - 1))) / rowRatioSum;
+
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'row';
+
+        validImages.forEach(item => {
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'gallery-item';
+
+          const img = document.createElement('img');
+          img.src = item.imgUrl;
+          img.loading = 'lazy';
+          img.alt = item.caption;
+          img.style.width = (item.ratio * rowHeight) + 'px';
+          img.style.height = rowHeight + 'px';
+
+          const captionDiv = document.createElement('div');
+          captionDiv.className = 'caption';
+          captionDiv.innerHTML = item.caption;
+
+          if (item.postUrl) {
+            const link = document.createElement('a');
+            link.href = item.postUrl;
+            link.target = '_blank';
+            link.appendChild(img);
+            itemDiv.appendChild(link);
+          } else {
+            itemDiv.appendChild(img);
+          }
+
+          itemDiv.appendChild(captionDiv);
+          rowDiv.appendChild(itemDiv);
+        });
+
+        gallery.appendChild(rowDiv);
+      }
+    }
+
+    (async () => {
+      await fetchImages();
+      renderGallery();
+    })();
+
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        const gallery = document.getElementById('gallery');
+        const containerWidth = gallery.clientWidth || window.innerWidth - 40;
+        const rows = gallery.querySelectorAll('.row');
+
+        rows.forEach(row => {
+          const items = row.querySelectorAll('.gallery-item img');
+          let ratios = [];
+          items.forEach(img => {
+            const width = parseFloat(img.style.width);
+            const height = parseFloat(img.style.height);
+            ratios.push(width / height);
+          });
+
+          const rowRatioSum = ratios.reduce((sum, r) => sum + r, 0);
+          const rowHeight = (containerWidth - (gap * (items.length - 1))) / rowRatioSum;
+
+          items.forEach((img, i) => {
+            img.style.width = (ratios[i] * rowHeight) + 'px';
+            img.style.height = rowHeight + 'px';
+          });
+        });
+      }, 300);
     });
-  }, 300);
-});
-</script>
+  </script>
 </body>
 </html>
