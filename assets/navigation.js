@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </ul>
 <h3>Gorstvo:</h3><ul class='label-list'>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/beneske-predalpe.html'>Beneške Predalpe</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/atlas.html'>Atlas</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/biokovo.html'>Biokovo</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/dinarsko-gorstvo.html'>Dinarsko gorstvo</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/dolomiti.html'>Dolomiti</a></li>
