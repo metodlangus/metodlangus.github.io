@@ -873,7 +873,7 @@ function fetchData(index) {
                                     const numericValue = parseFloat(value);
 
                                     // Exclude if the only tag is `-2` (peak)
-                                    if (numericValue === -2 && dataSkipValues.length === 1) {
+                                    if (numericValue === -2) {
                                         return false;
                                     }
 
