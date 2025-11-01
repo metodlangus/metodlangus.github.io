@@ -1483,23 +1483,34 @@ def generate_home_en_page(homepage_html):
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
+    <meta name="viewport" content="width=400, initial-scale=0.8, maximum-scale=2.0, user-scalable=yes">
     <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+
     <meta name="description" content="Mountain adventures and unforgettable moments: Discover the beauty of the mountain world and enjoy the image slideshows that take you through the adventures." />
     <meta name="keywords" content="mountain adventures, hiking, mountains, photography, nature, free time, gorski užitki, Metod Langus" />
     <meta name="author" content="Metod Langus" />
+
     <meta property="og:title" content="Gorski Užitki | Mountain Adventures Through Pictures | Metod Langus" />
     <meta property="og:description" content="Mountain adventures and unforgettable moments: Discover the beauty of the mountain world and enjoy the image slideshows that take you through the adventures." />
-    <meta property="og:image" content="images/mountain-landscape-view.jpg" />
+    <meta property="og:image" content="https://metodlangus.github.io/images/mountain-landscape-view.jpg" />
     <meta property="og:image:alt" content="Mountain views and nature" />
     <meta property="og:url" content="https://metodlangus.github.io/en/gorski-uzitki.html" />
     <meta property="og:type" content="website" />
 
     <title>Gorski Užitki | Mountain Adventures Through Pictures | Metod Langus</title>
 
+    <!-- 🔹 Canonical URL -->
+    <link rel="canonical" href="https://metodlangus.github.io/en/gorski-uzitki.html" />
+
+    <!-- 🔹 Language alternates -->
+    <link rel="alternate" href="https://metodlangus.github.io/gorski-uzitki.html" hreflang="sl" />
+    <link rel="alternate" href="https://metodlangus.github.io/en/gorski-uzitki.html" hreflang="en" />
+    <link rel="alternate" href="https://metodlangus.github.io/gorski-uzitki.html" hreflang="x-default" />
+
     <!-- Favicon -->
     <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
 
+    <!-- Fonts & CSS -->
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
@@ -1551,26 +1562,37 @@ def generate_home_si_page(homepage_html):
     footer_html = generate_footer_html()
 
     html_content = f"""<!DOCTYPE html>
-<html lang="en">
+<html lang="sl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
+    <meta name="viewport" content="width=400, initial-scale=0.8, maximum-scale=2.0, user-scalable=yes">
     <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+
     <meta name="description" content="Gorske avanture in nepozabni trenutki: Lepote gorskega sveta in predvajalniki slik, ki vas popeljejo skozi dogodivščine." />
-    <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
+    <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
     <meta name="author" content="Metod Langus" />
+
     <meta property="og:title" content="Gorski Užitki | Gorske pustolovščine skozi slike | Metod Langus" />
     <meta property="og:description" content="Gorske avanture in nepozabni trenutki: Lepote gorskega sveta in predvajalniki slik, ki vas popeljejo skozi dogodivščine." />
-    <meta property="og:image" content="slike/gore-pokrajina-razgled.jpg" />
+    <meta property="og:image" content="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiU8RYSJ0I45O63GlKYXw5-U_r7GwP48_st9F1LG7_Z3STuILVQxMO4qLgzP_wxg0v_77s-YwidwwZQIDS1K6SUmY-W3QMwcIyEvt28cLalvCVQu4qWTQIm-B_FvgEmCCe6ydGld4fQgMMd2xNdqMMFtuHgeVXB4gRPco3XP90OOKHpf6HyZ6AeEZqNJQo/s1600/IMG20241101141924.jpg" />
     <meta property="og:image:alt" content="Gorski razgledi in narava" />
     <meta property="og:url" content="https://metodlangus.github.io/gorski-uzitki.html" />
     <meta property="og:type" content="website" />
 
     <title>Gorski Užitki | Gorske pustolovščine skozi slike | Metod Langus</title>
 
+    <!-- Kanonična povezava -->
+    <link rel="canonical" href="https://metodlangus.github.io/gorski-uzitki.html" />
+
+    <!-- Jezikovne različice -->
+    <link rel="alternate" href="https://metodlangus.github.io/gorski-uzitki.html" hreflang="sl" />
+    <link rel="alternate" href="https://metodlangus.github.io/en/gorski-uzitki.html" hreflang="en" />
+    <link rel="alternate" href="https://metodlangus.github.io/gorski-uzitki.html" hreflang="x-default" />
+
     <!-- Favicon -->
     <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
 
+    <!-- Fonts & CSS -->
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
