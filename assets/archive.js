@@ -4,7 +4,16 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("archive-placeholder").innerHTML = `<aside class="sidebar-archive">
   <h2>Arhiv</h2>
   <details open>
-    <summary>2025 (58)</summary>
+    <summary>2025 (62)</summary>
+    <details class="month-group">
+      <summary>oktober 2025 (4)</summary>
+      <ul>
+        <li><a href="https://metodlangus.github.io/posts/2025/10/greben-polovnika.html">Greben Polovnika</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/10/vosca-1737-m-kamnati-vrh-1656-m.html">Vošca (1737 m), Kamnati vrh (1656 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/10/sentanski-vrh-1635-m.html">Šentanski vrh (1635 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/10/lokovnikov-grintovec-1809-m-hajnzev-praprotnik-1727-m.html">Lokovnikov Grintovec (1809 m), Hajnžev Praprotnik (1727 m)</a></li>
+      </ul>
+    </details>
     <details class="month-group">
       <summary>september 2025 (3)</summary>
       <ul>
