@@ -114,7 +114,8 @@ def fetch_all_entries():
 def fix_images_for_lightbox(html_content, post_title):
     """
     Modify image links in HTML content for lightbox compatibility.
-    Uses WebP only, adds alt tags, <picture> elements, and loading attributes.
+    Keeps first image high resolution (/s1600/), others at /s1000/.
+    Uses WebP, adds alt tags, <picture> elements, and loading attributes.
     """
     soup = BeautifulSoup(html_content, "html.parser")
     image_index = 0  # Track image count for loading priority
@@ -144,22 +145,29 @@ def fix_images_for_lightbox(html_content, post_title):
 
         img["alt"] = alt_text
 
-        # Step 2: Fix image src resolution
+        # Step 2: Determine correct resolution
         src = img.get("src", "")
-        new_src = src.replace("/s1600/", "/s1000/").replace("/s1200/", "/s600/")
-        new_src = re.sub(r"(/s\d+)(/)", r"\1-rw\2", new_src)  # Add -rw for WebP
-        img["src"] = new_src
-
-        # Step 3: Fix <a> href resolution
         href = a_tag.get("href", "")
-        new_href = href.replace("/s1600/", "/s1000/").replace("/s1200/", "/s600/")
-        new_href = re.sub(r"(/s\d+)(/)", r"\1-rw\2", new_href)  # Add -rw for WebP
+
+        # First image keeps or upgrades to /s1600/
+        if image_index == 0:
+            new_src = re.sub(r"/s\d+/", "/s1200/", src)
+            new_href = re.sub(r"/s\d+/", "/s1600/", href)
+        else:
+            # Other images downgraded to /s1000/
+            new_src = re.sub(r"/s\d+/", "/s600/", src)
+            new_href = re.sub(r"/s\d+/", "/s1000/", href)
+
+        # Add -rw (WebP) if missing
+        new_src = re.sub(r"(/s\d+)(/)", r"\1-rw\2", new_src)
+        new_href = re.sub(r"(/s\d+)(/)", r"\1-rw\2", new_href)
+        img["src"] = new_src
         a_tag["href"] = new_href
 
-        # Step 4: Add lightbox attribute
+        # Step 3: Add lightbox attribute
         a_tag["data-lightbox"] = "Gallery"
 
-        # Step 5: Add loading attributes
+        # Step 4: Loading and priority
         if image_index == 0:
             img["loading"] = "eager"
             img["fetchpriority"] = "high"
