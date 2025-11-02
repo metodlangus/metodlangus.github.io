@@ -199,6 +199,13 @@
 }
 
 
+/* sidebar pages */
+aside.sidebar-pages li {
+    list-style: none;
+    padding: 5px 10px;
+    margin: 0;
+}
+
 
 /* sidebar archive */
 .sidebar-archive h3 {

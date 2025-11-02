@@ -101,7 +101,7 @@ const endImage = {
 const defaultImgSrc_png = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEicpyIovkBboaA3DOVcPNZQQ47-GSa5AidzIeUbL2N8iue6yM1XIxd0BL5W8e2ty7ntqz4K8ovfmT7DV1c3_NXVFWWDLeKYMpbD_C1wK1qh4Y1zGLh_tHUi5d1pHtDxxQKunZLAkL3ibt5gjhI3KQX9cHtQMn0m9liFgtLc00VQH4YHc5I6aAO-mw84w8Q/s600/end_cover_photo.png";
 
 // Default cover photo
-const defaultImgSrc = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgOeImsdWR0X78A0DBrMxPaz8JnOzELaQisEXya9i1FR0IJRLKxk-aqHFnA7evS4gqsbyvfKr0KuXrXTP6uZ8F10bYls4zfDU7qOgD9dG7HZBm3UJRsFc9nv4jXscecg0hbLt1V4vG8Px4hemML8-HAnkmYITUeOyP-PrIChGugMmX6UtRca6zgq1LFCIbm/s600/20230427_132541.jpg";
+const defaultImgSrc = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiU8RYSJ0I45O63GlKYXw5-U_r7GwP48_st9F1LG7_Z3STuILVQxMO4qLgzP_wxg0v_77s-YwidwwZQIDS1K6SUmY-W3QMwcIyEvt28cLalvCVQu4qWTQIm-B_FvgEmCCe6ydGld4fQgMMd2xNdqMMFtuHgeVXB4gRPco3XP90OOKHpf6HyZ6AeEZqNJQo/s1600/IMG20241101141924.jpg";
 
 // Array to hold all slideshows data
 let slideshows = [];
@@ -2156,9 +2156,9 @@ function getNextOrPreviousEntry(index, currentEntry, direction) {
  * @return  None.
  */
 function setPlaceholderImage(imgElement, captionElement, upperTextElement) {
-    imgElement.src = 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgOeImsdWR0X78A0DBrMxPaz8JnOzELaQisEXya9i1FR0IJRLKxk-aqHFnA7evS4gqsbyvfKr0KuXrXTP6uZ8F10bYls4zfDU7qOgD9dG7HZBm3UJRsFc9nv4jXscecg0hbLt1V4vG8Px4hemML8-HAnkmYITUeOyP-PrIChGugMmX6UtRca6zgq1LFCIbm/s600/20230427_132541.jpg'; // Default placeholder
-    captionElement.textContent = 'Ferrata degli Angeli'; // Placeholder caption
-    upperTextElement.textContent = 'Tavolara'; // Placeholder upper text
+    imgElement.src = defaultImgSrc; // Default placeholder
+    captionElement.textContent = "FOTO: Matej"; // Placeholder caption
+    upperTextElement.textContent = "Cima dell'Uomo (3010 m)"; // Placeholder upper text
 }
 
 
