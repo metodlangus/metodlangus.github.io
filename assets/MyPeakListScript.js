@@ -5,6 +5,11 @@ async function fetchJSON(url) {
     return data;
 }
 
+// Normalize spaces: treat all space variants (non-breaking, thin, etc.) as the same
+function normalizeSpaces(str) {
+    return str.replace(/[\u00A0\u1680\u180E\u2000-\u200B\u202F\u205F\u3000]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
 // Function to sort peaks alphabetically; ensure 'Ostalo' is always last in label2 and label3
 function sortPeaksAlphabetically(labelMap) {
     const sortedLabelMap = {};
@@ -24,7 +29,9 @@ function sortPeaksAlphabetically(labelMap) {
         });
 
         label3Keys.forEach(label3 => {
-            sortedLabel3Map[label3] = label3Map[label3].sort((a, b) => a.peakName.localeCompare(b.peakName));
+            sortedLabel3Map[label3] = label3Map[label3].sort((a, b) =>
+                a.peakName.localeCompare(b.peakName)
+            );
         });
 
         sortedLabelMap[label2] = sortedLabel3Map;
@@ -53,7 +60,9 @@ function renderSortedPeaks(sortedLabelMap) {
                 peakItem.textContent = peakName;
 
                 if (publishedDates.length > 0) {
-                    const dateLinks = publishedDates.map(({ date, link }) => `<a href="${link}">${date}</a>`).join(', ');
+                    const dateLinks = publishedDates.map(({ date, link }) =>
+                        `<a href="${link}">${date}</a>`
+                    ).join(', ');
                     peakItem.innerHTML += ` (${dateLinks})`;
                 }
 
@@ -65,22 +74,17 @@ function renderSortedPeaks(sortedLabelMap) {
 
 // Main function to parse the JSON data and extract mountain names, heights, post links, and dates
 async function main() {
-    try { 
+    try {
         const loadingMessage = document.getElementById('loadingMessage');
         const mountainContainer = document.getElementById('mountainContainer');
         loadingMessage.style.display = 'block';
         mountainContainer.style.display = 'none';
 
-        const maxResults = 25; // Number of blog posts to fetch per request
-        let startIndex = 1; // Start index of blog posts to fetch
         let labelMap = {};
-        let hasMoreEntries = true;
 
-        
-        feedUrl = `${WindowBaseUrl}/data/all-posts.json`;
+        const feedUrl = `${WindowBaseUrl}/data/all-posts.json`;
         const jsonData = await fetchJSON(feedUrl);
         const entries = jsonData.feed.entry || [];
-
 
         entries.forEach(entry => {
             const content = entry.content.$t;
@@ -96,14 +100,13 @@ async function main() {
                 if (span && span.textContent) {
                     const namesAndHeights = span.textContent
                         .split(',')
-                        .map(nameAndHeight => nameAndHeight.trim());
+                        .map(nameAndHeight => normalizeSpaces(nameAndHeight));
 
                     namesAndHeights.forEach(nameAndHeight => {
-                        const peakName = nameAndHeight;
+                        const peakName = normalizeSpaces(nameAndHeight);
                         const fullUrl = entry.link.find(link => link.rel === 'alternate').href;
                         const postLink = new URL(fullUrl).pathname.slice(1); // remove leading "/"
 
-                        // Extract labels with prefixes "2." and all "3."
                         const label2 = entry.category ? entry.category.find(cat => cat.term.startsWith('2.')) : null;
                         const label3Categories = entry.category ? entry.category.filter(cat => cat.term.startsWith('3.')) : [];
 
@@ -112,23 +115,24 @@ async function main() {
                             ? label3Categories[label3Index].term.slice(2)
                             : "Ostalo";
 
-                        if (!labelMap[labelText2]) {
-                            labelMap[labelText2] = {};
-                        }
-
-                        if (!labelMap[labelText2][labelText3]) {
-                            labelMap[labelText2][labelText3] = [];
-                        }
+                        if (!labelMap[labelText2]) labelMap[labelText2] = {};
+                        if (!labelMap[labelText2][labelText3]) labelMap[labelText2][labelText3] = [];
 
                         const publishedDate = new Date(entry.published.$t);
                         const formattedDate = `${publishedDate.getDate()}/${publishedDate.getMonth() + 1}/${publishedDate.getFullYear()}`;
 
-                        // Check if the peak already exists in the list
-                        const existingPeak = labelMap[labelText2][labelText3].find(peak => peak.peakName === peakName);
+                        // Normalize names before comparing to merge duplicates with different spaces
+                        const existingPeak = labelMap[labelText2][labelText3].find(
+                            peak => normalizeSpaces(peak.peakName) === normalizeSpaces(peakName)
+                        );
+
                         if (existingPeak) {
                             existingPeak.publishedDates.push({ date: formattedDate, link: postLink });
                         } else {
-                            labelMap[labelText2][labelText3].push({ peakName, publishedDates: [{ date: formattedDate, link: postLink }] });
+                            labelMap[labelText2][labelText3].push({
+                                peakName,
+                                publishedDates: [{ date: formattedDate, link: postLink }]
+                            });
                         }
                     });
                 }
@@ -138,14 +142,11 @@ async function main() {
             peakTag2Matches.forEach(peakTagMatch => processPeaks(peakTagMatch, 1));
         });
 
-        // Render initial unsorted peaks
-        renderSortedPeaks(labelMap);
-
-        // Sort list alphabetically
+        // Sort and render peaks
         const sortedLabelMap = sortPeaksAlphabetically(labelMap);
         renderSortedPeaks(sortedLabelMap);
 
-        // Hide loading message and show mountainContainer after content is loaded
+        // Show results
         loadingMessage.style.display = 'none';
         mountainContainer.style.display = 'block';
 
