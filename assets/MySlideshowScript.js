@@ -1,11 +1,7 @@
 let randomizeImages = true; // default ON
-let slideshowIndex = 0;
-const slideshowTitles = [];
-const numberOfSlideshows = [];
-const slideshows = [];
-const slideshowContainer = [];
 
-const defaultImgSrc = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiU8RYSJ0I45O63GlKYXw5-U_r7GwP48_st9F1LG7_Z3STuILVQxMO4qLgzP_wxg0v_77s-YwidwwZQIDS1K6SUmY-W3QMwcIyEvt28cLalvCVQu4qWTQIm-B_FvgEmCCe6ydGld4fQgMMd2xNdqMMFtuHgeVXB4gRPco3XP90OOKHpf6HyZ6AeEZqNJQo/s1600/IMG20241101141924.jpg";
+const gallery = { imageBuffer: [], shuffledImages: [] };
+const galleryContainer = document.getElementById('galleryContainer');
 
 /* --------------------- LRU CACHE --------------------- */
 class LRUCacheBySize {
@@ -49,59 +45,16 @@ class LRUCacheBySize {
 }
 const imageCache = new LRUCacheBySize(50 * 1024 * 1024);
 
-/* --------------------- SLIDESHOW CREATION --------------------- */
-generateSlideshowContainers(defaultImgSrc);
+/* --------------------- INIT --------------------- */
+initializeGallery();
 
-function generateSlideshowContainers(defaultImgSrc) {
-    while (typeof window[`slideshowTitle${slideshowIndex}`] !== 'undefined') {
-        const SlideshowTitle = window[`slideshowTitle${slideshowIndex}`];
-        const coverPhoto = window[`CoverPhoto${slideshowIndex}`] || defaultImgSrc;
-        slideshowTitles.push(SlideshowTitle);
-        insertSlideshowContainer(SlideshowTitle, coverPhoto, slideshowIndex);
-        slideshowIndex++;
-    }
-    initializeSlideshows(numberOfSlideshows, defaultImgSrc);
-}
-
-function insertSlideshowContainer(slideshowTitle, coverPhoto, index) {
-    const wrapperDiv = document.createElement('div');
-    wrapperDiv.id = `slideShow-${index}`;
-    wrapperDiv.className = 'my-slideshow-wrapper';
-    wrapperDiv.innerHTML = `
-        <h2 class="gallery-title">${slideshowTitle}</h2>
-        <div class="gallery-container" id="slideshowContainer-${index}">
-            <div class="gallery-item cover-photo">
-                <img alt="Cover Photo" src="${coverPhoto}" id="coverPhotoElement-${index}" />
-                <div class="photo-overlay"><span class="photo-title">${slideshowTitle}</span></div>
-            </div>
-        </div>`;
-
-    const scriptTags = document.getElementsByTagName('script');
-    for (let script of scriptTags) {
-        if (script.innerText.includes(`var slideshowTitle${index}`)) {
-            script.parentNode.insertBefore(wrapperDiv, script.nextSibling);
-            numberOfSlideshows.push(index);
-            break;
-        }
-    }
-}
-
-function initializeSlideshows(numberOfSlideshows) {
-    numberOfSlideshows.forEach(index => {
-        slideshows[index] = { imageBuffer: [], shuffledImages: [] };
-        slideshowContainer.push(document.getElementById(`slideshowContainer-${index}`));
-    });
+function initializeGallery() {
+    fetchData();
 }
 
 /* --------------------- FETCHING DATA --------------------- */
-function fetchData(index) {
-    let feedUrl;
-    const title = slideshowTitles[index];
-
-    if (title === "All pictures") feedUrl = `${WindowBaseUrl}/data/all-posts.json`;
-    else if (title === "Make post slideshow" || title === "Make trip slideshow")
-        feedUrl = `${WindowBaseUrl}/data/posts/${postId}.json`;
-    else feedUrl = `${WindowBaseUrl}/data/posts/${encodeURIComponent(title)}.json`;
+function fetchData() {
+    const feedUrl = `${WindowBaseUrl}/data/all-posts.json`;
 
     fetch(feedUrl)
         .then(res => res.json())
@@ -109,78 +62,128 @@ function fetchData(index) {
             let entries = data.entry || data.feed?.entry;
             if (entries && !Array.isArray(entries)) entries = [entries];
 
-            if (title === "All pictures") {
-                if (!entries?.length) {
-                    document.getElementById('imagesLoadedCount').textContent = slideshows[index].imageBuffer.length;
-                    return;
-                }
-
-                const startDate = localStorage.getItem('startDateRange');
-                const endDate = localStorage.getItem('endDateRange');
-                const selectedLabels = JSON.parse(localStorage.getItem('selectedLabels') || '{}');
-
-                entries = entries.filter(entry => {
-                    const entryDate = new Date(entry.published?.$t || entry.published);
-                    if (startDate && entryDate < new Date(startDate)) return false;
-                    if (endDate && entryDate > new Date(endDate)) return false;
-                    if (Object.keys(selectedLabels).length) {
-                        const entryLabels = (entry.category || []).map(cat => cat.term.replace(/^\d+\.\s*/, ''));
-                        for (const group in selectedLabels) {
-                            if (!selectedLabels[group].some(label => entryLabels.includes(label))) return false;
-                        }
-                    }
-                    return true;
-                });
-
-                entries.forEach(entry => processEntry(index, entry));
-                const imgCount = slideshows[index].imageBuffer.length;
-
-                if (!imgCount) {
-                    document.getElementById(`slideShow-${index}`).innerHTML =
-                        `<p style="text-align:center; font-size:18px; padding:20px;">Ni slik za izbrane filtre</p>`;
-                    return;
-                }
-                document.getElementById('imagesLoadedCount').textContent = imgCount;
-                slideshows[index].shuffledImages = shuffleArray(slideshows[index].imageBuffer.slice(), index);
-                buildSlides(index);
+            if (!entries?.length) {
+                document.getElementById('imagesLoadedCount').textContent = gallery.imageBuffer.length;
                 return;
             }
 
-            for (const entry of entries) processEntry(index, entry);
-            document.getElementById('imagesLoadedCount').textContent = slideshows[index].imageBuffer.length;
-            slideshows[index].shuffledImages = shuffleArray(slideshows[index].imageBuffer.slice(), index);
-            buildSlides(index);
+            const startDate = localStorage.getItem('startDateRange');
+            const endDate = localStorage.getItem('endDateRange');
+            const selectedLabels = JSON.parse(localStorage.getItem('selectedLabels') || '{}');
+
+            entries = entries.filter(entry => {
+                const entryDate = new Date(entry.published?.$t || entry.published);
+                if (startDate && entryDate < new Date(startDate)) return false;
+                if (endDate && entryDate > new Date(endDate)) return false;
+                if (Object.keys(selectedLabels).length) {
+                    const entryLabels = (entry.category || []).map(cat => cat.term.replace(/^\d+\.\s*/, ''));
+                    for (const group in selectedLabels) {
+                        if (!selectedLabels[group].some(label => entryLabels.includes(label))) return false;
+                    }
+                }
+                return true;
+            });
+
+            entries.forEach(entry => processEntry(entry));
+            const imgCount = gallery.imageBuffer.length;
+            document.getElementById('imagesLoadedCount').textContent = imgCount;
+
+            if (!imgCount) {
+                if (galleryContainer)
+                    galleryContainer.innerHTML =
+                        `<p style="text-align:center; font-size:18px; padding:20px;">Ni slik za izbrane filtre</p>`;
+                return;
+            }
+
+            gallery.shuffledImages = shuffleArray(gallery.imageBuffer.slice());
+            buildGallery();
         })
         .catch(err => {
             console.error('Error fetching data:', err);
-            const wrapper = document.getElementById(`slideShow-${index}`);
-            if (wrapper) wrapper.style.display = 'none';
+            if (galleryContainer) galleryContainer.style.display = 'none';
         });
 }
 
 /* --------------------- BUILD GALLERY VIEW --------------------- */
-function buildSlides(index) { initializeSlides(index); }
-
-function initializeSlides(index) {
-    const galleryContainer = document.getElementById(`slideshowContainer-${index}`);
+async function buildGallery() {
     if (!galleryContainer) return;
     galleryContainer.innerHTML = '';
 
-    slideshows[index].shuffledImages.forEach(img => {
-        if (!img?.src) return;
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'gallery-item';
-        itemDiv.innerHTML = `
-            <img src="${img.src}" alt="${img.caption || 'Image'}" />
-            <div class="photo-overlay"><span class="photo-title">${img.caption || ''}</span></div>`;
-        galleryContainer.appendChild(itemDiv);
-    });
+    if (!gallery.shuffledImages.length) {
+        galleryContainer.innerHTML = '<div class="loading">Ni slik za izbrane filtre</div>';
+        return;
+    }
+
+    const gap = 8; // gap between images
+    const containerWidth = galleryContainer.clientWidth || window.innerWidth - 40;
+    const imagesPerRowEstimate = Math.max(2, Math.floor(containerWidth / 300));
+
+    let idx = 0;
+    while (idx < gallery.shuffledImages.length) {
+        const batch = gallery.shuffledImages.slice(idx, idx + imagesPerRowEstimate);
+        idx += imagesPerRowEstimate;
+
+        // Load images to get their aspect ratio
+        const loadedBatch = await Promise.all(batch.map(imgData =>
+            new Promise(resolve => {
+                const cachedSrc = imageCache.get(imgData.src) || imgData.src;
+                const img = new Image();
+                img.src = cachedSrc;
+                img.onload = () => {
+                    // Save to cache if not present
+                    if (!imageCache.has(imgData.src)) imageCache.set(imgData.src, imgData.src, estimateImageSize(imgData.src));
+                    resolve({...imgData, ratio: img.width / img.height});
+                };
+                img.onerror = () => resolve(null);
+            })
+        ));
+
+        const validImages = loadedBatch.filter(Boolean);
+        if (!validImages.length) continue;
+
+        // Calculate row height to fit container width
+        const rowRatioSum = validImages.reduce((sum, img) => sum + img.ratio, 0);
+        const rowHeight = (containerWidth - gap * (validImages.length - 1)) / rowRatioSum;
+
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'row';
+        rowDiv.style.display = 'flex';
+        rowDiv.style.gap = gap + 'px';
+
+        validImages.forEach(item => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'gallery-item';
+            itemDiv.style.width = item.ratio * rowHeight + 'px';
+            itemDiv.style.height = rowHeight + 'px';
+            itemDiv.style.position = 'relative';
+            itemDiv.style.overflow = 'hidden';
+
+            const imgEl = document.createElement('img');
+            imgEl.src = imageCache.get(item.src) || item.src;
+            imgEl.alt = item.caption || '';
+            imgEl.loading = 'lazy';
+            imgEl.style.width = '100%';
+            imgEl.style.height = '100%';
+            imgEl.style.objectFit = 'cover';
+
+            const captionDiv = document.createElement('div');
+            captionDiv.className = 'caption';
+            captionDiv.textContent = item.caption || '';
+
+            itemDiv.appendChild(imgEl);
+            itemDiv.appendChild(captionDiv);
+            rowDiv.appendChild(itemDiv);
+        });
+
+        galleryContainer.appendChild(rowDiv);
+    }
 }
 
+
 /* --------------------- UTILS --------------------- */
-function shuffleArray(array, index) {
-    const randomizeImages = localStorage.getItem('randomizeImages') === 'true';
-    if (slideshowTitles[index] === "All pictures" && randomizeImages) {
+function shuffleArray(array) {
+    const randomize = localStorage.getItem('randomizeImages') === 'true';
+    if (randomize) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [array[i], array[j]] = [array[j], array[i]];
@@ -189,12 +192,12 @@ function shuffleArray(array, index) {
     return array;
 }
 
-function processEntry(index, entry) {
+function processEntry(entry) {
     const htmlDoc = new DOMParser().parseFromString(entry.content.$t, 'text/html');
     const images = htmlDoc.getElementsByTagName('img');
     const captions = getCaptions(htmlDoc);
     const postTitle = entry.title.$t;
-    const containerSize = Math.max(slideshowContainer[index].offsetWidth, slideshowContainer[index].offsetHeight);
+    const containerSize = Math.max(galleryContainer.offsetWidth, galleryContainer.offsetHeight);
     const PhotosRange = localStorage.getItem('photosSliderValue') || initPhotos;
 
     for (let i = 1; i < images.length; i++) {
@@ -209,132 +212,42 @@ function processEntry(index, entry) {
 
         if (isWithinRange) {
             const imgSrc = images[i].src.replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//, `/s${containerSize}-rw/`);
-            slideshows[index].imageBuffer.push({ src: imgSrc, caption: captions[i] || '', title: postTitle });
+            gallery.imageBuffer.push({ src: imgSrc, caption: captions[i] || '', title: postTitle });
         }
     }
 }
 
 function getCaptions(htmlDoc) {
     const images = htmlDoc.getElementsByTagName('img');
-    const captions = Array.from({ length: images.length }, () => '');
-    const captionEls = htmlDoc.getElementsByClassName('tr-caption');
-    Array.from(captionEls).forEach((c, i) => captions[i] = c.textContent.trim());
+    const captionElements = htmlDoc.getElementsByClassName('tr-caption');
+    const captions = [];
+    let captionIndex = 0;
+
+    for (let i = 0; i < images.length; i++) {
+        let caption = '';
+        while (captionIndex < captionElements.length) {
+            const currentCaptionElement = captionElements[captionIndex];
+            const nextImageElement = images[i + 1];
+            if (!nextImageElement || currentCaptionElement.compareDocumentPosition(nextImageElement) & Node.DOCUMENT_POSITION_FOLLOWING) {
+                caption = currentCaptionElement.textContent.trim();
+                captionIndex++;
+                break;
+            }
+            break;
+        }
+        captions.push(caption);
+    }
     return captions;
 }
 
-/* --------------------- FILTERS / TOGGLES --------------------- */
-function initializePersistentToggle(buttonId, storageKey) {
-    const button = document.getElementById(buttonId);
-    if (!button) return;
-    let state = localStorage.getItem(storageKey);
-    state = (state === null) ? true : (state === 'true');
-    button.textContent = state ? 'DA' : 'NE';
-    button.addEventListener('click', () => {
-        state = !state;
-        localStorage.setItem(storageKey, state);
-        button.textContent = state ? 'DA' : 'NE';
-        setTimeout(() => location.reload(), 2000);
-    });
-}
-
-function toggleRandomize() {
-    randomizeImages = !randomizeImages;
-    document.getElementById('toggleRandomButton').innerText = randomizeImages ? 'DA' : 'NE';
-}
-
-function initializePersistentDateRange(startId, endId, storageKeyStart, storageKeyEnd) {
-    const start = document.getElementById(startId);
-    const end = document.getElementById(endId);
-    if (!start || !end) return;
-
-    start.value = localStorage.getItem(storageKeyStart) || '';
-    end.value = localStorage.getItem(storageKeyEnd) || '';
-
-    [start, end].forEach(input => {
-        input.addEventListener('change', () => {
-            localStorage.setItem(storageKeyStart, start.value);
-            localStorage.setItem(storageKeyEnd, end.value);
-            setTimeout(() => location.reload(), 2000);
-        });
-    });
-}
-
-function initializePersistentLabelFilter() {
-    const checkboxes = document.querySelectorAll('.label-filter-checkbox');
-    if (!checkboxes.length) return;
-    const saved = JSON.parse(localStorage.getItem('selectedLabels') || '{}');
-
-    checkboxes.forEach(cb => {
-        const prefix = cb.dataset.prefix;
-        if (saved[prefix]?.includes(cb.value)) cb.checked = true;
-        cb.addEventListener('change', () => {
-            const selected = {};
-            checkboxes.forEach(c => {
-                if (c.checked) {
-                    const p = c.dataset.prefix;
-                    (selected[p] ||= []).push(c.value);
-                }
-            });
-            localStorage.setItem('selectedLabels', JSON.stringify(selected));
-            setTimeout(() => location.reload(), 2000);
-        });
-    });
-}
-
-function toggleSection(id, btn) {
-    const el = document.getElementById(id);
-    const icon = btn.querySelector('.arrow-icon');
-    const isHidden = el.style.display === "none";
-    el.style.display = isHidden ? "block" : "none";
-    icon.textContent = isHidden ? "▼" : "▶";
-    localStorage.setItem("collapse_" + id, isHidden ? "open" : "closed");
-}
-
-function restoreCollapseState() {
-    document.querySelectorAll(".collapse-btn").forEach(btn => {
-        const id = btn.getAttribute("onclick").match(/'(.*?)'/)[1];
-        const state = localStorage.getItem("collapse_" + id);
-        const el = document.getElementById(id);
-        const icon = btn.querySelector(".arrow-icon");
-        if (state === "open") {
-            el.style.display = "block"; icon.textContent = "▼";
-        } else {
-            el.style.display = "none"; icon.textContent = "▶";
-        }
-    });
-}
-
-function setupClearFiltersButton() {
-    const btn = document.getElementById('clear-filters-btn');
-    if (!btn) return;
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.label-filter-checkbox').forEach(cb => cb.checked = false);
-        ['selectedLabels', 'startDateRange', 'endDateRange'].forEach(k => localStorage.removeItem(k));
-        setTimeout(() => location.reload(), 500);
-    });
-}
-
-/* --------------------- SLIDER --------------------- */
-function initializePersistentSlider(sliderId, valueDisplayId, storageKey) {
-    const slider = document.getElementById(sliderId);
-    const valueDisplay = document.getElementById(valueDisplayId);
-    if (!slider || !valueDisplay) return;
-
-    const titles = { "3": "Največ slik", "2": "Več slik", "1": "Malo slik", "0": "Najboljše" };
-    const saved = localStorage.getItem(storageKey);
-    const val = saved ?? initPhotos;
-    slider.value = val;
-    valueDisplay.textContent = titles[val] || val;
-
-    slider.addEventListener('input', () => {
-        localStorage.setItem(storageKey, slider.value);
-        valueDisplay.textContent = titles[slider.value] || slider.value;
-        setTimeout(() => location.reload(), 2000);
-    });
+// Simple size estimation for cache (in bytes)
+function estimateImageSize(url) {
+    // This is a rough estimate: 500KB per image
+    return 500 * 1024;
 }
 
 /* --------------------- ONLOAD --------------------- */
-window.addEventListener('load', () => numberOfSlideshows.forEach(fetchData));
+window.addEventListener('load', fetchData);
 document.addEventListener('DOMContentLoaded', () => {
     initializePersistentSlider('photosSliderElement', 'photosValueElement', 'photosSliderValue');
     initializePersistentToggle('toggleRandomButton', 'randomizeImages');
