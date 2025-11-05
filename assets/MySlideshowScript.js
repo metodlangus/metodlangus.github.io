@@ -188,19 +188,21 @@ async function buildGalleryBatch(imagesBatch) {
         const placeholderRow = document.createElement('div');
         placeholderRow.className = 'row placeholder-row';
         placeholderRow.style.display = 'flex';
-        placeholderRow.style.gap = gap + 'px';
-        placeholderRow.style.minHeight = estRowHeight + 'px';
-        placeholderRow.style.opacity = '0.3';
+        placeholderRow.style.justifyContent = 'center';
+        placeholderRow.style.alignItems = 'center';
+        placeholderRow.style.width = '100%';
+        placeholderRow.style.height = '80px';
 
-        batch.forEach(() => {
-            const ph = document.createElement('div');
-            ph.className = 'gallery-item placeholder';
-            ph.style.flex = `1`;
-            ph.style.background = '#f0f0f0';
-            ph.style.borderRadius = '8px';
-            placeholderRow.appendChild(ph);
-        });
+        const ph = document.createElement('div');
+        ph.className = 'gallery-item placeholder';
+        ph.style.fontSize = '22px';
+        ph.style.fontWeight = '700';
+        ph.style.color = 'rgba(0, 0, 0, 0.5)';
+        ph.style.textAlign = 'center';
+        ph.style.width = '100%';
+        ph.textContent = 'Nalaganje več slik...';
 
+        placeholderRow.appendChild(ph);
         galleryContainer.appendChild(placeholderRow);
 
         // --- Load actual images for this batch ---
@@ -232,15 +234,18 @@ async function buildGalleryBatch(imagesBatch) {
         rowDiv.style.display = 'flex';
         rowDiv.style.gap = gap + 'px';
         rowDiv.style.opacity = '0';
-        rowDiv.style.transition = 'opacity 0.3s ease';
+        rowDiv.style.transition = 'opacity 0.5s ease';
 
-        validImages.forEach(item => {
+        validImages.forEach((item, i) => {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'gallery-item';
             itemDiv.style.width = item.ratio * rowHeight + 'px';
             itemDiv.style.height = rowHeight + 'px';
             itemDiv.style.position = 'relative';
             itemDiv.style.overflow = 'hidden';
+            itemDiv.style.opacity = '0';                  // start invisible
+            itemDiv.style.transition = 'opacity 0.5s ease';
+            itemDiv.style.transitionDelay = `${i * 0.05}s`; // staggered fade-in
 
             const imgEl = document.createElement('img');
             imgEl.src = imageCache.get(item.src) || item.src;
@@ -257,10 +262,17 @@ async function buildGalleryBatch(imagesBatch) {
             itemDiv.appendChild(imgEl);
             itemDiv.appendChild(captionDiv);
             rowDiv.appendChild(itemDiv);
+
+            // fade in each image
+            requestAnimationFrame(() => {
+                itemDiv.style.opacity = '1';
+            });
         });
 
         // Smooth replace: swap placeholders → real row
         placeholderRow.replaceWith(rowDiv);
+
+        // fade in the whole row smoothly
         requestAnimationFrame(() => (rowDiv.style.opacity = '1'));
     }
 }
