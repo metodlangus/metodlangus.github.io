@@ -233,7 +233,7 @@ def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
                 </div>
                 <div class="my-thumbnail" id="post-snippet-{post_id}">
                   <div class="my-snippet-thumbnail">
-                    {'<img src="' + thumbnail.replace('/s72-c', '/s600-rw') + '" alt="Thumbnail image for post: ' + title + '">' if thumbnail else ""}
+                    {'<img src="' + thumbnail.replace('/s72-c', '/s600-rw') + '" alt="Naslovna slika: ' + title + '">' if thumbnail else ""}
                   </div>
                 </div>
                 <a href="{alternate_link}" aria-label="{title}"></a>

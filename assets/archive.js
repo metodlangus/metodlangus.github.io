@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function() {
       <summary>julij 2025 (5)</summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2025/07/medvedjek-1000-m.html">Medvedjek (1000 m)</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2025/07/poldnik-kopa-picco-di-mezzodi-2063-m-monte-bucher-grande-skala-2133-m.html">Poldnik (Kopa) / Picco di Mezzodi (2063 m), Monte Bucher grande / Skala (2133 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/07/poldnik-kopa-picco-di-mezzodi-2063-m-monte-bucher-grande.html">Poldnik (Kopa) / Picco di Mezzodi (2063 m), Monte Bucher grande / Skala (2133 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/07/brana-2253-m-cez-sijo.html">Brana (2253 m) čez Šijo</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/07/motschiwa-1822-m-kosmatitza-kosmatica-1659-m.html">Motschiwa (1822 m), Kosmatitza / Kosmatica (1659 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/07/po-hribckih-nad-dolino-drage.html">Po hribčkih nad dolino Drage</a></li>
@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <li><a href="https://metodlangus.github.io/posts/2025/06/hohe-leier-2774-m.html">Hohe Leier (2774 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/06/vikend-v-radstadtskih-turah-21-22-6-2025.html">Vikend v Radstadtskih Turah (21. – 22. 6. 2025)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/06/mosermandl-2608-m.html">Mosermandl (2608 m)</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2025/06/kleine-guglspitze-2570-m-in-speiereck-2411-m-ter-se-vsaj-15-vrhov-vmes.html">Kleine Guglspitze (2570 m) in Speiereck (2411 m) ter še vsaj 15 vrhov vmes</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/06/kleine-guglspitze-2570-m-in-speiereck-2411-m-ter-se-vsaj-15-vrhov.html">Kleine Guglspitze (2570 m) in Speiereck (2411 m) ter še vsaj 15 vrhov vmes</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/06/cez-krisko-goro-na-storzic-2132-m.html">Čez Kriško goro na Storžič (2132 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/06/brezpotni-ravnik-1477-m-ter-brda-2009-m-iz-krme.html">Brezpotni Ravnik (1477 m) ter Brda (2009 m) iz Krme</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/06/cez-kofce-na-stari-ljubelj.html">Čez Kofce na stari Ljubelj</a></li>
@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <li><a href="https://metodlangus.github.io/posts/2024/09/slovensky-raj-soteski-piecky-in-velky-sokol.html">Slovenský raj - soteski Piecky in Veľký Sokol</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/09/slovensky-raj-slovaski-np-stevilnih-kanjonov-in-sotesk.html">Slovenský raj - Slovaški NP številnih kanjonov in sotesk</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/09/rysy-2499-m-najvisji-vrh-poljske-koprovsky-stit-2367-m.html">Rysy (2499 m) - najvišji vrh Poljske, Kôprovský štít (2367 m)</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2024/09/gerlachovsky-stit-2654-m-najvisji-vrh-slovaske-vychodna-vysoka-2429-m.html">Gerlachovský štít (2654 m) - najvišji vrh Slovaške, Východná Vysoká (2429 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2024/09/gerlachovsky-stit-2654-m-najvisji-vrh-slovaske-vychodna-vysoka.html">Gerlachovský štít (2654 m) - najvišji vrh Slovaške, Východná Vysoká (2429 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/09/jezero-strbske-pleso.html">Jezero Štrbské Pleso</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/09/krivan-2494-m-simbol-slovaske-narodne-zavesti.html">Kriváň (2494 m) - simbol slovaške narodne zavesti</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/09/nizke-tatre-derese-2004-m-chopok-2024-m-dumbier-2043-m.html">Nizke Tatre - Dereše (2004 m), Chopok (2024 m), Ďumbier (2043 m)</a></li>
@@ -197,7 +197,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <li><a href="https://metodlangus.github.io/posts/2024/06/monte-sart-2324-m.html">Monte Sart (2324 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/06/precenje-kumlehov.html">Prečenje Kumlehov</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/06/mokrica-1853-m-iz-kurje-doline.html">Mokrica (1853 m) iz Kurje doline</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2024/06/bistrica-dobrca-1634-m-begunjscica-2060-m-vrtaca-2180-m-ljubelj.html">Bistrica - Dobrča (1634 m) - Begunjščica (2060 m) - Vrtača (2180 m) - Ljubelj</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2024/06/bistrica-dobrca-1634-m-begunjscica-2060-m-vrtaca-2180-m.html">Bistrica - Dobrča (1634 m) - Begunjščica (2060 m) - Vrtača (2180 m) - Ljubelj</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/06/bivak-stebrasta-skala-in-naprej-na-mezaklo.html">Bivak Stebrasta skala in naprej na Mežaklo</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/06/kriska-gora-1472-m-tolsti-vrh-1715-m.html">Kriška gora (1472 m), Tolsti vrh (1715 m)</a></li>
       </ul>
@@ -214,7 +214,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <li><a href="https://metodlangus.github.io/posts/2024/04/vrh-ljubeljscice-1705-m.html">Vrh Ljubeljščice (1705 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/04/vrh-ljubeljscice-1705-m-1.html">Vrh Ljubeljščice (1705 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/04/sentanski-vrh-1635-m-dobrca-1634-m.html">Šentanski vrh (1635 m), Dobrča (1634 m)</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2024/04/po-hribckih-nad-vasico-chiusaforte-z-najvisjim-monte-plananizza-1555-m.html">Po hribčkih nad vasico Chiusaforte, z najvišjim Monte Plananizza (1555 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2024/04/po-hribckih-nad-vasico-chiusaforte-z-najvisjim-monte-plananizza.html">Po hribčkih nad vasico Chiusaforte, z najvišjim Monte Plananizza (1555 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/04/od-alpe-piccola-1304-m-do-monte-acuto-1781-m.html">Od Alpe Piccola (1304 m) do Monte Acuto (1781 m)</a></li>
       </ul>
     </details>

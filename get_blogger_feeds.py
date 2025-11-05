@@ -90,8 +90,16 @@ def main():
             print(f"Date parse error at index {i}: {e}")
             pub_year, pub_month = "unknown", "unknown"
 
+      # Limit title length for slug generation (smart truncation)
+        max_slug_length = 70
+        truncated_title = title[:max_slug_length].rstrip()
+
+        # Avoid cutting the last word in half
+        if len(truncated_title) == max_slug_length and ' ' in truncated_title:
+            truncated_title = truncated_title[:truncated_title.rfind(' ')]
+
         # Generate slug
-        base_slug = slugify(title) or f"post-{i}"
+        base_slug = slugify(truncated_title) or f"post-{i}"
         slug_count = slug_counts[pub_year][(pub_month, base_slug)]
         unique_slug = base_slug if slug_count == 0 else f"{base_slug}-{slug_count}"
         slug_counts[pub_year][(pub_month, base_slug)] += 1
