@@ -45,12 +45,6 @@ class LRUCacheBySize {
 }
 const imageCache = new LRUCacheBySize(50 * 1024 * 1024);
 
-/* --------------------- INIT --------------------- */
-initializeGallery();
-
-function initializeGallery() {
-    fetchData();
-}
 
 /* --------------------- FETCHING DATA --------------------- */
 function fetchData() {
@@ -96,7 +90,7 @@ function fetchData() {
             }
 
             gallery.shuffledImages = shuffleArray(gallery.imageBuffer.slice());
-            buildGallery();
+            initLazyGallery(); // start lazy loading
         })
         .catch(err => {
             console.error('Error fetching data:', err);
@@ -104,44 +98,132 @@ function fetchData() {
         });
 }
 
-/* --------------------- BUILD GALLERY VIEW --------------------- */
-async function buildGallery() {
+/* --------------------- LAZY GALLERY --------------------- */
+let lazyIndex = 0;
+const batchSize = 12;
+let loadingInProgress = false;
+let observer = null;
+let sentinel = null;
+
+function initLazyGallery() {
     if (!galleryContainer) return;
     galleryContainer.innerHTML = '';
+    lazyIndex = 0;
+    loadingInProgress = false;
 
-    if (!gallery.shuffledImages.length) {
-        galleryContainer.innerHTML = '<div class="loading">Ni slik za izbrane filtre</div>';
-        return;
+    // Remove old sentinel if exists
+    if (sentinel) sentinel.remove();
+
+    sentinel = document.createElement('div');
+    sentinel.id = 'lazySentinel';
+    sentinel.style.position = 'absolute';  // avoid affecting row gaps
+    sentinel.style.height = '1px';
+    sentinel.style.width = '1px';          // minimal size
+    sentinel.style.bottom = '0';           // place at the bottom of container
+    galleryContainer.appendChild(sentinel);
+
+    // Load first batch immediately
+    loadNextBatch();
+
+    // Create / reset observer
+    if (observer) observer.disconnect();
+
+    observer = new IntersectionObserver(entries => {
+        for (const entry of entries) {
+            if (entry.isIntersecting && !loadingInProgress) {
+                loadNextBatch();
+            }
+        }
+    }, {
+        rootMargin: '800px 0px', // preload before visible
+        threshold: 0.01
+    });
+
+    observer.observe(sentinel);
+}
+
+async function loadNextBatch() {
+    if (loadingInProgress) return;
+    if (lazyIndex >= gallery.shuffledImages.length) return;
+
+    loadingInProgress = true;
+
+    const nextBatch = gallery.shuffledImages.slice(lazyIndex, lazyIndex + batchSize);
+    lazyIndex += batchSize;
+
+    await buildGalleryBatch(nextBatch);
+
+    loadingInProgress = false;
+
+    // Always move sentinel to bottom after each batch
+    if (sentinel && galleryContainer.lastElementChild !== sentinel) {
+        galleryContainer.appendChild(sentinel);
     }
 
-    const gap = 8; // gap between images
+    // If everything loaded, disconnect observer
+    if (lazyIndex >= gallery.shuffledImages.length) {
+        if (observer && sentinel) {
+            observer.unobserve(sentinel);
+            sentinel.remove();
+        }
+    }
+}
+
+
+/* --------------------- BUILD GALLERY BATCH (with placeholders) --------------------- */
+async function buildGalleryBatch(imagesBatch) {
+    const gap = 8;
     const containerWidth = galleryContainer.clientWidth || window.innerWidth - 40;
     const imagesPerRowEstimate = Math.max(2, Math.floor(containerWidth / 300));
 
     let idx = 0;
-    while (idx < gallery.shuffledImages.length) {
-        const batch = gallery.shuffledImages.slice(idx, idx + imagesPerRowEstimate);
+    while (idx < imagesBatch.length) {
+        const batch = imagesBatch.slice(idx, idx + imagesPerRowEstimate);
         idx += imagesPerRowEstimate;
 
-        // Load images to get their aspect ratio
+        // --- Estimate row height upfront for placeholders ---
+        const estRowHeight = (containerWidth - gap * (batch.length - 1)) / (batch.length * 1.5); // average 1.5 ratio
+
+        // --- Create placeholder row immediately ---
+        const placeholderRow = document.createElement('div');
+        placeholderRow.className = 'row placeholder-row';
+        placeholderRow.style.display = 'flex';
+        placeholderRow.style.gap = gap + 'px';
+        placeholderRow.style.minHeight = estRowHeight + 'px';
+        placeholderRow.style.opacity = '0.3';
+
+        batch.forEach(() => {
+            const ph = document.createElement('div');
+            ph.className = 'gallery-item placeholder';
+            ph.style.flex = `1`;
+            ph.style.background = '#f0f0f0';
+            ph.style.borderRadius = '8px';
+            placeholderRow.appendChild(ph);
+        });
+
+        galleryContainer.appendChild(placeholderRow);
+
+        // --- Load actual images for this batch ---
         const loadedBatch = await Promise.all(batch.map(imgData =>
             new Promise(resolve => {
                 const cachedSrc = imageCache.get(imgData.src) || imgData.src;
                 const img = new Image();
                 img.src = cachedSrc;
                 img.onload = () => {
-                    // Save to cache if not present
                     if (!imageCache.has(imgData.src)) imageCache.set(imgData.src, imgData.src, estimateImageSize(imgData.src));
-                    resolve({...imgData, ratio: img.width / img.height});
+                    resolve({ ...imgData, ratio: img.width / img.height });
                 };
                 img.onerror = () => resolve(null);
             })
         ));
 
         const validImages = loadedBatch.filter(Boolean);
-        if (!validImages.length) continue;
+        if (!validImages.length) {
+            placeholderRow.remove();
+            continue;
+        }
 
-        // Calculate row height to fit container width
+        // --- Replace placeholder with real row ---
         const rowRatioSum = validImages.reduce((sum, img) => sum + img.ratio, 0);
         const rowHeight = (containerWidth - gap * (validImages.length - 1)) / rowRatioSum;
 
@@ -149,6 +231,8 @@ async function buildGallery() {
         rowDiv.className = 'row';
         rowDiv.style.display = 'flex';
         rowDiv.style.gap = gap + 'px';
+        rowDiv.style.opacity = '0';
+        rowDiv.style.transition = 'opacity 0.3s ease';
 
         validImages.forEach(item => {
             const itemDiv = document.createElement('div');
@@ -175,10 +259,11 @@ async function buildGallery() {
             rowDiv.appendChild(itemDiv);
         });
 
-        galleryContainer.appendChild(rowDiv);
+        // Smooth replace: swap placeholders → real row
+        placeholderRow.replaceWith(rowDiv);
+        requestAnimationFrame(() => (rowDiv.style.opacity = '1'));
     }
 }
-
 
 /* --------------------- UTILS --------------------- */
 function shuffleArray(array) {
@@ -242,8 +327,7 @@ function getCaptions(htmlDoc) {
 
 // Simple size estimation for cache (in bytes)
 function estimateImageSize(url) {
-    // This is a rough estimate: 500KB per image
-    return 500 * 1024;
+    return 500 * 1024; // 500 KB estimate
 }
 
 /* --------------------- ONLOAD --------------------- */
