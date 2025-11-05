@@ -708,8 +708,9 @@ def generate_sidebar_html(picture_settings, map_settings, current_page):
         {random_photo_sections}
         <div class="pages">
           <aside class='sidebar-pages'><h2>Strani</h2>
-            <li><a href="{BASE_SITE_URL}">Dnevnik</a></li>
+            <li><a href="{BASE_SITE_URL}">Domov</a></li>
             <li><a href="{BASE_SITE_URL}/predvajalnik-nakljucnih-fotografij.html">Predvajalnik naključnih fotografij</a></li>
+            <li><a href="{BASE_SITE_URL}/galerija-fotografij.html">Galerija fotografij</a></li>
             <li><a href="{BASE_SITE_URL}/seznam-vrhov.html">Seznam vrhov</a></li>
             <li><a href="{BASE_SITE_URL}/zemljevid-spominov.html">Zemljevid spominov</a></li>
           </aside>
@@ -1302,6 +1303,7 @@ def generate_predvajalnik_page(current_page):
 
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="assets/MySlideshowScript.js" defer></script>
+  <script src="assets/MyFiltersScript.js" defer></script>
 
 </body>
 </html>"""
@@ -1309,6 +1311,82 @@ def generate_predvajalnik_page(current_page):
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html_content)
     print(f"Generated random slideshow page: {output_path}")
+
+
+def generate_gallery_page(current_page):
+    output_path = OUTPUT_DIR / "galerija-fotografij.html"
+
+    # Generate the full archive sidebar from all entries
+    sidebar_html = generate_sidebar_html(picture_settings=True, map_settings=False, current_page="slideshow")
+    header_html = generate_header_html()
+    searchbox_html = generate_searchbox_html()
+    footer_html = generate_footer_html()
+
+    html_content = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
+  <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+  <meta name="description" content="Gorske avanture in nepozabni trenutki: Galerija fotografij." />
+  <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
+  <meta name="author" content="Metod Langus" />
+  <meta property="og:title" content="Galerija fotografij" />
+  <meta property="og:description" content="Galerija fotografij" />
+  <meta property="og:image:alt" content="Gorski razgledi in narava v slikah" />
+  <meta property="og:url" content="https://metodlangus.github.io/galerija-fotografij.html" />
+  <meta property="og:type" content="website" />
+
+  <title>Galerija spominov</title>
+
+  <script>
+    var postTitle = 'Galerija fotografij';
+    var author = 'Metod';
+  </script>
+
+  <!-- Favicon -->
+  <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
+
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyGalleryScript.css">
+
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Top Header -->
+    <header class="top-header">
+      {header_html}
+    </header>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+      {sidebar_html}
+      <div class="content-wrapper">
+        {searchbox_html}
+        <h1>Galerija spominov</h1>
+        <div id="gallery" class="my-gallery-wrapper">
+          <div class="gallery-container" id="galleryContainer">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  {footer_html}
+
+  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
+  <script src="assets/MyFiltersScript.js" defer></script>
+  <script src="assets/MyGalleryScript.js" defer></script>
+
+</body>
+</html>"""
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(html_content)
+    print(f"Generated gallery page: {output_path}")
 
 
 def generate_peak_list_page():
@@ -1659,6 +1737,7 @@ if __name__ == "__main__":
 
     generate_label_pages(entries, label_posts_raw)
     generate_predvajalnik_page(current_page="predvajalnik-nakljucnih-fotografij.html")
+    generate_gallery_page(current_page="predvajalnik-nakljucnih-fotografij.html")
     generate_peak_list_page()
     generate_big_map_page()
 
