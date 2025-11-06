@@ -116,6 +116,7 @@ def fix_images_for_lightbox(html_content, post_title):
     Modify image links in HTML content for lightbox compatibility.
     Keeps first image high resolution (/s1600/), others at /s1000/.
     Uses WebP, adds alt tags, <picture> elements, and loading attributes.
+    Adds 'cover-photo' class to the first image.
     """
     soup = BeautifulSoup(html_content, "html.parser")
     image_index = 0  # Track image count for loading priority
@@ -171,6 +172,7 @@ def fix_images_for_lightbox(html_content, post_title):
         if image_index == 0:
             img["loading"] = "eager"
             img["fetchpriority"] = "high"
+            img["class"] = img.get("class", []) + ["cover-photo"]
         else:
             img["loading"] = "lazy"
             img["fetchpriority"] = "low"
@@ -765,22 +767,22 @@ def generate_header_html():
 
 def generate_footer_html():
     return f"""
-    <footer class="site-footer" style="position: relative;">
-      <!-- Tracker overlay -->
-      <div class="tracker" style="position: absolute; top: 5px; right: 5px; z-index: 10;"></div>
+  <footer class="site-footer" style="position: relative;">
+    <!-- Tracker overlay -->
+    <div class="tracker" style="position: absolute; top: 5px; right: 5px; z-index: 10;"></div>
 
-      <p>
-        Poganja 
-        <a href="https://github.com" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="72 72 496 496" width="16" height="16" fill="currentColor" style="vertical-align: text-top; margin-right: -1px;">
-            <!--!Font Awesome Free v7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free -->
-            <path fill="#f3891d" d="M237.9 461.4C237.9 463.4 235.6 465 232.7 465C229.4 465.3 227.1 463.7 227.1 461.4C227.1 459.4 229.4 457.8 232.3 457.8C235.3 457.5 237.9 459.1 237.9 461.4zM206.8 456.9C206.1 458.9 208.1 461.2 211.1 461.8C213.7 462.8 216.7 461.8 217.3 459.8C217.9 457.8 216 455.5 213 454.6C210.4 453.9 207.5 454.9 206.8 456.9zM251 455.2C248.1 455.9 246.1 457.8 246.4 460.1C246.7 462.1 249.3 463.4 252.3 462.7C255.2 462 257.2 460.1 256.9 458.1C256.6 456.2 253.9 454.9 251 455.2zM316.8 72C178.1 72 72 177.3 72 316C72 426.9 141.8 521.8 241.5 555.2C254.3 557.5 258.8 549.6 258.8 543.1C258.8 536.9 258.5 502.7 258.5 481.7C258.5 481.7 188.5 496.7 173.8 451.9C173.8 451.9 162.4 422.8 146 415.3C146 415.3 123.1 399.6 147.6 399.9C147.6 399.9 172.5 401.9 186.2 425.7C208.1 464.3 244.8 453.2 259.1 446.6C261.4 430.6 267.9 419.5 275.1 412.9C219.2 406.7 162.8 398.6 162.8 302.4C162.8 274.9 170.4 261.1 186.4 243.5C183.8 237 175.3 210.2 189 175.6C209.9 169.1 258 202.6 258 202.6C278 197 299.5 194.1 320.8 194.1C342.1 194.1 363.6 197 383.6 202.6C383.6 202.6 431.7 169 452.6 175.6C466.3 210.3 457.8 237 455.2 243.5C471.2 261.2 481 275 481 302.4C481 398.9 422.1 406.6 366.2 412.9C375.4 420.8 383.2 435.8 383.2 459.3C383.2 493 382.9 534.7 382.9 542.9C382.9 549.4 387.5 557.3 400.2 555C500.2 521.8 568 426.9 568 316C568 177.3 455.5 72 316.8 72zM169.2 416.9C167.9 417.9 168.2 420.2 169.9 422.1C171.5 423.7 173.8 424.4 175.1 423.1C176.4 422.1 176.1 419.8 174.4 417.9C172.8 416.3 170.5 415.6 169.2 416.9zM158.4 408.8C157.7 410.1 158.7 411.7 160.7 412.7C162.3 413.7 164.3 413.4 165 412C165.7 410.7 164.7 409.1 162.7 408.1C160.7 407.5 159.1 407.8 158.4 408.8zM190.8 444.4C189.2 445.7 189.8 448.7 192.1 450.6C194.4 452.9 197.3 453.2 198.6 451.6C199.9 450.3 199.3 447.3 197.3 445.4C195.1 443.1 192.1 442.8 190.8 444.4zM179.4 429.7C177.8 430.7 177.8 433.3 179.4 435.6C181 437.9 183.7 438.9 185 437.9C186.6 436.6 186.6 434 185 431.7C183.6 429.4 181 428.4 179.4 429.7z"/>
-          </svg>
-          GitHub
-        </a>
-      </p>
-      <p>© 2025 Metod Langus. Vse pravice pridržane.</p>
-    </footer>"""
+    <p>
+      Poganja 
+      <a href="https://github.com" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="72 72 496 496" width="16" height="16" fill="currentColor" style="vertical-align: text-top; margin-right: -1px;">
+          <!--!Font Awesome Free v7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free -->
+          <path fill="#f3891d" d="M237.9 461.4C237.9 463.4 235.6 465 232.7 465C229.4 465.3 227.1 463.7 227.1 461.4C227.1 459.4 229.4 457.8 232.3 457.8C235.3 457.5 237.9 459.1 237.9 461.4zM206.8 456.9C206.1 458.9 208.1 461.2 211.1 461.8C213.7 462.8 216.7 461.8 217.3 459.8C217.9 457.8 216 455.5 213 454.6C210.4 453.9 207.5 454.9 206.8 456.9zM251 455.2C248.1 455.9 246.1 457.8 246.4 460.1C246.7 462.1 249.3 463.4 252.3 462.7C255.2 462 257.2 460.1 256.9 458.1C256.6 456.2 253.9 454.9 251 455.2zM316.8 72C178.1 72 72 177.3 72 316C72 426.9 141.8 521.8 241.5 555.2C254.3 557.5 258.8 549.6 258.8 543.1C258.8 536.9 258.5 502.7 258.5 481.7C258.5 481.7 188.5 496.7 173.8 451.9C173.8 451.9 162.4 422.8 146 415.3C146 415.3 123.1 399.6 147.6 399.9C147.6 399.9 172.5 401.9 186.2 425.7C208.1 464.3 244.8 453.2 259.1 446.6C261.4 430.6 267.9 419.5 275.1 412.9C219.2 406.7 162.8 398.6 162.8 302.4C162.8 274.9 170.4 261.1 186.4 243.5C183.8 237 175.3 210.2 189 175.6C209.9 169.1 258 202.6 258 202.6C278 197 299.5 194.1 320.8 194.1C342.1 194.1 363.6 197 383.6 202.6C383.6 202.6 431.7 169 452.6 175.6C466.3 210.3 457.8 237 455.2 243.5C471.2 261.2 481 275 481 302.4C481 398.9 422.1 406.6 366.2 412.9C375.4 420.8 383.2 435.8 383.2 459.3C383.2 493 382.9 534.7 382.9 542.9C382.9 549.4 387.5 557.3 400.2 555C500.2 521.8 568 426.9 568 316C568 177.3 455.5 72 316.8 72zM169.2 416.9C167.9 417.9 168.2 420.2 169.9 422.1C171.5 423.7 173.8 424.4 175.1 423.1C176.4 422.1 176.1 419.8 174.4 417.9C172.8 416.3 170.5 415.6 169.2 416.9zM158.4 408.8C157.7 410.1 158.7 411.7 160.7 412.7C162.3 413.7 164.3 413.4 165 412C165.7 410.7 164.7 409.1 162.7 408.1C160.7 407.5 159.1 407.8 158.4 408.8zM190.8 444.4C189.2 445.7 189.8 448.7 192.1 450.6C194.4 452.9 197.3 453.2 198.6 451.6C199.9 450.3 199.3 447.3 197.3 445.4C195.1 443.1 192.1 442.8 190.8 444.4zM179.4 429.7C177.8 430.7 177.8 433.3 179.4 435.6C181 437.9 183.7 438.9 185 437.9C186.6 436.6 186.6 434 185 431.7C183.6 429.4 181 428.4 179.4 429.7z"/>
+        </svg>
+        GitHub
+      </a>
+    </p>
+    <p>© 2025 Metod Langus. Vse pravice pridržane.</p>
+  </footer>"""
 
 def generate_searchbox_html():
     return f"""
@@ -959,10 +961,7 @@ def fetch_and_save_all_posts(entries):
     footer_html = generate_footer_html()
 
     local_tz = ZoneInfo("Europe/Ljubljana")
-
     label_posts_raw = defaultdict(list)
-
-    # Get just the list of slugs
     slugs = generate_unique_slugs(entries, local_tz)
 
     for index, entry in enumerate(entries):  # Only first 5 entries entries[:5]
@@ -972,74 +971,87 @@ def fetch_and_save_all_posts(entries):
 
         full_id = entry.get("id", {}).get("$t", "")
         post_id = full_id.split("post-")[-1] if "post-" in full_id else ""
-
-        # Get the author name
         author = entry.get("author", {}).get("name", {}).get("$t", "")
-
-        # Parse published date
         formatted_date, year, month = parse_entry_date(entry, index)
 
-        # Insert MyPostContainer divs
+        # Replace custom post containers
         content_html = replace_mypost_scripts_with_rendered_posts(
-                            content_html,
-                            entries,
-                            entries_per_page=0, #Always visible page
-                            slugify_func=slugify,
-                            render_func=render_post_html
-                        )
+            content_html,
+            entries,
+            entries_per_page=0,
+            slugify_func=slugify,
+            render_func=render_post_html
+        )
 
-        # Fix images
+        # Fix images for lightbox
         content_html = fix_images_for_lightbox(content_html, title)
 
-        # Extract first image for og:image
+        # First image for og:image
         soup = BeautifulSoup(content_html, "html.parser")
         first_img_tag = soup.find("img")
-        og_image = first_img_tag["src"] if first_img_tag else "https://metodlangus.github.io/assets/default-og.jpg"
+        og_image = first_img_tag["src"] if first_img_tag else f"{BASE_SITE_URL}/assets/default-og.jpg"
 
-
-
-        # Normalize helper: strip, collapse whitespace, lowercase
-        def normalize(text):
-            return ' '.join(text.split()).strip().lower()
-
-        # Unwanted descriptions (normalized)
-        unwanted_descriptions = [
-            normalize("Summary, only on the post-container view."),
-            normalize("Kaj češ lepšega, kot biti v naravi.")
-        ]
-
-        # Try <summary> first
+        # Description extraction
+        def normalize(text): return ' '.join(text.split()).strip().lower()
+        unwanted = [normalize("Summary, only on the post-container view."), normalize("Kaj češ lepšega, kot biti v naravi.")]
         summary_tag = soup.find("summary")
-        if summary_tag:
-            summary_text = summary_tag.get_text()
-            if normalize(summary_text) not in unwanted_descriptions:
-                description = summary_text.strip()
-            else:
-                description = title # Use title instead generic text
+        if summary_tag and normalize(summary_tag.get_text()) not in unwanted:
+            description = summary_tag.get_text().strip()
         else:
-            # Fallback to <meta name="description">
             meta_tag = soup.find("meta", attrs={"name": "description"})
-            if meta_tag and meta_tag.get("content"):
-                meta_content = meta_tag["content"]
-                if normalize(meta_content) not in unwanted_descriptions:
-                    description = meta_content.strip()
-                else:
-                    description = title # Use title instead generic text
+            if meta_tag and normalize(meta_tag.get("content", "")) not in unwanted:
+                description = meta_tag["content"].strip()
             else:
-                description = ""
+                description = title
 
-
-
-        # Construct og:url
         og_url = f"{BASE_SITE_URL}/posts/{year}/{month}/{slug}.html"
         metadata_html = f"<div class='post-date' data-date='{formatted_date}'></div>"
-
-        # Previous and next posts with correct date paths
         nav_html = generate_post_navigation_html(entries, slugs, index, local_tz, year, month)
+        labels_html = generate_labels_html(entry, title, slug, year, month, formatted_date, post_id,
+                                           label_posts_raw, slugify, remove_first_prefix, remove_all_prefixes)
 
-        # Labels
-        labels_html = generate_labels_html(entry, title, slug, year, month, formatted_date, post_id, label_posts_raw,
-                                                            slugify, remove_first_prefix, remove_all_prefixes)
+        # --- New SEO Structured Data (JSON-LD)
+        structured_data = f"""
+  <script type="application/ld+json">
+  {{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "{title}",
+    "image": "{og_image}",
+    "author": {{
+      "@type": "Person",
+      "name": "Metod Langus"
+    }},
+    "publisher": {{
+      "@type": "Organization",
+      "name": "Gorski užitki",
+      "logo": {{
+        "@type": "ImageObject",
+        "url": "{BASE_SITE_URL}/photos/favicon.ico"
+      }}
+    }},
+    "description": "{description}",
+    "datePublished": "{formatted_date}",
+    "url": "{og_url}"
+  }}
+  </script>
+"""
+
+        # --- New GitHub Comments (Utterances)
+        comments_html = f"""
+      <section id="comments">
+        <h2>Komentarji</h2>
+        <script src="https://utteranc.es/client.js"
+          repo="metodlangus/metodlangus.github.io"
+          issue-term="pathname"
+          theme="github-light"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </section>"""
+
+        # --- New "Na vrh" Button (orange, smooth scroll)
+        back_to_top_html = """<button id="backToTop" title="Na vrh">↑</button>"""
 
         post_dir = OUTPUT_DIR / "posts" / year / month
         post_dir.mkdir(parents=True, exist_ok=True)
@@ -1047,23 +1059,20 @@ def fetch_and_save_all_posts(entries):
 
         with open(filename, "w", encoding="utf-8") as f:
             f.write(f"""<!DOCTYPE html>
-<html lang="en">
+<html lang="sl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
   <meta name="description" content="{description}" />
-  <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
   <meta name="author" content="Metod Langus" />
-
   <title>{title}</title>
-
-  <!-- OpenGraph meta tags -->
   <meta property="og:title" content="{title}">
   <meta property="og:type" content="article">
   <meta property="og:image" content="{og_image}">
   <meta property="og:url" content="{og_url}">
-  <meta property="og:description" content="{title}">
+  <meta property="og:description" content="{description}">
 
   <script>
     var postTitle = {title!r};
@@ -1071,7 +1080,7 @@ def fetch_and_save_all_posts(entries):
     var author = {author!r};
   </script>
 
-  <!-- Favicon -->
+  {structured_data}
   <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
 
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
@@ -1108,11 +1117,13 @@ def fetch_and_save_all_posts(entries):
         {content_html}
         {labels_html}
         {nav_html}
+        {comments_html}
       </div>
     </div>
   </div>
 
   <!-- Footer -->
+  {back_to_top_html}
   {footer_html}
 
   <script src='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.js'></script>
@@ -1187,7 +1198,7 @@ def generate_label_pages(entries, label_posts_raw):
   <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
   <meta name="description" content="Gorske avanture in nepozabni trenutki: Prikaz objav z oznako: {label_clean}" />
-  <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
   <meta name="author" content="Metod Langus" />
 
   <title>Prikaz objav z oznako: {label_clean}</title>
@@ -1252,7 +1263,7 @@ def generate_predvajalnik_page(current_page):
   <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
   <meta name="description" content="Gorske avanture in nepozabni trenutki: Predvajalnik naključnih fotografij." />
-  <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
   <meta name="author" content="Metod Langus" />
   <meta property="og:title" content="Predvajalnik naključnih fotografij" />
   <meta property="og:description" content="Predvajalnik naključnih fotografij" />
@@ -1329,7 +1340,7 @@ def generate_gallery_page(current_page):
   <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
   <meta name="description" content="Gorske avanture in nepozabni trenutki: Galerija fotografij." />
-  <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
   <meta name="author" content="Metod Langus" />
   <meta property="og:title" content="Galerija fotografij" />
   <meta property="og:description" content="Galerija fotografij" />
@@ -1405,7 +1416,7 @@ def generate_peak_list_page():
   <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
   <meta name="description" content="Seznam obiskanih vrhov" />
-  <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
   <meta name="author" content="Metod Langus" />
   <meta property="og:title" content="Seznam vrhov" />
   <meta property="og:description" content="Seznam obiskanih vrhov." />
@@ -1479,7 +1490,7 @@ def generate_big_map_page():
   <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
   <meta name="description" content="Gorske avanture in nepozabni trenutki na zemljevidu spominov." />
-  <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užtiki, Metod Langus" />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
   <meta name="author" content="Metod Langus" />
   <meta property="og:title" content="Zemljevid spominov" />
   <meta property="og:description" content="Zemljevid spominov, ki zajema slike ter sledi poti." />

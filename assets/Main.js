@@ -323,3 +323,11 @@ if (window.location.hostname === "metodlangus.github.io") {
     s.defer = true;
     document.querySelector('.tracker').appendChild(s);
 }
+
+
+/* Gumb 'Na vrh' */
+const btn = document.getElementById("backToTop");
+window.addEventListener("scroll", () => {
+  btn.style.display = window.scrollY > 400 ? "block" : "none";
+});
+btn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
