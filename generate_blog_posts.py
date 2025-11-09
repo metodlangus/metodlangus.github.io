@@ -131,15 +131,26 @@ def fix_images_for_lightbox(html_content, post_title):
         skip_keywords = [k.strip() for k in data_skip.split(";") if k.strip()]
         alt_text = ""
 
-        if "peak" in skip_keywords:
-            table = img.find_parent("table", class_="tr-caption-container")
-            if table:
-                caption_td = table.find("td", class_="tr-caption")
-                if caption_td and caption_td.get_text(strip=True):
-                    alt_text = caption_td.get_text(strip=True)
-        elif any(k in skip_keywords for k in ["best", "cover", "1"]):
-            alt_text = post_title
-        elif all(k in ["2", "3", "na"] for k in skip_keywords):
+        # Find possible caption
+        table = img.find_parent("table", class_="tr-caption-container")
+        caption_td = None
+        if table:
+            caption_td = table.find("td", class_="tr-caption")
+
+        caption_text = caption_td.get_text(strip=True) if caption_td and caption_td.get_text(strip=True) else ""
+
+        # Step 1A: Assign alt text based on rules
+        if image_index == 0:
+            # First image (cover photo)
+            alt_text = f"Gorski užitki | Metod Langus \u2013 {post_title}"
+        elif any(k in skip_keywords for k in ["peak", "best", "1", "2"]):
+            # Tagged as peak/best/1/2
+            if caption_text:
+                alt_text = f"{post_title} \u2013 {caption_text}"
+            else:
+                alt_text = post_title
+        elif "3" in skip_keywords:
+            # Tag 3 → empty alt
             alt_text = ""
         else:
             alt_text = ""
@@ -150,12 +161,12 @@ def fix_images_for_lightbox(html_content, post_title):
         src = img.get("src", "")
         href = a_tag.get("href", "")
 
-        # First image keeps or upgrades to /s1600/
         if image_index == 0:
+            # First image high resolution
             new_src = re.sub(r"/s\d+/", "/s1200/", src)
             new_href = re.sub(r"/s\d+/", "/s1600/", href)
         else:
-            # Other images downgraded to /s1000/
+            # Other images downgraded to resolution
             new_src = re.sub(r"/s\d+/", "/s600/", src)
             new_href = re.sub(r"/s\d+/", "/s1000/", href)
 
@@ -176,6 +187,7 @@ def fix_images_for_lightbox(html_content, post_title):
         else:
             img["loading"] = "lazy"
             img["fetchpriority"] = "low"
+
         image_index += 1
 
         # Step 5: Wrap in <picture> with WebP only (no JPEG fallback)
@@ -217,8 +229,33 @@ def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
 
     style_attr = "" if entries_per_page == 0 else ' style="display:none;"'
 
-    base_site_url = BASE_SITE_URL
+    # --- Extract summary / description for alt text ---
+    content_html = entry.get("content", {}).get("$t", "")
+    soup = BeautifulSoup(content_html, "html.parser")
 
+    def normalize(text):
+        return ' '.join(text.split()).strip().lower()
+
+    unwanted = [
+        normalize("Summary, only on the post-container view."),
+        normalize("Kaj češ lepšega, kot biti v naravi.")
+    ]
+
+    # Try extracting a <summary> or <meta name="description">
+    summary_tag = soup.find("summary")
+    if summary_tag and normalize(summary_tag.get_text()) not in unwanted:
+        description = summary_tag.get_text().strip()
+    else:
+        meta_tag = soup.find("meta", attrs={"name": "description"})
+        if meta_tag and normalize(meta_tag.get("content", "")) not in unwanted:
+            description = meta_tag["content"].strip()
+        else:
+            description = title
+
+    # Fallback alt text content
+    alt_text = f"{description}"
+
+    # --- ✅ Render HTML ---
     return f"""
           <div class="photo-entry" data-page="{page_number}"{style_attr}>
             <article class="my-post-outer-container">
@@ -235,7 +272,7 @@ def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
                 </div>
                 <div class="my-thumbnail" id="post-snippet-{post_id}">
                   <div class="my-snippet-thumbnail">
-                    {'<img src="' + thumbnail.replace('/s72-c', '/s600-rw') + '" alt="Naslovna slika: ' + title + '">' if thumbnail else ""}
+                    {'<img src="' + thumbnail.replace('/s72-c', '/s600-rw') + '" alt="' + alt_text + '">' if thumbnail else ""}
                   </div>
                 </div>
                 <a href="{alternate_link}" aria-label="{title}"></a>
@@ -784,6 +821,9 @@ def generate_footer_html():
     <p>© 2025 Metod Langus. Vse pravice pridržane.</p>
   </footer>"""
 
+def generate_back_to_top_html():
+    return """<button id="backToTop" title="Na vrh">↑</button>"""
+
 def generate_searchbox_html():
     return f"""
     <div id="searchResults"></div>"""
@@ -959,6 +999,7 @@ def fetch_and_save_all_posts(entries):
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
+    back_to_top_html = generate_back_to_top_html()
 
     local_tz = ZoneInfo("Europe/Ljubljana")
     label_posts_raw = defaultdict(list)
@@ -1049,9 +1090,6 @@ def fetch_and_save_all_posts(entries):
           async>
         </script>
       </section>"""
-
-        # --- New "Na vrh" Button (orange, smooth scroll)
-        back_to_top_html = """<button id="backToTop" title="Na vrh">↑</button>"""
 
         post_dir = OUTPUT_DIR / "posts" / year / month
         post_dir.mkdir(parents=True, exist_ok=True)
@@ -1159,6 +1197,7 @@ def generate_label_pages(entries, label_posts_raw):
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
+    back_to_top_html = generate_back_to_top_html()
 
     # Build lookup dictionary
     entry_lookup = {}
@@ -1234,6 +1273,7 @@ def generate_label_pages(entries, label_posts_raw):
   </div>
 
   <!-- Footer -->
+  {back_to_top_html}
   {footer_html}
 
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
@@ -1255,6 +1295,7 @@ def generate_predvajalnik_page(current_page):
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
+    back_to_top_html = generate_back_to_top_html()
 
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
@@ -1310,6 +1351,7 @@ def generate_predvajalnik_page(current_page):
   </div>
 
   <!-- Footer -->
+  {back_to_top_html}
   {footer_html}
 
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
@@ -1332,6 +1374,7 @@ def generate_gallery_page(current_page):
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
+    back_to_top_html = generate_back_to_top_html()
 
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
@@ -1360,6 +1403,8 @@ def generate_gallery_page(current_page):
 
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
 
+  <link href='https://metodlangus.github.io/plugins/lightbox2/2.11.1/css/lightbox.min.css' rel='stylesheet'>
+
   <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
   <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyGalleryScript.css">
 
@@ -1386,11 +1431,15 @@ def generate_gallery_page(current_page):
   </div>
 
   <!-- Footer -->
+  {back_to_top_html}
   {footer_html}
 
+  <script src='https://metodlangus.github.io/plugins/lightbox2/2.11.1/js/lightbox-plus-jquery.min.js'></script>
+  <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
+
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
-  <script src="assets/MyFiltersScript.js" defer></script>
-  <script src="assets/MyGalleryScript.js" defer></script>
+  <script src="{BASE_SITE_URL}/assets/MyFiltersScript.js" defer></script>
+  <script src="{BASE_SITE_URL}/assets/MyGalleryScript.js" defer></script>
 
 </body>
 </html>"""
@@ -1408,6 +1457,7 @@ def generate_peak_list_page():
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
+    back_to_top_html = generate_back_to_top_html()
 
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
@@ -1461,6 +1511,7 @@ def generate_peak_list_page():
   </div>
 
   <!-- Footer -->
+  {back_to_top_html}
   {footer_html}
 
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
@@ -1482,6 +1533,7 @@ def generate_big_map_page():
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
+    back_to_top_html = generate_back_to_top_html()
 
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
@@ -1542,6 +1594,7 @@ def generate_big_map_page():
   </div>
 
   <!-- Footer -->
+  {back_to_top_html}
   {footer_html}
 
   <script src='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.js'></script>
@@ -1575,6 +1628,7 @@ def generate_home_en_page(homepage_html):
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
+    back_to_top_html = generate_back_to_top_html()
 
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
@@ -1637,6 +1691,7 @@ def generate_home_en_page(homepage_html):
   </div>
 
   <!-- Footer -->
+  {back_to_top_html}
   {footer_html}
 
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
@@ -1657,6 +1712,7 @@ def generate_home_si_page(homepage_html):
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
+    back_to_top_html = generate_back_to_top_html()
 
     html_content = f"""<!DOCTYPE html>
 <html lang="sl">
@@ -1719,6 +1775,7 @@ def generate_home_si_page(homepage_html):
   </div>
 
   <!-- Footer -->
+  {back_to_top_html}
   {footer_html}
 
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>

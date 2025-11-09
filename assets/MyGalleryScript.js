@@ -247,9 +247,32 @@ async function buildGalleryBatch(imagesBatch) {
             itemDiv.style.transition = 'opacity 0.5s ease';
             itemDiv.style.transitionDelay = `${i * 0.05}s`; // staggered fade-in
 
+
+            // Create <a> wrapper for lightbox
+            const linkEl = document.createElement('a');
+            linkEl.href = imageCache.get(item.src) || item.src; // full-size image
+            linkEl.setAttribute('data-lightbox', 'Gallery');
+            linkEl.setAttribute('data-title', item.caption || '');
+
             const imgEl = document.createElement('img');
             imgEl.src = imageCache.get(item.src) || item.src;
-            imgEl.alt = item.caption || '';
+
+            // --- ALT TAG LOGIC ---
+            let altText = '';
+            const tag = (item.tag || '').toLowerCase();
+            const hasCaption = !!item.caption;
+
+            if (["cover", "peak", "best", "1", "2"].some(k => tag.includes(k))) {
+                altText = hasCaption ? `${item.title} – ${item.caption}` : item.title;
+            } else if (tag.includes("3")) {
+                altText = "";
+            } else {
+                altText = hasCaption ? item.caption : item.title || "";
+            }
+
+            imgEl.alt = altText;
+            // --- END ALT LOGIC ---
+
             imgEl.loading = 'lazy';
             imgEl.style.width = '100%';
             imgEl.style.height = '100%';
@@ -259,8 +282,9 @@ async function buildGalleryBatch(imagesBatch) {
             captionDiv.className = 'caption';
             captionDiv.textContent = item.caption || '';
 
-            itemDiv.appendChild(imgEl);
-            itemDiv.appendChild(captionDiv);
+            linkEl.appendChild(imgEl);       // image inside <a>
+            itemDiv.appendChild(linkEl);     // wrap <a> inside gallery item
+            itemDiv.appendChild(captionDiv); // optional caption overlay
             rowDiv.appendChild(itemDiv);
 
             // fade in each image
@@ -309,7 +333,12 @@ function processEntry(entry) {
 
         if (isWithinRange) {
             const imgSrc = images[i].src.replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//, `/s${containerSize}-rw/`);
-            gallery.imageBuffer.push({ src: imgSrc, caption: captions[i] || '', title: postTitle });
+            gallery.imageBuffer.push({
+                src: imgSrc,
+                caption: captions[i] || '',
+                title: postTitle,
+                tag: (images[i].getAttribute('data-skip') || '').toLowerCase() // 👈 save original data-skip tag
+            });
         }
     }
 }
