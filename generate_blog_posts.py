@@ -30,6 +30,8 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 entries_per_page = 12 # Set pagination on home and label pages
 
+DEFAULT_OG_IMAGE = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiU8RYSJ0I45O63GlKYXw5-U_r7GwP48_st9F1LG7_Z3STuILVQxMO4qLgzP_wxg0v_77s-YwidwwZQIDS1K6SUmY-W3QMwcIyEvt28cLalvCVQu4qWTQIm-B_FvgEmCCe6ydGld4fQgMMd2xNdqMMFtuHgeVXB4gRPco3XP90OOKHpf6HyZ6AeEZqNJQo/s1600/IMG20241101141924.jpg"
+
 
 def override_domain(url, base_site_url):
     """
@@ -62,8 +64,6 @@ def parse_entry_date(entry, index=None):
         formatted_date, year, month = published, "unknown", "unknown"
 
     return formatted_date, year, month
-
-
 
 def generate_unique_slugs(entries, return_type="slugs"):
     slugs = []
@@ -398,7 +398,6 @@ def build_archive_sidebar_html(entries):
     archive_html += "</aside>"
     return archive_html
 
-
 def save_archive_as_js(archive_html, output_path="assets/archive.js"):
     # Escape backticks so JS template literal doesn’t break
     safe_html = archive_html.replace("`", "\\`")
@@ -429,7 +428,6 @@ document.addEventListener("DOMContentLoaded", function() {{
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(js_code)
 
-
 def save_navigation_as_js(labels_html, output_path="assets/navigation.js"):
     # Escape backticks so JS template literal doesn’t break
     safe_html = labels_html.replace("`", "\\`")
@@ -459,7 +457,6 @@ document.addEventListener("DOMContentLoaded", function() {{
 """
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(js_code)
-
 
 def generate_labels_sidebar_html(feed_url):
     """Fetches labels from a Blogger feed and returns structured sidebar HTML."""
@@ -552,7 +549,7 @@ def render_sidebar_settings(picture_settings=True, map_settings=True, current_pa
         """
 
         # Add the conditional section if the page matches
-        if current_page == "slideshow":
+        if current_page in ("slideshow_page", "gallery_page"):
             section_html += f"""
         <div style="display: flex; align-items: center; gap: 5px; margin-left: 5px;">
             <span><b>Naključno prikazovanje:</b></span>
@@ -624,7 +621,6 @@ def render_sidebar_settings(picture_settings=True, map_settings=True, current_pa
       {settings_html}
     </div>
     """
-
 def generate_label_filter_section(feed_url):
     """
     Fetches labels from the Blogger feed and returns HTML for
@@ -728,7 +724,7 @@ def generate_sidebar_html(picture_settings, map_settings, current_page):
             <!-- First image (initial) -->
             <div class="mySlides slide1" style="opacity: 1;">
               <div class="uppertext">Cima dell'Uomo (3010 m)</div>
-              <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiU8RYSJ0I45O63GlKYXw5-U_r7GwP48_st9F1LG7_Z3STuILVQxMO4qLgzP_wxg0v_77s-YwidwwZQIDS1K6SUmY-W3QMwcIyEvt28cLalvCVQu4qWTQIm-B_FvgEmCCe6ydGld4fQgMMd2xNdqMMFtuHgeVXB4gRPco3XP90OOKHpf6HyZ6AeEZqNJQo/s1600/IMG20241101141924.jpg" alt="Initial Image" />
+              <img src={DEFAULT_OG_IMAGE} alt="Initial Image" />
               <div class="text">FOTO: Matej</div>
             </div>
             <div class="mySlides slide2">
@@ -759,7 +755,6 @@ def generate_sidebar_html(picture_settings, map_settings, current_page):
       </div>
     </div>
     """
-
 def generate_header_html():
     return f"""
     <h1>
@@ -947,8 +942,6 @@ def remove_first_prefix(label):
 def remove_all_prefixes(label):
     return re.sub(r"^(?:\d+\.\s*)+", "", label)
 
-
-
 def generate_url_element(loc, lastmod=None):
     """Ustvari en <url> element za sitemap brez changefreq in priority."""
     url = Element("url")
@@ -956,6 +949,7 @@ def generate_url_element(loc, lastmod=None):
     if lastmod:
         SubElement(url, "lastmod").text = lastmod
     return url
+
 
 def generate_sitemap(entries):
     """Ustvari sitemap.xml iz Blogger vnosov in vključi domačo stran."""
@@ -992,6 +986,7 @@ def generate_sitemap(entries):
     tree = ElementTree(urlset)
     tree.write(SITEMAP_FILE, encoding="utf-8", xml_declaration=True)
     print(f"Sitemap je bil ustvarjen in shranjen kot {SITEMAP_FILE}")
+
 
 def fetch_and_save_all_posts(entries):
     # Labels sidebar
@@ -1030,7 +1025,7 @@ def fetch_and_save_all_posts(entries):
         # First image for og:image
         soup = BeautifulSoup(content_html, "html.parser")
         first_img_tag = soup.find("img")
-        og_image = first_img_tag["src"] if first_img_tag else f"{BASE_SITE_URL}/assets/default-og.jpg"
+        og_image = first_img_tag["src"] if first_img_tag else DEFAULT_OG_IMAGE
 
         # Description extraction
         def normalize(text): return ' '.join(text.split()).strip().lower()
@@ -1051,7 +1046,7 @@ def fetch_and_save_all_posts(entries):
         labels_html = generate_labels_html(entry, title, slug, year, month, formatted_date, post_id,
                                            label_posts_raw, slugify, remove_first_prefix, remove_all_prefixes)
 
-        # --- New SEO Structured Data (JSON-LD)
+        # --- Schema.org JSON-LD
         structured_data = f"""
   <script type="application/ld+json">
   {{
@@ -1078,7 +1073,7 @@ def fetch_and_save_all_posts(entries):
   </script>
 """
 
-        # --- New GitHub Comments (Utterances)
+        # --- GitHub Comments (Utterances)
         comments_html = f"""
       <section id="comments">
         <h2>Komentarji</h2>
@@ -1100,12 +1095,17 @@ def fetch_and_save_all_posts(entries):
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=400, initial-scale=0.8, maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
   <meta name="description" content="{description}" />
   <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
   <meta name="author" content="Metod Langus" />
-  <title>{title}</title>
+
+  <title>{title} | Gorski Užitki</title>
+  <link rel="canonical" href="{og_url}">
+  <link rel="alternate" href="{og_url}" hreflang="sl" />
+  <link rel="alternate" href="{BASE_SITE_URL}" hreflang="x-default" />
+
   <meta property="og:title" content="{title}">
   <meta property="og:type" content="article">
   <meta property="og:image" content="{og_image}">
@@ -1119,10 +1119,13 @@ def fetch_and_save_all_posts(entries):
   </script>
 
   {structured_data}
+
+  <!-- Favicon -->
   <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
 
-  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
   
+  <!-- Fonts & CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
   <link href='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.css' rel='stylesheet'>
   <link href='https://metodlangus.github.io/plugins/@raruto/leaflet-elevation/dist/leaflet-elevation.min.css' rel='stylesheet'>
   <link href='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet'>
@@ -1131,13 +1134,12 @@ def fetch_and_save_all_posts(entries):
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css' rel='stylesheet'>
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css' rel='stylesheet'>
   <link href='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.css' rel='stylesheet'>
-
   <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
   <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyMapScript.css">
   <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MySlideshowScript.css">
   <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPostContainerScript.css">
-
 </head>
+
 <body>
   <div class="page-wrapper">
     <!-- Top Header -->
@@ -1175,11 +1177,9 @@ def fetch_and_save_all_posts(entries):
   <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
   <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
-
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyMapScript.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MySlideshowScript.js" defer></script>
-
 </body>
 </html>""")
 
@@ -1192,7 +1192,6 @@ def generate_label_pages(entries, label_posts_raw):
     labels_dir = OUTPUT_DIR / "search/labels"
     labels_dir.mkdir(parents=True, exist_ok=True)
 
-    # Generate sidebar, header, footer, etc.
     sidebar_html = generate_sidebar_html(picture_settings=False, map_settings=False, current_page="labels")
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
@@ -1230,27 +1229,65 @@ def generate_label_pages(entries, label_posts_raw):
 
             post_scripts_html += render_post_html(entry, i, entries_per_page, slugify, post_id)
 
+        # --- Schema.org structured data (JSON-LD)
+        schema_jsonld = f"""
+        <script type="application/ld+json">
+        {{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": "Prikaz objav z oznako: {label_clean}",
+          "url": "https://metodlangus.github.io/search/labels/{label_slug}.html",
+          "description": "Prikaz objav z oznako: {label_clean} - gorske avanture in nepozabni trenutki.",
+          "inLanguage": "sl",
+          "isPartOf": {{
+            "@type": "WebSite",
+            "name": "Gorski Užitki",
+            "url": "https://metodlangus.github.io"
+          }},
+          "publisher": {{
+            "@type": "Person",
+            "name": "Metod Langus",
+            "url": "https://metodlangus.github.io"
+          }}
+        }}
+        </script>
+        """
+
         html_content = f"""<!DOCTYPE html>
-<html lang="en">
+<html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=400, initial-scale=0.8, maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
-  <meta name="description" content="Gorske avanture in nepozabni trenutki: Prikaz objav z oznako: {label_clean}" />
+  <meta name="description" content="Prikaz objav z oznako: {label_clean} - gorske avanture in nepozabni trenutki." />
   <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
   <meta name="author" content="Metod Langus" />
 
-  <title>Prikaz objav z oznako: {label_clean}</title>
+  <meta property="og:title" content="Prikaz objav z oznako: {label_clean}" />
+  <meta property="og:description" content="Prikaz objav z oznako: {label_clean} - gorske avanture in nepozabni trenutki." />
+  <meta property="og:image" content={DEFAULT_OG_IMAGE}" />
+  <meta property="og:image:alt" content="Prikaz objav z oznako: {label_clean}" />
+  <meta property="og:url" content="https://metodlangus.github.io/search/labels/{label_slug}.html" />
+  <meta property="og:type" content="website" />
+
+  <title>Prikaz objav z oznako: {label_clean} | Gorski Užitki</title>
+
+  <!-- Canonical & hreflang -->
+  <link rel="canonical" href="https://metodlangus.github.io/search/labels/{label_slug}.html" />
+  <link rel="alternate" href="https://metodlangus.github.io/search/labels/{label_slug}.html" hreflang="sl" />
+  <link rel="alternate" href="https://metodlangus.github.io" hreflang="x-default" />
+
+  {schema_jsonld}
 
   <!-- Favicon -->
   <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
 
+  <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
   <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPostContainerScript.css">
-
 </head>
+
 <body>
   <div class="page-wrapper">
     <!-- Top Header -->
@@ -1277,7 +1314,6 @@ def generate_label_pages(entries, label_posts_raw):
   {footer_html}
 
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
-
 </body>
 </html>"""
 
@@ -1290,29 +1326,66 @@ def generate_label_pages(entries, label_posts_raw):
 def generate_predvajalnik_page(current_page):
     output_path = OUTPUT_DIR / "predvajalnik-nakljucnih-fotografij.html"
 
-    # Generate the full archive sidebar from all entries
-    sidebar_html = generate_sidebar_html(picture_settings=True, map_settings=False, current_page="slideshow")
+    sidebar_html = generate_sidebar_html(picture_settings=True, map_settings=False, current_page=current_page)
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
     back_to_top_html = generate_back_to_top_html()
 
+    # --- Schema.org structured data (JSON-LD)
+    schema_jsonld = """
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Predvajalnik naključnih fotografij",
+      "url": "https://metodlangus.github.io/predvajalnik-nakljucnih-fotografij.html",
+      "description": "Predvajalnik naključnih fotografij gorskih avantur in nepozabnih trenutkov.",
+      "inLanguage": "sl",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "Gorski Užitki",
+        "url": "https://metodlangus.github.io"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Metod Langus",
+        "url": "https://metodlangus.github.io"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://metodlangus.github.io/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    """
+
     html_content = f"""<!DOCTYPE html>
-<html lang="en">
+<html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=400, initial-scale=0.8, maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
-  <meta name="description" content="Gorske avanture in nepozabni trenutki: Predvajalnik naključnih fotografij." />
+  <meta name="description" content="Predvajalnik naključnih fotografij gorskih avantur in nepozabnih trenutkov." />
   <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
   <meta name="author" content="Metod Langus" />
+
   <meta property="og:title" content="Predvajalnik naključnih fotografij" />
-  <meta property="og:description" content="Predvajalnik naključnih fotografij" />
+  <meta property="og:description" content="Predvajalnik naključnih fotografij gorskih avantur in nepozabnih trenutkov." />
+  <meta property="og:image" content={DEFAULT_OG_IMAGE} />
   <meta property="og:image:alt" content="Gorski razgledi in narava v slikah" />
   <meta property="og:url" content="https://metodlangus.github.io/predvajalnik-nakljucnih-fotografij.html" />
   <meta property="og:type" content="website" />
 
-  <title>Predvajalnik naključnih fotografij</title>
+  <title>Predvajalnik naključnih fotografij | Gorski Užitki</title>
+
+  <!-- Canonical & hreflang -->
+  <link rel="canonical" href="https://metodlangus.github.io/predvajalnik-nakljucnih-fotografij.html" />
+  <link rel="alternate" href="https://metodlangus.github.io/predvajalnik-nakljucnih-fotografij.html" hreflang="sl" />
+  <link rel="alternate" href="https://metodlangus.github.io" hreflang="x-default" />
+
+  {schema_jsonld}
 
   <script>
     var postTitle = 'Predvajalnik naključnih fotografij';
@@ -1323,12 +1396,12 @@ def generate_predvajalnik_page(current_page):
   <!-- Favicon -->
   <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
 
+  <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
   <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MySlideshowScript.css">
-
 </head>
+
 <body>
   <div class="page-wrapper">
     <!-- Top Header -->
@@ -1355,9 +1428,8 @@ def generate_predvajalnik_page(current_page):
   {footer_html}
 
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
-  <script src="assets/MySlideshowScript.js" defer></script>
-  <script src="assets/MyFiltersScript.js" defer></script>
-
+  <script src="{BASE_SITE_URL}/assets/MySlideshowScript.js" defer></script>
+  <script src="{BASE_SITE_URL}/assets/MyFiltersScript.js" defer></script>
 </body>
 </html>"""
 
@@ -1369,29 +1441,66 @@ def generate_predvajalnik_page(current_page):
 def generate_gallery_page(current_page):
     output_path = OUTPUT_DIR / "galerija-fotografij.html"
 
-    # Generate the full archive sidebar from all entries
-    sidebar_html = generate_sidebar_html(picture_settings=True, map_settings=False, current_page="slideshow")
+    sidebar_html = generate_sidebar_html(picture_settings=True, map_settings=False, current_page=current_page)
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
     back_to_top_html = generate_back_to_top_html()
 
+    # --- Schema.org structured data (JSON-LD)
+    schema_jsonld = """
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Galerija fotografij",
+      "url": "https://metodlangus.github.io/galerija-fotografij.html",
+      "description": "Galerija gorskih avantur in nepozabnih trenutkov.",
+      "inLanguage": "sl",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "Gorski Užitki",
+        "url": "https://metodlangus.github.io"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Metod Langus",
+        "url": "https://metodlangus.github.io"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://metodlangus.github.io/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    """
+
     html_content = f"""<!DOCTYPE html>
-<html lang="en">
+<html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=400, initial-scale=0.8, maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
-  <meta name="description" content="Gorske avanture in nepozabni trenutki: Galerija fotografij." />
+  <meta name="description" content="Galerija gorskih avantur in nepozabnih trenutkov." />
   <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
   <meta name="author" content="Metod Langus" />
+
   <meta property="og:title" content="Galerija fotografij" />
-  <meta property="og:description" content="Galerija fotografij" />
-  <meta property="og:image:alt" content="Gorski razgledi in narava v slikah" />
+  <meta property="og:description" content="Galerija gorskih avantur in nepozabnih trenutkov." />
+  <meta property="og:image" content={DEFAULT_OG_IMAGE} />
+  <meta property="og:image:alt" content="Galerija gorskih avantur" />
   <meta property="og:url" content="https://metodlangus.github.io/galerija-fotografij.html" />
   <meta property="og:type" content="website" />
 
-  <title>Galerija spominov</title>
+  <title>Galerija spominov | Gorski Užitki</title>
+
+  <!-- Canonical & hreflang -->
+  <link rel="canonical" href="https://metodlangus.github.io/galerija-fotografij.html" />
+  <link rel="alternate" href="https://metodlangus.github.io/galerija-fotografij.html" hreflang="sl" />
+  <link rel="alternate" href="https://metodlangus.github.io" hreflang="x-default" />
+
+  {schema_jsonld}
 
   <script>
     var postTitle = 'Galerija fotografij';
@@ -1401,14 +1510,13 @@ def generate_gallery_page(current_page):
   <!-- Favicon -->
   <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
 
+  <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
-
   <link href='https://metodlangus.github.io/plugins/lightbox2/2.11.1/css/lightbox.min.css' rel='stylesheet'>
-
   <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
   <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyGalleryScript.css">
-
 </head>
+
 <body>
   <div class="page-wrapper">
     <!-- Top Header -->
@@ -1436,11 +1544,9 @@ def generate_gallery_page(current_page):
 
   <script src='https://metodlangus.github.io/plugins/lightbox2/2.11.1/js/lightbox-plus-jquery.min.js'></script>
   <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
-
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyFiltersScript.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyGalleryScript.js" defer></script>
-
 </body>
 </html>"""
 
@@ -1452,29 +1558,66 @@ def generate_gallery_page(current_page):
 def generate_peak_list_page():
     output_path = OUTPUT_DIR / "seznam-vrhov.html"
 
-    # Generate the full archive sidebar from all entries
     sidebar_html = generate_sidebar_html(picture_settings=False, map_settings=False, current_page="peak-list")
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
     back_to_top_html = generate_back_to_top_html()
 
+    # --- Schema.org structured data (JSON-LD)
+    schema_jsonld = """
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Seznam vrhov",
+      "url": "https://metodlangus.github.io/seznam-vrhov.html",
+      "description": "Seznam obiskanih vrhov na gorskih avanturah.",
+      "inLanguage": "sl",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "Gorski Užitki",
+        "url": "https://metodlangus.github.io"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Metod Langus",
+        "url": "https://metodlangus.github.io"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://metodlangus.github.io/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    """
+
     html_content = f"""<!DOCTYPE html>
-<html lang="en">
+<html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=400, initial-scale=0.8, maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
-  <meta name="description" content="Seznam obiskanih vrhov" />
+  <meta name="description" content="Seznam obiskanih vrhov na gorskih avanturah." />
   <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
   <meta name="author" content="Metod Langus" />
+
   <meta property="og:title" content="Seznam vrhov" />
-  <meta property="og:description" content="Seznam obiskanih vrhov." />
+  <meta property="og:description" content="Seznam obiskanih vrhov na gorskih avanturah." />
+  <meta property="og:image" content={DEFAULT_OG_IMAGE} />
   <meta property="og:image:alt" content="Seznam obiskanih vrhov" />
   <meta property="og:url" content="https://metodlangus.github.io/seznam-vrhov.html" />
   <meta property="og:type" content="website" />
 
-  <title>Seznam vrhov</title>
+  <title>Seznam vrhov | Gorski Užitki</title>
+
+  <!-- Canonical & hreflang -->
+  <link rel="canonical" href="https://metodlangus.github.io/seznam-vrhov.html" />
+  <link rel="alternate" href="https://metodlangus.github.io/seznam-vrhov.html" hreflang="sl" />
+  <link rel="alternate" href="https://metodlangus.github.io" hreflang="x-default" />
+
+  {schema_jsonld}
 
   <script>
     var postTitle = 'Seznam vrhov';
@@ -1485,12 +1628,12 @@ def generate_peak_list_page():
   <!-- Favicon -->
   <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
 
+  <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
   <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPeakListScript.css">
-
 </head>
+
 <body>
   <div class="page-wrapper">
     <!-- Top Header -->
@@ -1505,7 +1648,7 @@ def generate_peak_list_page():
         {searchbox_html}
         <h1>Seznam vrhov</h1>
         <div id='loadingMessage'>Nalaganje ...</div>
-        <div id='mountainContainer'/></div>
+        <div id='mountainContainer'></div>
       </div>
     </div>
   </div>
@@ -1515,8 +1658,7 @@ def generate_peak_list_page():
   {footer_html}
 
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
-  <script src="assets/MyPeakListScript.js" defer></script>
-
+  <script src="{BASE_SITE_URL}/assets/MyPeakListScript.js" defer></script>
 </body>
 </html>"""
 
@@ -1528,29 +1670,65 @@ def generate_peak_list_page():
 def generate_big_map_page():
     output_path = OUTPUT_DIR / "zemljevid-spominov.html"
 
-    # Generate the full archive sidebar from all entries
     sidebar_html = generate_sidebar_html(picture_settings=False, map_settings=True, current_page="map")
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
     back_to_top_html = generate_back_to_top_html()
 
+    # --- Schema.org structured data (JSON-LD)
+    schema_jsonld = """
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Zemljevid spominov",
+      "url": "https://metodlangus.github.io/zemljevid-spominov.html",
+      "description": "Gorske avanture in nepozabni trenutki na zemljevidu spominov.",
+      "inLanguage": "sl",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "Gorski Užitki",
+        "url": "https://metodlangus.github.io"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Metod Langus",
+        "url": "https://metodlangus.github.io"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://metodlangus.github.io/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    """
+
     html_content = f"""<!DOCTYPE html>
-<html lang="en">
+<html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=400, initial-scale=0.8, maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
   <meta name="description" content="Gorske avanture in nepozabni trenutki na zemljevidu spominov." />
   <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
   <meta name="author" content="Metod Langus" />
   <meta property="og:title" content="Zemljevid spominov" />
   <meta property="og:description" content="Zemljevid spominov, ki zajema slike ter sledi poti." />
+  <meta property="og:image" content={DEFAULT_OG_IMAGE} />
   <meta property="og:image:alt" content="Zemljevid spominov" />
   <meta property="og:url" content="https://metodlangus.github.io/zemljevid-spominov.html" />
   <meta property="og:type" content="website" />
 
-  <title>Zemljevid spominov</title>
+  <title>Zemljevid spominov | Gorski Užitki</title>
+
+  <!-- Canonical & hreflang -->
+  <link rel="canonical" href="https://metodlangus.github.io/zemljevid-spominov.html" />
+  <link rel="alternate" href="https://metodlangus.github.io/zemljevid-spominov.html" hreflang="sl" />
+  <link rel="alternate" href="https://metodlangus.github.io" hreflang="x-default" />
+
+  {schema_jsonld}
 
   <script>
     var postTitle = 'Zemljevid spominov';
@@ -1560,8 +1738,8 @@ def generate_big_map_page():
   <!-- Favicon -->
   <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
 
+    <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
-
   <link href='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.css' rel='stylesheet'>
   <link href='https://metodlangus.github.io/plugins/@raruto/leaflet-elevation/dist/leaflet-elevation.min.css' rel='stylesheet'>
   <link href='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet'>
@@ -1570,11 +1748,10 @@ def generate_big_map_page():
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css' rel='stylesheet'>
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css' rel='stylesheet'>
   <link href='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.css' rel='stylesheet'>
-  
   <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
   <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyMemoryMapScript.css">
-
 </head>
+
 <body>
   <div class="page-wrapper">
     <!-- Top Header -->
@@ -1588,7 +1765,7 @@ def generate_big_map_page():
       <div class="content-wrapper">
         {searchbox_html}
         <h1>Zemljevid spominov</h1>
-          <div id='map'></div>
+        <div id="map"></div>
       </div>
     </div>
   </div>
@@ -1608,10 +1785,8 @@ def generate_big_map_page():
   <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
   <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
-
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
-  <script src="assets/MyMemoryMapScript.js" defer></script>
-
+  <script src="{BASE_SITE_URL}/assets/MyMemoryMapScript.js" defer></script>
 </body>
 </html>"""
 
@@ -1623,12 +1798,34 @@ def generate_big_map_page():
 def generate_home_en_page(homepage_html):
     output_path = OUTPUT_DIR / "en/index.html"
 
-    # Generate the full archive sidebar from all entries
     sidebar_html = generate_sidebar_html(picture_settings=False, map_settings=False, current_page="home")
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
     back_to_top_html = generate_back_to_top_html()
+
+    # --- Schema.org structured data (JSON-LD)
+    schema_jsonld = f"""
+    <script type="application/ld+json">
+    {{
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Gorski Užitki",
+      "url": "https://metodlangus.github.io/en",
+      "description": "Mountain adventures and unforgettable moments: Discover the beauty of the mountain world and enjoy the image slideshows that take you through the adventures.",
+      "publisher": {{
+        "@type": "Person",
+        "name": "Metod Langus",
+        "url": "https://metodlangus.github.io/en"
+      }},
+      "potentialAction": {{
+        "@type": "SearchAction",
+        "target": "https://metodlangus.github.io/en/search?q={{search_term_string}}",
+        "query-input": "required name=search_term_string"
+      }}
+    }}
+    </script>
+    """
 
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
@@ -1641,19 +1838,18 @@ def generate_home_en_page(homepage_html):
     <meta name="keywords" content="mountain adventures, hiking, mountains, photography, nature, free time, gorski užitki, Metod Langus" />
     <meta name="author" content="Metod Langus" />
 
+    <title>Gorski Užitki | Mountain Adventures Through Pictures | Metod Langus</title>
+    <link rel="canonical" href="https://metodlangus.github.io/en" />
+
+    {schema_jsonld}
+
     <meta property="og:title" content="Gorski Užitki | Mountain Adventures Through Pictures | Metod Langus" />
     <meta property="og:description" content="Mountain adventures and unforgettable moments: Discover the beauty of the mountain world and enjoy the image slideshows that take you through the adventures." />
-    <meta property="og:image" content="https://metodlangus.github.io/images/mountain-landscape-view.jpg" />
+    <meta property="og:image" content={DEFAULT_OG_IMAGE} />
     <meta property="og:image:alt" content="Mountain views and nature" />
     <meta property="og:url" content="https://metodlangus.github.io/en" />
     <meta property="og:type" content="website" />
 
-    <title>Gorski Užitki | Mountain Adventures Through Pictures | Metod Langus</title>
-
-    <!-- 🔹 Canonical URL -->
-    <link rel="canonical" href="https://metodlangus.github.io/en" />
-
-    <!-- 🔹 Language alternates -->
     <link rel="alternate" href="https://metodlangus.github.io" hreflang="sl" />
     <link rel="alternate" href="https://metodlangus.github.io/en" hreflang="en" />
     <link rel="alternate" href="https://metodlangus.github.io" hreflang="x-default" />
@@ -1663,11 +1859,9 @@ def generate_home_en_page(homepage_html):
 
     <!-- Fonts & CSS -->
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
     <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyRandomPhoto.css">
     <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPostContainerScript.css">
-
 </head>
 
 <body>
@@ -1696,7 +1890,6 @@ def generate_home_en_page(homepage_html):
 
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyRandomPhoto.js" defer></script>
-
 </body>
 </html>"""
 
@@ -1707,12 +1900,34 @@ def generate_home_en_page(homepage_html):
 def generate_home_si_page(homepage_html):
     output_path = OUTPUT_DIR / "index.html"
 
-    # Generate the full archive sidebar from all entries
     sidebar_html = generate_sidebar_html(picture_settings=False, map_settings=False, current_page="home")
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
     back_to_top_html = generate_back_to_top_html()
+
+    # --- Schema.org structured data (JSON-LD)
+    schema_jsonld = f"""
+    <script type="application/ld+json">
+    {{
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Gorski užitki",
+      "url": "https://metodlangus.github.io",
+      "description": "Gorske avanture in nepozabni trenutki: Lepote gorskega sveta in predvajalniki slik, ki vas popeljejo skozi dogodivščine.",
+      "publisher": {{
+        "@type": "Person",
+        "name": "Metod Langus",
+        "url": "https://metodlangus.github.io"
+      }},
+      "potentialAction": {{
+        "@type": "SearchAction",
+        "target": "https://metodlangus.github.io/search?q={{search_term_string}}",
+        "query-input": "required name=search_term_string"
+      }}
+    }}
+    </script>
+    """
 
     html_content = f"""<!DOCTYPE html>
 <html lang="sl">
@@ -1725,19 +1940,18 @@ def generate_home_si_page(homepage_html):
     <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
     <meta name="author" content="Metod Langus" />
 
+    <title>Gorski Užitki | Gorske pustolovščine skozi slike | Metod Langus</title>
+    <link rel="canonical" href="https://metodlangus.github.io" />
+
+    {schema_jsonld}
+
     <meta property="og:title" content="Gorski Užitki | Gorske pustolovščine skozi slike | Metod Langus" />
     <meta property="og:description" content="Gorske avanture in nepozabni trenutki: Lepote gorskega sveta in predvajalniki slik, ki vas popeljejo skozi dogodivščine." />
-    <meta property="og:image" content="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiU8RYSJ0I45O63GlKYXw5-U_r7GwP48_st9F1LG7_Z3STuILVQxMO4qLgzP_wxg0v_77s-YwidwwZQIDS1K6SUmY-W3QMwcIyEvt28cLalvCVQu4qWTQIm-B_FvgEmCCe6ydGld4fQgMMd2xNdqMMFtuHgeVXB4gRPco3XP90OOKHpf6HyZ6AeEZqNJQo/s1600/IMG20241101141924.jpg" />
+    <meta property="og:image" content={DEFAULT_OG_IMAGE} />
     <meta property="og:image:alt" content="Gorski razgledi in narava" />
     <meta property="og:url" content="https://metodlangus.github.io" />
     <meta property="og:type" content="website" />
 
-    <title>Gorski Užitki | Gorske pustolovščine skozi slike | Metod Langus</title>
-
-    <!-- Kanonična povezava -->
-    <link rel="canonical" href="https://metodlangus.github.io" />
-
-    <!-- Jezikovne različice -->
     <link rel="alternate" href="https://metodlangus.github.io" hreflang="sl" />
     <link rel="alternate" href="https://metodlangus.github.io/en" hreflang="en" />
     <link rel="alternate" href="https://metodlangus.github.io" hreflang="x-default" />
@@ -1747,11 +1961,9 @@ def generate_home_si_page(homepage_html):
 
     <!-- Fonts & CSS -->
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
     <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyRandomPhoto.css">
     <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPostContainerScript.css">
-
 </head>
 
 <body>
@@ -1780,7 +1992,6 @@ def generate_home_si_page(homepage_html):
 
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyRandomPhoto.js" defer></script>
-
 </body>
 </html>"""
 
@@ -1804,8 +2015,8 @@ if __name__ == "__main__":
     save_navigation_as_js(labels_sidebar_html, "assets/navigation.js")
 
     generate_label_pages(entries, label_posts_raw)
-    generate_predvajalnik_page(current_page="predvajalnik-nakljucnih-fotografij.html")
-    generate_gallery_page(current_page="predvajalnik-nakljucnih-fotografij.html")
+    generate_predvajalnik_page(current_page="slideshow_page")
+    generate_gallery_page(current_page="gallery_page")
     generate_peak_list_page()
     generate_big_map_page()
 

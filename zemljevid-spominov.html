@@ -1,19 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=400, initial-scale=0.8,  maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=400, initial-scale=0.8, maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
   <meta name="description" content="Gorske avanture in nepozabni trenutki na zemljevidu spominov." />
   <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
   <meta name="author" content="Metod Langus" />
   <meta property="og:title" content="Zemljevid spominov" />
   <meta property="og:description" content="Zemljevid spominov, ki zajema slike ter sledi poti." />
+  <meta property="og:image" content=https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiU8RYSJ0I45O63GlKYXw5-U_r7GwP48_st9F1LG7_Z3STuILVQxMO4qLgzP_wxg0v_77s-YwidwwZQIDS1K6SUmY-W3QMwcIyEvt28cLalvCVQu4qWTQIm-B_FvgEmCCe6ydGld4fQgMMd2xNdqMMFtuHgeVXB4gRPco3XP90OOKHpf6HyZ6AeEZqNJQo/s1600/IMG20241101141924.jpg />
   <meta property="og:image:alt" content="Zemljevid spominov" />
   <meta property="og:url" content="https://metodlangus.github.io/zemljevid-spominov.html" />
   <meta property="og:type" content="website" />
 
-  <title>Zemljevid spominov</title>
+  <title>Zemljevid spominov | Gorski Užitki</title>
+
+  <!-- Canonical & hreflang -->
+  <link rel="canonical" href="https://metodlangus.github.io/zemljevid-spominov.html" />
+  <link rel="alternate" href="https://metodlangus.github.io/zemljevid-spominov.html" hreflang="sl" />
+  <link rel="alternate" href="https://metodlangus.github.io" hreflang="x-default" />
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Zemljevid spominov",
+      "url": "https://metodlangus.github.io/zemljevid-spominov.html",
+      "description": "Gorske avanture in nepozabni trenutki na zemljevidu spominov.",
+      "inLanguage": "sl",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "Gorski Užitki",
+        "url": "https://metodlangus.github.io"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Metod Langus",
+        "url": "https://metodlangus.github.io"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://metodlangus.github.io/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    
 
   <script>
     var postTitle = 'Zemljevid spominov';
@@ -23,8 +57,8 @@
   <!-- Favicon -->
   <link rel="icon" href="https://metodlangus.github.io/photos/favicon.ico" type="image/x-icon">
 
+    <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
-
   <link href='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.css' rel='stylesheet'>
   <link href='https://metodlangus.github.io/plugins/@raruto/leaflet-elevation/dist/leaflet-elevation.min.css' rel='stylesheet'>
   <link href='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet'>
@@ -33,11 +67,10 @@
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css' rel='stylesheet'>
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css' rel='stylesheet'>
   <link href='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.css' rel='stylesheet'>
-  
   <link rel="stylesheet" href="https://metodlangus.github.io/assets/Main.css">
   <link rel="stylesheet" href="https://metodlangus.github.io/assets/MyMemoryMapScript.css">
-
 </head>
+
 <body>
   <div class="page-wrapper">
     <!-- Top Header -->
@@ -153,7 +186,7 @@
         
     <div id="searchResults"></div>
         <h1>Zemljevid spominov</h1>
-          <div id='map'></div>
+        <div id="map"></div>
       </div>
     </div>
   </div>
@@ -189,9 +222,7 @@
   <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
   <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
-
   <script src="https://metodlangus.github.io/assets/Main.js" defer></script>
-  <script src="assets/MyMemoryMapScript.js" defer></script>
-
+  <script src="https://metodlangus.github.io/assets/MyMemoryMapScript.js" defer></script>
 </body>
 </html>
