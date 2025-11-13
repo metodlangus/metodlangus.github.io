@@ -116,7 +116,7 @@ function insertPostContainer(postTitle, displayMode, scriptTag) {
           // Create the new label for "1. " category
           var labelOne = document.createElement('a');
           labelOne.classList.add('my-labels');
-          labelOne.href = WindowBaseUrl + '/search/labels/' + slugify(cleanTerm) + '.html';
+          labelOne.href = WindowBaseUrl + '/search/labels/' + slugify(cleanTerm) + '/';
           labelOne.textContent = cleanTerm;
 
           // Append the label to the tag container
@@ -174,7 +174,7 @@ function insertPostContainer(postTitle, displayMode, scriptTag) {
           // Create the new label for "6. " category
           var labelSix = document.createElement('a');
           labelSix.classList.add('my-labels', 'label-six');
-          labelSix.href = WindowBaseUrl + '/search/labels/' + slugify(cleanTerm) + '.html';
+          labelSix.href = WindowBaseUrl + '/search/labels/' + slugify(cleanTerm) + '';
           labelSix.textContent = cleanTerm;
 
           // Append the label to the tag container

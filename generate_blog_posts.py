@@ -70,17 +70,20 @@ def generate_unique_slugs(entries, return_type="slugs"):
     archive_dict = defaultdict(lambda: defaultdict(list))
 
     for i, entry in enumerate(entries):
-        # Pridobi href iz linkov
+        # Get href from links
         links = entry.get("link", [])
-        href = next((l.get("href") for l in links if l.get("rel") == "alternate" and l.get("type") == "text/html"), None)
+        href = next(
+            (l.get("href") for l in links if l.get("rel") == "alternate" and l.get("type") == "text/html"),
+            None
+        )
 
         if href:
             path_parts = urlparse(href).path.strip("/").split("/")
-            # Expecting: ['posts', 'year', 'month', 'slugify-title.html']
-            if len(path_parts) >= 4:
+            # Expecting structure: ['posts', 'year', 'month', 'post_name', 'index.html']
+            if len(path_parts) >= 5 and path_parts[-1] == "index.html":
                 year = path_parts[1]
                 month = path_parts[2]
-                unique_slug = os.path.splitext(path_parts[3])[0]
+                unique_slug = path_parts[3]  # Folder name
             else:
                 year, month = "unknown", "unknown"
                 unique_slug = f"post-{i}"
@@ -222,8 +225,8 @@ def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
     label_one = next((c["term"].replace("1. ", "") for c in categories if c["term"].startswith("1. ")), "")
     label_six = next((c["term"].replace("6. ", "") for c in categories if c["term"].startswith("6. ")), "")
 
-    label_one_link = f"{BASE_SITE_URL}/search/labels/{slugify_func(label_one)}.html" if label_one else ""
-    label_six_link = f"{BASE_SITE_URL}/search/labels/{slugify_func(label_six)}.html" if label_six else ""
+    label_one_link = f"{BASE_SITE_URL}/search/labels/{slugify_func(label_one)}/" if label_one else ""
+    label_six_link = f"{BASE_SITE_URL}/search/labels/{slugify_func(label_six)}/" if label_six else ""
 
     page_number = 1 if entries_per_page == 0 else (index // entries_per_page + 1)
 
@@ -255,7 +258,7 @@ def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
     # Fallback alt text content
     alt_text = f"{description}"
 
-    # --- ✅ Render HTML ---
+    # --- Render HTML ---
     return f"""
           <div class="photo-entry" data-page="{page_number}"{style_attr}>
             <article class="my-post-outer-container">
@@ -386,7 +389,7 @@ def build_archive_sidebar_html(entries):
                          .replace('"', "&quot;")
                          .replace("'", "&#x27;")
                 )
-                archive_html += f"""        <li><a href="{BASE_SITE_URL}/posts/{y}/{m}/{slug}.html">{safe_title}</a></li>
+                archive_html += f"""        <li><a href="{BASE_SITE_URL}/posts/{y}/{m}/{slug}/">{safe_title}</a></li>
 """
 
             archive_html += """      </ul>
@@ -506,7 +509,7 @@ def generate_labels_sidebar_html(feed_url):
             clean_label = re.sub(r'^\d+\.\s*', '', raw_label)
             slug = slugify(clean_label)
             label_html_parts.append(
-                f"<li><a class='label-name' href='{BASE_SITE_URL}/search/labels/{slug}.html'>{clean_label}</a></li>"
+                f"<li><a class='label-name' href='{BASE_SITE_URL}/search/labels/{slug}/'>{clean_label}</a></li>"
             )
 
         label_html_parts.append("</ul>")
@@ -719,7 +722,7 @@ def generate_sidebar_html(picture_settings, map_settings, current_page):
         random_photo_sections = f"""
         <div class="random-photo">
           <h2 class="title">Naključna fotografija</h2>
-          <a href="https://metodlangus.github.io/predvajalnik-nakljucnih-fotografij.html">
+          <a href="https://metodlangus.github.io/predvajalnik-fotografij/">
           <div class="slideshow-container">
             <!-- First image (initial) -->
             <div class="mySlides slide1" style="opacity: 1;">
@@ -744,10 +747,10 @@ def generate_sidebar_html(picture_settings, map_settings, current_page):
         <div class="pages">
           <aside class='sidebar-pages'><h2>Strani</h2>
             <li><a href="{BASE_SITE_URL}">Domov</a></li>
-            <li><a href="{BASE_SITE_URL}/predvajalnik-nakljucnih-fotografij.html">Predvajalnik naključnih fotografij</a></li>
-            <li><a href="{BASE_SITE_URL}/galerija-fotografij.html">Galerija fotografij</a></li>
-            <li><a href="{BASE_SITE_URL}/seznam-vrhov.html">Seznam vrhov</a></li>
-            <li><a href="{BASE_SITE_URL}/zemljevid-spominov.html">Zemljevid spominov</a></li>
+            <li><a href="{BASE_SITE_URL}/predvajalnik-fotografij/">Predvajalnik naključnih fotografij</a></li>
+            <li><a href="{BASE_SITE_URL}/galerija-fotografij/">Galerija fotografij</a></li>
+            <li><a href="{BASE_SITE_URL}/seznam-vrhov/">Seznam vrhov</a></li>
+            <li><a href="{BASE_SITE_URL}/zemljevid-spominov/">Zemljevid spominov</a></li>
           </aside>
         </div>
         {settings_html}
@@ -867,7 +870,7 @@ def generate_post_navigation_html(entries, slugs, index, local_tz, year, month):
         nav_html += f"""
         <div class="prev-link" style="text-align: left; max-width: 45%;">
           <div class="pager-title">Prejšnja objava</div>
-          <a href="{BASE_SITE_URL}/posts/{prev_year}/{prev_month}/{prev_slug}.html">&larr; {prev_title}</a>
+          <a href="{BASE_SITE_URL}/posts/{prev_year}/{prev_month}/{prev_slug}/">&larr; {prev_title}</a>
         </div>
         """
 
@@ -875,7 +878,7 @@ def generate_post_navigation_html(entries, slugs, index, local_tz, year, month):
         nav_html += f"""
         <div class="next-link" style="text-align: right; max-width: 45%;">
           <div class="pager-title">Naslednja objava</div>
-          <a href="{BASE_SITE_URL}/posts/{next_year}/{next_month}/{next_slug}.html">{next_title} &rarr;</a>
+          <a href="{BASE_SITE_URL}/posts/{next_year}/{next_month}/{next_slug}/">{next_title} &rarr;</a>
         </div>
         """
 
@@ -910,7 +913,7 @@ def generate_labels_html(entry, title, slug, year, month, formatted_date, post_i
             label_links = []
             for label_raw in labels_raw:
                 slug_part = remove_first_prefix(label_raw)
-                label_url = f"{BASE_SITE_URL}/search/labels/{slugify(slug_part)}.html"
+                label_url = f"{BASE_SITE_URL}/search/labels/{slugify(slug_part)}/"
                 label_text = remove_all_prefixes(label_raw)
                 label_links.append(f"<a class='my-labels' href='{label_url}'>{label_text}</a>")
             labels_html = "<div class='post-labels'>" + " ".join(label_links) + "</div>"
@@ -942,29 +945,47 @@ def remove_first_prefix(label):
 def remove_all_prefixes(label):
     return re.sub(r"^(?:\d+\.\s*)+", "", label)
 
-def generate_url_element(loc, lastmod=None):
-    """Ustvari en <url> element za sitemap brez changefreq in priority."""
+def indent_xml(elem, level=0):
+    """Recursively indent XML for pretty printing."""
+    i = "\n" + "   " * level
+    if len(elem):
+        if not elem.text or not elem.text.strip():
+            elem.text = i + "   "
+        for child in elem:
+            indent_xml(child, level + 1)
+        if not child.tail or not child.tail.strip():
+            child.tail = i
+    if level and (not elem.tail or not elem.tail.strip()):
+        elem.tail = i
+    return elem
+
+def generate_url_element(loc, lastmod=None, changefreq=None, priority=None):
+    """Create a <url> element for sitemap."""
     url = Element("url")
     SubElement(url, "loc").text = loc
+    if changefreq:
+        SubElement(url, "changefreq").text = changefreq
+    if priority:
+        SubElement(url, "priority").text = str(priority)
     if lastmod:
         SubElement(url, "lastmod").text = lastmod
     return url
 
 
 def generate_sitemap(entries):
-    """Ustvari sitemap.xml iz Blogger vnosov in vključi domačo stran."""
+    """Generate pretty-printed sitemap.xml including homepage."""
     urlset = Element("urlset", {
         "xmlns": "http://www.sitemaps.org/schemas/sitemap/0.9"
     })
 
-    # Dodaj domačo stran
-    homepage_url = BASE_SITE_URL
+    # Add homepage
     homepage_lastmod = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    homepage_element = generate_url_element(homepage_url, homepage_lastmod)
+    homepage_element = generate_url_element(BASE_SITE_URL, homepage_lastmod)
     urlset.append(homepage_element)
 
-    # Dodaj ostale vnose
+    # Add other entries
     for entry in entries:
+        # Determine lastmod
         published = entry.get("published", {}).get("$t", "")
         try:
             dt = datetime.strptime(published, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
@@ -972,7 +993,7 @@ def generate_sitemap(entries):
             dt = datetime.now(timezone.utc)
         lastmod = dt.strftime("%Y-%m-%dT%H:%M:%SZ")
 
-        # Extract the actual post URL from the entry's "link" list
+        # Extract post URL
         post_url = None
         for link in entry.get("link", []):
             if link.get("rel") == "alternate" and link.get("type") == "text/html":
@@ -980,16 +1001,23 @@ def generate_sitemap(entries):
                 break
 
         if post_url:
-            url_element = generate_url_element(post_url, lastmod)
+            url_element = generate_url_element(
+                post_url,
+                lastmod=lastmod,
+                changefreq="monthly",
+                priority=1
+            )
             urlset.append(url_element)
 
+    # Pretty-print before writing
+    indent_xml(urlset)
     tree = ElementTree(urlset)
     tree.write(SITEMAP_FILE, encoding="utf-8", xml_declaration=True)
     print(f"Sitemap je bil ustvarjen in shranjen kot {SITEMAP_FILE}")
 
 
 def fetch_and_save_all_posts(entries):
-    # Labels sidebar
+    # HTML sections
     sidebar_html = generate_sidebar_html(picture_settings=True, map_settings=False, current_page="posts")
     header_html = generate_header_html()
     searchbox_html = generate_searchbox_html()
@@ -1040,13 +1068,13 @@ def fetch_and_save_all_posts(entries):
             else:
                 description = title
 
-        og_url = f"{BASE_SITE_URL}/posts/{year}/{month}/{slug}.html"
+        og_url = f"{BASE_SITE_URL}/posts/{year}/{month}/{slug}/"
         metadata_html = f"<div class='post-date' data-date='{formatted_date}'></div>"
         nav_html = generate_post_navigation_html(entries, slugs, index, local_tz, year, month)
         labels_html = generate_labels_html(entry, title, slug, year, month, formatted_date, post_id,
                                            label_posts_raw, slugify, remove_first_prefix, remove_all_prefixes)
 
-        # --- Schema.org JSON-LD
+        # Schema.org JSON-LD
         structured_data = f"""
   <script type="application/ld+json">
   {{
@@ -1073,7 +1101,7 @@ def fetch_and_save_all_posts(entries):
   </script>
 """
 
-        # --- GitHub Comments (Utterances)
+        # GitHub Comments (Utterances)
         comments_html = f"""
       <section id="comments">
         <h2>Komentarji</h2>
@@ -1086,9 +1114,10 @@ def fetch_and_save_all_posts(entries):
         </script>
       </section>"""
 
-        post_dir = OUTPUT_DIR / "posts" / year / month
+        # Create nested folder and save as index.html
+        post_dir = OUTPUT_DIR / "posts" / year / month / slug
         post_dir.mkdir(parents=True, exist_ok=True)
-        filename = post_dir / f"{slug}.html"
+        filename = post_dir / "index.html"
 
         with open(filename, "w", encoding="utf-8") as f:
             f.write(f"""<!DOCTYPE html>
@@ -1210,7 +1239,11 @@ def generate_label_pages(entries, label_posts_raw):
     for label, posts in label_posts_raw.items():
         label_slug = slugify(remove_first_prefix(label))
         label_clean = re.sub(r"^(?:\d+\.\s*)+", "", label)
-        filename = labels_dir / f"{label_slug}.html"
+
+        # Create folder for each label page
+        label_dir = labels_dir / label_slug
+        label_dir.mkdir(parents=True, exist_ok=True)
+        filename = label_dir / "index.html"
 
         # Sort posts by date descending
         posts_sorted = sorted(posts, key=lambda x: x['date'], reverse=True)
@@ -1236,18 +1269,18 @@ def generate_label_pages(entries, label_posts_raw):
           "@context": "https://schema.org",
           "@type": "WebPage",
           "name": "Prikaz objav z oznako: {label_clean}",
-          "url": "https://metodlangus.github.io/search/labels/{label_slug}.html",
+          "url": "{BASE_SITE_URL}/search/labels/{label_slug}/",
           "description": "Prikaz objav z oznako: {label_clean} - gorske avanture in nepozabni trenutki.",
           "inLanguage": "sl",
           "isPartOf": {{
             "@type": "WebSite",
             "name": "Gorski Užitki",
-            "url": "https://metodlangus.github.io"
+            "url": "https://metodlangus.github.io/"
           }},
           "publisher": {{
             "@type": "Person",
             "name": "Metod Langus",
-            "url": "https://metodlangus.github.io"
+            "url": "https://metodlangus.github.io/"
           }}
         }}
         </script>
@@ -1265,17 +1298,17 @@ def generate_label_pages(entries, label_posts_raw):
 
   <meta property="og:title" content="Prikaz objav z oznako: {label_clean}" />
   <meta property="og:description" content="Prikaz objav z oznako: {label_clean} - gorske avanture in nepozabni trenutki." />
-  <meta property="og:image" content={DEFAULT_OG_IMAGE}" />
+  <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
   <meta property="og:image:alt" content="Prikaz objav z oznako: {label_clean}" />
-  <meta property="og:url" content="https://metodlangus.github.io/search/labels/{label_slug}.html" />
+  <meta property="og:url" content="{BASE_SITE_URL}/search/labels/{label_slug}/" />
   <meta property="og:type" content="website" />
 
   <title>Prikaz objav z oznako: {label_clean} | Gorski Užitki</title>
 
   <!-- Canonical & hreflang -->
-  <link rel="canonical" href="https://metodlangus.github.io/search/labels/{label_slug}.html" />
-  <link rel="alternate" href="https://metodlangus.github.io/search/labels/{label_slug}.html" hreflang="sl" />
-  <link rel="alternate" href="https://metodlangus.github.io" hreflang="x-default" />
+  <link rel="canonical" href="{BASE_SITE_URL}/search/labels/{label_slug}/" />
+  <link rel="alternate" href="{BASE_SITE_URL}/search/labels/{label_slug}/" hreflang="sl" />
+  <link rel="alternate" href="{BASE_SITE_URL}" hreflang="x-default" />
 
   {schema_jsonld}
 
@@ -1324,7 +1357,9 @@ def generate_label_pages(entries, label_posts_raw):
 
 
 def generate_predvajalnik_page(current_page):
-    output_path = OUTPUT_DIR / "predvajalnik-nakljucnih-fotografij.html"
+    output_dir = OUTPUT_DIR / "predvajalnik-fotografij"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / "index.html"
 
     sidebar_html = generate_sidebar_html(picture_settings=True, map_settings=False, current_page=current_page)
     header_html = generate_header_html()
@@ -1339,18 +1374,18 @@ def generate_predvajalnik_page(current_page):
       "@context": "https://schema.org",
       "@type": "WebPage",
       "name": "Predvajalnik naključnih fotografij",
-      "url": "https://metodlangus.github.io/predvajalnik-nakljucnih-fotografij.html",
+      "url": "https://metodlangus.github.io/predvajalnik-fotografij/",
       "description": "Predvajalnik naključnih fotografij gorskih avantur in nepozabnih trenutkov.",
       "inLanguage": "sl",
       "isPartOf": {
         "@type": "WebSite",
         "name": "Gorski Užitki",
-        "url": "https://metodlangus.github.io"
+        "url": "https://metodlangus.github.io/"
       },
       "publisher": {
         "@type": "Person",
         "name": "Metod Langus",
-        "url": "https://metodlangus.github.io"
+        "url": "https://metodlangus.github.io/"
       },
       "potentialAction": {
         "@type": "SearchAction",
@@ -1373,17 +1408,17 @@ def generate_predvajalnik_page(current_page):
 
   <meta property="og:title" content="Predvajalnik naključnih fotografij" />
   <meta property="og:description" content="Predvajalnik naključnih fotografij gorskih avantur in nepozabnih trenutkov." />
-  <meta property="og:image" content={DEFAULT_OG_IMAGE} />
+  <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
   <meta property="og:image:alt" content="Gorski razgledi in narava v slikah" />
-  <meta property="og:url" content="https://metodlangus.github.io/predvajalnik-nakljucnih-fotografij.html" />
+  <meta property="og:url" content="https://metodlangus.github.io/predvajalnik-fotografij/" />
   <meta property="og:type" content="website" />
 
   <title>Predvajalnik naključnih fotografij | Gorski Užitki</title>
 
   <!-- Canonical & hreflang -->
-  <link rel="canonical" href="https://metodlangus.github.io/predvajalnik-nakljucnih-fotografij.html" />
-  <link rel="alternate" href="https://metodlangus.github.io/predvajalnik-nakljucnih-fotografij.html" hreflang="sl" />
-  <link rel="alternate" href="https://metodlangus.github.io" hreflang="x-default" />
+  <link rel="canonical" href="https://metodlangus.github.io/predvajalnik-fotografij/" />
+  <link rel="alternate" href="https://metodlangus.github.io/predvajalnik-fotografij/" hreflang="sl" />
+  <link rel="alternate" href="https://metodlangus.github.io/" hreflang="x-default" />
 
   {schema_jsonld}
 
@@ -1439,7 +1474,9 @@ def generate_predvajalnik_page(current_page):
 
 
 def generate_gallery_page(current_page):
-    output_path = OUTPUT_DIR / "galerija-fotografij.html"
+    output_dir = OUTPUT_DIR / "galerija-fotografij"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / "index.html"
 
     sidebar_html = generate_sidebar_html(picture_settings=True, map_settings=False, current_page=current_page)
     header_html = generate_header_html()
@@ -1454,18 +1491,18 @@ def generate_gallery_page(current_page):
       "@context": "https://schema.org",
       "@type": "WebPage",
       "name": "Galerija fotografij",
-      "url": "https://metodlangus.github.io/galerija-fotografij.html",
+      "url": "https://metodlangus.github.io/galerija-fotografij/",
       "description": "Galerija gorskih avantur in nepozabnih trenutkov.",
       "inLanguage": "sl",
       "isPartOf": {
         "@type": "WebSite",
         "name": "Gorski Užitki",
-        "url": "https://metodlangus.github.io"
+        "url": "https://metodlangus.github.io/"
       },
       "publisher": {
         "@type": "Person",
         "name": "Metod Langus",
-        "url": "https://metodlangus.github.io"
+        "url": "https://metodlangus.github.io/"
       },
       "potentialAction": {
         "@type": "SearchAction",
@@ -1488,17 +1525,17 @@ def generate_gallery_page(current_page):
 
   <meta property="og:title" content="Galerija fotografij" />
   <meta property="og:description" content="Galerija gorskih avantur in nepozabnih trenutkov." />
-  <meta property="og:image" content={DEFAULT_OG_IMAGE} />
+  <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
   <meta property="og:image:alt" content="Galerija gorskih avantur" />
-  <meta property="og:url" content="https://metodlangus.github.io/galerija-fotografij.html" />
+  <meta property="og:url" content="https://metodlangus.github.io/galerija-fotografij/" />
   <meta property="og:type" content="website" />
 
   <title>Galerija spominov | Gorski Užitki</title>
 
   <!-- Canonical & hreflang -->
-  <link rel="canonical" href="https://metodlangus.github.io/galerija-fotografij.html" />
-  <link rel="alternate" href="https://metodlangus.github.io/galerija-fotografij.html" hreflang="sl" />
-  <link rel="alternate" href="https://metodlangus.github.io" hreflang="x-default" />
+  <link rel="canonical" href="https://metodlangus.github.io/galerija-fotografij/" />
+  <link rel="alternate" href="https://metodlangus.github.io/galerija-fotografij/" hreflang="sl" />
+  <link rel="alternate" href="https://metodlangus.github.io/" hreflang="x-default" />
 
   {schema_jsonld}
 
@@ -1556,7 +1593,9 @@ def generate_gallery_page(current_page):
 
 
 def generate_peak_list_page():
-    output_path = OUTPUT_DIR / "seznam-vrhov.html"
+    output_dir = OUTPUT_DIR / "seznam-vrhov"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / "index.html"
 
     sidebar_html = generate_sidebar_html(picture_settings=False, map_settings=False, current_page="peak-list")
     header_html = generate_header_html()
@@ -1571,18 +1610,18 @@ def generate_peak_list_page():
       "@context": "https://schema.org",
       "@type": "WebPage",
       "name": "Seznam vrhov",
-      "url": "https://metodlangus.github.io/seznam-vrhov.html",
+      "url": "https://metodlangus.github.io/seznam-vrhov/",
       "description": "Seznam obiskanih vrhov na gorskih avanturah.",
       "inLanguage": "sl",
       "isPartOf": {
         "@type": "WebSite",
         "name": "Gorski Užitki",
-        "url": "https://metodlangus.github.io"
+        "url": "https://metodlangus.github.io/"
       },
       "publisher": {
         "@type": "Person",
         "name": "Metod Langus",
-        "url": "https://metodlangus.github.io"
+        "url": "https://metodlangus.github.io/"
       },
       "potentialAction": {
         "@type": "SearchAction",
@@ -1605,17 +1644,17 @@ def generate_peak_list_page():
 
   <meta property="og:title" content="Seznam vrhov" />
   <meta property="og:description" content="Seznam obiskanih vrhov na gorskih avanturah." />
-  <meta property="og:image" content={DEFAULT_OG_IMAGE} />
+  <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
   <meta property="og:image:alt" content="Seznam obiskanih vrhov" />
-  <meta property="og:url" content="https://metodlangus.github.io/seznam-vrhov.html" />
+  <meta property="og:url" content="https://metodlangus.github.io/seznam-vrhov/" />
   <meta property="og:type" content="website" />
 
   <title>Seznam vrhov | Gorski Užitki</title>
 
   <!-- Canonical & hreflang -->
-  <link rel="canonical" href="https://metodlangus.github.io/seznam-vrhov.html" />
-  <link rel="alternate" href="https://metodlangus.github.io/seznam-vrhov.html" hreflang="sl" />
-  <link rel="alternate" href="https://metodlangus.github.io" hreflang="x-default" />
+  <link rel="canonical" href="https://metodlangus.github.io/seznam-vrhov/" />
+  <link rel="alternate" href="https://metodlangus.github.io/seznam-vrhov/" hreflang="sl" />
+  <link rel="alternate" href="https://metodlangus.github.io/" hreflang="x-default" />
 
   {schema_jsonld}
 
@@ -1668,7 +1707,9 @@ def generate_peak_list_page():
 
 
 def generate_big_map_page():
-    output_path = OUTPUT_DIR / "zemljevid-spominov.html"
+    output_dir = OUTPUT_DIR / "zemljevid-spominov"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / "index.html"
 
     sidebar_html = generate_sidebar_html(picture_settings=False, map_settings=True, current_page="map")
     header_html = generate_header_html()
@@ -1683,18 +1724,18 @@ def generate_big_map_page():
       "@context": "https://schema.org",
       "@type": "WebPage",
       "name": "Zemljevid spominov",
-      "url": "https://metodlangus.github.io/zemljevid-spominov.html",
+      "url": "https://metodlangus.github.io/zemljevid-spominov/",
       "description": "Gorske avanture in nepozabni trenutki na zemljevidu spominov.",
       "inLanguage": "sl",
       "isPartOf": {
         "@type": "WebSite",
         "name": "Gorski Užitki",
-        "url": "https://metodlangus.github.io"
+        "url": "https://metodlangus.github.io/"
       },
       "publisher": {
         "@type": "Person",
         "name": "Metod Langus",
-        "url": "https://metodlangus.github.io"
+        "url": "https://metodlangus.github.io/"
       },
       "potentialAction": {
         "@type": "SearchAction",
@@ -1716,17 +1757,17 @@ def generate_big_map_page():
   <meta name="author" content="Metod Langus" />
   <meta property="og:title" content="Zemljevid spominov" />
   <meta property="og:description" content="Zemljevid spominov, ki zajema slike ter sledi poti." />
-  <meta property="og:image" content={DEFAULT_OG_IMAGE} />
+  <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
   <meta property="og:image:alt" content="Zemljevid spominov" />
-  <meta property="og:url" content="https://metodlangus.github.io/zemljevid-spominov.html" />
+  <meta property="og:url" content="https://metodlangus.github.io/zemljevid-spominov/" />
   <meta property="og:type" content="website" />
 
   <title>Zemljevid spominov | Gorski Užitki</title>
 
   <!-- Canonical & hreflang -->
-  <link rel="canonical" href="https://metodlangus.github.io/zemljevid-spominov.html" />
-  <link rel="alternate" href="https://metodlangus.github.io/zemljevid-spominov.html" hreflang="sl" />
-  <link rel="alternate" href="https://metodlangus.github.io" hreflang="x-default" />
+  <link rel="canonical" href="https://metodlangus.github.io/zemljevid-spominov/" />
+  <link rel="alternate" href="https://metodlangus.github.io/zemljevid-spominov/" hreflang="sl" />
+  <link rel="alternate" href="https://metodlangus.github.io/" hreflang="x-default" />
 
   {schema_jsonld}
 
@@ -1738,7 +1779,7 @@ def generate_big_map_page():
   <!-- Favicon -->
   <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
 
-    <!-- Fonts & CSS -->
+  <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
   <link href='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.css' rel='stylesheet'>
   <link href='https://metodlangus.github.io/plugins/@raruto/leaflet-elevation/dist/leaflet-elevation.min.css' rel='stylesheet'>
@@ -1796,7 +1837,9 @@ def generate_big_map_page():
 
 
 def generate_home_en_page(homepage_html):
-    output_path = OUTPUT_DIR / "en/index.html"
+    output_dir = OUTPUT_DIR / "en"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / "index.html"
 
     sidebar_html = generate_sidebar_html(picture_settings=False, map_settings=False, current_page="home")
     header_html = generate_header_html()
@@ -1811,12 +1854,12 @@ def generate_home_en_page(homepage_html):
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "Gorski Užitki",
-      "url": "https://metodlangus.github.io/en",
+      "url": "https://metodlangus.github.io/en/",
       "description": "Mountain adventures and unforgettable moments: Discover the beauty of the mountain world and enjoy the image slideshows that take you through the adventures.",
       "publisher": {{
         "@type": "Person",
         "name": "Metod Langus",
-        "url": "https://metodlangus.github.io/en"
+        "url": "https://metodlangus.github.io/en/"
       }},
       "potentialAction": {{
         "@type": "SearchAction",
@@ -1839,20 +1882,20 @@ def generate_home_en_page(homepage_html):
     <meta name="author" content="Metod Langus" />
 
     <title>Gorski Užitki | Mountain Adventures Through Pictures | Metod Langus</title>
-    <link rel="canonical" href="https://metodlangus.github.io/en" />
+    <link rel="canonical" href="https://metodlangus.github.io/en/" />
 
     {schema_jsonld}
 
     <meta property="og:title" content="Gorski Užitki | Mountain Adventures Through Pictures | Metod Langus" />
     <meta property="og:description" content="Mountain adventures and unforgettable moments: Discover the beauty of the mountain world and enjoy the image slideshows that take you through the adventures." />
-    <meta property="og:image" content={DEFAULT_OG_IMAGE} />
+    <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
     <meta property="og:image:alt" content="Mountain views and nature" />
-    <meta property="og:url" content="https://metodlangus.github.io/en" />
+    <meta property="og:url" content="https://metodlangus.github.io/en/" />
     <meta property="og:type" content="website" />
 
-    <link rel="alternate" href="https://metodlangus.github.io" hreflang="sl" />
-    <link rel="alternate" href="https://metodlangus.github.io/en" hreflang="en" />
-    <link rel="alternate" href="https://metodlangus.github.io" hreflang="x-default" />
+    <link rel="alternate" href="https://metodlangus.github.io/" hreflang="sl" />
+    <link rel="alternate" href="https://metodlangus.github.io/en/" hreflang="en" />
+    <link rel="alternate" href="https://metodlangus.github.io/" hreflang="x-default" />
 
     <!-- Favicon -->
     <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
@@ -1895,7 +1938,7 @@ def generate_home_en_page(homepage_html):
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html_content)
-    print(f"Generated home en page: {output_path}")
+    print(f"Generated home EN page: {output_path}")
 
 def generate_home_si_page(homepage_html):
     output_path = OUTPUT_DIR / "index.html"
@@ -1913,12 +1956,12 @@ def generate_home_si_page(homepage_html):
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "Gorski užitki",
-      "url": "https://metodlangus.github.io",
+      "url": "https://metodlangus.github.io/",
       "description": "Gorske avanture in nepozabni trenutki: Lepote gorskega sveta in predvajalniki slik, ki vas popeljejo skozi dogodivščine.",
       "publisher": {{
         "@type": "Person",
         "name": "Metod Langus",
-        "url": "https://metodlangus.github.io"
+        "url": "https://metodlangus.github.io/"
       }},
       "potentialAction": {{
         "@type": "SearchAction",
@@ -1941,20 +1984,20 @@ def generate_home_si_page(homepage_html):
     <meta name="author" content="Metod Langus" />
 
     <title>Gorski Užitki | Gorske pustolovščine skozi slike | Metod Langus</title>
-    <link rel="canonical" href="https://metodlangus.github.io" />
+    <link rel="canonical" href="https://metodlangus.github.io/" />
 
     {schema_jsonld}
 
     <meta property="og:title" content="Gorski Užitki | Gorske pustolovščine skozi slike | Metod Langus" />
     <meta property="og:description" content="Gorske avanture in nepozabni trenutki: Lepote gorskega sveta in predvajalniki slik, ki vas popeljejo skozi dogodivščine." />
-    <meta property="og:image" content={DEFAULT_OG_IMAGE} />
+    <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
     <meta property="og:image:alt" content="Gorski razgledi in narava" />
-    <meta property="og:url" content="https://metodlangus.github.io" />
+    <meta property="og:url" content="https://metodlangus.github.io/" />
     <meta property="og:type" content="website" />
 
-    <link rel="alternate" href="https://metodlangus.github.io" hreflang="sl" />
-    <link rel="alternate" href="https://metodlangus.github.io/en" hreflang="en" />
-    <link rel="alternate" href="https://metodlangus.github.io" hreflang="x-default" />
+    <link rel="alternate" href="https://metodlangus.github.io/" hreflang="sl" />
+    <link rel="alternate" href="https://metodlangus.github.io/en/" hreflang="en" />
+    <link rel="alternate" href="https://metodlangus.github.io/" hreflang="x-default" />
 
     <!-- Favicon -->
     <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
@@ -1997,7 +2040,7 @@ def generate_home_si_page(homepage_html):
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html_content)
-    print(f"Generated home si page: {output_path}")
+    print(f"Generated home SI page: {output_path}")
 
 
 if __name__ == "__main__":

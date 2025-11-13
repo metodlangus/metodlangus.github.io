@@ -3,73 +3,73 @@ document.addEventListener("DOMContentLoaded", function() {
   // Insert labels HTML into placeholder
   document.getElementById("navigation-placeholder").innerHTML = `<aside class='sidebar-labels'><h2>Navigacija</h2>
 <div class='first-items'><h3>Kategorija:</h3><ul class='label-list'>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/alpinizem.html'>Alpinizem</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/ferata.html'>Ferata</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/gornistvo.html'>Gorništvo</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/gorski-tek.html'>Gorski tek</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/ostalo.html'>Ostalo</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/plezanje.html'>Plezanje</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/pohodnistvo.html'>Pohodništvo</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/potepanja.html'>Potepanja</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/sprehod.html'>Sprehod</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/tek.html'>Tek</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/turno-smucanje.html'>Turno smučanje</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/alpinizem/'>Alpinizem</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/ferata/'>Ferata</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/gornistvo/'>Gorništvo</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/gorski-tek/'>Gorski tek</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/ostalo/'>Ostalo</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/plezanje/'>Plezanje</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/pohodnistvo/'>Pohodništvo</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/potepanja/'>Potepanja</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/sprehod/'>Sprehod</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/tek/'>Tek</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/turno-smucanje/'>Turno smučanje</a></li>
 </ul>
 <div class='remaining-items hidden' style='height:auto;'>
 <h3>Država:</h3><ul class='label-list'>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/avstrija.html'>Avstrija</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/hrvaska.html'>Hrvaška</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/italija.html'>Italija</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/madzarska.html'>Madžarska</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/maroko.html'>Maroko</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/sardinija.html'>Sardinija</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/slovaska.html'>Slovaška</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/slovenija.html'>Slovenija</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/svica.html'>Švica</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/avstrija/'>Avstrija</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/hrvaska/'>Hrvaška</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/italija/'>Italija</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/madzarska/'>Madžarska</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/maroko/'>Maroko</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/sardinija/'>Sardinija</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/slovaska/'>Slovaška</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/slovenija/'>Slovenija</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/svica/'>Švica</a></li>
 </ul>
 <h3>Gorstvo:</h3><ul class='label-list'>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/beneske-predalpe.html'>Beneške Predalpe</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/atlas.html'>Atlas</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/biokovo.html'>Biokovo</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/dinarsko-gorstvo.html'>Dinarsko gorstvo</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/dolomiti.html'>Dolomiti</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/julijske-alpe.html'>Julijske Alpe</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/kamnisko-savinjske-alpe.html'>Kamniško-Savinjske Alpe</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/karavanke.html'>Karavanke</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/karnijske-alpe.html'>Karnijske Alpe</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/kriske-alpe.html'>Kriške Alpe</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/matra.html'>Mátra</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/nizke-tatre.html'>Nizke Tatre</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/nizke-ture.html'>Nizke Ture</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/peninske-alpe.html'>Peninske Alpe</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/slovaski-raj.html'>Slovaški raj</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/tavolara.html'>Tavolara</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/tribec.html'>Tribeč</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/velebit.html'>Velebit</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/visoke-tatre.html'>Visoke Tatre</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/visoke-ture.html'>Visoke Ture</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/beneske-predalpe/'>Beneške Predalpe</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/atlas/'>Atlas</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/biokovo/'>Biokovo</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/dinarsko-gorstvo/'>Dinarsko gorstvo</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/dolomiti/'>Dolomiti</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/julijske-alpe/'>Julijske Alpe</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/kamnisko-savinjske-alpe/'>Kamniško-Savinjske Alpe</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/karavanke/'>Karavanke</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/karnijske-alpe/'>Karnijske Alpe</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/kriske-alpe/'>Kriške Alpe</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/matra/'>Mátra</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/nizke-tatre/'>Nizke Tatre</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/nizke-ture/'>Nizke Ture</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/peninske-alpe/'>Peninske Alpe</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/slovaski-raj/'>Slovaški raj</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/tavolara/'>Tavolara</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/tribec/'>Tribeč</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/velebit/'>Velebit</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/visoke-tatre/'>Visoke Tatre</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/visoke-ture/'>Visoke Ture</a></li>
 </ul>
 <h3>Časovno:</h3><ul class='label-list'>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/celodnevni.html'>Celodnevni</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/daljsa-potepanja.html'>Daljša potepanja</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/dvodnevni.html'>Dvodnevni</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/kratki.html'>Kratki</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/poldnevni.html'>Poldnevni</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/vikend-potepanja.html'>Vikend potepanja</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/celodnevni/'>Celodnevni</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/daljsa-potepanja/'>Daljša potepanja</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/dvodnevni/'>Dvodnevni</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/kratki/'>Kratki</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/poldnevni/'>Poldnevni</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/vikend-potepanja/'>Vikend potepanja</a></li>
 </ul>
 <h3>Ostalo:</h3><ul class='label-list'>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/brezpotje.html'>Brezpotje</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/greben.html'>Greben</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/jama.html'>Jama</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/jezero.html'>Jezero</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/kanjon.html'>Kanjon</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/mesto.html'>Mesto</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/moji-najljubsi.html'>Moji najljubši</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/otok.html'>Otok</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/polotok.html'>Polotok</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/slap.html'>Slap</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/soteska.html'>Soteska</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/grad.html'>Grad</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/brezpotje/'>Brezpotje</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/greben/'>Greben</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/jama/'>Jama</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/jezero/'>Jezero</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/kanjon/'>Kanjon</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/mesto/'>Mesto</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/moji-najljubsi/'>Moji najljubši</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/otok/'>Otok</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/polotok/'>Polotok</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/slap/'>Slap</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/soteska/'>Soteska</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/grad/'>Grad</a></li>
 </ul>
 </div>
 

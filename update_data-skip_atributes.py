@@ -24,14 +24,19 @@ def parse_file_to_dict(local_path=None, url=None):
             match = re.search(r'data-skip=([\d\w;]+)', rest)
             data_skip = match.group(1) if match else "NA"  # Default to "NA" if missing
 
-            # Extract post title and post link (assuming they're enclosed in quotes)
+            # Extract post title (inside quotes)
             title_match = re.search(r'"(.*?)"', rest)
             post_title = title_match.group(1) if title_match else ""
 
-            post_link_match = re.search(r'(\d{4}/\d{2}/[\w-]+\.html)', rest)
+            # Extract post link (e.g., 2023/03/sardija-2023/index.html)
+            post_link_match = re.search(r'(\d{4}/\d{2}/[\w-]+/index\.html)', rest)
             post_link = post_link_match.group(1) if post_link_match else ""
 
-            # Store the extracted data in the dictionary
+            # Convert post_link to folder-style (remove index.html)
+            if post_link.endswith("index.html"):
+                post_link = post_link.replace("index.html", "")
+
+            # Store extracted data
             photo_data[image_name] = {
                 "data_skip": data_skip,
                 "post_title": post_title,
@@ -64,18 +69,18 @@ def update_photo_data(extracted_url, list_url, local_list_path, local_file_path)
                 post_title = photo_dict[image_name]["post_title"]
                 post_link = photo_dict[image_name]["post_link"]
 
-                # Ensure we keep existing metadata and update only what’s necessary
+                # Update or insert data-skip
                 if "data-skip=" in line:
                     line = re.sub(data_skip_regex, f"data-skip={skip_data},", line)
                 else:
                     # Insert data-skip if missing
                     line = line.replace(rest, f"{rest} data-skip={skip_data},")
 
-                # Update post title (text inside quotes)
+                # Update post title
                 line = re.sub(r'"[^"]*"', f'"{post_title}"', line)
 
-                # Update post link (e.g., 2023/03/sardija-2023.html)
-                line = re.sub(r'\d{4}/\d{2}/[\w-]+\.html', post_link, line)
+                # Update post link (remove index.html if present)
+                line = re.sub(r'\d{4}/\d{2}/[\w-]+/(?:index\.html)?', post_link, line)
 
                 updated_line = line
             else:

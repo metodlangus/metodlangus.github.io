@@ -116,11 +116,11 @@ def main():
                     print(f"⚠️ Warning: Date mismatch for post '{title}'")
                     print(f"  Published: {pub_year}-{pub_month}, Link: {link_year}-{link_month}")
 
-                updated_original_link = f"{BASE_SITE_URL}/posts/{link_year}/{link_month}/{unique_slug}.html"
+                updated_original_link = f"{BASE_SITE_URL}/posts/{link_year}/{link_month}/{unique_slug}/index.html"
             else:
-                updated_original_link = f"{BASE_SITE_URL}/{unique_slug}.html"
+                updated_original_link = f"{BASE_SITE_URL}/{unique_slug}/index.html"
         else:
-            updated_original_link = f"{BASE_SITE_URL}/{unique_slug}.html"
+            updated_original_link = f"{BASE_SITE_URL}/{unique_slug}/index.html"
 
 
 

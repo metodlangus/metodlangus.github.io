@@ -72,6 +72,15 @@ function renderSortedPeaks(sortedLabelMap) {
     }
 }
 
+// Helper function to get post link from parent directory
+function getParentDirectoryUrl(fullUrl) {
+    const url = new URL(fullUrl);
+    const segments = url.pathname.split('/').filter(Boolean);
+    segments.pop(); // remove last segment (file or folder)
+    const parentPath = segments.join('/') + '/'; // ensure trailing slash
+    return `${url.origin}/${parentPath}`;
+}
+
 // Main function to parse the JSON data and extract mountain names, heights, post links, and dates
 async function main() {
     try {
@@ -105,7 +114,7 @@ async function main() {
                     namesAndHeights.forEach(nameAndHeight => {
                         const peakName = normalizeSpaces(nameAndHeight);
                         const fullUrl = entry.link.find(link => link.rel === 'alternate').href;
-                        const postLink = new URL(fullUrl).pathname.slice(1); // remove leading "/"
+                        const postLink = getParentDirectoryUrl(fullUrl); // use simplified parent directory
 
                         const label2 = entry.category ? entry.category.find(cat => cat.term.startsWith('2.')) : null;
                         const label3Categories = entry.category ? entry.category.filter(cat => cat.term.startsWith('3.')) : [];
