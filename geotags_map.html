@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Geotag Map Example</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Leaflet CSS -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<style>
+  body, html { margin: 0; padding: 0; height: 100%; }
+  #map { width: 100%; height: 100vh; }
+  .popup-title { font-weight: bold; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- ✅ Load your generated geotag data -->
+<script src="mont-nav-keywords-geo.js"></script>
+
+<script>
+if (typeof keywords_geo === "undefined") {
+  alert("⚠️ keywords_geo not found — make sure mont-nav-keywords-geo.js is in the same folder!");
+}
+
+// Helper: distance between two points in km
+function distanceKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI/180;
+  const dLon = (lon2 - lon1) * Math.PI/180;
+  const a = Math.sin(dLat/2)**2 +
+            Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
+            Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+// Parse date from filename like 24_10_13__08_34_31.JPG
+function parseDateFromFilename(filename) {
+  const match = filename.match(/(\d{2})_(\d{1,2})_(\d{1,2})__([\d_]+)\.JPG/i);
+  if (!match) return null;
+  const [ , year, month, day, timePart ] = match;
+  const [hour, min, sec] = timePart.split('_').map(v => parseInt(v));
+  const fullYear = 2000 + parseInt(year); // Convert YY to YYYY
+  return `${parseInt(day)}.${parseInt(month)}.${fullYear} at ${hour}:${min}:${sec}`;
+}
+
+// Fetch first image date from post index.html
+async function fetchPostDate(postName) {
+  const url = `https://mattia-furlan.github.io/mont/escursioni/${postName}/index.html`;
+  try {
+    const response = await fetch(url);
+    const html = await response.text();
+    const regex = /resized_photos\/(\d{2}_\d{1,2}_\d{1,2}__\d{2}_\d{2}_\d{2}\.JPG)/i;
+    const match = html.match(regex);
+    return match ? parseDateFromFilename(match[1]) : "Date unknown";
+  } catch (e) {
+    console.error("Error fetching date for", postName, e);
+    return "Date unknown";
+  }
+}
+
+// Initialize map
+const map = L.map('map').setView([46.38, 13.3], 10);
+
+// Add OpenTopoMap tiles
+L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenTopoMap contributors'
+}).addTo(map);
+
+// Colors per post group
+const colors = ['red', 'blue', 'green', 'orange', 'purple'];
+let colorIndex = 0;
+
+(async function() {
+for (const [postName, locations] of Object.entries(keywords_geo)) {
+  const color = colors[colorIndex % colors.length];
+  colorIndex++;
+
+  // Remove locations without coordinates
+  let validLocations = locations.filter(l => l.lat && l.lon);
+
+  if (validLocations.length < 2) continue; // skip posts with <2 valid points
+
+  // Compute centroid
+  const centroidLat = validLocations.reduce((sum, l) => sum + l.lat, 0) / validLocations.length;
+  const centroidLon = validLocations.reduce((sum, l) => sum + l.lon, 0) / validLocations.length;
+
+  // Filter out locations farther than 8 km from centroid (adjust threshold)
+  validLocations = validLocations.filter(l => distanceKm(l.lat, l.lon, centroidLat, centroidLon) <= 100);
+
+  if (validLocations.length === 0) continue;
+
+  // Collect LatLngs for polyline
+  const latlngs = [];
+  const postDate = await fetchPostDate(postName);
+
+  validLocations.forEach(loc => {
+    const marker = L.circleMarker([loc.lat, loc.lon], {
+      radius: 6,
+      color,
+      fillColor: color,
+      fillOpacity: 0.8
+    }).addTo(map);
+
+    const postLink = `https://mattia-furlan.github.io/mont/escursioni/${postName}`;
+
+    const popupHTML = `
+      <div class="popup-title">
+        <a href="${postLink}" target="_blank">${postName}</a>
+      </div>
+      <div><strong>${loc.name}</strong></div>
+      <div>Date: ${postDate}</div>
+      <hr>
+      <div>Other places in this post:<br>
+        ${validLocations.map(l => l.name).join(', ')}
+      </div>
+    `;
+    marker.bindPopup(popupHTML);
+
+    latlngs.push([loc.lat, loc.lon]);
+  });
+
+  // Draw polyline connecting all filtered locations
+  if (latlngs.length > 1) {
+    L.polyline(latlngs, { color: color, weight: 2, opacity: 0.7 }).addTo(map);
+  }
+}
+})();
+</script>
+
+</body>
+</html>
