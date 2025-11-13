@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mattia Furlan adventures map</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  flex-direction: row;
+}
+
+#sidebar {
+  width: 350px;
+  max-width: 90%;
+  background: #f8f8f8;
+  border-right: 1px solid #ccc;
+  padding: 15px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  transition: transform 0.3s ease-in-out;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  z-index: 1000;
+  transform: translateX(-100%);
+  box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+}
+
+#sidebar.show {
+  transform: translateX(0);
+}
+
+#sidebar h2 {
+  margin-top: 0;
+  font-size: 1.2em;
+}
+
+#sidebar ol {
+  padding-left: 20px;
+  margin: 0;
+}
+
+#sidebar li {
+  margin-bottom: 12px;
+  cursor: pointer;
+  color: #0077cc;
+  font-size: 1em;
+}
+
+#sidebar li.no-map {
+  color: #999;
+  cursor: default;
+}
+
+#sidebar li:hover {
+  text-decoration: underline;
+}
+
+#map {
+  flex: 1;
+  height: 100vh;
+  min-width: 0;
+}
+
+#toggleSidebar {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1100;
+  background: rgba(100, 100, 100, 0.6);
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 5px;
+  font-size: 1.2em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#toggleSidebar:hover {
+  background: rgba(100, 100, 100, 0.9);
+}
+</style>
+</head>
+<body>
+
+<button id="toggleSidebar">☰ Menu</button>
+
+<div id="sidebar">
+  <h2>Mattia Furlan adventures</h2>
+  <ol id="postList"></ol>
+</div>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="mont-nav-keywords-geo.js"></script>
+
+<script>
+// Toggle sidebar
+const sidebar = document.getElementById('sidebar');
+const toggleBtn = document.getElementById('toggleSidebar');
+toggleBtn.addEventListener('click', () => {
+  sidebar.classList.toggle('show');
+});
+
+// Distance helper
+function distanceKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI/180;
+  const dLon = (lon2 - lon1) * Math.PI/180;
+  const a = Math.sin(dLat/2)**2 +
+            Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
+            Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function parseDateFromFilename(filename) {
+  const match = filename.match(/(\d{2})_(\d{1,2})_(\d{1,2})__([\d_]+)\.JPG/i);
+  if (!match) return null;
+  const [ , year, month, day, timePart ] = match;
+  const [hour, min, sec] = timePart.split('_').map(v => parseInt(v));
+  const fullYear = 2000 + parseInt(year);
+  return { text: `${parseInt(day)}.${parseInt(month)}.${fullYear} at ${hour}:${min}:${sec}`, dateObj: new Date(fullYear, month - 1, day, hour, min, sec) };
+}
+
+async function fetchPostDate(postName) {
+  const url = `https://mattia-furlan.github.io/mont/escursioni/${postName}/index.html`;
+  try {
+    const response = await fetch(url);
+    const html = await response.text();
+    const regex = /resized_photos\/(\d{2}_\d{1,2}_\d{1,2}__\d{2}_\d{2}_\d{2}\.JPG)/i;
+    const match = html.match(regex);
+    return match ? parseDateFromFilename(match[1]) : { text: "Date unknown", dateObj: new Date(0) };
+  } catch (e) {
+    console.error("Error fetching date for", postName, e);
+    return { text: "Date unknown", dateObj: new Date(0) };
+  }
+}
+
+// Initialize map
+const map = L.map('map', { zoomControl: false }).setView([46.38, 13.3], 10);
+L.control.zoom({ position: 'topright' }).addTo(map);
+L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenTopoMap contributors'
+}).addTo(map);
+
+const colors = ['red', 'blue', 'green', 'orange', 'purple'];
+let colorIndex = 0;
+const postList = document.getElementById('postList');
+const allLatLngs = [];
+
+// Store all markers and polylines
+const postsData = [];
+const postPolylines = {};
+const postMarkers = {};
+let allVisible = true;
+
+(async function() {
+  for (const [postName, locations] of Object.entries(keywords_geo)) {
+    const color = colors[colorIndex % colors.length];
+    colorIndex++;
+
+    let validLocations = locations.filter(l => l.lat && l.lon);
+    if (validLocations.length > 1) {
+      const centroidLat = validLocations.reduce((sum, l) => sum + l.lat, 0)/validLocations.length;
+      const centroidLon = validLocations.reduce((sum, l) => sum + l.lon, 0)/validLocations.length;
+      validLocations = validLocations.filter(l => distanceKm(l.lat, l.lon, centroidLat, centroidLon) <= 100);
+    }
+
+    const latlngs = [];
+    const markers = [];
+    const postDate = await fetchPostDate(postName);
+
+    validLocations.forEach(loc => {
+      const marker = L.circleMarker([loc.lat, loc.lon], {
+        radius: 8,
+        color,
+        fillColor: color,
+        fillOpacity: 0.8
+      }).addTo(map);
+
+      const postLink = `https://mattia-furlan.github.io/mont/escursioni/${postName}`;
+      const popupHTML = `
+        <div class="popup-title">
+          <a href="${postLink}" target="_blank">${postName}</a>
+        </div>
+        <div><strong>${loc.name}</strong></div>
+        <div>Date: ${postDate.text}</div>
+        <hr>
+        <div>Other places in this post:<br>
+          ${validLocations.map(l => l.name).join(', ')}
+        </div>
+      `;
+      marker.bindPopup(popupHTML);
+      markers.push(marker);
+      latlngs.push([loc.lat, loc.lon]);
+      allLatLngs.push([loc.lat, loc.lon]);
+    });
+
+    if (latlngs.length > 1) {
+      const polyline = L.polyline(latlngs, { color, weight: 2, opacity: 0.7 }).addTo(map);
+      postPolylines[postName] = polyline;
+    }
+
+    postMarkers[postName] = markers;
+    postsData.push({ postName, postDate, latlngs, markers });
+  }
+
+  // Sort posts by date
+  const allPostsSorted = Object.keys(keywords_geo).map(postName => {
+    const post = postsData.find(p => p.postName === postName);
+    return post || { postName, postDate: { text: "Date unknown", dateObj: new Date(0) }, latlngs: [], markers: [] };
+  });
+  allPostsSorted.sort((a,b)=>b.postDate.dateObj - a.postDate.dateObj);
+
+  // Populate sidebar
+  allPostsSorted.forEach(post => {
+    const li = document.createElement('li');
+    li.textContent = `${post.postName} — ${post.postDate.text}`;
+
+    if (post.latlngs.length > 0) {
+      li.onclick = () => {
+        // Hide all other markers and lines
+        Object.entries(postPolylines).forEach(([name, line]) => {
+          if (name === post.postName) line.addTo(map); else map.removeLayer(line);
+        });
+        Object.entries(postMarkers).forEach(([name, markers]) => {
+          if (name === post.postName) markers.forEach(m=>m.addTo(map)); 
+          else markers.forEach(m=>map.removeLayer(m));
+        });
+
+        map.fitBounds(L.latLngBounds(post.latlngs));
+        post.markers[0].openPopup();
+        sidebar.classList.remove('show');
+      };
+    } else {
+      li.classList.add('no-map');
+      li.onclick = () => {
+        window.open(`https://mattia-furlan.github.io/mont/escursioni/${post.postName}`, '_blank');
+      };
+    }
+
+    postList.appendChild(li);
+  });
+
+  if (allLatLngs.length > 0) {
+    map.fitBounds(L.latLngBounds(allLatLngs));
+  }
+
+  // Toggle all markers and lines
+  const toggleOverlayBtn = L.control({ position: 'topright' });
+  toggleOverlayBtn.onAdd = function() {
+    const btn = L.DomUtil.create('button', '');
+    btn.innerHTML = 'Toggle Overlay';
+    btn.style.background = 'rgba(100,100,100,0.6)';
+    btn.style.color = 'white';
+    btn.style.padding = '5px 10px';
+    btn.style.border = 'none';
+    btn.style.borderRadius = '5px';
+    btn.style.cursor = 'pointer';
+    btn.style.marginTop = '40px';
+    btn.onmouseover = ()=>btn.style.background='rgba(100,100,100,0.9)';
+    btn.onmouseout = ()=>btn.style.background='rgba(100,100,100,0.6)';
+    btn.onclick = () => {
+      allVisible = !allVisible;
+      Object.values(postPolylines).forEach(line=>{
+        allVisible ? line.addTo(map) : map.removeLayer(line);
+      });
+      Object.values(postMarkers).forEach(arr=>{
+        arr.forEach(m=>{
+          allVisible ? m.addTo(map) : map.removeLayer(m);
+        });
+      });
+    };
+    return btn;
+  };
+  toggleOverlayBtn.addTo(map);
+
+})();
+</script>
+</body>
+</html>
