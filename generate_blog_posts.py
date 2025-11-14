@@ -746,11 +746,12 @@ def generate_sidebar_html(picture_settings, map_settings, current_page):
         {random_photo_sections}
         <div class="pages">
           <aside class='sidebar-pages'><h2>Strani</h2>
-            <li><a href="{BASE_SITE_URL}">Domov</a></li>
+            <li><a href="{BASE_SITE_URL}">Dnevnik</a></li>
             <li><a href="{BASE_SITE_URL}/predvajalnik-fotografij/">Predvajalnik naključnih fotografij</a></li>
             <li><a href="{BASE_SITE_URL}/galerija-fotografij/">Galerija fotografij</a></li>
             <li><a href="{BASE_SITE_URL}/seznam-vrhov/">Seznam vrhov</a></li>
             <li><a href="{BASE_SITE_URL}/zemljevid-spominov/">Zemljevid spominov</a></li>
+            <li><a href="{BASE_SITE_URL}/uporabne-povezave/">Uporabne povezave</a></li>
           </aside>
         </div>
         {settings_html}
@@ -2043,6 +2044,203 @@ def generate_home_si_page(homepage_html):
     print(f"Generated home SI page: {output_path}")
 
 
+def generate_useful_links_page():
+    output_dir = OUTPUT_DIR / "uporabne-povezave"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / "index.html"
+
+    # Sidebar, header, footer, etc.
+    sidebar_html = generate_sidebar_html(picture_settings=False, map_settings=False, current_page="useful-links")
+    header_html = generate_header_html()
+    searchbox_html = generate_searchbox_html()
+    footer_html = generate_footer_html()
+    back_to_top_html = generate_back_to_top_html()
+
+    # --- Schema.org structured data (JSON-LD)
+    schema_jsonld = f"""
+    <script type="application/ld+json">
+    {{
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Uporabne povezave",
+      "url": "https://metodlangus.github.io/uporabne-povezave/",
+      "description": "Seznam uporabnih povezav do drugih blogov in vsebin.",
+      "inLanguage": "sl",
+      "isPartOf": {{
+        "@type": "WebSite",
+        "name": "Gorski Užitki",
+        "url": "https://metodlangus.github.io"
+      }},
+      "publisher": {{
+        "@type": "Person",
+        "name": "Metod Langus",
+        "url": "https://metodlangus.github.io"
+      }},
+      "potentialAction": {{
+        "@type": "SearchAction",
+        "target": "https://metodlangus.github.io/search?q={{search_term_string}}",
+        "query-input": "required name=search_term_string"
+      }}
+    }}
+    </script>
+    """
+
+    # Generate HTML for the links
+    links_html = """
+      <div id="useful-links-container"></div>
+      <script src="../assets/useful-links.js"></script>
+
+      <style>
+      .open-map-btn {
+        margin-left: 10px;
+        padding: 3px 8px;
+        background: #ccc;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .open-map-btn:hover {
+        background: #aaa;
+      }
+      #mapOverlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
+        background: rgba(0,0,0,0.75);
+        z-index: 999999;
+      }
+      #mapOverlay iframe {
+        width: 90vw;
+        height: 90vh;
+        border: none;
+        margin: 5vh 5vw;
+        border-radius: 8px;
+        box-shadow: 0 0 25px rgba(0,0,0,0.6);
+      }
+      #mapOverlayClose {
+        position: fixed;
+        top: 12px;
+        right: 20px;
+        font-size: 32px;
+        color: white;
+        cursor: pointer;
+        z-index: 1000000;
+      }
+      #mapOverlayClose:hover {
+        color: #ffaaaa;
+      }
+      </style>
+
+      <script>
+      const container = document.getElementById('useful-links-container');
+      let html = '<ul class="useful-links">';
+
+      usefulLinks.forEach((link, index) => {
+          html += `<li style="margin-bottom:15px; position:relative;">
+                      <img src="${link.favicon}" alt="" style="width:16px;height:16px;vertical-align:middle;margin-right:5px;">
+                      <a href="${link.url}" target="_blank">${link.title}</a>
+
+                      ${link.url === "https://mattia-furlan.github.io/mont/escursioni/introduzione/" ? `
+                          <button class="open-map-btn" onclick="openMapOverlay()">🗺️ Zemljevid</button>
+                      ` : ``}
+
+                      <br>
+                      <small>${link.description}</small>
+                    </li>`;
+      });
+
+      html += '</ul>';
+      container.innerHTML = html;
+
+      function openMapOverlay() {
+          const overlay = document.getElementById('mapOverlay');
+          const frame = document.getElementById('mapOverlayFrame');
+          frame.src = "../mattia_furlan_map.html";  // Path to your map page
+          overlay.style.display = "block";
+      }
+
+      function closeMapOverlay() {
+          document.getElementById('mapOverlay').style.display = "none";
+          document.getElementById('mapOverlayFrame').src = "";
+      }
+      </script>
+    """
+
+    # Main HTML content
+    html_content = f"""<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=400, initial-scale=0.8, maximum-scale=2.0, user-scalable=yes">
+  <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+  <meta name="description" content="Seznam uporabnih povezav do drugih blogov in vsebin." />
+  <meta name="keywords" content="gorski užitki, uporabne povezave, blog, pohodništvo, gore, narava" />
+  <meta name="author" content="Metod Langus" />
+
+  <meta property="og:title" content="Uporabne povezave" />
+  <meta property="og:description" content="Seznam uporabnih povezav do drugih blogov in vsebin." />
+  <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
+  <meta property="og:image:alt" content="Uporabne povezave" />
+  <meta property="og:url" content="https://metodlangus.github.io/uporabne-povezave.html" />
+  <meta property="og:type" content="website" />
+
+  <title>Uporabne povezave | Gorski Užitki</title>
+
+  <!-- Canonical & hreflang -->
+  <link rel="canonical" href="https://metodlangus.github.io/uporabne-povezave.html" />
+  <link rel="alternate" href="https://metodlangus.github.io/uporabne-povezave.html" hreflang="sl" />
+  <link rel="alternate" href="https://metodlangus.github.io" hreflang="x-default" />
+
+  {schema_jsonld}
+
+  <script>
+    var postTitle = 'Uporabne povezave';
+    var author = 'Metod';
+  </script>
+
+  <!-- Favicon -->
+  <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
+
+  <!-- Fonts & CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
+</head>
+
+<body>
+  <div class="page-wrapper">
+    <header class="top-header">{header_html}</header>
+    <div class="main-layout">
+      {sidebar_html}
+      <div class="content-wrapper">
+        {searchbox_html}
+        <h1>Uporabne povezave</h1>
+        <p>Zbirka povezav do drugih blogov in ostalih uporabnih spletnih vsebin:</p>
+
+        {links_html}
+
+        <div id="mapOverlay">
+            <div id="mapOverlayClose" onclick="closeMapOverlay()">✖</div>
+            <iframe id="mapOverlayFrame" src="" loading="lazy"></iframe>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {back_to_top_html}
+  {footer_html}
+
+  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
+</body>
+</html>"""
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(html_content)
+
+    print(f"Generated useful links page: {output_path}")
+    
+
 if __name__ == "__main__":
     entries = fetch_all_entries()
     label_posts_raw = fetch_and_save_all_posts(entries)  # This function should return { label: [ {postId, date, html}, ... ] }
@@ -2062,6 +2260,7 @@ if __name__ == "__main__":
     generate_gallery_page(current_page="gallery_page")
     generate_peak_list_page()
     generate_big_map_page()
+    generate_useful_links_page()
 
     homepage_html = generate_homepage_html(entries)
     generate_home_en_page(homepage_html)
