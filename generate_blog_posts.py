@@ -14,6 +14,7 @@ from collections import defaultdict
 from urllib.parse import urlparse, urlunparse, urljoin
 import os
 import json
+import subprocess
 
 ##### Commit message: #####
 # Update blog posts
@@ -746,11 +747,12 @@ def generate_sidebar_html(picture_settings, map_settings, current_page):
         {random_photo_sections}
         <div class="pages">
           <aside class='sidebar-pages'><h2>Strani</h2>
-            <li><a href="{BASE_SITE_URL}">Domov</a></li>
+            <li><a href="{BASE_SITE_URL}">Dnevnik</a></li>
             <li><a href="{BASE_SITE_URL}/predvajalnik-fotografij/">Predvajalnik naključnih fotografij</a></li>
             <li><a href="{BASE_SITE_URL}/galerija-fotografij/">Galerija fotografij</a></li>
             <li><a href="{BASE_SITE_URL}/seznam-vrhov/">Seznam vrhov</a></li>
             <li><a href="{BASE_SITE_URL}/zemljevid-spominov/">Zemljevid spominov</a></li>
+            <li><a href="{BASE_SITE_URL}/uporabne-povezave/">Uporabne povezave</a></li>
           </aside>
         </div>
         {settings_html}
@@ -946,15 +948,15 @@ def remove_all_prefixes(label):
     return re.sub(r"^(?:\d+\.\s*)+", "", label)
 
 def indent_xml(elem, level=0):
-    """Recursively indent XML for pretty printing."""
+    """Pretty-print XML."""
     i = "\n" + "   " * level
     if len(elem):
         if not elem.text or not elem.text.strip():
             elem.text = i + "   "
         for child in elem:
             indent_xml(child, level + 1)
-        if not child.tail or not child.tail.strip():
-            child.tail = i
+            if not child.tail or not child.tail.strip():
+                child.tail = i
     if level and (not elem.tail or not elem.tail.strip()):
         elem.tail = i
     return elem
@@ -971,43 +973,46 @@ def generate_url_element(loc, lastmod=None, changefreq=None, priority=None):
         SubElement(url, "lastmod").text = lastmod
     return url
 
+def generate_sitemap_from_folder(folder_path: Path, exclude_dirs=None):
+    """
+    Generate sitemap.xml by scanning all .html files in folder_path,
+    excluding directories listed in exclude_dirs.
+    """
 
-def generate_sitemap(entries):
-    """Generate pretty-printed sitemap.xml including homepage."""
-    urlset = Element("urlset", {
-        "xmlns": "http://www.sitemaps.org/schemas/sitemap/0.9"
-    })
+    urlset = Element("urlset", {"xmlns": "http://www.sitemaps.org/schemas/sitemap/0.9"})
 
-    # Add homepage
-    homepage_lastmod = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    homepage_element = generate_url_element(BASE_SITE_URL, homepage_lastmod)
-    urlset.append(homepage_element)
+    for html_file in folder_path.rglob("*.html"):
+        relative_path = html_file.relative_to(folder_path).as_posix()
 
-    # Add other entries
-    for entry in entries:
-        # Determine lastmod
-        published = entry.get("published", {}).get("$t", "")
-        try:
-            dt = datetime.strptime(published, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
-        except ValueError:
-            dt = datetime.now(timezone.utc)
-        lastmod = dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+        # Skip excluded directories
+        if any(f"{excl}/" in relative_path for excl in exclude_dirs):
+            continue
 
-        # Extract post URL
-        post_url = None
-        for link in entry.get("link", []):
-            if link.get("rel") == "alternate" and link.get("type") == "text/html":
-                post_url = link.get("href")
-                break
+        # Full URL
+        url = f"{BASE_SITE_URL}/{relative_path}"
 
-        if post_url:
-            url_element = generate_url_element(
-                post_url,
-                lastmod=lastmod,
-                changefreq="monthly",
-                priority=1
-            )
-            urlset.append(url_element)
+        # Last modification date
+        lastmod = datetime.fromtimestamp(html_file.stat().st_mtime, tz=timezone.utc).strftime(
+            "%Y-%m-%dT%H:%M:%SZ"
+        )
+
+        # Determine priority
+        parts = Path(relative_path).parts
+
+        if parts[-1] == "index.html" and len(parts) <= 2:
+            priority = 1                       # Root index or one level deep index.html
+        elif "posts" in parts:
+            priority = 1                       # Any posts file
+        elif parts[0] == "search":
+            priority = 0.8                     # search/ directory
+        elif len(parts) == 1 and parts[0] != "index.html":
+            priority = 0.6                     # other root HTML files
+        else:
+            priority = 0.5                       # fallback default
+
+        changefreq = "monthly"
+
+        urlset.append(generate_url_element(url, lastmod=lastmod, changefreq=changefreq, priority=priority))
 
     # Pretty-print before writing
     indent_xml(urlset)
@@ -2043,6 +2048,171 @@ def generate_home_si_page(homepage_html):
     print(f"Generated home SI page: {output_path}")
 
 
+def generate_mattia_map_page():
+    output_path = OUTPUT_DIR / "mattia-adventures-map.html"
+
+    # Generate sidebar HTML dynamically (optional)
+    sidebar_html = """
+    <div id="sidebar">
+      <h2>Mattia Furlan adventures</h2>
+      <ol id="postList"></ol>
+    </div>
+    """
+
+    # Full HTML content
+    html_content = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mattia Furlan adventures map</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.css' rel='stylesheet'>
+<link href='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.css' rel='stylesheet'>
+<link rel="stylesheet" href="{BASE_SITE_URL}/assets/MattiaMapScript.css">
+
+</head>
+<body>
+
+<button id="toggleSidebar">☰</button>
+{sidebar_html}
+
+<div id="map"></div>
+
+<script src='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
+<script src="{BASE_SITE_URL}/mont-nav-keywords-geo.js"></script>
+<script src="{BASE_SITE_URL}/assets/MattiaMapScript.js"></script>
+
+</body>
+</html>
+"""
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(html_content)
+    print(f"Generated Mattia adventures map page: {output_path}")
+
+
+def generate_useful_links_page():
+    output_dir = OUTPUT_DIR / "uporabne-povezave"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / "index.html"
+
+    # Sidebar, header, footer, etc.
+    sidebar_html = generate_sidebar_html(picture_settings=False, map_settings=False, current_page="useful-links")
+    header_html = generate_header_html()
+    searchbox_html = generate_searchbox_html()
+    footer_html = generate_footer_html()
+    back_to_top_html = generate_back_to_top_html()
+
+    # --- Schema.org structured data (JSON-LD)
+    schema_jsonld = f"""
+    <script type="application/ld+json">
+    {{
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Uporabne povezave",
+      "url": "https://metodlangus.github.io/uporabne-povezave/",
+      "description": "Seznam uporabnih povezav do drugih blogov in vsebin.",
+      "inLanguage": "sl",
+      "isPartOf": {{
+        "@type": "WebSite",
+        "name": "Gorski Užitki",
+        "url": "https://metodlangus.github.io"
+      }},
+      "publisher": {{
+        "@type": "Person",
+        "name": "Metod Langus",
+        "url": "https://metodlangus.github.io"
+      }},
+      "potentialAction": {{
+        "@type": "SearchAction",
+        "target": "https://metodlangus.github.io/search?q={{search_term_string}}",
+        "query-input": "required name=search_term_string"
+      }}
+    }}
+    </script>
+    """
+
+    # Generate HTML for the links
+    links_html = """<div id="useful-links-container"></div>"""
+
+    # Main HTML content
+    html_content = f"""<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=400, initial-scale=0.8, maximum-scale=2.0, user-scalable=yes">
+  <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+  <meta name="description" content="Seznam uporabnih povezav do drugih blogov in vsebin." />
+  <meta name="keywords" content="gorski užitki, uporabne povezave, blog, pohodništvo, gore, narava" />
+  <meta name="author" content="Metod Langus" />
+
+  <meta property="og:title" content="Uporabne povezave" />
+  <meta property="og:description" content="Seznam uporabnih povezav do drugih blogov in vsebin." />
+  <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
+  <meta property="og:image:alt" content="Uporabne povezave" />
+  <meta property="og:url" content="https://metodlangus.github.io/uporabne-povezave.html" />
+  <meta property="og:type" content="website" />
+
+  <title>Uporabne povezave | Gorski Užitki</title>
+
+  <!-- Canonical & hreflang -->
+  <link rel="canonical" href="https://metodlangus.github.io/uporabne-povezave.html" />
+  <link rel="alternate" href="https://metodlangus.github.io/uporabne-povezave.html" hreflang="sl" />
+  <link rel="alternate" href="https://metodlangus.github.io" hreflang="x-default" />
+
+  {schema_jsonld}
+
+  <script>
+    var postTitle = 'Uporabne povezave';
+    var author = 'Metod';
+  </script>
+
+  <!-- Favicon -->
+  <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
+
+  <!-- Fonts & CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyUsefulLinksScript.css">
+</head>
+
+<body>
+  <div class="page-wrapper">
+    <header class="top-header">{header_html}</header>
+    <div class="main-layout">
+      {sidebar_html}
+      <div class="content-wrapper">
+        {searchbox_html}
+        <h1>Uporabne povezave</h1>
+        <p>Zbirka povezav do drugih blogov in ostalih uporabnih spletnih vsebin:</p>
+
+        {links_html}
+
+        <div id="mapOverlay">
+            <div id="mapOverlayClose" onclick="closeMapOverlay()">✖</div>
+            <iframe id="mapOverlayFrame" src="" loading="lazy"></iframe>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {back_to_top_html}
+  {footer_html}
+
+  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/assets/MyUsefulLinksScript.js" defer></script>
+</body>
+</html>"""
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(html_content)
+
+    print(f"Generated useful links page: {output_path}")
+    
+
 if __name__ == "__main__":
     entries = fetch_all_entries()
     label_posts_raw = fetch_and_save_all_posts(entries)  # This function should return { label: [ {postId, date, html}, ... ] }
@@ -2063,8 +2233,13 @@ if __name__ == "__main__":
     generate_peak_list_page()
     generate_big_map_page()
 
+    # Run geotags_map.py in the current directory
+    subprocess.run(["python", "geotags_map.py"], check=True)
+    generate_mattia_map_page()
+    generate_useful_links_page()
+
     homepage_html = generate_homepage_html(entries)
     generate_home_en_page(homepage_html)
     generate_home_si_page(homepage_html)
 
-    generate_sitemap(entries)
+    generate_sitemap_from_folder(Path(r"C:\Spletna_stran_Github\metodlangus.github.io"), exclude_dirs=["plugins"])
