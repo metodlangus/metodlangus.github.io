@@ -1,0 +1,84 @@
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .background {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .background svg {
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    display: block;
+    border: none;
+  }
+
+  .quarter {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 50%;
+    padding: 2%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    text-align: left;
+    pointer-events: auto;
+  }
+
+  .message-overlay {
+    padding: 5% 1% 1% 2%;
+    text-align: center;
+    pointer-events: auto;
+  }
+
+  .message-overlay h1 {
+    color: #f3891d;
+    font-weight: bold;
+    margin: 0 0 0.3em 0;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  .message-overlay p {
+    color: #333;
+    margin: 0.2em 0;
+  }
+
+  .message-overlay a {
+    display: inline-block;
+    margin-top: 0.8em;
+    padding: 0.3em 0.6em;
+    background: #f3891d;
+    color: #333;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .message-overlay a:hover {
+    background: #f3891d;
+  }
+
+  .centered {
+    position: absolute;
+  }
