@@ -27,6 +27,11 @@ SITEMAP_FILE = "sitemap.xml"
 
 LASTMOD_DB = Path(".build/lastmod.json")
 
+INDEXNOW_ENDPOINT = "https://www.bing.com/indexnow"
+HOST = "metodlangus.github.io"
+KEY = "96686b98e4974b89a7268c29fa7756a8"
+KEY_LOCATION = f"https://{HOST}/{KEY}.txt"
+
 # Constants
 BASE_FEED_URL = "https://gorski-uzitki.blogspot.com/feeds/posts/default"
 OUTPUT_DIR = Path.cwd() # Current path
@@ -992,11 +997,15 @@ def generate_url_element(loc, lastmod=None, changefreq=None, priority=None):
         SubElement(url, "lastmod").text = lastmod
     return url
 
-def generate_sitemap_from_folder(folder_path: Path, exclude_dirs=None):
+def generate_sitemap_from_folder(folder_path: Path, exclude_dirs=None, exclude_files=None):
     """
     Generate sitemap.xml by scanning all .html files in folder_path,
-    excluding directories listed in exclude_dirs.
+    excluding directories in exclude_dirs and files in exclude_files.
     """
+    if exclude_dirs is None:
+        exclude_dirs = []
+    if exclude_files is None:
+        exclude_files = []
 
     lastmod_db = load_lastmod_db()
     new_lastmod_db = {}
@@ -1006,11 +1015,15 @@ def generate_sitemap_from_folder(folder_path: Path, exclude_dirs=None):
     for html_file in folder_path.rglob("*.html"):
         relative_path = html_file.relative_to(folder_path).as_posix()
 
-        # Skip excluded dirs
-        if exclude_dirs and any(f"{excl}/" in relative_path for excl in exclude_dirs):
+        # Skip excluded directories
+        if any(f"{excl}/" in relative_path for excl in exclude_dirs):
             continue
 
-        # Compute hash
+        # Skip excluded files
+        if relative_path in exclude_files:
+            continue
+
+        # Compute hash & lastmod
         md5 = compute_md5(html_file)
         key = relative_path
 
@@ -1053,6 +1066,65 @@ def generate_sitemap_from_folder(folder_path: Path, exclude_dirs=None):
     ElementTree(urlset).write(SITEMAP_FILE, encoding="utf-8", xml_declaration=True)
     print(f"Sitemap je bil ustvarjen in shranjen kot {SITEMAP_FILE}")
 
+def submit_changed_files_to_indexnow(folder_path: Path, exclude_dirs=None, exclude_files=None):
+    """
+    Submit only changed HTML files to IndexNow.
+    Uses lastmod DB to detect changed files.
+    Can exclude directories and specific files.
+    """
+
+    if exclude_dirs is None:
+        exclude_dirs = []
+    if exclude_files is None:
+        exclude_files = []
+
+    lastmod_db = load_lastmod_db()  # Load previous lastmod/md5 info
+    new_lastmod_db = {}
+
+    changed_urls = []
+
+    for html_file in folder_path.rglob("*.html"):
+        relative_path = html_file.relative_to(folder_path).as_posix()
+
+        # Skip excluded directories
+        if any(f"{excl}/" in relative_path for excl in exclude_dirs):
+            continue
+
+        # Skip excluded files
+        if relative_path in exclude_files:
+            continue
+
+        # Compute MD5 and check lastmod
+        md5 = compute_md5(html_file)
+        key = relative_path
+
+        if key in lastmod_db and lastmod_db[key]["md5"] == md5:
+            # unchanged
+            lastmod = lastmod_db[key]["lastmod"]
+        else:
+            # changed → mark for submission
+            lastmod = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+            url = f"https://{HOST}/{relative_path}"
+            changed_urls.append(url)
+
+        # Save current info
+        new_lastmod_db[key] = {"md5": md5, "lastmod": lastmod}
+
+    # Update DB
+    save_lastmod_db(new_lastmod_db)
+
+    # Submit only changed URLs
+    if changed_urls:
+        payload = {
+            "host": HOST,
+            "key": KEY,
+            "keyLocation": KEY_LOCATION,
+            "urlList": changed_urls
+        }
+        response = requests.post(INDEXNOW_ENDPOINT, json=payload)
+        print(f"Submitted {len(changed_urls)} changed URLs to IndexNow - Status: {response.status_code}")
+    else:
+        print("No changed URLs to submit.")
 
 def fetch_and_save_all_posts(entries):
     # HTML sections
@@ -2414,4 +2486,14 @@ if __name__ == "__main__":
     generate_home_si_page(homepage_html)
     generate_404_page()
 
-    generate_sitemap_from_folder(Path(r"C:\Spletna_stran_Github\metodlangus.github.io"), exclude_dirs=["plugins"])
+    generate_sitemap_from_folder(
+        Path(r"C:\Spletna_stran_Github\metodlangus.github.io"),
+        exclude_dirs=["plugins"],
+        exclude_files=["mattia-adventures-map.html"]
+    )
+
+    submit_changed_files_to_indexnow(
+        Path(r"C:\Spletna_stran_Github\metodlangus.github.io"),
+        exclude_dirs=["plugins"],
+        exclude_files=["mattia-adventures-map.html"]
+    )
