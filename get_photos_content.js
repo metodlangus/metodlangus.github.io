@@ -17,7 +17,7 @@ function fetchData() {
             entries.forEach(entry => {
                 const postTitle = entry.title.$t;
                 const content = entry.content.$t;
-                const postUrl = entry.link.find(link => link.rel === 'alternate').href.replace(blogUrl, '');
+                const postUrl = entry.link.find(link => link.rel === 'alternate').href.replace(blogUrl + "/posts", "");
                 const $ = cheerio.load(content);
                 const images = $('img');
 
