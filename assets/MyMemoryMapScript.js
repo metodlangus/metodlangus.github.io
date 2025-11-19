@@ -470,22 +470,41 @@ const ClearTracksControl = L.Control.extend({
     }
 });
 
-// Fetch and display track markers
+// Fetch and display track markers with track-popup style (same as photo-popup style)
 function loadTrackMarkers() {
     fetch(trackListUrl)
         .then(response => response.text())
         .then(data => {
-            const trackList = data.split('\n').map(line => line.split(';')).filter(parts => parts.length === 3);
-            trackList.forEach(([lat, lng, filename]) => {
+            // Split lines and filter for at least 3 columns
+            const trackList = data.split('\n').map(line => line.split(';')).filter(parts => parts.length >= 3);
+
+            trackList.forEach(([lat, lng, filename, coverPhoto, postLink]) => {
                 const { trackName, trackDate } = extractTrackName(filename);
                 const gpxURL = `${gpxFolder}${filename}`;
                 const randomColor = trackColors[Math.floor(Math.random() * trackColors.length)];
+
+                // Build popup content using track-popup style
+                let popupContent;
+                if (coverPhoto && coverPhoto.trim() !== '' && postLink && postLink.trim() !== '') {
+                    popupContent = `
+                        <div class="popup-container">
+                            <a href="${postLink}" target="_blank">
+                                <img src="${coverPhoto}" alt="${trackName}" class="popup-image">
+                            </a>
+                            <div class="popup-caption">${trackName}<br>${trackDate}</div>
+                        </div>`;
+                } else {
+                    // Fallback to simple text if no photo
+                    popupContent = `
+                        <div class="popup-container">
+                            <div class="popup-caption">${trackName}<br>${trackDate}</div>
+                        </div>`;
+                }
+
                 const marker = L.marker([parseFloat(lat), parseFloat(lng)], { 
                     icon: startMarkerIcon, title: filename 
-                }).bindPopup(
-                    `<strong>${trackName}</strong><br>${trackDate}`, 
-                    { className: 'track-popup' } // Assign custom class for track popups
-                );
+                }).bindPopup(popupContent, { className: 'track-popup' });
+
                 marker.on('click', () => loadGPXTrack(gpxURL, randomColor, marker));
                 clusteredMarkers.addLayer(marker);
             });

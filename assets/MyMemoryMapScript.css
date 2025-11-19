@@ -5,14 +5,12 @@
     border-radius: 3px;
     position: relative;
 }
-/* Track popup content */
-.track-popup .leaflet-popup-content {
+/* Track & Photo popup content */
+.track-popup .leaflet-popup-content,
+.photo-popup .leaflet-popup-content {
     max-width: 300px;
     word-wrap: break-word;
     overflow-wrap: break-word;
-}
-/* Photo popup content */
-.photo-popup .leaflet-popup-content {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -22,6 +20,7 @@
     min-width: calc(2 / 3 * 100vw); /* Minimum width: exactly 2/3 of viewport width */
 }
 /* Default behavior: Responsive popup with min-width set to 50% of the viewport */
+.track-popup .leaflet-popup-content-wrapper,
 .photo-popup .leaflet-popup-content-wrapper {
     padding: 0;
     background: transparent;
@@ -31,6 +30,7 @@
     max-width: none; /* No maximum width initially */
     height: auto;
 }
+.track-popup .leaflet-popup-tip,
 .photo-popup .leaflet-popup-tip {
     background: gray;
 }
@@ -43,9 +43,11 @@
 }
 /* When viewport width is above a certain threshold, update the min-width */
 @media (min-width: 600px) {
+    .track-popup .leaflet-popup-content-wrapper,
     .photo-popup .leaflet-popup-content-wrapper {
         min-width: 400px !important;
     }
+    .track-popup .leaflet-popup-content,
     .photo-popup .leaflet-popup-content {
         min-width: 400px !important; /* Minimum width: 66% of the viewport width */
     }
