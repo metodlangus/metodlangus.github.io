@@ -4,7 +4,15 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("archive-placeholder").innerHTML = `<aside class="sidebar-archive">
   <h2>Arhiv</h2>
   <details open>
-    <summary>2025 (62)</summary>
+    <summary>2025 (65)</summary>
+    <details class="month-group">
+      <summary>november 2025 (3)</summary>
+      <ul>
+        <li><a href="https://metodlangus.github.io/posts/2025/11/ojstra-1577-m-topica-1949-m-zitrajska-gora-1064-m/">Ojstra (1577 m), Topica (1949 m), Žitrajska gora (1064 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/11/mali-grintovec-1813-m-srednji-vrh-1853-m/">Mali Grintovec (1813 m), Srednji vrh (1853 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/11/monte-cit-1415-m-monte-torre-1742-m/">Monte Cit (1415 m), Monte Torre (1742 m)</a></li>
+      </ul>
+    </details>
     <details class="month-group">
       <summary>oktober 2025 (4)</summary>
       <ul>
