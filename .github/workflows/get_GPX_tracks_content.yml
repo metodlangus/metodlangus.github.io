@@ -24,7 +24,7 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          python -m pip install gpxpy
+          python -m pip install gpxpy requests beautifulsoup4
 
       - name: Generate list_of_tracks.txt with coordinates
         run: |
