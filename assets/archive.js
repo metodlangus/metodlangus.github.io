@@ -4,11 +4,12 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("archive-placeholder").innerHTML = `<aside class="sidebar-archive">
   <h2>Arhiv</h2>
   <details open>
-    <summary>2025 (65)</summary>
+    <summary>2025 (66)</summary>
     <details class="month-group">
-      <summary>november 2025 (3)</summary>
+      <summary>november 2025 (4)</summary>
       <ul>
-        <li><a href="https://metodlangus.github.io/posts/2025/11/ojstra-1577-m-topica-1949-m-zitrajska-gora-1064-m/">Ojstra (1577 m), Topica (1949 m), Žitrajska gora (1064 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/11/jerebikovec-1593-m/">Jerebikovec (1593 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/11/ojstra-1577-m-topica-1649-m-zitrajska-gora-1064-m/">Ojstra (1577 m), Topica (1649 m), Žitrajska gora (1064 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/11/mali-grintovec-1813-m-srednji-vrh-1853-m/">Mali Grintovec (1813 m), Srednji vrh (1853 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/11/monte-cit-1415-m-monte-torre-1742-m/">Monte Cit (1415 m), Monte Torre (1742 m)</a></li>
       </ul>
@@ -72,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <li><a href="https://metodlangus.github.io/posts/2025/05/rutarski-vrsic-1699-m-vanezev-rob-1891-m/">Rutarski vršič (1699 m), Vanežev rob (1891 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/05/veliki-vrh-kriz-1742-m-slap-cedca/">Veliki vrh (Križ) (1742 m), slap Čedca</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/05/skozi-kraljestvo-muflonov/">Skozi kraljestvo muflonov</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2025/05/greben-begunjscice-2060-m-cez-potocnikovo-planino/">Greben Begunjščice (2060 m) čez Potočnikovo planino</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/05/greben-begunjscice-2060-m-cez-potocnikovo-planino/">Greben Begunjščice (2060 m) čez Potočnikovo planino</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/05/visoki-kurjek-barenkogel-1973-m-lepa-plevelnica-1959-m/">Visoki Kurjek / Bärenkogel (1973 m), Lepa Plevelnica (1959 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/05/potepanje-po-hrvaski-26-4-4-5-2025/">Potepanje po Hrvaški (26. 4. – 4. 5. 2025)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/05/klek-1181-m/">Klek (1181 m)</a></li>
@@ -133,8 +134,8 @@ document.addEventListener("DOMContentLoaded", function() {
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2024/11/srednji-vrh-1796-m-vrtaca-wertatscha-2180-m/">Srednji vrh (1796 m), Vrtača / Wertatscha (2180 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/11/potepanje-po-dolomitih-28-10-4-11-2024/">Potepanje po Dolomitih (28. 10. – 4. 11. 2024)</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2024/11/bruneck-brunico/">Bruneck - Brunico</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/11/piccolo-cir-2520-m-gran-cir-2592-m/">Piccolo Cir (2520 m), Gran Cir (2592 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2024/11/bruneck-brunico/">Bruneck - Brunico</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/11/mesola-2727-m-mesolina-2642-m/">Mesola (2727 m), Mesolina (2642 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/11/roda-di-vael-rotwand-2806-m/">Roda di Vaèl - Rotwand (2806 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/11/cima-costabella-2762-m-cima-dell-uomo-3010-m/">Cima Costabella (2762 m), Cima dell&#x27;Uomo (3010 m)</a></li>
