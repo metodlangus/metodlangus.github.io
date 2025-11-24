@@ -16,6 +16,7 @@ import os
 import json
 import subprocess
 import hashlib
+import time
 
 ##### Commit message: #####
 # Update blog posts
@@ -41,6 +42,9 @@ entries_per_page = 12 # Set pagination on home and label pages
 
 DEFAULT_OG_IMAGE = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiU8RYSJ0I45O63GlKYXw5-U_r7GwP48_st9F1LG7_Z3STuILVQxMO4qLgzP_wxg0v_77s-YwidwwZQIDS1K6SUmY-W3QMwcIyEvt28cLalvCVQu4qWTQIm-B_FvgEmCCe6ydGld4fQgMMd2xNdqMMFtuHgeVXB4gRPco3XP90OOKHpf6HyZ6AeEZqNJQo/s1600/IMG20241101141924.jpg"
 
+REMOTE_DB_URL = "https://metodlangus.github.io/.build/lastmod.json"  # remote published DB
+
+
 def load_lastmod_db():
     if LASTMOD_DB.exists():
         with open(LASTMOD_DB, "r", encoding="utf-8") as f:
@@ -48,14 +52,15 @@ def load_lastmod_db():
     return {}
 
 def save_lastmod_db(db):
-    LASTMOD_DB.parent.mkdir(exist_ok=True)
+    LASTMOD_DB.parent.mkdir(parents=True, exist_ok=True)
     with open(LASTMOD_DB, "w", encoding="utf-8") as f:
-        json.dump(db, f, indent=2)
+        json.dump(db, f, indent=2, ensure_ascii=False)  
 
-def compute_md5(path: Path):
+def compute_md5(file_path: Path) -> str:
     h = hashlib.md5()
-    with open(path, "rb") as f:
-        h.update(f.read())
+    with open(file_path, "rb") as f:
+        for chunk in iter(lambda: f.read(8192), b""):
+            h.update(chunk)
     return h.hexdigest()
 
 def override_domain(url, base_site_url):
@@ -1008,7 +1013,6 @@ def generate_sitemap_from_folder(folder_path: Path, exclude_dirs=None, exclude_f
         exclude_files = []
 
     lastmod_db = load_lastmod_db()
-    new_lastmod_db = {}
 
     urlset = Element("urlset", {"xmlns": "http://www.sitemaps.org/schemas/sitemap/0.9"})
 
@@ -1034,9 +1038,6 @@ def generate_sitemap_from_folder(folder_path: Path, exclude_dirs=None, exclude_f
             # Changed → update time
             lastmod = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-        # Save into new DB
-        new_lastmod_db[key] = {"md5": md5, "lastmod": lastmod}
-
         # Build URL
         url = f"{BASE_SITE_URL}/{relative_path}"
 
@@ -1058,73 +1059,105 @@ def generate_sitemap_from_folder(folder_path: Path, exclude_dirs=None, exclude_f
 
         urlset.append(generate_url_element(url, lastmod=lastmod, changefreq=changefreq, priority=priority))
 
-    # Save DB for next run
-    save_lastmod_db(new_lastmod_db)
-
     # Pretty-print & write XML
     indent_xml(urlset)
     ElementTree(urlset).write(SITEMAP_FILE, encoding="utf-8", xml_declaration=True)
     print(f"Sitemap je bil ustvarjen in shranjen kot {SITEMAP_FILE}")
 
-def submit_changed_files_to_indexnow(folder_path: Path, exclude_dirs=None, exclude_files=None):
+def submit_changed_files_to_indexnow(folder_path: Path,
+                                     exclude_dirs=None,
+                                     exclude_files=None,
+                                     index: bool = True):
     """
-    Submit only changed HTML files to IndexNow.
-    Uses lastmod DB to detect changed files.
-    Can exclude directories and specific files.
+    Compare local HTML MD5 checksums with remote DB.
+    Submit changed URLs to IndexNow only if index=True.
+    Always update local lastmod.json.
     """
-
     if exclude_dirs is None:
         exclude_dirs = []
     if exclude_files is None:
         exclude_files = []
 
-    lastmod_db = load_lastmod_db()  # Load previous lastmod/md5 info
+    try:
+        os.sync()
+    except AttributeError:
+        pass
+    time.sleep(0.1)
+
+    # Load remote published DB
+    try:
+        r = requests.get(REMOTE_DB_URL, timeout=10)
+        r.raise_for_status()
+        remote_db = r.json() or {}
+    except Exception:
+        print("WARNING: Could not load remote lastmod DB.")
+        remote_db = {}
+
     new_lastmod_db = {}
-
     changed_urls = []
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
+    def comparison_keys(rel_path: str):
+        # index.html → check both file and folder
+        if rel_path.endswith("index.html"):
+            folder_key = rel_path[:-10]  # remove index.html
+            if not folder_key.endswith("/"):
+                folder_key += "/"
+            file_key = rel_path
+            url = f"https://{HOST}/{folder_key}"
+            return [file_key, folder_key], url, file_key
+
+        # normal file
+        return [rel_path], f"https://{HOST}/{rel_path}", rel_path
+
+    # Scan all html files
     for html_file in folder_path.rglob("*.html"):
-        relative_path = html_file.relative_to(folder_path).as_posix()
+        rel = html_file.relative_to(folder_path).as_posix()
 
-        # Skip excluded directories
-        if any(f"{excl}/" in relative_path for excl in exclude_dirs):
+        if any(f"{d}/" in rel for d in exclude_dirs):
+            continue
+        if rel in exclude_files:
             continue
 
-        # Skip excluded files
-        if relative_path in exclude_files:
-            continue
-
-        # Compute MD5 and check lastmod
         md5 = compute_md5(html_file)
-        key = relative_path
+        keys_to_check, url_to_submit, storage_key = comparison_keys(rel)
 
-        if key in lastmod_db and lastmod_db[key]["md5"] == md5:
-            # unchanged
-            lastmod = lastmod_db[key]["lastmod"]
+        # Remote record
+        old_md5 = None
+        old_lastmod = None
+        for k in keys_to_check:
+            if k in remote_db:
+                old_md5 = remote_db[k].get("md5")
+                old_lastmod = remote_db[k].get("lastmod")
+                break
+
+        # Compare
+        if old_md5 == md5 and old_md5 is not None:
+            lastmod = old_lastmod or now
         else:
-            # changed → mark for submission
-            lastmod = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-            url = f"https://{HOST}/{relative_path}"
-            changed_urls.append(url)
+            lastmod = now
+            changed_urls.append(url_to_submit)
 
-        # Save current info
-        new_lastmod_db[key] = {"md5": md5, "lastmod": lastmod}
+        # Save entry
+        new_lastmod_db[storage_key] = {"md5": md5, "lastmod": lastmod}
 
-    # Update DB
-    save_lastmod_db(new_lastmod_db)
-
-    # Submit only changed URLs
-    if changed_urls:
+    # Submit changed URLs only if index=True
+    if index and changed_urls:
         payload = {
             "host": HOST,
             "key": KEY,
             "keyLocation": KEY_LOCATION,
             "urlList": changed_urls
         }
-        response = requests.post(INDEXNOW_ENDPOINT, json=payload)
-        print(f"Submitted {len(changed_urls)} changed URLs to IndexNow - Status: {response.status_code}")
+        try:
+            resp = requests.post(INDEXNOW_ENDPOINT, json=payload, timeout=15)
+            print(f"IndexNow: submitted {len(changed_urls)} URLs – status {resp.status_code}")
+        except Exception as e:
+            print("ERROR submitting to IndexNow:", e)
     else:
-        print("No changed URLs to submit.")
+        print("No IndexNow submission (either index=False or no changes).")
+
+    save_lastmod_db(new_lastmod_db)
 
 def fetch_and_save_all_posts(entries):
     # HTML sections
@@ -2495,5 +2528,6 @@ if __name__ == "__main__":
     submit_changed_files_to_indexnow(
         Path(r"C:\Spletna_stran_Github\metodlangus.github.io"),
         exclude_dirs=["plugins"],
-        exclude_files=["mattia-adventures-map.html"]
+        exclude_files=["mattia-adventures-map.html"],
+        index=True
     )
