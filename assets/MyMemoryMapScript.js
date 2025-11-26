@@ -40,9 +40,14 @@ const openstreetMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y
     minZoom: 1, updateWhenIdle: true
 });
 
+const esriSatellite = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+    attribution: "Tiles © Esri — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye",
+    minZoom: 1, updateWhenIdle: true
+});
+
 // Custom red marker start icon
 const startMarkerIcon = L.icon({
-    iconUrl: 'https://metodlangus.github.io/photos/marker-icon-red.png', // Red icon URL
+    iconUrl: 'https://metodlangus.github.io/photos/marker-icon-green.png', // Green icon URL
     iconSize: [25, 41], // Icon size
     iconAnchor: [12, 41], // Icon anchor (the point of the icon that will be placed at the marker position)
     popupAnchor: [1, -34], // Popup position
@@ -51,7 +56,7 @@ const startMarkerIcon = L.icon({
 
 // Custom photo marker icon
 const photoMarkerIcon = L.icon({
-    iconUrl: 'https://metodlangus.github.io/photos/marker-photo-icon-blue.png', // Red icon URL
+    iconUrl: 'https://metodlangus.github.io/photos/marker-photo-icon-blue.png', // Blue icon URL
     iconSize: [25, 41], // Icon size
     iconAnchor: [12, 41], // Icon anchor (the point of the icon that will be placed at the marker position)
     popupAnchor: [1, -34], // Popup position
@@ -518,8 +523,8 @@ function handleZoomChange() {
 
     // Check if the OpenTopoMap is currently active
     if (map.hasLayer(opentopoMap)) {
-        // If zoom level exceeds 17.25, switch to OpenStreetMap
-        if (zoomLevel > 17.25) {
+        // If zoom level exceeds 15.50, switch to OpenStreetMap
+        if (zoomLevel > 15.50) {
             if (!map.hasLayer(openstreetMap)) {
                 map.removeLayer(opentopoMap);
                 map.addLayer(openstreetMap);
@@ -529,8 +534,8 @@ function handleZoomChange() {
     } else if (map.hasLayer(openstreetMap)) {
         // If OpenStreetMap is already the active layer, do nothing
         // But handle zooming out and returning to OpenTopoMap if necessary
-        if (zoomLevel <= 17.25 && wasZoomedFromTopo) {
-            // If zoom level is lower than 17.25 and the map was zoomed from OpenTopoMap
+        if (zoomLevel <= 15.50 && wasZoomedFromTopo) {
+            // If zoom level is lower than 15.50 and the map was zoomed from OpenTopoMap
             map.removeLayer(openstreetMap);
             map.addLayer(opentopoMap);
             wasZoomedFromTopo = false; // Reset the flag after switching back
@@ -549,7 +554,7 @@ masterLayerGroup.addLayer(nonClusteredMarkers);
 
 // Add layer control to toggle between OpenTopoMap and OpenStreetMap
 L.control.layers(
-    {"OpenTopoMap": opentopoMap, "OpenStreetMap": openstreetMap},
+    {"OpenTopoMap": opentopoMap, "OpenStreetMap": openstreetMap, "Esri Satellite": esriSatellite},
     {'GPX sledi': masterLayerGroup, 'Slike': markers},
     {position: 'topright'}
 ).addTo(map);

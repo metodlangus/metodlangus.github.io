@@ -6,6 +6,23 @@ var usePostTitle = false; // Set to true to use post title, false to use extract
 // Set track colour
 var trackColour = 'orange';
 
+// Custom START (green) and END (red) icons
+const startMarkerIcon = L.icon({
+    iconUrl: 'https://metodlangus.github.io/photos/marker-icon-green.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowUrl: null
+});
+
+const endMarkerIcon = L.icon({
+    iconUrl: 'https://metodlangus.github.io/photos/marker-icon-red.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowUrl: null
+});
+
 // Generate map containers by iterating through valid gpx files.
 while (typeof window[`gpxURL${mapIndex}`] !== 'undefined' && window[`gpxURL${mapIndex}`].includes('.gpx')) {
     // Access the variables
@@ -95,12 +112,44 @@ function insertMapContainer(gpxURL, reliveURL, stravaURL, index) {
 
             // Add base tile layers
             const opentopoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-                attribution: 'Map data &copy; <a href="http://www.opentopomap.org">OpenTopoMap</a>'
+                attribution: 'Map data &copy; <a href="http://www.opentopomap.org">OpenTopoMap</a>',
+                minZoom: 1, updateWhenIdle: true
             }).addTo(map);
 
             const openstreetMap = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                minZoom: 1, updateWhenIdle: true
             });
+
+            const esriSatellite = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+                attribution: "Tiles © Esri — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye",
+                minZoom: 1, updateWhenIdle: true
+            });
+
+            let wasZoomedFromTopo = false;
+
+            // Per-map zoom change handler
+            function handleZoomChange() {
+                const zoomLevel = map.getZoom();
+
+                // Check if the OpenTopoMap is currently active
+                if (map.hasLayer(opentopoMap)) {
+                    if (zoomLevel > 15.50) {
+                        if (!map.hasLayer(openstreetMap)) {
+                            map.removeLayer(opentopoMap);
+                            map.addLayer(openstreetMap);
+                            wasZoomedFromTopo = true;
+                        }
+                    }
+                } else if (map.hasLayer(openstreetMap)) {
+                    if (zoomLevel <= 15.50 && wasZoomedFromTopo) {
+                        map.removeLayer(openstreetMap);
+                        map.addLayer(opentopoMap);
+                        wasZoomedFromTopo = false;
+                    }
+                }
+            }
+            map.on('zoomend', handleZoomChange);
 
             // Fetch GPX data from the URL
             fetch(gpxURL)
@@ -137,11 +186,34 @@ function insertMapContainer(gpxURL, reliveURL, stravaURL, index) {
                     });
 
                     var GPXtrack = L.layerGroup([polyline, arrowLayer]).addTo(map);
+                    
+                    var coords = geojson.features[0].geometry.coordinates;
+                    var latlngs = coords.map(c => [c[1], c[0]]);
+
+                    // Helper function to remove <hr> from description
+                    function cleanDescription(desc) {
+                        if (!desc) return '';
+                        // Remove all <hr ...> tags
+                        return desc.replace(/<hr[^>]*>/gi, '');
+                    }
+
+                    // START marker with popup from wpt or default text
+                    var startMarker = L.marker(latlngs[0], { icon: startMarkerIcon }).addTo(map);
+                    if (geojson.features[0].properties && geojson.features[0].properties.desc) {
+                        startMarker.bindPopup(cleanDescription(geojson.features[0].properties.desc));
+                    }
+
+                    // END marker with popup from GPX track description
+                    var endMarker = L.marker(latlngs[latlngs.length - 1], { icon: endMarkerIcon }).addTo(map);
+                    if (geojson.features[0].properties && geojson.features[0].properties.desc) {
+                        endMarker.bindPopup(cleanDescription(geojson.features[0].properties.desc));
+                    }
 
                     // Define base and overlay layers for the map
                     var baseLayers = {
-                        opentopoMap: opentopoMap,
-                        openstreetMap: openstreetMap
+                        "OpenTopoMap": opentopoMap,
+                        "OpenStreetMap": openstreetMap,
+                        "Esri Satellite": esriSatellite
                     };
 
                     var overlayLayers = {
@@ -166,9 +238,9 @@ function insertMapContainer(gpxURL, reliveURL, stravaURL, index) {
                 collapsed: true,
                 distanceMarkers: false,
                 downloadLink: true,
-                edgeScale: false, 
+                edgeScale: false,
                 hotline: false,
-                wptLabels: true,
+                wptIcons: false,
                 polyline: {
                     opacity: 0, // Make polyline invisible
                 }
