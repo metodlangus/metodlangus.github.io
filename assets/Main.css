@@ -152,7 +152,7 @@
 
 .nav-links a {
   display: inline-block;
-  font-size: 20px;
+  font-size: 18px;
   text-shadow: 0.5px 0.5px 0px #000;
   background-color: #ccc;
   /* color: #2c3e50; Blogger: $(attribution.link.color)*/
@@ -163,6 +163,7 @@
   font-weight: 800;
   word-break: initial;
   transition: background-color 0.2s ease;
+  text-align: center;
 }
 
 .nav-links a:hover {
@@ -175,7 +176,7 @@
 }
 
 /* Responsive Adjustments */
-@media (max-width: 400px) {
+@media (max-width: 360px) {
   .nav-links {
     flex-direction: column;
     align-items: center;
@@ -411,6 +412,17 @@ a {
   justify-content: center;
 }
 
+.search-close {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
 
 /* Base styles for menu button (hidden by default) */
 .menu-toggle {
@@ -491,6 +503,13 @@ a {
   .logo-svg {
     width: 80%;
     max-width: 540px; /* adjust as needed */
+  }
+}
+
+/* Responsive layout for the smallest screens */
+@media (max-width: 600px) {
+  .content-wrapper {
+    padding: 0.5rem;
   }
 }
 

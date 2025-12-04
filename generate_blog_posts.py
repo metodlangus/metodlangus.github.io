@@ -810,10 +810,10 @@ def generate_header_html():
 
     <div class="header-right">
       <button id="searchToggle" class="search-toggle" aria-label="Search">
-        <svg xmlns="http://www.w3.org/2000/svg" 
-            viewBox="0 0 24 24" 
-            width="24" height="24" 
-            fill="none" stroke="#000" stroke-width="2" 
+        <svg xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="24" height="24"
+            fill="none" stroke="#000" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -823,9 +823,7 @@ def generate_header_html():
         <input type="text" id="searchBox" placeholder="Išči objave...">
 
         <!-- Close button inside the search container -->
-        <button id="searchClose" aria-label="Close search" 
-          style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-                background: transparent; border: none; font-size: 20px; cursor: pointer;">
+        <button id="searchClose" class="search-close" aria-label="Close search">
           ×
         </button>
       </div>
@@ -893,23 +891,23 @@ def generate_post_navigation_html(entries, slugs, index, local_tz, year, month):
 
     # --- HTML navigation block ---
     nav_html = """
-    <div class="nav-links-wrapper" style="margin-top: 2em;">
-      <div class="nav-links" style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+    <div class="nav-links-wrapper">
+      <div class="nav-links">
     """
 
     if prev_slug:
         nav_html += f"""
-        <div class="prev-link" style="text-align: left; max-width: 45%;">
+        <div class="prev-link">
           <div class="pager-title">Prejšnja objava</div>
-          <a href="{BASE_SITE_URL}/posts/{prev_year}/{prev_month}/{prev_slug}/">&larr; {prev_title}</a>
+          <a href="{BASE_SITE_URL}/posts/{prev_year}/{prev_month}/{prev_slug}/">&larr; {prev_title}</a>
         </div>
         """
 
     if next_slug:
         nav_html += f"""
-        <div class="next-link" style="text-align: right; max-width: 45%;">
+        <div class="next-link">
           <div class="pager-title">Naslednja objava</div>
-          <a href="{BASE_SITE_URL}/posts/{next_year}/{next_month}/{next_slug}/">{next_title} &rarr;</a>
+          <a href="{BASE_SITE_URL}/posts/{next_year}/{next_month}/{next_slug}/">{next_title} &rarr;</a>
         </div>
         """
 
@@ -1267,7 +1265,7 @@ def fetch_and_save_all_posts(entries):
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=400, initial-scale=0.8, maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
   <meta name="description" content="{description}" />
   <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
@@ -1433,7 +1431,7 @@ def generate_label_pages(entries, label_posts_raw):
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=400, initial-scale=0.8, maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
   <meta name="description" content="Prikaz objav z oznako: {label_clean} - gorske avanture in nepozabni trenutki." />
   <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
@@ -1543,7 +1541,7 @@ def generate_predvajalnik_page(current_page):
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=400, initial-scale=0.8, maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
   <meta name="description" content="Predvajalnik naključnih fotografij gorskih avantur in nepozabnih trenutkov." />
   <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
@@ -1660,7 +1658,7 @@ def generate_gallery_page(current_page):
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=400, initial-scale=0.8, maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
   <meta name="description" content="Galerija gorskih avantur in nepozabnih trenutkov." />
   <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
@@ -1779,7 +1777,7 @@ def generate_peak_list_page():
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=400, initial-scale=0.8, maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
   <meta name="description" content="Seznam obiskanih vrhov na gorskih avanturah." />
   <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
@@ -1893,7 +1891,7 @@ def generate_big_map_page():
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=400, initial-scale=0.8, maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
   <meta name="description" content="Gorske avanture in nepozabni trenutki na zemljevidu spominov." />
   <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
@@ -2017,7 +2015,7 @@ def generate_home_en_page(homepage_html):
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=400, initial-scale=0.8, maximum-scale=2.0, user-scalable=yes">
+    <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
     <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
 
     <meta name="description" content="Mountain adventures and unforgettable moments: Discover the beauty of the mountain world and enjoy the image slideshows that take you through the adventures." />
@@ -2119,7 +2117,7 @@ def generate_home_si_page(homepage_html):
 <html lang="sl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=400, initial-scale=0.8, maximum-scale=2.0, user-scalable=yes">
+    <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
     <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
 
     <meta name="description" content="Gorske avanture in nepozabni trenutki: Lepote gorskega sveta in predvajalniki slik, ki vas popeljejo skozi dogodivščine." />
@@ -2280,7 +2278,7 @@ def generate_useful_links_page():
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=400, initial-scale=0.8, maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
   <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
   <meta name="description" content="Seznam uporabnih povezav do drugih blogov in vsebin." />
   <meta name="keywords" content="gorski užitki, uporabne povezave, blog, pohodništvo, gore, narava" />

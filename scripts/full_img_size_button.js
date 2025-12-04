@@ -62,7 +62,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 btn.style.cssText = 'position: absolute; top: 10px; right: 10px; padding: 5px; background-color: rgba(0, 0, 0, 0.3); color: #fff; border: none; border-radius: 5px; cursor: pointer; z-index: 1000000;';
                 var iconImg = document.createElement('img');
                 iconImg.src = 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjNZz81Qo6JF_YRLPDKgfuUSmnMLMXdIQtiGTBwyEmYKF549fHKNqwYrEw1UJWCt9wokFNXTNmIOV4qgnelDJ6fyqLYLH3sttGacsMkNkhJ01elKCrNP7ec0AF9n-r9Tqm9I_9QB5mm2nYHElB7be9mBYCZbZTIRtk8Or-TNVL24_LxIXfE1IWo7d8Rv2SL/s512/full-size.png';
-                iconImg.style.cssText = 'width: 15px; height: 15px; filter: invert(100%);';
+                iconImg.style.cssText = 'width: 15px; height: 15px; filter: invert(100%); display: block;';
                 btn.appendChild(iconImg);
                 lightboxContainer.appendChild(btn);
                 
