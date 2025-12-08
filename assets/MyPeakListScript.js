@@ -46,14 +46,25 @@ function renderSortedPeaks(sortedLabelMap) {
     mountainContainer.innerHTML = '';
 
     for (const [label2, label3Map] of Object.entries(sortedLabelMap)) {
-        const label2Header = document.createElement('h2');
-        label2Header.textContent = label2;
-        mountainContainer.appendChild(label2Header);
+
+        const label3Keys = Object.keys(label3Map);
+        const isOnlyOstalo = label2 === "Ostalo" && label3Keys.length === 1 && label3Keys[0] === "Ostalo";
+
+        // Display <h2> only if this is NOT the special Ostalo/Ostalo-only case
+        if (!isOnlyOstalo) {
+            const label2Header = document.createElement('h2');
+            label2Header.textContent = label2;
+            mountainContainer.appendChild(label2Header);
+        }
 
         for (const [label3, peaks] of Object.entries(label3Map)) {
-            const label3Header = document.createElement('h3');
-            label3Header.textContent = label3;
-            mountainContainer.appendChild(label3Header);
+
+            // Also skip <h3> if this is the single Ostalo/Ostalo block
+            if (!(isOnlyOstalo && label3 === "Ostalo")) {
+                const label3Header = document.createElement('h3');
+                label3Header.textContent = label3;
+                mountainContainer.appendChild(label3Header);
+            }
 
             peaks.forEach(({ peakName, publishedDates }) => {
                 const peakItem = document.createElement('li');
