@@ -1036,8 +1036,12 @@ def generate_sitemap_from_folder(folder_path: Path, exclude_dirs=None, exclude_f
             # Changed → update time
             lastmod = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-        # Build URL
-        url = f"{BASE_SITE_URL}/{relative_path}"
+        # Build URL (remove index.html) ----------
+        if relative_path.endswith("index.html"):
+            clean_path = relative_path[:-len("index.html")]
+            url = f"{BASE_SITE_URL}/{clean_path}".rstrip("/") + "/"
+        else:
+            url = f"{BASE_SITE_URL}/{relative_path}"
 
         # Determine priority
         parts = Path(relative_path).parts
