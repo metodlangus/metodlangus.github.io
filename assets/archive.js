@@ -4,7 +4,15 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("archive-placeholder").innerHTML = `<aside class="sidebar-archive">
   <h2>Arhiv</h2>
   <details open>
-    <summary>2025 (68)</summary>
+    <summary>2025 (71)</summary>
+    <details class="month-group">
+      <summary>december 2025 (3)</summary>
+      <ul>
+        <li><a href="https://metodlangus.github.io/posts/2025/12/spik-2473-m/">Špik (2473 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/12/potoska-gora-1283-m/">Potoška gora (1283 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/12/mittagskogel-kepa-2145-m/">Mittagskogel / Kepa (2145 m)</a></li>
+      </ul>
+    </details>
     <details class="month-group">
       <summary>november 2025 (6)</summary>
       <ul>
