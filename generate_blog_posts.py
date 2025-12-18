@@ -5,7 +5,6 @@ from slugify import slugify
 from collections import defaultdict
 from datetime import datetime, timezone
 from babel.dates import format_datetime
-import locale
 from xml.etree.ElementTree import Element, SubElement, ElementTree
 from zoneinfo import ZoneInfo  # Python 3.9+
 from dateutil import parser  # pip install python-dateutil
@@ -17,6 +16,8 @@ import json
 import subprocess
 import hashlib
 import time
+import sys
+import winsound
 
 ##### Commit message: #####
 # Update blog posts
@@ -249,7 +250,9 @@ def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
     thumbnail = entry.get("media$thumbnail", {}).get("url", "")
     link_list = entry.get("link", [])
     raw_link = next((l["href"] for l in link_list if l.get("rel") == "alternate"), "#")
-    alternate_link = override_domain(raw_link, BASE_SITE_URL)
+    parsed = urlparse(raw_link)
+    path = parsed.path[:-10] if parsed.path.endswith("/index.html") else parsed.path
+    alternate_link = override_domain(urlunparse(parsed._replace(path=path)), BASE_SITE_URL)
     categories = entry.get("category", [])
 
     label_one = next((c["term"].replace("1. ", "") for c in categories if c["term"].startswith("1. ")), "")
@@ -2491,45 +2494,235 @@ def generate_404_page():
     print(f"Generated 404 page: {output_path}")
 
 
+COMMIT_AFTER_SECTIONS = {
+    1:  "Update blog feeds",
+    17: "Update blog posts",
+    18: "Update list_of_tracks.txt with start coordinates",
+    20: "Update photo data and skip attributes",
+    21: "Update list of extracted_photos_with_gps_data.txt"
+}
+
+# List of patterns running 
+PATTERNS = {
+    "full_run": "r" * 21,
+    "skip_geotag_photos" : "rrrrrrrrrrrrrrrrrrrrs",  # skip geotaging photos
+    "just_geotag_photos" : "ssssssssssssssssssssr",  # run just geotaging photos
+}
+
+def choose_pattern():
+    print("Select a pattern or manual mode:")
+    for i, key in enumerate(PATTERNS.keys(), 1):
+        print(f"{i}. {key} ({PATTERNS[key]})")
+    print(f"{len(PATTERNS)+1}. Manual (ask for each section)")
+
+    while True:
+        choice = input("Enter number: ").strip()
+        if choice.isdigit():
+            choice = int(choice)
+            if 1 <= choice <= len(PATTERNS):
+                pattern_name = list(PATTERNS.keys())[choice-1]
+                print(f"Selected pattern: {pattern_name} -> {PATTERNS[pattern_name]}")
+                return iter(PATTERNS[pattern_name])
+            elif choice == len(PATTERNS)+1:
+                print("Manual mode selected.")
+                return None
+        print("Invalid choice. Try again.")
+
+def git_has_changes():
+    result = subprocess.run(
+        ["git", "status", "--porcelain"],
+        capture_output=True,
+        text=True
+    )
+    return bool(result.stdout.strip())
+
+def git_commit(default_message):
+    if not git_has_changes():
+        print("No changes to commit.")
+        return
+
+    print(f"\nGit changes detected.")
+    print(f"Proposed commit message:\n  {default_message}")
+    # Play default system beep
+    winsound.Beep(1000, 500)  # Frequency 1000Hz, Duration 500ms
+    choice = input("[c]ommit / [e]dit message / [s]kip? ").strip().lower()
+
+    if choice == "s":
+        print("Skipping commit.")
+        return
+
+    if choice == "e":
+        default_message = input("Enter commit message: ").strip()
+
+    subprocess.run(["git", "add", "-A"], check=True)
+    subprocess.run(["git", "commit", "-m", default_message], check=True)
+    print("Committed successfully.")
+
+def run_section(
+    section_no,
+    section_name,
+    func,
+    *args,
+    pattern_iter=None,
+    **kwargs
+):
+    """
+    Run / skip / quit a section.
+    Commit only if section_no is in COMMIT_AFTER_SECTIONS.
+    """
+    # Pattern or manual choice
+    if pattern_iter:
+        try:
+            choice = next(pattern_iter)
+            print(f"\nSection {section_no}: {section_name} → pattern choice: {choice}")
+        except StopIteration:
+            print("Pattern exhausted → switching to manual mode.")
+            choice = None
+
+    else:
+        choice = None
+
+    if choice not in ("r", "s", "q"):
+        while True:
+            choice = input(
+                f"\nSection {section_no}: {section_name} [r]un / [s]kip / [q]uit? "
+            ).strip().lower()
+            if choice in ("r", "s", "q"):
+                break
+
+    if choice == "q":
+        print("Quitting...")
+        sys.exit(0)
+
+    if choice == "s":
+        print(f"Skipping section {section_no}: {section_name}")
+        return
+
+    # Run section
+    print(f"Running section {section_no}: {section_name}")
+    func(*args, **kwargs)
+
+    # Commit only if this section is a commit point
+    if section_no in COMMIT_AFTER_SECTIONS:
+        git_commit(f"{COMMIT_AFTER_SECTIONS[section_no]}")
+
+
 if __name__ == "__main__":
-    entries = fetch_all_entries()
-    label_posts_raw = fetch_and_save_all_posts(entries)  # This function should return { label: [ {postId, date, html}, ... ] }
+    # 0.1 Upload new GPX file
+    # 0.2 Write post in Blogger
+    # 0.3 Copy post content in input_post.txt and with data-skip_attributes_to_posts.py append data-skip tags to photos
+    # 0.4 Copy post back and publish it
 
-    # 1. Build the archive HTML from entries
-    archive_html = build_archive_sidebar_html(entries)
-    # 2. Save it as assets/archive.js
-    save_archive_as_js(archive_html, "assets/archive.js")
+    pattern_iter = choose_pattern()
 
-    # 1. Generate the labels HTML
-    labels_sidebar_html = generate_labels_sidebar_html(feed_url=BASE_FEED_URL)
-    # 2. Save it as assets/navigation.js
-    save_navigation_as_js(labels_sidebar_html, "assets/navigation.js")
+    # Play default system beep
+    winsound.Beep(1000, 500)  # Frequency 1000Hz, Duration 500ms
+    input("Please make sure that phase 0 is completed (Upload GPX, write post, append data-skip tags, publish post). Press Enter to continue...")
 
-    generate_label_pages(entries, label_posts_raw)
-    generate_predvajalnik_page(current_page="slideshow_page")
-    generate_gallery_page(current_page="gallery_page")
-    generate_peak_list_page()
-    generate_big_map_page()
+    # 1. Create feeds
+    run_section(1, "Create feeds",
+        lambda: subprocess.run(["python", "get_blogger_feeds.py"], check=True),
+        pattern_iter=pattern_iter)
 
-    # Run geotags_map.py in the current directory
-    subprocess.run(["python", "geotags_map.py"], check=True)
-    generate_mattia_map_page()
-    generate_useful_links_page()
+    # 2. Fetch entries and posts
+    def fetch_posts():
+        global entries, label_posts_raw
+        entries = fetch_all_entries()
+        label_posts_raw = fetch_and_save_all_posts(entries)
 
-    homepage_html = generate_homepage_html(entries)
-    generate_home_en_page(homepage_html)
-    generate_home_si_page(homepage_html)
-    generate_404_page()
+    run_section(2, "Fetch entries and posts", fetch_posts, pattern_iter=pattern_iter)
 
-    generate_sitemap_from_folder(
-        Path(r"C:\Spletna_stran_Github\metodlangus.github.io"),
-        exclude_dirs=["plugins"],
-        exclude_files=["mattia-adventures-map.html"]
-    )
+    # 3. Build archive HTML
+    run_section(3, "Build archive HTML",
+        lambda: save_archive_as_js(build_archive_sidebar_html(entries), "assets/archive.js"),
+        pattern_iter=pattern_iter)
 
-    submit_changed_files_to_indexnow(
-        Path(r"C:\Spletna_stran_Github\metodlangus.github.io"),
-        exclude_dirs=["plugins"],
-        exclude_files=["mattia-adventures-map.html"],
-        index=True
-    )
+    # 4. Build labels navigation
+    run_section(4, "Build labels navigation",
+        lambda: save_navigation_as_js(
+            generate_labels_sidebar_html(feed_url=BASE_FEED_URL),
+            "assets/navigation.js"),
+        pattern_iter=pattern_iter)
+
+    # 5-6 Generate Mattia map
+    run_section(5, "Run geotags map",
+        lambda: subprocess.run(["python", "geotags_map.py"], check=True),
+        pattern_iter=pattern_iter)
+
+    run_section(6, "Generate mattia map page",
+        generate_mattia_map_page, pattern_iter=pattern_iter)
+
+    # 7–15 Create blog pages
+    run_section(7, "Generate label pages",
+        lambda: generate_label_pages(entries, label_posts_raw),
+        pattern_iter=pattern_iter)
+
+    run_section(8, "Generate slideshow page",
+        lambda: generate_predvajalnik_page(current_page="slideshow_page"),
+        pattern_iter=pattern_iter)
+
+    run_section(9, "Generate gallery page",
+        lambda: generate_gallery_page(current_page="gallery_page"),
+        pattern_iter=pattern_iter)
+
+    run_section(10, "Generate peak list page",
+        generate_peak_list_page, pattern_iter=pattern_iter)
+
+    run_section(11, "Generate big map page",
+        generate_big_map_page, pattern_iter=pattern_iter)
+
+    run_section(12, "Generate useful links page",
+        generate_useful_links_page, pattern_iter=pattern_iter)
+
+    run_section(13, "Generate homepage EN",
+        lambda: generate_home_en_page(generate_homepage_html(entries)),
+        pattern_iter=pattern_iter)
+
+    run_section(14, "Generate homepage SI",
+        lambda: generate_home_si_page(generate_homepage_html(entries)),
+        pattern_iter=pattern_iter)
+
+    run_section(15, "Generate 404 page",
+        generate_404_page, pattern_iter=pattern_iter)
+
+    # 16 Generate sitemap
+    run_section(16, "Generate sitemap",
+        lambda: generate_sitemap_from_folder(
+            Path(r"C:\Spletna_stran_Github\metodlangus.github.io"),
+            exclude_dirs=["plugins"],
+            exclude_files=["mattia-adventures-map.html"]),
+        pattern_iter=pattern_iter)
+
+    # 17. Submit changed files to IndexNow
+    run_section(17, "Submit changed files to IndexNow",
+        lambda: submit_changed_files_to_indexnow(
+            Path(r"C:\Spletna_stran_Github\metodlangus.github.io"),
+            exclude_dirs=["plugins"],
+            exclude_files=["mattia-adventures-map.html"],
+            index=True),
+        pattern_iter=pattern_iter)
+
+    # 18. Update list_of_tracks.txt
+    run_section(18, "Update list_of_tracks.txt",
+        lambda: subprocess.run(["python", "generate_track_list.py"], check=True),
+        pattern_iter=pattern_iter)
+
+    # 19. Update photos content
+    run_section(19, "Update photos content",
+        lambda: subprocess.run(["node", "get_photos_content.js"], check=True),
+        pattern_iter=pattern_iter)
+
+    # 20. Update data-skip attributes
+    run_section(20, "Update data-skip attributes",
+        lambda: subprocess.run(["python", "update_data-skip_atributes.py"], check=True),
+        pattern_iter=pattern_iter)
+    
+    # Prompt user to connect phone before continuing
+    # Play default system beep
+    winsound.Beep(1000, 500)  # Frequency 1000Hz, Duration 500ms
+    input("Please connect your phone and ensure ADB is enabled. Press Enter to continue...")
+
+    # 21. Update extracted_photos_with_gps_data.txt
+    run_section(21, "Update extracted_photos_with_gps_data.txt",
+        lambda: subprocess.run(["python", "apped_location_to_photos.py"], check=True),
+        pattern_iter=pattern_iter)

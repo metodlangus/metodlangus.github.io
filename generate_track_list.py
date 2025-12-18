@@ -3,17 +3,23 @@ import re
 from bs4 import BeautifulSoup
 from pathlib import Path
 import gpxpy
+import os
+import json
 
-BLOG_URL = "https://metodlangus.github.io"
-FEED_URL = f"{BLOG_URL}/data/all-posts.json"
-GPX_FOLDER = Path("GPX_tracks")
-OUTPUT_FILE = Path("list_of_tracks.txt")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+GPX_FOLDER = Path(BASE_DIR) / "GPX_tracks"
+OUTPUT_FILE = Path(BASE_DIR) / "list_of_tracks.txt"
+LOCAL_FEED_FILE = Path(BASE_DIR) / "data" / "all-posts.json"
 
 
 def extract_gpx_and_cover():
     posts = {}
     print("Fetching feed...")
-    data = requests.get(FEED_URL).json()
+
+    with open(LOCAL_FEED_FILE, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
     entries = data["feed"]["entry"]
     print(f"Loaded {len(entries)} posts.")
 
@@ -31,10 +37,8 @@ def extract_gpx_and_cover():
         cover_photo = img_tag["src"] if img_tag else ""
 
         # Post URL
-        post_url = next(
-            (l["href"] for l in entry["link"] if l["rel"] == "alternate"),
-            ""
-        )
+        post_url = next((l["href"] for l in entry["link"] if l["rel"] == "alternate"), "")
+        post_url = post_url[:-10] if post_url.endswith("/index.html") else post_url
 
         # Title
         title = entry["title"]["$t"]

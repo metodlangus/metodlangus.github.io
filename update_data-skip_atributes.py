@@ -1,25 +1,26 @@
-import requests
 import re
+import os
 
-def fetch_file_content(url, local_override=None):
-    """Fetches the content of a file either from a URL or a local file."""
-    if local_override:
-        with open(local_override, 'r', encoding="utf-8") as file:
-            return file.read()
-    response = requests.get(url)
-    response.raise_for_status()  # Raise an error if the request failed
-    return response.text
 
-def parse_file_to_dict(local_path=None, url=None):
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+def fetch_file_content(local_path):
+    """Fetches the content of a local file."""
+    with open(local_path, 'r', encoding="utf-8") as file:
+        return file.read()
+
+
+def parse_file_to_dict(local_path):
     """Parses list_of_photos.txt into a dictionary where the key is the image name."""
     photo_data = {}
-    content = fetch_file_content(url, local_override=local_path)
+    content = fetch_file_content(local_path)
 
     for line in content.splitlines():
         parts = line.split(' ', 1)  # Split only on the first space to keep the rest intact
         if len(parts) > 1:
             image_name, rest = parts[0], parts[1]
-            
+
             # Extract the 'data-skip' value if it exists
             match = re.search(r'data-skip=([\d\w;]+)', rest)
             data_skip = match.group(1) if match else "NA"  # Default to "NA" if missing
@@ -45,18 +46,19 @@ def parse_file_to_dict(local_path=None, url=None):
 
     return photo_data
 
-def update_photo_data(extracted_url, list_url, local_list_path, local_file_path):
+
+def update_photo_data(local_list_path, local_file_path):
     """Updates the extracted photos file with the data-skip attribute, post title, and post link."""
     # Parse the list_of_photos.txt file into a dictionary
-    photo_dict = parse_file_to_dict(local_path=local_list_path)
+    photo_dict = parse_file_to_dict(local_list_path)
 
-    # Fetch the extracted photos file content
-    extracted_content = fetch_file_content(extracted_url)
+    # Load extracted photos file
+    extracted_content = fetch_file_content(local_file_path)
     extracted_lines = extracted_content.splitlines()
 
     # Regex to match and update the `data-skip` attribute
     data_skip_regex = re.compile(r"(data-skip=[^,]*),?")
-    
+
     updated_lines = []
     for line in extracted_lines:
         parts = line.split(', Link: ', 1)
@@ -82,25 +84,16 @@ def update_photo_data(extracted_url, list_url, local_list_path, local_file_path)
                 # Update post link (remove index.html if present)
                 line = re.sub(r'\d{4}/\d{2}/[\w-]+/(?:index\.html)?', post_link, line)
 
-                updated_line = line
-            else:
-                updated_line = line  # No update needed
-        else:
-            updated_line = line  # No update needed
+        updated_lines.append(line)
 
-        updated_lines.append(updated_line)
-
-    # Write the updated lines to the local file
+    # Write updated content back to file
     with open(local_file_path, 'w', encoding="utf-8") as file:
-        file.writelines("\n".join(updated_lines) + "\n")
+        file.write("\n".join(updated_lines) + "\n")
+
 
 # Local paths for files
-local_list_path = 'list_of_photos.txt'
-local_file_path = 'extracted_photos_with_gps_data.txt'
+local_list_path = os.path.join(BASE_DIR, 'list_of_photos.txt')
+local_file_path = os.path.join(BASE_DIR, 'extracted_photos_with_gps_data.txt')
 
-# URLs to fallback files (if needed)
-extracted_url = 'https://metodlangus.github.io/extracted_photos_with_gps_data.txt'
-list_url = 'https://metodlangus.github.io/list_of_photos.txt'
-
-# Update the photo data
-update_photo_data(extracted_url, list_url, local_list_path, local_file_path)
+# Update the photo data (LOCAL ONLY)
+update_photo_data(local_list_path, local_file_path)
