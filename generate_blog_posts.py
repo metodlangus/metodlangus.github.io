@@ -384,6 +384,8 @@ def replace_mypost_scripts_with_rendered_posts(content_html, entries, entries_pe
 def build_archive_sidebar_html(entries):
     """
     Generate complete archive sidebar HTML from Blogger entries.
+    Clicking a year/month navigates to the correct archive page,
+    arrow still expands/collapses the section.
     """
     archive_dict = generate_unique_slugs(entries, return_type="archive")
 
@@ -394,31 +396,32 @@ def build_archive_sidebar_html(entries):
     for y in sorted(archive_dict.keys(), reverse=True):
         year_posts = archive_dict[y]
         year_count = sum(len(posts) for posts in year_posts.values())
+        # Link to yearly page
         archive_html += f"""  <details open>
-    <summary>{y} ({year_count})</summary>
+    <summary><a href="{BASE_SITE_URL}/posts/{y}/">{y} ({year_count})</a></summary>
 """
 
         for m in sorted(year_posts.keys(), reverse=True):
             posts = year_posts[m]
             try:
-                # Use a dummy date to get the month name
-                dummy_date = datetime.strptime(m, '%m')
                 # Format month name in Slovenian
-                month_name = format_datetime(dummy_date, "LLLL", locale="sl")  # 'LLLL' = full month name
+                dummy_date = datetime.strptime(m, '%m')
+                month_name = format_datetime(dummy_date, "LLLL", locale="sl")
             except ValueError:
                 month_name = m
             month_label = f"{month_name} {y} ({len(posts)})"
 
+            # Month link
             archive_html += f"""    <details class="month-group">
-      <summary>{month_label}</summary>
+      <summary><a href="{BASE_SITE_URL}/posts/{y}/{m}/">{month_label}</a></summary>
       <ul>
 """
 
             for slug, title in posts:
                 safe_title = (
                     title.replace("&", "&amp;")
-                         .replace("<", "<")
-                         .replace(">", ">")
+                         .replace("<", "&lt;")
+                         .replace(">", "&gt;")
                          .replace('"', "&quot;")
                          .replace("'", "&#x27;")
                 )
@@ -1502,6 +1505,267 @@ def generate_label_pages(entries, label_posts_raw):
             f.write(html_content)
 
         print(f"Generated label page: {filename}")
+
+
+def generate_archive_pages(entries):
+    """
+    Generates yearly and monthly archive pages with posts sorted by date.
+    """
+    from collections import defaultdict
+
+    # Slovene month names
+    month_names_sl = {
+        "01": "januar",
+        "02": "februar",
+        "03": "marec",
+        "04": "april",
+        "05": "maj",
+        "06": "junij",
+        "07": "julij",
+        "08": "avgust",
+        "09": "september",
+        "10": "oktober",
+        "11": "november",
+        "12": "december"
+    }
+
+    # Prepare HTML snippets
+    sidebar_html = generate_sidebar_html(picture_settings=False, map_settings=False, current_page="posts")
+    header_html = generate_header_html()
+    searchbox_html = generate_searchbox_html()
+    footer_html = generate_footer_html()
+    back_to_top_html = generate_back_to_top_html()
+
+    local_tz = ZoneInfo("Europe/Ljubljana")
+    # Organize posts by year and month
+    archive_dict = defaultdict(lambda: defaultdict(list))
+
+    slugs = generate_unique_slugs(entries, local_tz)
+
+    for index, entry in enumerate(entries):
+        title = entry.get("title", {}).get("$t", f"untitled-{index}")
+        full_id = entry.get("id", {}).get("$t", "")
+        post_id = full_id.split("post-")[-1] if "post-" in full_id else ""
+        formatted_date, year, month = parse_entry_date(entry, index)
+        month_str = f"{int(month):02}"  # Ensure two digits
+        archive_dict[year][month_str].append({
+            "entry": entry,
+            "slug": slugs[index],
+            "date": formatted_date,
+            "post_id": post_id
+        })
+
+    # Generate yearly and monthly pages
+    for year, months in archive_dict.items():
+        # --- Year page ---
+        year_dir = OUTPUT_DIR / "posts" / year
+        year_dir.mkdir(parents=True, exist_ok=True)
+        year_filename = year_dir / "index.html"
+
+        # Flatten all posts for the year
+        year_posts = []
+        for month in sorted(months.keys(), reverse=True):
+            for post_info in sorted(months[month], key=lambda x: x['date'], reverse=True):
+                year_posts.append(post_info)
+
+        year_posts_html = ""
+        for i, post_info in enumerate(year_posts):
+            year_posts_html += render_post_html(post_info["entry"], i, entries_per_page, slugify, post_info["post_id"])
+
+        # --- Schema.org structured data (JSON-LD)
+        schema_jsonld = f"""
+        <script type="application/ld+json">
+        {{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": "Prikaz objav, dodanih na: {year}",
+          "url": "{BASE_SITE_URL}/posts/{year}/",
+          "description": "Prikaz objav, dodanih na: {year} - gorske avanture in nepozabni trenutki.",
+          "inLanguage": "sl",
+          "isPartOf": {{
+            "@type": "WebSite",
+            "name": "Gorski Užitki",
+            "url": "https://metodlangus.github.io/"
+          }},
+          "publisher": {{
+            "@type": "Person",
+            "name": "Metod Langus",
+            "url": "https://metodlangus.github.io/"
+          }}
+        }}
+        </script>
+        """
+
+        html_year = f"""<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
+  <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+  <meta name="description" content="Prikaz objav, dodanih na: {year} - gorske avanture in nepozabni trenutki." />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
+  <meta name="author" content="Metod Langus" />
+
+  <meta property="og:title" content="Prikaz objav, dodanih na: {year}" />
+  <meta property="og:description" content="Prikaz objav, dodanih na: {year} - gorske avanture in nepozabni trenutki." />
+  <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
+  <meta property="og:image:alt" content="Prikaz objav, dodanih na: {year}" />
+  <meta property="og:url" content="{BASE_SITE_URL}/posts/{year}/" />
+  <meta property="og:type" content="website" />
+
+  <title>Prikaz objav, dodanih na: {year} | Gorski Užitki</title>
+
+  <!-- Canonical & hreflang -->
+  <link rel="canonical" href="{BASE_SITE_URL}/posts/{year}/" />
+  <link rel="alternate" href="{BASE_SITE_URL}/posts/{year}/" hreflang="sl" />
+  <link rel="alternate" href="{BASE_SITE_URL}" hreflang="x-default" />
+
+  {schema_jsonld}
+
+  <!-- Favicon -->
+  <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
+
+  <!-- Fonts & CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPostContainerScript.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Top Header -->
+    <header class="top-header">
+      {header_html}
+    </header>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+      {sidebar_html}
+      <div class="content-wrapper">
+        {searchbox_html}
+        <h1>Prikaz objav, dodanih na: {year}</h1>
+        <div class="blog-posts hfeed container">
+          {year_posts_html}
+        </div>
+        <div id="blog-pager" class="blog-pager"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  {back_to_top_html}
+  {footer_html}
+
+  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
+</body>
+</html>"""
+
+        with open(year_filename, "w", encoding="utf-8") as f:
+            f.write(html_year)
+        print(f"Generated year archive page: {year_filename}")
+
+        # --- Month pages ---
+        for month, posts in months.items():
+            month_dir = year_dir / month
+            month_dir.mkdir(parents=True, exist_ok=True)
+            month_filename = month_dir / "index.html"
+
+            month_name_sl = month_names_sl.get(month, month)  # Slovene month name
+
+            month_posts_sorted = sorted(posts, key=lambda x: x['date'], reverse=True)
+            month_posts_html = ""
+            for i, post_info in enumerate(month_posts_sorted):
+                month_posts_html += render_post_html(post_info["entry"], i, entries_per_page, slugify, post_info["post_id"])
+
+            # --- Schema.org structured data (JSON-LD)
+            schema_jsonld = f"""
+            <script type="application/ld+json">
+            {{
+              "@context": "https://schema.org",
+              "@type": "WebPage",
+              "name": "Prikaz objav, dodanih na: {month_name_sl}, {year}",
+              "url": "{BASE_SITE_URL}/posts/{year}/",
+              "description": "Prikaz objav, dodanih na: {month_name_sl}, {year} - gorske avanture in nepozabni trenutki.",
+              "inLanguage": "sl",
+              "isPartOf": {{
+                "@type": "WebSite",
+                "name": "Gorski Užitki",
+                "url": "https://metodlangus.github.io/"
+              }},
+              "publisher": {{
+                "@type": "Person",
+                "name": "Metod Langus",
+                "url": "https://metodlangus.github.io/"
+              }}
+            }}
+            </script>
+            """
+
+            html_month = f"""<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
+  <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+  <meta name="description" content="Prikaz objav, dodanih na: {month_name_sl}, {year} - gorske avanture in nepozabni trenutki." />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
+  <meta name="author" content="Metod Langus" />
+
+  <meta property="og:title" content="Prikaz objav, dodanih na: {month_name_sl}, {year}" />
+  <meta property="og:description" content="Prikaz objav, dodanih na: {month_name_sl}, {year} - gorske avanture in nepozabni trenutki." />
+  <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
+  <meta property="og:image:alt" content="Prikaz objav, dodanih na: {month_name_sl}, {year}" />
+  <meta property="og:url" content="{BASE_SITE_URL}/posts/{month_dir}/" />
+  <meta property="og:type" content="website" />
+
+  <title>Prikaz objav, dodanih na: {month_name_sl}, {year} | Gorski Užitki</title>
+
+  <!-- Canonical & hreflang -->
+  <link rel="canonical" href="{BASE_SITE_URL}/posts/{month_dir}/" />
+  <link rel="alternate" href="{BASE_SITE_URL}/posts/{month_dir}/" hreflang="sl" />
+  <link rel="alternate" href="{BASE_SITE_URL}" hreflang="x-default" />
+
+  {schema_jsonld}
+
+  <!-- Favicon -->
+  <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
+
+  <!-- Fonts & CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPostContainerScript.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Top Header -->
+    <header class="top-header">
+      {header_html}
+    </header>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+      {sidebar_html}
+      <div class="content-wrapper">
+        {searchbox_html}
+        <h1>Prikaz objav, dodanih na: {month_name_sl}, {year}</h1>
+        <div class="blog-posts hfeed container">
+          {month_posts_html}
+        </div>
+        <div id="blog-pager" class="blog-pager"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  {back_to_top_html}
+  {footer_html}
+
+  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
+</body>
+</html>"""
+
+            with open(month_filename, "w", encoding="utf-8") as f:
+                f.write(html_month)
+            print(f"Generated month archive page: {month_filename}")
 
 
 def generate_predvajalnik_page(current_page):
@@ -2634,7 +2898,8 @@ if __name__ == "__main__":
 
     # 3. Build archive HTML
     run_section(3, "Build archive HTML",
-        lambda: save_archive_as_js(build_archive_sidebar_html(entries), "assets/archive.js"),
+        lambda: (generate_archive_pages(entries),
+            save_archive_as_js(build_archive_sidebar_html(entries), "assets/archive.js")),
         pattern_iter=pattern_iter)
 
     # 4. Build labels navigation
