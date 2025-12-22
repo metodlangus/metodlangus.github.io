@@ -22,29 +22,45 @@ import winsound
 ##### Commit message: #####
 # Update blog posts
 
-# Nastavitve
-BASE_SITE_URL = "https://metodlangus.github.io"
-# BASE_SITE_URL = "http://127.0.0.1:5500/metodlangus.github.io"
-SITEMAP_FILE = "sitemap.xml"
+GITHUB_USER_NAME = "metodlangus"
+GITHUB_REPO_NAME = "metodlangus.github.io"
+LOCAL_HOST_URL = f"http://127.0.0.1:5501"
+LOCAL_REPO_PATH  = os.path.dirname(os.path.abspath(__file__))
 
-LASTMOD_DB = Path(".build/lastmod.json")
+# Nastavitve - Change this one line when switching local <-> GitHub Pages
+BASE_SITE_URL = f"https://{GITHUB_REPO_NAME}"
+# BASE_SITE_URL = f"{LOCAL_HOST_URL}/{GITHUB_REPO_NAME}"
 
-INDEXNOW_ENDPOINT = "https://www.bing.com/indexnow"
-HOST = "metodlangus.github.io"
-KEY = "96686b98e4974b89a7268c29fa7756a8"
-KEY_LOCATION = f"https://{HOST}/{KEY}.txt"
+BLOG_AUTHOR = "Metod Langus"
+BLOG_TITLE = "Gorski užitki"
+SITE_VERIFICATION = "4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU"
 
 # Constants
-BASE_FEED_URL = "https://gorski-uzitki.blogspot.com/feeds/posts/default"
+entries_per_page = 12 # Set pagination on home and label pages
+NO_IMAGE = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEih6RhkrzOOLNxaVeJR-PiYl4gL_LCvnt8_mQJMJ1QLqVoKAovrkocbpwT5Pf7Zc7jLFnKH2F4MdWZR7Fqq4ZDd1T5FqVB4Wn6uxoP1_JcGEprf-tt_7HqeHhLjKnaFHs3xrkitzcqQNmNaiVT-MrgmJgxjARcUDGpEVYdpif-J2gJF72h_xB9qnLkKfUH4/s1600/no-image-icon.jpg"
+DEFAULT_OG_IMAGE = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiU8RYSJ0I45O63GlKYXw5-U_r7GwP48_st9F1LG7_Z3STuILVQxMO4qLgzP_wxg0v_77s-YwidwwZQIDS1K6SUmY-W3QMwcIyEvt28cLalvCVQu4qWTQIm-B_FvgEmCCe6ydGld4fQgMMd2xNdqMMFtuHgeVXB4gRPco3XP90OOKHpf6HyZ6AeEZqNJQo/s1600/IMG20241101141924.jpg"
+SLIDESHOW_COVER_IMAGE = DEFAULT_OG_IMAGE
+SLIDESHOW_COVER_UPPER_TEXT = "Cima dell'Uomo (3010 m)"
+SLIDESHOW_COVER_TEXT = "FOTO: Matej"
+
+BLOG_TITLE_SVG = """<svg class='logo-svg' height='67' version='1.0' viewBox='0 0 1350 168' width='540' xmlns='http://www.w3.org/2000/svg'>
+          <g fill='#666'>
+            <path d='m945 4-14 6h-13c-10-6-10-6-22-5-12 0-12 0-16 3l-5 3c-2 0-5 4-5 6s4 7 14 16l13 16-9 1c-7 0-8 0-11 3s-10 6-12 6c-1 0-2 4-2 9s-1 7-2 5l-2-8c0-7-2-12-5-14l-22-1c-17 0-20 0-23 2l-3 2-4 2-4 2-4-4-5-5-23 1h-23l-3 3c-2 2-4 5-6 5-2 2-2 2-3 16l-1 18a253 253 0 0 0 1 32c0 5 3 14 6 17l1 3c0 2 6 8 12 12 3 3 5 3 16 4h12l21-2 26 1c25 0 29 0 32-4 2-3 4-2 6 1 3 3 12 5 17 3h29a494 494 0 0 1 51-1l6-1 8-2 4-2 2 2 8 4h18c12 0 19-1 21-2l8-3c6-2 7-4 7-18l1-26V95h7l8-1 1 17c1 14 1 18 4 24 2 6 3 9 8 13 5 5 9 6 23 10a164 164 0 0 0 52-2c3-2 3-2 7 1 3 2 4 2 22 2 20-1 30-2 34-4 2-1 3-1 7 1 6 3 6 3 24 3l21-1c3-1 18-2 20 0 2 1 39 2 40 0l8-2c3-1 7-3 8-5l3-2V56l-3-2c-3-3-3-4-1-8l1-18c-1-21 1-20-24-20-19 0-19 0-23 3l-6 3-4 3c-2 3-2 4-2 17l1 16 5 2c5 0 5 2 0 4s-7 2-7 1l-5-4c-4-3-5-3-15-3-16 0-28 2-34 4l-7 3c-3 2-5 1-5-4l2-17V22l-3-4-4-4h-39l-3 3-4 3-4 2c-3 2-4 3-5 9l-1 11v8c0 5-2 5-6 3l-12-3-10-1-1-14c0-14-1-17-8-19-8-3-40-1-40 2l-4 2c-4 0-10 5-10 7v13l-1 12-4 2c-8 4-10 4-14 0-3-3-4-6-2-8l2-16V14l-3-3-3-3h-38l-4 3-5 3-4 2c-2 2-3 12-2 26v8l4 1c6 2 7 3 2 5-6 3-7 4-8 9v44l1 5c0 4 0 4-3 4l-3-1-13-1c-10-1-12-2-12-3 0-2 2-4 7-8l12-10 5-5 1-15-1-18c-2-4-5-5-18-6l-14-1c-3-1-3-4 0-4 4-2 25-26 27-32 2-5 0-9-5-10h-18zm12 8 2 2-14 16-7 8h-26l-11-11-11-13 3-2c5-1 13 1 21 5l10 4 11-4c12-6 18-7 22-5zm74 4 1 12c0 15 1 14-16 14l-14-2c-3-1-4-7-4-15 0-7 0-8 2-9h31zm297 1 1 12c0 10 0 11-2 12-3 2-27 0-29-1l-2-8c-3-17-2-17 17-17l15 2zm-217 7c2 1 2 3 2 17 0 18-1 17 14 17 13 0 13 0 13 13l-1 12c0 2-10 3-18 1s-8-1-8 14c0 19 2 21 18 23 10 0 11 0 12 2 1 4 2 22 1 24-1 1-4 2-18 2l-22-1c-8-2-23-16-25-23l-2-20c-2-24 0-22-11-22h-8l-1-10c0-13 0-13 11-13l7-1 2-15c0-16 1-20 4-20 6-2 27-1 30 0zm93-1v19c-2 25-1 45 0 47 3 2 5 1 8-4a88 88 0 0 1 6-10c6-8 11-15 13-15l19-2c19 0 19 0 14 8a81 81 0 0 1-4 7l-3 5-3 4-5 8-4 8 5 9 9 16a99 99 0 0 0 10 17l2 2c2 2 1 6-1 6l-20 1c-21 0-20 1-26-12-5-10-12-21-14-22h-3c-2 1-2 4-2 17 0 14 0 15-2 16h-34v-17c-1-21 1-104 1-107 1-2 1-2 17-2l17 1zM786 59l2 30c1 28 1 28 3 31 6 7 15 7 20 1 3-3 3-4 4-15 0-9-1-27-3-40-1-7 0-7 20-7l17 1 1 3a664 664 0 0 1 1 86l-17 1c-18 0-19 0-19-6 0-3 0-3-3-3-2 0-4 1-7 4-7 8-25 9-37 3-8-4-18-18-20-29a460 460 0 0 1 1-60h37zm167 1 11 2c1 1 2 24 1 26l-6 5a536 536 0 0 0-27 23c-3 2-4 5-1 6l20 2 19 2 1 11c0 8 0 10-2 12l-42 1-44-2c-2-1-2-1-2-12 0-13 0-12 13-24 16-13 25-22 25-24l-2-2c-2-1-4-2-8-1h-27l-1-12c0-8 0-11 2-12 1-2 5-2 30-2l40 1zm81 2a654 654 0 0 1-1 84c-2 2-31 2-34 0l-2-1v-40l1-42c1-2 2-2 18-2l18 1zm297 4v80c-1 2-2 2-18 2l-17-1a963 963 0 0 1 1-85l18-1h16v5zm-55 6 1 16v22c1 4 0 23-1 23-2 0-7-8-11-16l-7-12-3-6 16-27c4-5 6-5 6 0zm-126 19c-1 3-1 5 1 9v14c0 2 0 2-2 2l-4-1-6-1c-9 0-16-1-17-3l-1-8c0-5 0-6 2-7h4l5-1 5-1c3 0 10-4 11-6s1-2 2-1v4zm-287-1c0 4 2 5 15 5 9 0 14 1 14 2s-11 12-21 20c-4 4-7 7-7 9l-2 2c-2 0-2-3-2-19l1-20c1-1 2 0 2 1zM637 11l-5 3c-5 0-7 9-6 23s1 14 5 14c6 1 6 3 1 5-5 3-6 3-8 0-6-5-7-6-19-6-21 0-30 2-40 7-3 2-5 1-5-1V20c-2-5-5-6-26-6-18 0-19 0-21 2l-7 5c-8 4-8 4-8 33a782 782 0 0 0 0 40v10c1 5-2 5-6 1l-9-8c-4-3-5-5-4-6l5-1c10 0 14-13 6-23-3-3-11-10-16-12-10-5-14-5-32-5-17 0-17 0-23 3l-15 7-17 7-1-5-1-7c-2-7-25-7-38 0-5 2-5 2-8 0-5-5-7-5-26-5-17 0-17 0-20 2-1 2-4 4-7 5-6 2-6 4-7 16l-1 13c0 2-3-1-4-5l-1-5-3-6c-2-6-6-10-12-13l-6-3-5-1-6-1c-6-2-45-3-47-1l-4 2c-6 1-20 11-28 19s-10 9-10 5l-2-5-3-3 3-4c2-4 2-5 1-10-1-7-5-12-12-19a50 50 0 0 0-32-18l-26-1c-17 0-18 0-25 2l-10 4-10 5-12 6-6 7-4 5-6 13-1 3a321 321 0 0 0 1 59l2 6 2 6c0 2 12 16 15 17l5 3a141 141 0 0 0 40 8c11 0 35-4 39-6 2-1 8-4 11-4 5-2 16-10 21-16 9-12 7-11 10-6l2 6 6 8c6 8 11 11 25 15a175 175 0 0 0 41 1l10-2 7-2 3-1 17-9c4-4 9-12 11-16l2-4c2 0 2 4 2 19l1 9c2 6 4 6 26 6a167 167 0 0 0 28-2l7-3 2-2v-25c0-28-1-26 15-27l14-1c6-3 8-2 9 1l6 9 6 7c0 1-6 7-10 9-3 1-5 3-5 6 0 4 3 11 7 14 4 4 15 11 16 11l5 2 14 2 13 1a119 119 0 0 0 38-8l3-2 8-7 10-6c5-4 6-3 6 7 0 7 0 8 3 11l3 3h19c20-1 31-2 33-4 2-1 8 0 11 3 2 1 37 1 50-1h11c4 2 39 3 43 0l4-1 5-2c8-3 7-2 8-52 0-45-1-48-5-50v-6c1-2 2-7 2-18V14l-3-3-3-3h-39l-3 3zm39 6 1 12c0 11 0 11-2 12-3 1-27 0-29-1-1-1-2-4-2-10-1-11 0-14 2-14 2-1 29 0 30 1zM552 55v34c2 2 5 1 7-3l2-4a1412 1412 0 0 0 17-22l20-2h16v2l-4 9-8 13-6 9-3 6 6 13 7 11c0 1 3 7 9 15 5 9 6 11 3 12a201 201 0 0 1-40 0l-6-9c-5-11-13-24-15-25l-3 1-2 17-1 16h-32c-2 0-2-1-3-7l3-118 16-1h17v33zM97 25l11 2c11 2 13 3 25 15 8 7 10 11 10 16v4h-43l-4-5-10-5c-7 0-12 1-16 5-5 4-5 7-4 31 0 22 1 24 7 30 3 2 4 3 11 3 8 0 13-2 16-7 5-7 4-13-3-13-6 0-7-1-7-12-1-13-3-13 23-12h25l5 2c2 1 2 34 0 39-2 8-12 19-20 23l-21 8c-8 2-20 3-27 2-14-2-18-3-24-7l-7-4c-1 0-12-10-13-13-4-8-8-27-7-35V73c1-22 7-35 22-41l7-3 3-1 4-1 6-2h31zm130 33c13 1 20 2 26 6 4 2 10 7 10 10l2 5 2 6 1 3c3 3 4 22 2 30-1 5-5 14-8 18-3 3-12 9-19 11-4 2-8 2-15 2l-12 1h-5l-6-1-17-5c-4-3-10-10-15-19-3-6-3-7-3-12a229 229 0 0 1 8-36c1-4 4-9 6-11 2-3 13-8 16-8h26zm96 0c8 1 10 2 10 7 0 6 6 6 11 2 6-6 14-8 23-9l10 1v28c-1 2-2 2-14 2-15 0-21 2-25 7l-3 3v23l1 25c-1 2-2 2-18 2l-18-1c-2-1-2-2-2-22a1560 1560 0 0 0 2-68h23zm139 1 4 1c4 1 13 7 17 12l3 6v3l-17 1c-16 0-16 0-20-3s-7-3-11 0c-7 5-1 13 12 15 12 1 18 3 25 8 10 7 16 13 17 17 1 6-1 9-7 13-7 6-8 6-19 12-8 4-10 4-20 5-7 1-11 1-16-1l-11-2c-9-2-18-7-22-13-3-6-2-7 6-7l15-1c8-1 8-1 15 2 8 3 11 3 15 0 3-2 4-4 1-8-2-3-6-5-16-7-12-3-14-3-20-6l-10-7c-5-5-5-5-5-11v-7l8-8c12-10 18-15 25-15 7-1 30 0 31 1zm217 18c1 19 0 67-1 68-2 2-31 2-34 1l-1-43c-1-36 0-41 1-42l18-1h16l1 16zM80 67l3 5-8 4c-2-1-3-7-1-10 1-3 4-2 6 1zm544 1 1 54c-1 9-1 9-3 9l-8-11c-1-5-4-9-8-15l-4-7 6-9 14-22 2 1z'/>
+            <path d='m213 82-3 4c-1 5-2 20-1 28 1 7 1 9 3 11 5 3 10 3 15-1 3-3 3-5 3-8l1-10c2-7 0-18-4-22-3-4-9-5-14-2z'/>
+          </g>
+        </svg>"""
+
 OUTPUT_DIR = Path.cwd() # Current path
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+SITEMAP_FILE = "sitemap.xml"
+LASTMOD_DB = Path(".build/lastmod.json")
+BASE_FEED_PATH = f"{LOCAL_REPO_PATH }/data/all-posts.json"
+REMOTE_DB_URL = f"{BASE_SITE_URL}/.build/lastmod.json"
 
-entries_per_page = 12 # Set pagination on home and label pages
-
-DEFAULT_OG_IMAGE = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiU8RYSJ0I45O63GlKYXw5-U_r7GwP48_st9F1LG7_Z3STuILVQxMO4qLgzP_wxg0v_77s-YwidwwZQIDS1K6SUmY-W3QMwcIyEvt28cLalvCVQu4qWTQIm-B_FvgEmCCe6ydGld4fQgMMd2xNdqMMFtuHgeVXB4gRPco3XP90OOKHpf6HyZ6AeEZqNJQo/s1600/IMG20241101141924.jpg"
-
-REMOTE_DB_URL = "https://metodlangus.github.io/.build/lastmod.json"  # remote published DB
-
+# Indexnow settings
+INDEXNOW_ENDPOINT = "https://www.bing.com/indexnow"
+KEY = "96686b98e4974b89a7268c29fa7756a8"
+KEY_LOCATION = f"{BASE_SITE_URL}/{KEY}.txt"
 
 def load_lastmod_db():
     if LASTMOD_DB.exists():
@@ -132,7 +148,7 @@ def fetch_all_entries():
     print("Fetching all paginated posts...")
     all_entries = []
 
-    url = "data/all-posts.json"
+    url = BASE_FEED_PATH
     print(f"Fetching: {url}")
     
     # Load JSON directly from local file
@@ -176,7 +192,7 @@ def fix_images_for_lightbox(html_content, post_title):
         # Step 1A: Assign alt text based on rules
         if image_index == 0:
             # First image (cover photo)
-            alt_text = f"Gorski užitki | Metod Langus \u2013 {post_title}"
+            alt_text = f"{BLOG_TITLE} | {BLOG_AUTHOR} \u2013 {post_title}"
         elif any(k in skip_keywords for k in ["peak", "best", "1", "2"]):
             # Tagged as peak/best/1/2
             if caption_text:
@@ -247,7 +263,7 @@ def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
 
 
     title = entry.get("title", {}).get("$t", f"untitled-{index}")
-    thumbnail = entry.get("media$thumbnail", {}).get("url", "")
+    thumbnail = entry.get("media$thumbnail", {}).get("url", NO_IMAGE)
     link_list = entry.get("link", [])
     raw_link = next((l["href"] for l in link_list if l.get("rel") == "alternate"), "#")
     parsed = urlparse(raw_link)
@@ -497,11 +513,12 @@ document.addEventListener("DOMContentLoaded", function() {{
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(js_code)
 
-def generate_labels_sidebar_html(feed_url):
-    """Fetches labels from a Blogger feed and returns structured sidebar HTML."""
+def generate_labels_sidebar_html(feed_path):
+    """Loads labels from a local Blogger JSON feed file and returns structured sidebar HTML."""
 
-    response = requests.get(feed_url, params={"alt": "json"})
-    feed_data = response.json()
+    # Load local JSON feed
+    with open(feed_path, "r", encoding="utf-8") as f:
+        feed_data = json.load(f)
 
     # Extract label terms
     labels_raw = [cat["term"] for cat in feed_data["feed"].get("category", [])]
@@ -571,7 +588,7 @@ def render_sidebar_settings(picture_settings=True, map_settings=True, current_pa
     heading = "<h2>Nastavitve</h2>"
 
     if picture_settings:
-        label_filter_html = generate_label_filter_section(feed_url=BASE_FEED_URL)
+        label_filter_html = generate_label_filter_section(feed_path=BASE_FEED_PATH)
 
         # Base section
         section_html = f"""
@@ -660,15 +677,16 @@ def render_sidebar_settings(picture_settings=True, map_settings=True, current_pa
       {settings_html}
     </div>
     """
-def generate_label_filter_section(feed_url):
+def generate_label_filter_section(feed_path):
     """
-    Fetches labels from the Blogger feed and returns HTML for
+    Loads labels from a local Blogger JSON feed file and returns HTML for
     a selectable label filter section with collapsible checkboxes (play button style)
     and a Clear Filters button.
     """
 
-    response = requests.get(feed_url, params={"alt": "json"})
-    feed_data = response.json()
+    # Load local JSON feed
+    with open(feed_path, "r", encoding="utf-8") as f:
+        feed_data = json.load(f)
 
     labels_raw = [cat["term"] for cat in feed_data["feed"].get("category", [])]
 
@@ -736,6 +754,8 @@ def generate_label_filter_section(feed_url):
 
     return "\n".join(html_parts)
 
+
+
 def generate_sidebar_html(picture_settings, map_settings, current_page):
     # Render settings section (includes conditional logic for photo player page)
     settings_html = render_sidebar_settings(picture_settings, map_settings, current_page)
@@ -758,13 +778,13 @@ def generate_sidebar_html(picture_settings, map_settings, current_page):
         random_photo_sections = f"""
         <div class="random-photo">
           <h2 class="title">Naključna fotografija</h2>
-          <a href="https://metodlangus.github.io/predvajalnik-fotografij/">
+          <a href="{BASE_SITE_URL}/predvajalnik-fotografij/">
           <div class="slideshow-container">
             <!-- First image (initial) -->
             <div class="mySlides slide1" style="opacity: 1;">
-              <div class="uppertext">Cima dell'Uomo (3010 m)</div>
-              <img src={DEFAULT_OG_IMAGE} alt="Initial Image" />
-              <div class="text">FOTO: Matej</div>
+              <div class="uppertext">{SLIDESHOW_COVER_UPPER_TEXT}</div>
+              <img src={SLIDESHOW_COVER_IMAGE} alt="Initial Image" />
+              <div class="text">{SLIDESHOW_COVER_TEXT}</div>
             </div>
             <div class="mySlides slide2">
               <div class="uppertext"></div>
@@ -799,15 +819,10 @@ def generate_header_html():
     return f"""
     <h1>
       <span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;">
-        Gorski Užitki
+        {BLOG_TITLE}
       </span>
       <a class='logo-svg' href="{BASE_SITE_URL}">
-        <svg class='logo-svg' height='67' version='1.0' viewBox='0 0 1350 168' width='540' xmlns='http://www.w3.org/2000/svg'>
-          <g fill='#666'>
-            <path d='m945 4-14 6h-13c-10-6-10-6-22-5-12 0-12 0-16 3l-5 3c-2 0-5 4-5 6s4 7 14 16l13 16-9 1c-7 0-8 0-11 3s-10 6-12 6c-1 0-2 4-2 9s-1 7-2 5l-2-8c0-7-2-12-5-14l-22-1c-17 0-20 0-23 2l-3 2-4 2-4 2-4-4-5-5-23 1h-23l-3 3c-2 2-4 5-6 5-2 2-2 2-3 16l-1 18a253 253 0 0 0 1 32c0 5 3 14 6 17l1 3c0 2 6 8 12 12 3 3 5 3 16 4h12l21-2 26 1c25 0 29 0 32-4 2-3 4-2 6 1 3 3 12 5 17 3h29a494 494 0 0 1 51-1l6-1 8-2 4-2 2 2 8 4h18c12 0 19-1 21-2l8-3c6-2 7-4 7-18l1-26V95h7l8-1 1 17c1 14 1 18 4 24 2 6 3 9 8 13 5 5 9 6 23 10a164 164 0 0 0 52-2c3-2 3-2 7 1 3 2 4 2 22 2 20-1 30-2 34-4 2-1 3-1 7 1 6 3 6 3 24 3l21-1c3-1 18-2 20 0 2 1 39 2 40 0l8-2c3-1 7-3 8-5l3-2V56l-3-2c-3-3-3-4-1-8l1-18c-1-21 1-20-24-20-19 0-19 0-23 3l-6 3-4 3c-2 3-2 4-2 17l1 16 5 2c5 0 5 2 0 4s-7 2-7 1l-5-4c-4-3-5-3-15-3-16 0-28 2-34 4l-7 3c-3 2-5 1-5-4l2-17V22l-3-4-4-4h-39l-3 3-4 3-4 2c-3 2-4 3-5 9l-1 11v8c0 5-2 5-6 3l-12-3-10-1-1-14c0-14-1-17-8-19-8-3-40-1-40 2l-4 2c-4 0-10 5-10 7v13l-1 12-4 2c-8 4-10 4-14 0-3-3-4-6-2-8l2-16V14l-3-3-3-3h-38l-4 3-5 3-4 2c-2 2-3 12-2 26v8l4 1c6 2 7 3 2 5-6 3-7 4-8 9v44l1 5c0 4 0 4-3 4l-3-1-13-1c-10-1-12-2-12-3 0-2 2-4 7-8l12-10 5-5 1-15-1-18c-2-4-5-5-18-6l-14-1c-3-1-3-4 0-4 4-2 25-26 27-32 2-5 0-9-5-10h-18zm12 8 2 2-14 16-7 8h-26l-11-11-11-13 3-2c5-1 13 1 21 5l10 4 11-4c12-6 18-7 22-5zm74 4 1 12c0 15 1 14-16 14l-14-2c-3-1-4-7-4-15 0-7 0-8 2-9h31zm297 1 1 12c0 10 0 11-2 12-3 2-27 0-29-1l-2-8c-3-17-2-17 17-17l15 2zm-217 7c2 1 2 3 2 17 0 18-1 17 14 17 13 0 13 0 13 13l-1 12c0 2-10 3-18 1s-8-1-8 14c0 19 2 21 18 23 10 0 11 0 12 2 1 4 2 22 1 24-1 1-4 2-18 2l-22-1c-8-2-23-16-25-23l-2-20c-2-24 0-22-11-22h-8l-1-10c0-13 0-13 11-13l7-1 2-15c0-16 1-20 4-20 6-2 27-1 30 0zm93-1v19c-2 25-1 45 0 47 3 2 5 1 8-4a88 88 0 0 1 6-10c6-8 11-15 13-15l19-2c19 0 19 0 14 8a81 81 0 0 1-4 7l-3 5-3 4-5 8-4 8 5 9 9 16a99 99 0 0 0 10 17l2 2c2 2 1 6-1 6l-20 1c-21 0-20 1-26-12-5-10-12-21-14-22h-3c-2 1-2 4-2 17 0 14 0 15-2 16h-34v-17c-1-21 1-104 1-107 1-2 1-2 17-2l17 1zM786 59l2 30c1 28 1 28 3 31 6 7 15 7 20 1 3-3 3-4 4-15 0-9-1-27-3-40-1-7 0-7 20-7l17 1 1 3a664 664 0 0 1 1 86l-17 1c-18 0-19 0-19-6 0-3 0-3-3-3-2 0-4 1-7 4-7 8-25 9-37 3-8-4-18-18-20-29a460 460 0 0 1 1-60h37zm167 1 11 2c1 1 2 24 1 26l-6 5a536 536 0 0 0-27 23c-3 2-4 5-1 6l20 2 19 2 1 11c0 8 0 10-2 12l-42 1-44-2c-2-1-2-1-2-12 0-13 0-12 13-24 16-13 25-22 25-24l-2-2c-2-1-4-2-8-1h-27l-1-12c0-8 0-11 2-12 1-2 5-2 30-2l40 1zm81 2a654 654 0 0 1-1 84c-2 2-31 2-34 0l-2-1v-40l1-42c1-2 2-2 18-2l18 1zm297 4v80c-1 2-2 2-18 2l-17-1a963 963 0 0 1 1-85l18-1h16v5zm-55 6 1 16v22c1 4 0 23-1 23-2 0-7-8-11-16l-7-12-3-6 16-27c4-5 6-5 6 0zm-126 19c-1 3-1 5 1 9v14c0 2 0 2-2 2l-4-1-6-1c-9 0-16-1-17-3l-1-8c0-5 0-6 2-7h4l5-1 5-1c3 0 10-4 11-6s1-2 2-1v4zm-287-1c0 4 2 5 15 5 9 0 14 1 14 2s-11 12-21 20c-4 4-7 7-7 9l-2 2c-2 0-2-3-2-19l1-20c1-1 2 0 2 1zM637 11l-5 3c-5 0-7 9-6 23s1 14 5 14c6 1 6 3 1 5-5 3-6 3-8 0-6-5-7-6-19-6-21 0-30 2-40 7-3 2-5 1-5-1V20c-2-5-5-6-26-6-18 0-19 0-21 2l-7 5c-8 4-8 4-8 33a782 782 0 0 0 0 40v10c1 5-2 5-6 1l-9-8c-4-3-5-5-4-6l5-1c10 0 14-13 6-23-3-3-11-10-16-12-10-5-14-5-32-5-17 0-17 0-23 3l-15 7-17 7-1-5-1-7c-2-7-25-7-38 0-5 2-5 2-8 0-5-5-7-5-26-5-17 0-17 0-20 2-1 2-4 4-7 5-6 2-6 4-7 16l-1 13c0 2-3-1-4-5l-1-5-3-6c-2-6-6-10-12-13l-6-3-5-1-6-1c-6-2-45-3-47-1l-4 2c-6 1-20 11-28 19s-10 9-10 5l-2-5-3-3 3-4c2-4 2-5 1-10-1-7-5-12-12-19a50 50 0 0 0-32-18l-26-1c-17 0-18 0-25 2l-10 4-10 5-12 6-6 7-4 5-6 13-1 3a321 321 0 0 0 1 59l2 6 2 6c0 2 12 16 15 17l5 3a141 141 0 0 0 40 8c11 0 35-4 39-6 2-1 8-4 11-4 5-2 16-10 21-16 9-12 7-11 10-6l2 6 6 8c6 8 11 11 25 15a175 175 0 0 0 41 1l10-2 7-2 3-1 17-9c4-4 9-12 11-16l2-4c2 0 2 4 2 19l1 9c2 6 4 6 26 6a167 167 0 0 0 28-2l7-3 2-2v-25c0-28-1-26 15-27l14-1c6-3 8-2 9 1l6 9 6 7c0 1-6 7-10 9-3 1-5 3-5 6 0 4 3 11 7 14 4 4 15 11 16 11l5 2 14 2 13 1a119 119 0 0 0 38-8l3-2 8-7 10-6c5-4 6-3 6 7 0 7 0 8 3 11l3 3h19c20-1 31-2 33-4 2-1 8 0 11 3 2 1 37 1 50-1h11c4 2 39 3 43 0l4-1 5-2c8-3 7-2 8-52 0-45-1-48-5-50v-6c1-2 2-7 2-18V14l-3-3-3-3h-39l-3 3zm39 6 1 12c0 11 0 11-2 12-3 1-27 0-29-1-1-1-2-4-2-10-1-11 0-14 2-14 2-1 29 0 30 1zM552 55v34c2 2 5 1 7-3l2-4a1412 1412 0 0 0 17-22l20-2h16v2l-4 9-8 13-6 9-3 6 6 13 7 11c0 1 3 7 9 15 5 9 6 11 3 12a201 201 0 0 1-40 0l-6-9c-5-11-13-24-15-25l-3 1-2 17-1 16h-32c-2 0-2-1-3-7l3-118 16-1h17v33zM97 25l11 2c11 2 13 3 25 15 8 7 10 11 10 16v4h-43l-4-5-10-5c-7 0-12 1-16 5-5 4-5 7-4 31 0 22 1 24 7 30 3 2 4 3 11 3 8 0 13-2 16-7 5-7 4-13-3-13-6 0-7-1-7-12-1-13-3-13 23-12h25l5 2c2 1 2 34 0 39-2 8-12 19-20 23l-21 8c-8 2-20 3-27 2-14-2-18-3-24-7l-7-4c-1 0-12-10-13-13-4-8-8-27-7-35V73c1-22 7-35 22-41l7-3 3-1 4-1 6-2h31zm130 33c13 1 20 2 26 6 4 2 10 7 10 10l2 5 2 6 1 3c3 3 4 22 2 30-1 5-5 14-8 18-3 3-12 9-19 11-4 2-8 2-15 2l-12 1h-5l-6-1-17-5c-4-3-10-10-15-19-3-6-3-7-3-12a229 229 0 0 1 8-36c1-4 4-9 6-11 2-3 13-8 16-8h26zm96 0c8 1 10 2 10 7 0 6 6 6 11 2 6-6 14-8 23-9l10 1v28c-1 2-2 2-14 2-15 0-21 2-25 7l-3 3v23l1 25c-1 2-2 2-18 2l-18-1c-2-1-2-2-2-22a1560 1560 0 0 0 2-68h23zm139 1 4 1c4 1 13 7 17 12l3 6v3l-17 1c-16 0-16 0-20-3s-7-3-11 0c-7 5-1 13 12 15 12 1 18 3 25 8 10 7 16 13 17 17 1 6-1 9-7 13-7 6-8 6-19 12-8 4-10 4-20 5-7 1-11 1-16-1l-11-2c-9-2-18-7-22-13-3-6-2-7 6-7l15-1c8-1 8-1 15 2 8 3 11 3 15 0 3-2 4-4 1-8-2-3-6-5-16-7-12-3-14-3-20-6l-10-7c-5-5-5-5-5-11v-7l8-8c12-10 18-15 25-15 7-1 30 0 31 1zm217 18c1 19 0 67-1 68-2 2-31 2-34 1l-1-43c-1-36 0-41 1-42l18-1h16l1 16zM80 67l3 5-8 4c-2-1-3-7-1-10 1-3 4-2 6 1zm544 1 1 54c-1 9-1 9-3 9l-8-11c-1-5-4-9-8-15l-4-7 6-9 14-22 2 1z'/>
-            <path d='m213 82-3 4c-1 5-2 20-1 28 1 7 1 9 3 11 5 3 10 3 15-1 3-3 3-5 3-8l1-10c2-7 0-18-4-22-3-4-9-5-14-2z'/>
-          </g>
-        </svg>
+        {BLOG_TITLE_SVG}
       </a>
     </h1>
     <div class="header-left">
@@ -1112,11 +1127,11 @@ def submit_changed_files_to_indexnow(folder_path: Path,
             if not folder_key.endswith("/"):
                 folder_key += "/"
             file_key = rel_path
-            url = f"https://{HOST}/{folder_key}"
+            url = f"{BASE_SITE_URL}/{folder_key}"
             return [file_key, folder_key], url, file_key
 
         # normal file
-        return [rel_path], f"https://{HOST}/{rel_path}", rel_path
+        return [rel_path], f"{BASE_SITE_URL}/{rel_path}", rel_path
 
     # Scan all html files
     for html_file in folder_path.rglob("*.html"):
@@ -1152,7 +1167,7 @@ def submit_changed_files_to_indexnow(folder_path: Path,
     # Submit changed URLs only if index=True
     if index and changed_urls:
         payload = {
-            "host": HOST,
+            "host": BASE_SITE_URL.replace("https://", "").replace("http://", ""),
             "key": KEY,
             "keyLocation": KEY_LOCATION,
             "urlList": changed_urls
@@ -1226,8 +1241,7 @@ def fetch_and_save_all_posts(entries):
                                            label_posts_raw, slugify, remove_first_prefix, remove_all_prefixes)
 
         # Schema.org JSON-LD
-        structured_data = f"""
-  <script type="application/ld+json">
+        structured_data = f"""<script type="application/ld+json">
   {{
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -1235,11 +1249,11 @@ def fetch_and_save_all_posts(entries):
     "image": "{og_image}",
     "author": {{
       "@type": "Person",
-      "name": "Metod Langus"
+      "name": "{BLOG_AUTHOR}"
     }},
     "publisher": {{
-      "@type": "Organization",
-      "name": "Gorski užitki",
+      "@type": "Person",
+      "name": "{BLOG_TITLE}",
       "logo": {{
         "@type": "ImageObject",
         "url": "{BASE_SITE_URL}/photos/favicon.ico"
@@ -1249,15 +1263,14 @@ def fetch_and_save_all_posts(entries):
     "datePublished": "{formatted_date}",
     "url": "{og_url}"
   }}
-  </script>
-"""
+  </script>"""
 
         # GitHub Comments (Utterances)
         comments_html = f"""
       <section id="comments">
         <h2>Komentarji</h2>
         <script src="https://utteranc.es/client.js"
-          repo="metodlangus/metodlangus.github.io"
+          repo="{GITHUB_USER_NAME}/{GITHUB_REPO_NAME}"
           issue-term="pathname"
           theme="github-light"
           crossorigin="anonymous"
@@ -1276,12 +1289,12 @@ def fetch_and_save_all_posts(entries):
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
-  <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+  <meta name="google-site-verification" content="{SITE_VERIFICATION}" />
   <meta name="description" content="{description}" />
-  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
-  <meta name="author" content="Metod Langus" />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}" />
+  <meta name="author" content="{BLOG_AUTHOR}" />
 
-  <title>{title} | Gorski Užitki</title>
+  <title>{title} | {BLOG_TITLE}</title>
   <link rel="canonical" href="{og_url}">
   <link rel="alternate" href="{og_url}" hreflang="sl" />
   <link rel="alternate" href="{BASE_SITE_URL}" hreflang="x-default" />
@@ -1303,7 +1316,6 @@ def fetch_and_save_all_posts(entries):
   <!-- Favicon -->
   <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
 
-  
   <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
   <link href='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.css' rel='stylesheet'>
@@ -1414,38 +1426,36 @@ def generate_label_pages(entries, label_posts_raw):
             post_scripts_html += render_post_html(entry, i, entries_per_page, slugify, post_id)
 
         # --- Schema.org structured data (JSON-LD)
-        schema_jsonld = f"""
-        <script type="application/ld+json">
-        {{
-          "@context": "https://schema.org",
-          "@type": "WebPage",
-          "name": "Prikaz objav z oznako: {label_clean}",
-          "url": "{BASE_SITE_URL}/search/labels/{label_slug}/",
-          "description": "Prikaz objav z oznako: {label_clean} - gorske avanture in nepozabni trenutki.",
-          "inLanguage": "sl",
-          "isPartOf": {{
-            "@type": "WebSite",
-            "name": "Gorski Užitki",
-            "url": "https://metodlangus.github.io/"
-          }},
-          "publisher": {{
-            "@type": "Person",
-            "name": "Metod Langus",
-            "url": "https://metodlangus.github.io/"
-          }}
-        }}
-        </script>
-        """
+        schema_jsonld = f"""<script type="application/ld+json">
+  {{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Prikaz objav z oznako: {label_clean}",
+    "url": "{BASE_SITE_URL}/search/labels/{label_slug}/",
+    "description": "Prikaz objav z oznako: {label_clean} - gorske avanture in nepozabni trenutki.",
+    "inLanguage": "sl",
+    "isPartOf": {{
+      "@type": "WebSite",
+      "name": "{BLOG_TITLE}",
+      "url": "{BASE_SITE_URL}/"
+    }},
+    "publisher": {{
+      "@type": "Person",
+      "name": "{BLOG_AUTHOR}",
+      "url": "{BASE_SITE_URL}/"
+    }}
+  }}
+  </script>"""
 
         html_content = f"""<!DOCTYPE html>
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
-  <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+  <meta name="google-site-verification" content="{SITE_VERIFICATION}" />
   <meta name="description" content="Prikaz objav z oznako: {label_clean} - gorske avanture in nepozabni trenutki." />
-  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
-  <meta name="author" content="Metod Langus" />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}" />
+  <meta name="author" content="{BLOG_AUTHOR}" />
 
   <meta property="og:title" content="Prikaz objav z oznako: {label_clean}" />
   <meta property="og:description" content="Prikaz objav z oznako: {label_clean} - gorske avanture in nepozabni trenutki." />
@@ -1454,7 +1464,7 @@ def generate_label_pages(entries, label_posts_raw):
   <meta property="og:url" content="{BASE_SITE_URL}/search/labels/{label_slug}/" />
   <meta property="og:type" content="website" />
 
-  <title>Prikaz objav z oznako: {label_clean} | Gorski Užitki</title>
+  <title>Prikaz objav z oznako: {label_clean} | {BLOG_TITLE}</title>
 
   <!-- Canonical & hreflang -->
   <link rel="canonical" href="{BASE_SITE_URL}/search/labels/{label_slug}/" />
@@ -1573,38 +1583,36 @@ def generate_archive_pages(entries):
             year_posts_html += render_post_html(post_info["entry"], i, entries_per_page, slugify, post_info["post_id"])
 
         # --- Schema.org structured data (JSON-LD)
-        schema_jsonld = f"""
-        <script type="application/ld+json">
-        {{
-          "@context": "https://schema.org",
-          "@type": "WebPage",
-          "name": "Prikaz objav, dodanih na: {year}",
-          "url": "{BASE_SITE_URL}/posts/{year}/",
-          "description": "Prikaz objav, dodanih na: {year} - gorske avanture in nepozabni trenutki.",
-          "inLanguage": "sl",
-          "isPartOf": {{
-            "@type": "WebSite",
-            "name": "Gorski Užitki",
-            "url": "https://metodlangus.github.io/"
-          }},
-          "publisher": {{
-            "@type": "Person",
-            "name": "Metod Langus",
-            "url": "https://metodlangus.github.io/"
-          }}
-        }}
-        </script>
-        """
+        schema_jsonld = f"""<script type="application/ld+json">
+  {{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Prikaz objav, dodanih na: {year}",
+    "url": "{BASE_SITE_URL}/posts/{year}/",
+    "description": "Prikaz objav, dodanih na: {year} - gorske avanture in nepozabni trenutki.",
+    "inLanguage": "sl",
+    "isPartOf": {{
+      "@type": "WebSite",
+      "name": "{BLOG_TITLE}",
+      "url": "{BASE_SITE_URL}/"
+    }},
+    "publisher": {{
+      "@type": "Person",
+      "name": "{BLOG_AUTHOR}",
+      "url": "{BASE_SITE_URL}/"
+    }}
+  }}
+  </script>"""
 
         html_year = f"""<!DOCTYPE html>
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
-  <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+  <meta name="google-site-verification" content="{SITE_VERIFICATION}" />
   <meta name="description" content="Prikaz objav, dodanih na: {year} - gorske avanture in nepozabni trenutki." />
-  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
-  <meta name="author" content="Metod Langus" />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}" />
+  <meta name="author" content="{BLOG_AUTHOR}" />
 
   <meta property="og:title" content="Prikaz objav, dodanih na: {year}" />
   <meta property="og:description" content="Prikaz objav, dodanih na: {year} - gorske avanture in nepozabni trenutki." />
@@ -1613,7 +1621,7 @@ def generate_archive_pages(entries):
   <meta property="og:url" content="{BASE_SITE_URL}/posts/{year}/" />
   <meta property="og:type" content="website" />
 
-  <title>Prikaz objav, dodanih na: {year} | Gorski Užitki</title>
+  <title>Prikaz objav, dodanih na: {year} | {BLOG_TITLE}</title>
 
   <!-- Canonical & hreflang -->
   <link rel="canonical" href="{BASE_SITE_URL}/posts/{year}/" />
@@ -1677,51 +1685,49 @@ def generate_archive_pages(entries):
                 month_posts_html += render_post_html(post_info["entry"], i, entries_per_page, slugify, post_info["post_id"])
 
             # --- Schema.org structured data (JSON-LD)
-            schema_jsonld = f"""
-            <script type="application/ld+json">
-            {{
-              "@context": "https://schema.org",
-              "@type": "WebPage",
-              "name": "Prikaz objav, dodanih na: {month_name_sl}, {year}",
-              "url": "{BASE_SITE_URL}/posts/{year}/",
-              "description": "Prikaz objav, dodanih na: {month_name_sl}, {year} - gorske avanture in nepozabni trenutki.",
-              "inLanguage": "sl",
-              "isPartOf": {{
-                "@type": "WebSite",
-                "name": "Gorski Užitki",
-                "url": "https://metodlangus.github.io/"
-              }},
-              "publisher": {{
-                "@type": "Person",
-                "name": "Metod Langus",
-                "url": "https://metodlangus.github.io/"
-              }}
-            }}
-            </script>
-            """
+            schema_jsonld = f"""<script type="application/ld+json">
+  {{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Prikaz objav, dodanih na: {month_name_sl}, {year}",
+    "url": "{BASE_SITE_URL}/posts/{year}/{month}/",
+    "description": "Prikaz objav, dodanih na: {month_name_sl}, {year} - gorske avanture in nepozabni trenutki.",
+    "inLanguage": "sl",
+    "isPartOf": {{
+      "@type": "WebSite",
+      "name": "{BLOG_TITLE}",
+      "url": "{BASE_SITE_URL}/"
+    }},
+    "publisher": {{
+      "@type": "Person",
+      "name": "{BLOG_AUTHOR}",
+      "url": "{BASE_SITE_URL}/"
+    }}
+  }}
+  </script>"""
 
             html_month = f"""<!DOCTYPE html>
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
-  <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+  <meta name="google-site-verification" content="{SITE_VERIFICATION}" />
   <meta name="description" content="Prikaz objav, dodanih na: {month_name_sl}, {year} - gorske avanture in nepozabni trenutki." />
-  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
-  <meta name="author" content="Metod Langus" />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}" />
+  <meta name="author" content="{BLOG_AUTHOR}" />
 
   <meta property="og:title" content="Prikaz objav, dodanih na: {month_name_sl}, {year}" />
   <meta property="og:description" content="Prikaz objav, dodanih na: {month_name_sl}, {year} - gorske avanture in nepozabni trenutki." />
   <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
   <meta property="og:image:alt" content="Prikaz objav, dodanih na: {month_name_sl}, {year}" />
-  <meta property="og:url" content="{BASE_SITE_URL}/posts/{month_dir}/" />
+  <meta property="og:url" content="{BASE_SITE_URL}/posts/{year}/{month}/" />
   <meta property="og:type" content="website" />
 
-  <title>Prikaz objav, dodanih na: {month_name_sl}, {year} | Gorski Užitki</title>
+  <title>Prikaz objav, dodanih na: {month_name_sl}, {year} | {BLOG_TITLE}</title>
 
   <!-- Canonical & hreflang -->
-  <link rel="canonical" href="{BASE_SITE_URL}/posts/{month_dir}/" />
-  <link rel="alternate" href="{BASE_SITE_URL}/posts/{month_dir}/" hreflang="sl" />
+  <link rel="canonical" href="{BASE_SITE_URL}/posts/{year}/{month}/" />
+  <link rel="alternate" href="{BASE_SITE_URL}/posts/{year}/{month}/" hreflang="sl" />
   <link rel="alternate" href="{BASE_SITE_URL}" hreflang="x-default" />
 
   {schema_jsonld}
@@ -1780,64 +1786,61 @@ def generate_predvajalnik_page(current_page):
     back_to_top_html = generate_back_to_top_html()
 
     # --- Schema.org structured data (JSON-LD)
-    schema_jsonld = """
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebPage",
-      "name": "Predvajalnik naključnih fotografij",
-      "url": "https://metodlangus.github.io/predvajalnik-fotografij/",
-      "description": "Predvajalnik naključnih fotografij gorskih avantur in nepozabnih trenutkov.",
-      "inLanguage": "sl",
-      "isPartOf": {
-        "@type": "WebSite",
-        "name": "Gorski Užitki",
-        "url": "https://metodlangus.github.io/"
-      },
-      "publisher": {
-        "@type": "Person",
-        "name": "Metod Langus",
-        "url": "https://metodlangus.github.io/"
-      },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://metodlangus.github.io/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-    </script>
-    """
+    schema_jsonld = f"""<script type="application/ld+json">
+  {{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Predvajalnik naključnih fotografij",
+    "url": "{BASE_SITE_URL}/predvajalnik-fotografij/",
+    "description": "Predvajalnik naključnih fotografij gorskih avantur in nepozabnih trenutkov.",
+    "inLanguage": "sl",
+    "isPartOf": {{
+      "@type": "WebSite",
+      "name": "{BLOG_TITLE}",
+      "url": "{BASE_SITE_URL}/"
+    }},
+    "publisher": {{
+      "@type": "Person",
+      "name": "{BLOG_AUTHOR}",
+      "url": "{BASE_SITE_URL}/"
+    }},
+    "potentialAction": {{
+      "@type": "SearchAction",
+      "target": "{BASE_SITE_URL}/search?q={{search_term_string}}",
+      "query-input": "required name=search_term_string"
+    }}
+  }}
+  </script>"""
 
     html_content = f"""<!DOCTYPE html>
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
-  <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+  <meta name="google-site-verification" content="{SITE_VERIFICATION}" />
   <meta name="description" content="Predvajalnik naključnih fotografij gorskih avantur in nepozabnih trenutkov." />
-  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
-  <meta name="author" content="Metod Langus" />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}" />
+  <meta name="author" content="{BLOG_AUTHOR}" />
 
   <meta property="og:title" content="Predvajalnik naključnih fotografij" />
   <meta property="og:description" content="Predvajalnik naključnih fotografij gorskih avantur in nepozabnih trenutkov." />
   <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
   <meta property="og:image:alt" content="Gorski razgledi in narava v slikah" />
-  <meta property="og:url" content="https://metodlangus.github.io/predvajalnik-fotografij/" />
+  <meta property="og:url" content="{BASE_SITE_URL}/predvajalnik-fotografij/" />
   <meta property="og:type" content="website" />
 
-  <title>Predvajalnik naključnih fotografij | Gorski Užitki</title>
+  <title>Predvajalnik naključnih fotografij | {BLOG_TITLE}</title>
 
   <!-- Canonical & hreflang -->
-  <link rel="canonical" href="https://metodlangus.github.io/predvajalnik-fotografij/" />
-  <link rel="alternate" href="https://metodlangus.github.io/predvajalnik-fotografij/" hreflang="sl" />
-  <link rel="alternate" href="https://metodlangus.github.io/" hreflang="x-default" />
+  <link rel="canonical" href="{BASE_SITE_URL}/predvajalnik-fotografij/" />
+  <link rel="alternate" href="{BASE_SITE_URL}/predvajalnik-fotografij/" hreflang="sl" />
+  <link rel="alternate" href="{BASE_SITE_URL}/" hreflang="x-default" />
 
   {schema_jsonld}
 
   <script>
     var postTitle = 'Predvajalnik naključnih fotografij';
-    var postId = '8898311262758762797';
-    var author = 'Metod';
+    var author = '{BLOG_AUTHOR}';
   </script>
 
   <!-- Favicon -->
@@ -1897,63 +1900,61 @@ def generate_gallery_page(current_page):
     back_to_top_html = generate_back_to_top_html()
 
     # --- Schema.org structured data (JSON-LD)
-    schema_jsonld = """
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebPage",
-      "name": "Galerija fotografij",
-      "url": "https://metodlangus.github.io/galerija-fotografij/",
-      "description": "Galerija gorskih avantur in nepozabnih trenutkov.",
-      "inLanguage": "sl",
-      "isPartOf": {
-        "@type": "WebSite",
-        "name": "Gorski Užitki",
-        "url": "https://metodlangus.github.io/"
-      },
-      "publisher": {
-        "@type": "Person",
-        "name": "Metod Langus",
-        "url": "https://metodlangus.github.io/"
-      },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://metodlangus.github.io/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-    </script>
-    """
+    schema_jsonld = f"""<script type="application/ld+json">
+  {{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Galerija fotografij",
+    "url": "{BASE_SITE_URL}/galerija-fotografij/",
+    "description": "Galerija gorskih avantur in nepozabnih trenutkov.",
+    "inLanguage": "sl",
+    "isPartOf": {{
+      "@type": "WebSite",
+      "name": "{BLOG_TITLE}",
+      "url": "{BASE_SITE_URL}/"
+    }},
+    "publisher": {{
+      "@type": "Person",
+      "name": "{BLOG_AUTHOR}",
+      "url": "{BASE_SITE_URL}/"
+    }},
+    "potentialAction": {{
+      "@type": "SearchAction",
+      "target": "{BASE_SITE_URL}/search?q={{search_term_string}}",
+      "query-input": "required name=search_term_string"
+    }}
+  }}
+  </script>"""
 
     html_content = f"""<!DOCTYPE html>
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
-  <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+  <meta name="google-site-verification" content="{SITE_VERIFICATION}" />
   <meta name="description" content="Galerija gorskih avantur in nepozabnih trenutkov." />
-  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
-  <meta name="author" content="Metod Langus" />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}" />
+  <meta name="author" content="{BLOG_AUTHOR}" />
 
   <meta property="og:title" content="Galerija fotografij" />
   <meta property="og:description" content="Galerija gorskih avantur in nepozabnih trenutkov." />
   <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
   <meta property="og:image:alt" content="Galerija gorskih avantur" />
-  <meta property="og:url" content="https://metodlangus.github.io/galerija-fotografij/" />
+  <meta property="og:url" content="{BASE_SITE_URL}/galerija-fotografij/" />
   <meta property="og:type" content="website" />
 
-  <title>Galerija spominov | Gorski Užitki</title>
+  <title>Galerija spominov | {BLOG_TITLE}</title>
 
   <!-- Canonical & hreflang -->
-  <link rel="canonical" href="https://metodlangus.github.io/galerija-fotografij/" />
-  <link rel="alternate" href="https://metodlangus.github.io/galerija-fotografij/" hreflang="sl" />
-  <link rel="alternate" href="https://metodlangus.github.io/" hreflang="x-default" />
+  <link rel="canonical" href="{BASE_SITE_URL}/galerija-fotografij/" />
+  <link rel="alternate" href="{BASE_SITE_URL}/galerija-fotografij/" hreflang="sl" />
+  <link rel="alternate" href="{BASE_SITE_URL}/" hreflang="x-default" />
 
   {schema_jsonld}
 
   <script>
     var postTitle = 'Galerija fotografij';
-    var author = 'Metod';
+    var author = '{BLOG_AUTHOR}';
   </script>
 
   <!-- Favicon -->
@@ -2016,64 +2017,61 @@ def generate_peak_list_page():
     back_to_top_html = generate_back_to_top_html()
 
     # --- Schema.org structured data (JSON-LD)
-    schema_jsonld = """
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebPage",
-      "name": "Seznam vrhov",
-      "url": "https://metodlangus.github.io/seznam-vrhov/",
-      "description": "Seznam obiskanih vrhov na gorskih avanturah.",
-      "inLanguage": "sl",
-      "isPartOf": {
-        "@type": "WebSite",
-        "name": "Gorski Užitki",
-        "url": "https://metodlangus.github.io/"
-      },
-      "publisher": {
-        "@type": "Person",
-        "name": "Metod Langus",
-        "url": "https://metodlangus.github.io/"
-      },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://metodlangus.github.io/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-    </script>
-    """
+    schema_jsonld = f"""<script type="application/ld+json">
+  {{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Seznam vrhov",
+    "url": "{BASE_SITE_URL}/seznam-vrhov/",
+    "description": "Seznam obiskanih vrhov na gorskih avanturah.",
+    "inLanguage": "sl",
+    "isPartOf": {{
+      "@type": "WebSite",
+      "name": "{BLOG_TITLE}",
+      "url": "{BASE_SITE_URL}/"
+    }},
+    "publisher": {{
+      "@type": "Person",
+      "name": "{BLOG_AUTHOR}",
+      "url": "{BASE_SITE_URL}/"
+    }},
+    "potentialAction": {{
+      "@type": "SearchAction",
+      "target": "{BASE_SITE_URL}/search?q={{search_term_string}}",
+      "query-input": "required name=search_term_string"
+    }}
+  }}
+  </script>"""
 
     html_content = f"""<!DOCTYPE html>
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
-  <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+  <meta name="google-site-verification" content="{SITE_VERIFICATION}" />
   <meta name="description" content="Seznam obiskanih vrhov na gorskih avanturah." />
-  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
-  <meta name="author" content="Metod Langus" />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}" />
+  <meta name="author" content="{BLOG_AUTHOR}" />
 
   <meta property="og:title" content="Seznam vrhov" />
   <meta property="og:description" content="Seznam obiskanih vrhov na gorskih avanturah." />
   <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
   <meta property="og:image:alt" content="Seznam obiskanih vrhov" />
-  <meta property="og:url" content="https://metodlangus.github.io/seznam-vrhov/" />
+  <meta property="og:url" content="{BASE_SITE_URL}/seznam-vrhov/" />
   <meta property="og:type" content="website" />
 
-  <title>Seznam vrhov | Gorski Užitki</title>
+  <title>Seznam vrhov | {BLOG_TITLE}</title>
 
   <!-- Canonical & hreflang -->
-  <link rel="canonical" href="https://metodlangus.github.io/seznam-vrhov/" />
-  <link rel="alternate" href="https://metodlangus.github.io/seznam-vrhov/" hreflang="sl" />
-  <link rel="alternate" href="https://metodlangus.github.io/" hreflang="x-default" />
+  <link rel="canonical" href="{BASE_SITE_URL}/seznam-vrhov/" />
+  <link rel="alternate" href="{BASE_SITE_URL}/seznam-vrhov/" hreflang="sl" />
+  <link rel="alternate" href="{BASE_SITE_URL}/" hreflang="x-default" />
 
   {schema_jsonld}
 
   <script>
     var postTitle = 'Seznam vrhov';
-    var postId = '3182270651807797129';
-    var author = 'Metod';
+    var author = '{BLOG_AUTHOR}';
   </script>
 
   <!-- Favicon -->
@@ -2130,62 +2128,60 @@ def generate_big_map_page():
     back_to_top_html = generate_back_to_top_html()
 
     # --- Schema.org structured data (JSON-LD)
-    schema_jsonld = """
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebPage",
-      "name": "Zemljevid spominov",
-      "url": "https://metodlangus.github.io/zemljevid-spominov/",
-      "description": "Gorske avanture in nepozabni trenutki na zemljevidu spominov.",
-      "inLanguage": "sl",
-      "isPartOf": {
-        "@type": "WebSite",
-        "name": "Gorski Užitki",
-        "url": "https://metodlangus.github.io/"
-      },
-      "publisher": {
-        "@type": "Person",
-        "name": "Metod Langus",
-        "url": "https://metodlangus.github.io/"
-      },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://metodlangus.github.io/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-    </script>
-    """
+    schema_jsonld = f"""<script type="application/ld+json">
+  {{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Zemljevid spominov",
+    "url": "{BASE_SITE_URL}/zemljevid-spominov/",
+    "description": "Gorske avanture in nepozabni trenutki na zemljevidu spominov.",
+    "inLanguage": "sl",
+    "isPartOf": {{
+      "@type": "WebSite",
+      "name": "{BLOG_TITLE}",
+      "url": "{BASE_SITE_URL}/"
+    }},
+    "publisher": {{
+      "@type": "Person",
+      "name": "{BLOG_AUTHOR}",
+      "url": "{BASE_SITE_URL}/"
+    }},
+    "potentialAction": {{
+      "@type": "SearchAction",
+      "target": "{BASE_SITE_URL}/search?q={{search_term_string}}",
+      "query-input": "required name=search_term_string"
+    }}
+  }}
+  </script>"""
 
     html_content = f"""<!DOCTYPE html>
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
-  <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+  <meta name="google-site-verification" content="{SITE_VERIFICATION}" />
   <meta name="description" content="Gorske avanture in nepozabni trenutki na zemljevidu spominov." />
-  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
-  <meta name="author" content="Metod Langus" />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}" />
+  <meta name="author" content="{BLOG_AUTHOR}" />
   <meta property="og:title" content="Zemljevid spominov" />
   <meta property="og:description" content="Zemljevid spominov, ki zajema slike ter sledi poti." />
   <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
   <meta property="og:image:alt" content="Zemljevid spominov" />
-  <meta property="og:url" content="https://metodlangus.github.io/zemljevid-spominov/" />
+  <meta property="og:url" content="{BASE_SITE_URL}/zemljevid-spominov/" />
   <meta property="og:type" content="website" />
 
-  <title>Zemljevid spominov | Gorski Užitki</title>
+  <title>Zemljevid spominov | {BLOG_TITLE}</title>
 
   <!-- Canonical & hreflang -->
-  <link rel="canonical" href="https://metodlangus.github.io/zemljevid-spominov/" />
-  <link rel="alternate" href="https://metodlangus.github.io/zemljevid-spominov/" hreflang="sl" />
-  <link rel="alternate" href="https://metodlangus.github.io/" hreflang="x-default" />
+  <link rel="canonical" href="{BASE_SITE_URL}/zemljevid-spominov/" />
+  <link rel="alternate" href="{BASE_SITE_URL}/zemljevid-spominov/" hreflang="sl" />
+  <link rel="alternate" href="{BASE_SITE_URL}/" hreflang="x-default" />
 
   {schema_jsonld}
 
   <script>
     var postTitle = 'Zemljevid spominov';
-    var author = 'Metod';
+    var author = '{BLOG_AUTHOR}';
   </script>
 
   <!-- Favicon -->
@@ -2260,63 +2256,61 @@ def generate_home_en_page(homepage_html):
     back_to_top_html = generate_back_to_top_html()
 
     # --- Schema.org structured data (JSON-LD)
-    schema_jsonld = f"""
-    <script type="application/ld+json">
-    {{
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Gorski Užitki",
-      "url": "https://metodlangus.github.io/en/",
-      "description": "Mountain adventures and unforgettable moments: Discover the beauty of the mountain world and enjoy the image slideshows that take you through the adventures.",
-      "publisher": {{
-        "@type": "Person",
-        "name": "Metod Langus",
-        "url": "https://metodlangus.github.io/en/"
-      }},
-      "potentialAction": {{
-        "@type": "SearchAction",
-        "target": "https://metodlangus.github.io/en/search?q={{search_term_string}}",
-        "query-input": "required name=search_term_string"
-      }}
+    schema_jsonld = f"""<script type="application/ld+json">
+  {{
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "{BLOG_TITLE}",
+    "url": "{BASE_SITE_URL}/en/",
+    "description": "Mountain adventures and unforgettable moments: Discover the beauty of the mountain world and enjoy the image slideshows that take you through the adventures.",
+    "publisher": {{
+      "@type": "Person",
+      "name": "{BLOG_AUTHOR}",
+      "url": "{BASE_SITE_URL}/en/"
+    }},
+    "potentialAction": {{
+      "@type": "SearchAction",
+      "target": "{BASE_SITE_URL}/en/search?q={{search_term_string}}",
+      "query-input": "required name=search_term_string"
     }}
-    </script>
-    """
+  }}
+  </script>"""
 
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
-    <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
+  <meta name="google-site-verification" content="{SITE_VERIFICATION}" />
 
-    <meta name="description" content="Mountain adventures and unforgettable moments: Discover the beauty of the mountain world and enjoy the image slideshows that take you through the adventures." />
-    <meta name="keywords" content="mountain adventures, hiking, mountains, photography, nature, free time, gorski užitki, Metod Langus" />
-    <meta name="author" content="Metod Langus" />
+  <meta name="description" content="Mountain adventures and unforgettable moments: Discover the beauty of the mountain world and enjoy the image slideshows that take you through the adventures." />
+  <meta name="keywords" content="mountain adventures, hiking, mountains, photography, nature, free time, {BLOG_TITLE}, {BLOG_AUTHOR}" />
+  <meta name="author" content="{BLOG_AUTHOR}" />
 
-    <title>Gorski Užitki | Mountain Adventures Through Pictures | Metod Langus</title>
-    <link rel="canonical" href="https://metodlangus.github.io/en/" />
+  <title>{BLOG_TITLE} | Mountain Adventures Through Pictures | {BLOG_AUTHOR}</title>
+  <link rel="canonical" href="{BASE_SITE_URL}/en/" />
 
-    {schema_jsonld}
+  {schema_jsonld}
 
-    <meta property="og:title" content="Gorski Užitki | Mountain Adventures Through Pictures | Metod Langus" />
-    <meta property="og:description" content="Mountain adventures and unforgettable moments: Discover the beauty of the mountain world and enjoy the image slideshows that take you through the adventures." />
-    <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
-    <meta property="og:image:alt" content="Mountain views and nature" />
-    <meta property="og:url" content="https://metodlangus.github.io/en/" />
-    <meta property="og:type" content="website" />
+  <meta property="og:title" content="{BLOG_TITLE} | Mountain Adventures Through Pictures | {BLOG_AUTHOR}" />
+  <meta property="og:description" content="Mountain adventures and unforgettable moments: Discover the beauty of the mountain world and enjoy the image slideshows that take you through the adventures." />
+  <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
+  <meta property="og:image:alt" content="Mountain views and nature" />
+  <meta property="og:url" content="{BASE_SITE_URL}/en/" />
+  <meta property="og:type" content="website" />
 
-    <link rel="alternate" href="https://metodlangus.github.io/" hreflang="sl" />
-    <link rel="alternate" href="https://metodlangus.github.io/en/" hreflang="en" />
-    <link rel="alternate" href="https://metodlangus.github.io/" hreflang="x-default" />
+  <link rel="alternate" href="{BASE_SITE_URL}/" hreflang="sl" />
+  <link rel="alternate" href="{BASE_SITE_URL}/en/" hreflang="en" />
+  <link rel="alternate" href="{BASE_SITE_URL}/" hreflang="x-default" />
 
-    <!-- Favicon -->
-    <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
+  <!-- Favicon -->
+  <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
 
-    <!-- Fonts & CSS -->
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
-    <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyRandomPhoto.css">
-    <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPostContainerScript.css">
+  <!-- Fonts & CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyRandomPhoto.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPostContainerScript.css">
 </head>
 
 <body>
@@ -2362,63 +2356,61 @@ def generate_home_si_page(homepage_html):
     back_to_top_html = generate_back_to_top_html()
 
     # --- Schema.org structured data (JSON-LD)
-    schema_jsonld = f"""
-    <script type="application/ld+json">
-    {{
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Gorski užitki",
-      "url": "https://metodlangus.github.io/",
-      "description": "Gorske avanture in nepozabni trenutki: Lepote gorskega sveta in predvajalniki slik, ki vas popeljejo skozi dogodivščine.",
-      "publisher": {{
-        "@type": "Person",
-        "name": "Metod Langus",
-        "url": "https://metodlangus.github.io/"
-      }},
-      "potentialAction": {{
-        "@type": "SearchAction",
-        "target": "https://metodlangus.github.io/search?q={{search_term_string}}",
-        "query-input": "required name=search_term_string"
-      }}
+    schema_jsonld = f"""<script type="application/ld+json">
+  {{
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "{BLOG_TITLE}",
+    "url": "{BASE_SITE_URL}/",
+    "description": "Gorske avanture in nepozabni trenutki: Lepote gorskega sveta in predvajalniki slik, ki vas popeljejo skozi dogodivščine.",
+    "publisher": {{
+      "@type": "Person",
+      "name": "{BLOG_AUTHOR}",
+      "url": "{BASE_SITE_URL}/"
+    }},
+    "potentialAction": {{
+      "@type": "SearchAction",
+      "target": "{BASE_SITE_URL}/search?q={{search_term_string}}",
+      "query-input": "required name=search_term_string"
     }}
-    </script>
-    """
+  }}
+  </script>"""
 
     html_content = f"""<!DOCTYPE html>
 <html lang="sl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
-    <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
+  <meta name="google-site-verification" content="{SITE_VERIFICATION}" />
 
-    <meta name="description" content="Gorske avanture in nepozabni trenutki: Lepote gorskega sveta in predvajalniki slik, ki vas popeljejo skozi dogodivščine." />
-    <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, gorski užitki, Metod Langus" />
-    <meta name="author" content="Metod Langus" />
+  <meta name="description" content="Gorske avanture in nepozabni trenutki: Lepote gorskega sveta in predvajalniki slik, ki vas popeljejo skozi dogodivščine." />
+  <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}" />
+  <meta name="author" content="{BLOG_AUTHOR}" />
 
-    <title>Gorski Užitki | Gorske pustolovščine skozi slike | Metod Langus</title>
-    <link rel="canonical" href="https://metodlangus.github.io/" />
+  <title>{BLOG_TITLE} | Gorske pustolovščine skozi slike | {BLOG_AUTHOR}</title>
+  <link rel="canonical" href="{BASE_SITE_URL}/" />
 
-    {schema_jsonld}
+  {schema_jsonld}
 
-    <meta property="og:title" content="Gorski Užitki | Gorske pustolovščine skozi slike | Metod Langus" />
-    <meta property="og:description" content="Gorske avanture in nepozabni trenutki: Lepote gorskega sveta in predvajalniki slik, ki vas popeljejo skozi dogodivščine." />
-    <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
-    <meta property="og:image:alt" content="Gorski razgledi in narava" />
-    <meta property="og:url" content="https://metodlangus.github.io/" />
-    <meta property="og:type" content="website" />
+  <meta property="og:title" content="{BLOG_TITLE} | Gorske pustolovščine skozi slike | {BLOG_AUTHOR}" />
+  <meta property="og:description" content="Gorske avanture in nepozabni trenutki: Lepote gorskega sveta in predvajalniki slik, ki vas popeljejo skozi dogodivščine." />
+  <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
+  <meta property="og:image:alt" content="Gorski razgledi in narava" />
+  <meta property="og:url" content="{BASE_SITE_URL}/" />
+  <meta property="og:type" content="website" />
 
-    <link rel="alternate" href="https://metodlangus.github.io/" hreflang="sl" />
-    <link rel="alternate" href="https://metodlangus.github.io/en/" hreflang="en" />
-    <link rel="alternate" href="https://metodlangus.github.io/" hreflang="x-default" />
+  <link rel="alternate" href="{BASE_SITE_URL}/" hreflang="sl" />
+  <link rel="alternate" href="{BASE_SITE_URL}/en/" hreflang="en" />
+  <link rel="alternate" href="{BASE_SITE_URL}/" hreflang="x-default" />
 
-    <!-- Favicon -->
-    <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
+  <!-- Favicon -->
+  <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
 
-    <!-- Fonts & CSS -->
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
-    <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyRandomPhoto.css">
-    <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPostContainerScript.css">
+  <!-- Fonts & CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyRandomPhoto.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPostContainerScript.css">
 </head>
 
 <body>
@@ -2513,33 +2505,31 @@ def generate_useful_links_page():
     back_to_top_html = generate_back_to_top_html()
 
     # --- Schema.org structured data (JSON-LD)
-    schema_jsonld = f"""
-    <script type="application/ld+json">
-    {{
-      "@context": "https://schema.org",
-      "@type": "WebPage",
-      "name": "Uporabne povezave",
-      "url": "https://metodlangus.github.io/uporabne-povezave/",
-      "description": "Seznam uporabnih povezav do drugih blogov in vsebin.",
-      "inLanguage": "sl",
-      "isPartOf": {{
-        "@type": "WebSite",
-        "name": "Gorski Užitki",
-        "url": "https://metodlangus.github.io/"
-      }},
-      "publisher": {{
-        "@type": "Person",
-        "name": "Metod Langus",
-        "url": "https://metodlangus.github.io/"
-      }},
-      "potentialAction": {{
-        "@type": "SearchAction",
-        "target": "https://metodlangus.github.io/search?q={{search_term_string}}",
-        "query-input": "required name=search_term_string"
-      }}
+    schema_jsonld = f"""<script type="application/ld+json">
+  {{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Uporabne povezave",
+    "url": "{BASE_SITE_URL}/uporabne-povezave/",
+    "description": "Seznam uporabnih povezav do drugih blogov in vsebin.",
+    "inLanguage": "sl",
+    "isPartOf": {{
+      "@type": "WebSite",
+      "name": "{BLOG_TITLE}",
+      "url": "{BASE_SITE_URL}/"
+    }},
+    "publisher": {{
+      "@type": "Person",
+      "name": "{BLOG_AUTHOR}",
+      "url": "{BASE_SITE_URL}/"
+    }},
+    "potentialAction": {{
+      "@type": "SearchAction",
+      "target": "{BASE_SITE_URL}/search?q={{search_term_string}}",
+      "query-input": "required name=search_term_string"
     }}
-    </script>
-    """
+  }}
+  </script>"""
 
     # Generate HTML for the links
     links_html = """<div id="useful-links-container"></div>"""
@@ -2550,30 +2540,30 @@ def generate_useful_links_page():
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
-  <meta name="google-site-verification" content="4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU" />
+  <meta name="google-site-verification" content="{SITE_VERIFICATION}" />
   <meta name="description" content="Seznam uporabnih povezav do drugih blogov in vsebin." />
-  <meta name="keywords" content="gorski užitki, uporabne povezave, blog, pohodništvo, gore, narava" />
-  <meta name="author" content="Metod Langus" />
+  <meta name="keywords" content="uporabne povezave, blog, pohodništvo, gore, narava, {BLOG_TITLE}, {BLOG_AUTHOR}" />
+  <meta name="author" content="{BLOG_AUTHOR}" />
 
   <meta property="og:title" content="Uporabne povezave" />
   <meta property="og:description" content="Seznam uporabnih povezav do drugih blogov in vsebin." />
   <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
   <meta property="og:image:alt" content="Uporabne povezave" />
-  <meta property="og:url" content="https://metodlangus.github.io/uporabne-povezave.html" />
+  <meta property="og:url" content="{BASE_SITE_URL}/uporabne-povezave.html" />
   <meta property="og:type" content="website" />
 
-  <title>Uporabne povezave | Gorski Užitki</title>
+  <title>Uporabne povezave | {BLOG_TITLE}</title>
 
   <!-- Canonical & hreflang -->
-  <link rel="canonical" href="https://metodlangus.github.io/uporabne-povezave.html" />
-  <link rel="alternate" href="https://metodlangus.github.io/uporabne-povezave.html" hreflang="sl" />
-  <link rel="alternate" href="https://metodlangus.github.io" hreflang="x-default" />
+  <link rel="canonical" href="{BASE_SITE_URL}/uporabne-povezave.html" />
+  <link rel="alternate" href="{BASE_SITE_URL}/uporabne-povezave.html" hreflang="sl" />
+  <link rel="alternate" href="{BASE_SITE_URL}" hreflang="x-default" />
 
   {schema_jsonld}
 
   <script>
     var postTitle = 'Uporabne povezave';
-    var author = 'Metod';
+    var author = '{BLOG_AUTHOR}';
   </script>
 
   <!-- Favicon -->
@@ -2629,23 +2619,23 @@ def generate_404_page():
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Napaka 404 – Stran ne obstaja | Gorski Užitki</title>
+  <title>Napaka 404 – Stran ne obstaja | {BLOG_TITLE}</title>
 
-  <meta name="description" content="Napaka 404 – Stran, ki jo iščete, ne obstaja. Morda je bila odstranjena ali premaknjena. Oglejte si vsebino na Gorski Užitki.">
-  <meta name="keywords" content="404, napaka 404, stran ne obstaja, gorski užitki, pohodništvo, blog">
-  <meta name="author" content="Metod Langus">
+  <meta name="description" content="Napaka 404 – Stran, ki jo iščete, ne obstaja. Morda je bila odstranjena ali premaknjena. Oglejte si vsebino na {BLOG_TITLE}.">
+  <meta name="keywords" content="404, napaka 404, stran ne obstaja, pohodništvo, blog, {BLOG_TITLE}, {BLOG_AUTHOR}">
+  <meta name="author" content="{BLOG_AUTHOR}">
 
   <!-- Canonical & hreflang -->
-  <link rel="canonical" href="https://metodlangus.github.io/404.html" />
-  <link rel="alternate" href="https://metodlangus.github.io/404.html" hreflang="sl" />
-  <link rel="alternate" href="https://metodlangus.github.io" hreflang="x-default" />
+  <link rel="canonical" href="{BASE_SITE_URL}/404.html" />
+  <link rel="alternate" href="{BASE_SITE_URL}/404.html" hreflang="sl" />
+  <link rel="alternate" href="{BASE_SITE_URL}" hreflang="x-default" />
 
   <!-- OpenGraph -->
   <meta property="og:title" content="Napaka 404 – Stran ne obstaja">
-  <meta property="og:description" content="Stran ne obstaja. Nadaljujte brskanje po blogu Gorski Užitki.">
+  <meta property="og:description" content="Stran ne obstaja. Nadaljujte brskanje po blogu {BLOG_TITLE}.">
   <meta property="og:image" content="{DEFAULT_OG_IMAGE}">
   <meta property="og:image:alt" content="Napaka 404">
-  <meta property="og:url" content="https://metodlangus.github.io/404.html">
+  <meta property="og:url" content="{BASE_SITE_URL}/404.html">
   <meta property="og:type" content="website">
 
   <!-- Structured Data -->
@@ -2654,18 +2644,18 @@ def generate_404_page():
     "@context": "https://schema.org",
     "@type": "WebPage",
     "name": "Napaka 404 – Stran ne obstaja",
-    "url": "https://metodlangus.github.io/404.html",
-    "description": "Stran ne obstaja. Nadaljujte brskanje po blogu Gorski Užitki.",
+    "url": "{BASE_SITE_URL}/404.html",
+    "description": "Stran ne obstaja. Nadaljujte brskanje po blogu {BLOG_TITLE}.",
     "inLanguage": "sl",
     "isPartOf": {{
       "@type": "WebSite",
-      "name": "Gorski Užitki",
-      "url": "https://metodlangus.github.io/"
+      "name": "{BLOG_TITLE}",
+      "url": "{BASE_SITE_URL}/"
     }},
     "publisher": {{
       "@type": "Person",
-      "name": "Metod Langus",
-      "url": "https://metodlangus.github.io/"
+      "name": "{BLOG_AUTHOR}",
+      "url": "{BASE_SITE_URL}/"
     }}
   }}
 </script>
@@ -2684,7 +2674,7 @@ def generate_404_page():
         <div class="message-overlay">
           <h1>404</h1>
           <p>Ups! Stran, ki jo iščete, ne obstaja. Morda je bila premaknjena ali izbrisana.</p>
-          <a href="https://metodlangus.github.io/" class="home-btn">Domov</a>
+          <a href="{BASE_SITE_URL}/" class="home-btn">Domov</a>
         </div>
       </div>
 
@@ -2905,7 +2895,7 @@ if __name__ == "__main__":
     # 4. Build labels navigation
     run_section(4, "Build labels navigation",
         lambda: save_navigation_as_js(
-            generate_labels_sidebar_html(feed_url=BASE_FEED_URL),
+            generate_labels_sidebar_html(feed_path=BASE_FEED_PATH),
             "assets/navigation.js"),
         pattern_iter=pattern_iter)
 
@@ -2953,7 +2943,7 @@ if __name__ == "__main__":
     # 16 Generate sitemap
     run_section(16, "Generate sitemap",
         lambda: generate_sitemap_from_folder(
-            Path(r"C:\Spletna_stran_Github\metodlangus.github.io"),
+            Path(LOCAL_REPO_PATH),
             exclude_dirs=["plugins"],
             exclude_files=["mattia-adventures-map.html"]),
         pattern_iter=pattern_iter)
@@ -2961,7 +2951,7 @@ if __name__ == "__main__":
     # 17. Submit changed files to IndexNow
     run_section(17, "Submit changed files to IndexNow",
         lambda: submit_changed_files_to_indexnow(
-            Path(r"C:\Spletna_stran_Github\metodlangus.github.io"),
+            Path(LOCAL_REPO_PATH),
             exclude_dirs=["plugins"],
             exclude_files=["mattia-adventures-map.html"],
             index=True),
