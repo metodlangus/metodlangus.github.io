@@ -66,6 +66,9 @@ function renderSortedPeaks(sortedLabelMap) {
                 mountainContainer.appendChild(label3Header);
             }
 
+            // Wrap <li> elements in <ul>
+            const ul = document.createElement('ul');
+
             peaks.forEach(({ peakName, publishedDates }) => {
                 const peakItem = document.createElement('li');
                 peakItem.textContent = peakName;
@@ -77,8 +80,10 @@ function renderSortedPeaks(sortedLabelMap) {
                     peakItem.innerHTML += ` (${dateLinks})`;
                 }
 
-                mountainContainer.appendChild(peakItem);
+                ul.appendChild(peakItem);
             });
+
+            mountainContainer.appendChild(ul);
         }
     }
 }
