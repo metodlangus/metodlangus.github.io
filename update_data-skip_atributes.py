@@ -81,8 +81,9 @@ def update_photo_data(local_list_path, local_file_path):
                 # Update post title
                 line = re.sub(r'"[^"]*"', f'"{post_title}"', line)
 
-                # Update post link (remove index.html if present)
-                line = re.sub(r'\d{4}/\d{2}/[\w-]+/(?:index\.html)?', post_link, line)
+                # update post link ONLY if it exists
+                if post_link:
+                    line = re.sub(r'\d{4}/\d{2}/[\w-]+/index\.html', post_link, line)
 
         updated_lines.append(line)
 

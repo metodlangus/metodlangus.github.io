@@ -86,15 +86,21 @@ def override_domain(url, base_site_url):
     preserving the path, query, and fragment from the original URL.
     """
     parsed_original = urlparse(url)
-    
-    # Ensure the path does not start with a leading slash
-    relative_path = urlunparse(('', '', parsed_original.path.lstrip('/'),
-                                parsed_original.params,
-                                parsed_original.query,
-                                parsed_original.fragment))
-    
-    # Safely join
-    return urljoin(base_site_url.rstrip('/') + '/', relative_path)
+    parsed_base = urlparse(base_site_url)
+
+    # Combine base path and original path safely
+    base_path = parsed_base.path.rstrip('/')
+    original_path = parsed_original.path.lstrip('/')
+    combined_path = f"{base_path}/{original_path}" if base_path else f"/{original_path}"
+
+    return urlunparse((
+        parsed_base.scheme,
+        parsed_base.netloc,
+        combined_path,
+        parsed_original.params,
+        parsed_original.query,
+        parsed_original.fragment
+    ))
 
 def parse_entry_date(entry, index=None):
     published = entry.get("published", {}).get("$t", "")
@@ -402,6 +408,7 @@ def build_archive_sidebar_html(entries):
     Generate complete archive sidebar HTML from Blogger entries.
     Clicking a year/month navigates to the correct archive page,
     arrow still expands/collapses the section.
+    Numbers are displayed with a space before parentheses.
     """
     archive_dict = generate_unique_slugs(entries, return_type="archive")
 
@@ -412,9 +419,9 @@ def build_archive_sidebar_html(entries):
     for y in sorted(archive_dict.keys(), reverse=True):
         year_posts = archive_dict[y]
         year_count = sum(len(posts) for posts in year_posts.values())
-        # Link to yearly page
+        # Year link with space before parentheses
         archive_html += f"""  <details open>
-    <summary><a href="{BASE_SITE_URL}/posts/{y}/">{y} ({year_count})</a></summary>
+    <summary><a href="{BASE_SITE_URL}/posts/{y}/">{y}</a>&nbsp;<span class="post-count" dir="ltr">({year_count})</span></summary>
 """
 
         for m in sorted(year_posts.keys(), reverse=True):
@@ -425,11 +432,11 @@ def build_archive_sidebar_html(entries):
                 month_name = format_datetime(dummy_date, "LLLL", locale="sl")
             except ValueError:
                 month_name = m
-            month_label = f"{month_name} {y} ({len(posts)})"
+            month_label = f"{month_name} {y}"
 
-            # Month link
+            # Month link with space before parentheses
             archive_html += f"""    <details class="month-group">
-      <summary><a href="{BASE_SITE_URL}/posts/{y}/{m}/">{month_label}</a></summary>
+      <summary><a href="{BASE_SITE_URL}/posts/{y}/{m}/">{month_label}</a>&nbsp;<span class="post-count" dir="ltr">({len(posts)})</span></summary>
       <ul>
 """
 
@@ -801,13 +808,16 @@ def generate_sidebar_html(picture_settings, map_settings, current_page):
       <div class="sidebar" id="sidebar">
         {random_photo_sections}
         <div class="pages">
-          <aside class='sidebar-pages'><h2>Strani</h2>
-            <li><a href="{BASE_SITE_URL}">Dnevnik</a></li>
-            <li><a href="{BASE_SITE_URL}/predvajalnik-fotografij/">Predvajalnik naključnih fotografij</a></li>
-            <li><a href="{BASE_SITE_URL}/galerija-fotografij/">Galerija fotografij</a></li>
-            <li><a href="{BASE_SITE_URL}/seznam-vrhov/">Seznam vrhov</a></li>
-            <li><a href="{BASE_SITE_URL}/zemljevid-spominov/">Zemljevid spominov</a></li>
-            <li><a href="{BASE_SITE_URL}/uporabne-povezave/">Uporabne povezave</a></li>
+          <aside class='sidebar-pages'>
+            <h2>Strani</h2>
+            <ul>
+              <li><a href="{BASE_SITE_URL}">Dnevnik</a></li>
+              <li><a href="{BASE_SITE_URL}/predvajalnik-fotografij/">Predvajalnik naključnih fotografij</a></li>
+              <li><a href="{BASE_SITE_URL}/galerija-fotografij/">Galerija fotografij</a></li>
+              <li><a href="{BASE_SITE_URL}/seznam-vrhov/">Seznam vrhov</a></li>
+              <li><a href="{BASE_SITE_URL}/zemljevid-spominov/">Zemljevid spominov</a></li>
+              <li><a href="{BASE_SITE_URL}/uporabne-povezave/">Uporabne povezave</a></li>
+            </ul>
           </aside>
         </div>
         {settings_html}
