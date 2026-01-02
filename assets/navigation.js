@@ -48,6 +48,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/velebit/'>Velebit</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/visoke-tatre/'>Visoke Tatre</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/visoke-ture/'>Visoke Ture</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/ziljske-alpe/'>Ziljske Alpe</a></li>
 </ul>
 <h3>Časovno:</h3><ul class='label-list'>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/celodnevni/'>Celodnevni</a></li>
@@ -58,6 +59,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/vikend-potepanja/'>Vikend potepanja</a></li>
 </ul>
 <h3>Ostalo:</h3><ul class='label-list'>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/5/'>5</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/brezpotje/'>Brezpotje</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/greben/'>Greben</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/jama/'>Jama</a></li>

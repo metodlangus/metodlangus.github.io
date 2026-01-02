@@ -4,10 +4,17 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("archive-placeholder").innerHTML = `<aside class="sidebar-archive">
   <h2>Arhiv</h2>
   <details open>
-    <summary><a href="https://metodlangus.github.io/posts/2025/">2025</a>&nbsp;<span class="post-count" dir="ltr">(72)</span></summary>
+    <summary><a href="https://metodlangus.github.io/posts/2025/">2025</a>&nbsp;<span class="post-count" dir="ltr">(79)</span></summary>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/posts/2025/12/">december 2025</a>&nbsp;<span class="post-count" dir="ltr">(3)</span></summary>
+      <summary><a href="https://metodlangus.github.io/posts/2025/12/">december 2025</a>&nbsp;<span class="post-count" dir="ltr">(10)</span></summary>
       <ul>
+        <li><a href="https://metodlangus.github.io/posts/2025/12/murnovec-1864-m-schwarzkogel-kresisce-1842-m/">Murnovec (1864 m), Schwarzkogel / Kresišče (1842 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/12/vrh-velikih-gac-1053-m/">Vrh Velikih Gač (1053 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/12/latschur-2236-m/">Latschur (2236 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/12/bela-pec-1583-m/">Bela peč (1583 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/12/cez-psico-na-storzic-2132-m/">Čez Psico na Storžič (2132 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/12/sentanski-vrh-1635-m/">Šentanski vrh (1635 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/12/gorenji-krivi-rob-2008-m/">Gorenji Krivi rob (2008 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/12/spik-2473-m/">Špik (2473 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/12/potoska-gora-1283-m/">Potoška gora (1283 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/12/mittagskogel-kepa-2145-m/">Mittagskogel / Kepa (2145 m)</a></li>
