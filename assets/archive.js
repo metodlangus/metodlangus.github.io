@@ -4,9 +4,9 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("archive-placeholder").innerHTML = `<aside class="sidebar-archive">
   <h2>Arhiv</h2>
   <details open>
-    <summary>2025 (72)</summary>
+    <summary><a href="https://metodlangus.github.io/posts/2025/">2025</a>&nbsp;<span class="post-count" dir="ltr">(72)</span></summary>
     <details class="month-group">
-      <summary>december 2025 (3)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2025/12/">december 2025</a>&nbsp;<span class="post-count" dir="ltr">(3)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2025/12/spik-2473-m/">Špik (2473 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/12/potoska-gora-1283-m/">Potoška gora (1283 m)</a></li>
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>november 2025 (6)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2025/11/">november 2025</a>&nbsp;<span class="post-count" dir="ltr">(6)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2025/11/sentanski-vrh-1635-m-cez-crni-vrh-1257-m/">Šentanski vrh (1635 m) čez Črni vrh (1257 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/11/goli-vrh-1787-m-mala-baba-2018-m/">Goli vrh (1787 m), Mala Baba (2018 m)</a></li>
@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>oktober 2025 (4)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2025/10/">oktober 2025</a>&nbsp;<span class="post-count" dir="ltr">(4)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2025/10/greben-polovnika/">Greben Polovnika</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/10/vosca-1737-m-kamnati-vrh-1656-m/">Vošca (1737 m), Kamnati vrh (1656 m)</a></li>
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>september 2025 (3)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2025/09/">september 2025</a>&nbsp;<span class="post-count" dir="ltr">(3)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2025/09/maroko-9-25-9-2025/">Maroko (9. – 25. 9. 2025)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/09/jebel-toubkal-4167-m/">Jebel Toubkal (4167 m)</a></li>
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>avgust 2025 (5)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2025/08/">avgust 2025</a>&nbsp;<span class="post-count" dir="ltr">(5)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2025/08/ponza-piccola-mala-ponca-1921-m/">Ponza Piccola / Mala Ponca (1921 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/08/okrog-triglava-2864-m/">Okrog Triglava (2864 m)</a></li>
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>julij 2025 (5)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2025/07/">julij 2025</a>&nbsp;<span class="post-count" dir="ltr">(5)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2025/07/medvedjek-1000-m/">Medvedjek (1000 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/07/poldnik-kopa-picco-di-mezzodi-2063-m-monte-bucher-grande-skala-2133-m/">Poldnik (Kopa) / Picco di Mezzodi (2063 m), Monte Bucher grande / Skala (2133 m)</a></li>
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>junij 2025 (10)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2025/06/">junij 2025</a>&nbsp;<span class="post-count" dir="ltr">(10)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2025/06/greben-lonzakopfl-2317-m-vorder-geisslkopf-2974-m/">Greben Lonzaköpfl (2317 m) – Vorder Geißlkopf (2974 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/06/hohe-leier-2774-m/">Hohe Leier (2774 m)</a></li>
@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>maj 2025 (13)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2025/05/">maj 2025</a>&nbsp;<span class="post-count" dir="ltr">(13)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2025/05/mestece-timau/">Mestece Timau</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/05/cuestalta-hoher-trieb-2198-m/">Cuestalta / Hoher Trieb (2198 m)</a></li>
@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>april 2025 (9)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2025/04/">april 2025</a>&nbsp;<span class="post-count" dir="ltr">(9)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2025/04/veliki-sibenik-1467-m-sveti-jure-1762-m/">Veliki Šibenik (1467 m), Sveti Jure (1762 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/04/omis-ferata-fortica/">Omiš (ferata Fortica)</a></li>
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>marec 2025 (4)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2025/03/">marec 2025</a>&nbsp;<span class="post-count" dir="ltr">(4)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2025/03/schilchernock-2270-m-gaipahohe-2192-m/">Schilchernock (2270 m), Gaipahöhe (2192 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/03/mrezce-1965-m/">Mrežce (1965 m)</a></li>
@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>februar 2025 (6)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2025/02/">februar 2025</a>&nbsp;<span class="post-count" dir="ltr">(6)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2025/02/turno-smucanje-po-kaninu/">Turno smučanje po Kaninu</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/02/kriska-gora-1472-m/">Kriška gora (1472 m)</a></li>
@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>januar 2025 (4)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2025/01/">januar 2025</a>&nbsp;<span class="post-count" dir="ltr">(4)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2025/01/vosca-1737-m-zajcnik-1746-m-trupejevo-poldne-1931-m/">Vošca (1737 m), Zajčnik (1746 m), Trupejevo poldne (1931 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/01/pticji-vrh-1551-m-korenjscica-1764-m/">Ptičji vrh (1551 m), Korenjščica (1764 m)</a></li>
@@ -139,9 +139,9 @@ document.addEventListener("DOMContentLoaded", function() {
     </details>
   </details>
   <details open>
-    <summary>2024 (60)</summary>
+    <summary><a href="https://metodlangus.github.io/posts/2024/">2024</a>&nbsp;<span class="post-count" dir="ltr">(60)</span></summary>
     <details class="month-group">
-      <summary>november 2024 (7)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2024/11/">november 2024</a>&nbsp;<span class="post-count" dir="ltr">(7)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2024/11/srednji-vrh-1796-m-vrtaca-wertatscha-2180-m/">Srednji vrh (1796 m), Vrtača / Wertatscha (2180 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/11/potepanje-po-dolomitih-28-10-4-11-2024/">Potepanje po Dolomitih (28. 10. – 4. 11. 2024)</a></li>
@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>oktober 2024 (4)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2024/10/">oktober 2024</a>&nbsp;<span class="post-count" dir="ltr">(4)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2024/10/cima-d-auta-orientale-2645-m/">Cima d&#x27;Auta Orientale (2645 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/10/cima-di-val-di-roda-2791-m/">Cima di Val di Roda (2791 m)</a></li>
@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>september 2024 (19)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2024/09/">september 2024</a>&nbsp;<span class="post-count" dir="ltr">(19)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2024/09/slovaska-madzarska-31-8-12-9-2024/">Slovaška, Madžarska  (31. 8. – 12. 9. 2024)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/09/budapest-budimpesta/">Budapest - Budimpešta</a></li>
@@ -186,7 +186,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>avgust 2024 (5)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2024/08/">avgust 2024</a>&nbsp;<span class="post-count" dir="ltr">(5)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2024/08/kremnica/">Kremnica</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/08/razgledni-stolp-haj-gupna-442-m/">Razgledni stolp Háj, Gupňa (442 m)</a></li>
@@ -196,7 +196,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>julij 2024 (9)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2024/07/">julij 2024</a>&nbsp;<span class="post-count" dir="ltr">(9)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2024/07/potepanje-po-karnijcih-25-28-7-2024/">Potepanje po Karnijcih (25. – 28. 7. 2024)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/07/cimon-del-cavallo-2251-m/">Cimon del Cavallo (2251 m)</a></li>
@@ -210,7 +210,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>junij 2024 (8)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2024/06/">junij 2024</a>&nbsp;<span class="post-count" dir="ltr">(8)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2024/06/dolina-rezije-29-30-6-2024/">Dolina Rezije (29. – 30. 6. 2024)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/06/baba-grande-velika-baba-2161-m/">Baba grande / Velika Baba (2161 m)</a></li>
@@ -223,13 +223,13 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>maj 2024 (1)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2024/05/">maj 2024</a>&nbsp;<span class="post-count" dir="ltr">(1)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2024/05/brezpotje-cez-akle-1380-m-in-starca-1426-m/">Brezpotje čez Akle (1380 m) in Starca (1426 m)</a></li>
       </ul>
     </details>
     <details class="month-group">
-      <summary>april 2024 (5)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2024/04/">april 2024</a>&nbsp;<span class="post-count" dir="ltr">(5)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2024/04/vrh-ljubeljscice-1705-m/">Vrh Ljubeljščice (1705 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/04/vrh-ljubeljscice-1705-m-1/">Vrh Ljubeljščice (1705 m)</a></li>
@@ -239,7 +239,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>marec 2024 (2)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2024/03/">marec 2024</a>&nbsp;<span class="post-count" dir="ltr">(2)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2024/03/pot-sedmih-slapov/">Pot sedmih slapov</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/03/mrezce-1965-m-okroglez-1965-m/">Mrežce (1965 m), Okroglež (1965 m)</a></li>
@@ -247,16 +247,16 @@ document.addEventListener("DOMContentLoaded", function() {
     </details>
   </details>
   <details open>
-    <summary>2023 (32)</summary>
+    <summary><a href="https://metodlangus.github.io/posts/2023/">2023</a>&nbsp;<span class="post-count" dir="ltr">(32)</span></summary>
     <details class="month-group">
-      <summary>december 2023 (2)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2023/12/">december 2023</a>&nbsp;<span class="post-count" dir="ltr">(2)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2023/12/prevala-2067-m-iz-sella-nevea/">Prevala (2067 m) iz Sella Nevea</a></li>
         <li><a href="https://metodlangus.github.io/posts/2023/12/dobrca-1634-m-cez-travnike/">Dobrča (1634 m) čez travnike</a></li>
       </ul>
     </details>
     <details class="month-group">
-      <summary>oktober 2023 (3)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2023/10/">oktober 2023</a>&nbsp;<span class="post-count" dir="ltr">(3)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2023/10/podaljsan-vikend-v-dolomitih-28-9-2-10-2023/">Podaljšan vikend v Dolomitih (28. 9. – 2. 10. 2023)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2023/10/piz-boe-3152-m/">Piz Boè (3152 m)</a></li>
@@ -264,7 +264,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>september 2023 (3)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2023/09/">september 2023</a>&nbsp;<span class="post-count" dir="ltr">(3)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2023/09/sentiero-alpinistico-claudio-costanzi/">Sentiero Alpinistico Claudio Costanzi</a></li>
         <li><a href="https://metodlangus.github.io/posts/2023/09/giro-del-brenta/">Giro del Brenta</a></li>
@@ -272,7 +272,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>avgust 2023 (9)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2023/08/">avgust 2023</a>&nbsp;<span class="post-count" dir="ltr">(9)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2023/08/podaljsan-vikend-v-dolomitih-18-21-8-2024/">Podaljšan vikend v Dolomitih  (18. – 21. 8. 2024)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2023/08/antelao-3264-m-kralj-dolomitov/">Antelao (3264 m) - kralj Dolomitov</a></li>
@@ -286,13 +286,13 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>julij 2023 (1)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2023/07/">julij 2023</a>&nbsp;<span class="post-count" dir="ltr">(1)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2023/07/izpitna-tura-smer-ogrin-omersa-v-ojstrici-2350-m/">Izpitna tura smer Ogrin-Omersa v Ojstrici (2350 m)</a></li>
       </ul>
     </details>
     <details class="month-group">
-      <summary>maj 2023 (4)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2023/05/">maj 2023</a>&nbsp;<span class="post-count" dir="ltr">(4)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2023/05/sardinija-25-4-2-5-2023/">Sardinija  (25. 4. – 2. 5. 2023)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2023/05/olbia/">Olbia</a></li>
@@ -301,7 +301,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>april 2023 (8)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2023/04/">april 2023</a>&nbsp;<span class="post-count" dir="ltr">(8)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2023/04/cagliari-sella-del-diavolo/">Cagliari, Sella del Diavolo</a></li>
         <li><a href="https://metodlangus.github.io/posts/2023/04/pedra-longa/">Pedra Longa</a></li>
@@ -314,7 +314,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>marec 2023 (2)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2023/03/">marec 2023</a>&nbsp;<span class="post-count" dir="ltr">(2)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2023/03/vrtaski-vrh-1898-m-vrtasko-sleme-2077-m/">Vrtaški vrh (1898 m), Vrtaško Sleme (2077 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2023/03/prvi-turni-smuk/">Prvi turni smuk</a></li>
@@ -322,9 +322,9 @@ document.addEventListener("DOMContentLoaded", function() {
     </details>
   </details>
   <details open>
-    <summary>2022 (4)</summary>
+    <summary><a href="https://metodlangus.github.io/posts/2022/">2022</a>&nbsp;<span class="post-count" dir="ltr">(4)</span></summary>
     <details class="month-group">
-      <summary>junij 2022 (4)</summary>
+      <summary><a href="https://metodlangus.github.io/posts/2022/06/">junij 2022</a>&nbsp;<span class="post-count" dir="ltr">(4)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2022/06/ledeniska-tura-saas-fee-svica-24-28-6-2022/">Ledeniška tura Saas-Fee (Švica) (24. – 28. 6. 2022)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2022/06/nadelhorn-4327-m/">Nadelhorn (4327 m)</a></li>
