@@ -1042,6 +1042,7 @@ def generate_sitemap_from_folder(folder_path: Path, exclude_dirs=None, exclude_f
         exclude_files = []
 
     lastmod_db = load_lastmod_db()
+    new_lastmod_db = {}  # Collect updated entries
 
     urlset = Element("urlset", {"xmlns": "http://www.sitemaps.org/schemas/sitemap/0.9"})
 
@@ -1067,6 +1068,12 @@ def generate_sitemap_from_folder(folder_path: Path, exclude_dirs=None, exclude_f
             # Changed → update time
             lastmod = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
+        # Persist entry so next run can compare correctly
+        new_lastmod_db[key] = {
+            "md5": md5,
+            "lastmod": lastmod
+        }
+
         # Build URL (remove index.html) ----------
         if relative_path.endswith("index.html"):
             clean_path = relative_path[:-len("index.html")]
@@ -1086,11 +1093,14 @@ def generate_sitemap_from_folder(folder_path: Path, exclude_dirs=None, exclude_f
         elif len(parts) == 1 and parts[0] != "index.html":
             priority = 0.6                     # other root HTML files
         else:
-            priority = 0.5                       # fallback default
+            priority = 0.5                     # fallback default
 
         changefreq = "monthly"
 
         urlset.append(generate_url_element(url, lastmod=lastmod, changefreq=changefreq, priority=priority))
+
+    # Save updated DB (this was missing)
+    save_lastmod_db(new_lastmod_db)
 
     # Pretty-print & write XML
     indent_xml(urlset)
