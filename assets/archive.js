@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("archive-placeholder").innerHTML = `<aside class="sidebar-archive">
   <h2>Arhiv</h2>
   <details open>
-    <summary>2025 (71)</summary>
+    <summary>2025 (72)</summary>
     <details class="month-group">
       <summary>december 2025 (3)</summary>
       <ul>
@@ -42,8 +42,9 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary>avgust 2025 (4)</summary>
+      <summary>avgust 2025 (5)</summary>
       <ul>
+        <li><a href="https://metodlangus.github.io/posts/2025/08/ponza-piccola-mala-ponca-1921-m/">Ponza Piccola / Mala Ponca (1921 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/08/okrog-triglava-2864-m/">Okrog Triglava (2864 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/08/crna-prst-1844-m-rodica-1963-m/">Črna prst (1844 m), Rodica (1963 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/08/luknja-pec-2249-m-rjavina-2532-m/">Luknja peč (2249 m), Rjavina (2532 m)</a></li>
