@@ -1624,7 +1624,10 @@ function checkAndInitialize(index) {
      * @return  None.
      */
 function initializeKeyboardListeners(index) {
-    document.addEventListener('keydown', ({ key }) => {
+    document.addEventListener('keydown', ({ key, ctrlKey, metaKey, altKey }) => {
+        // Allow browser shortcuts like Ctrl+F / Cmd+F
+        if (ctrlKey || metaKey || altKey) return;
+
         // Determine which slideshow to control
         const index = activeFullscreenIndex !== null ? activeFullscreenIndex : currentSlideshowIndex;
 
@@ -1660,16 +1663,16 @@ function initializeKeyboardListeners(index) {
                 autoSetQuality(index);
             }, // Enable/disable auto quality
             '0': () => preloadAllImages(index), // Preload all images
-            t: () => toggleSlideshowOrImageVisibility(index), // Toggle slideshow or image visibility
             '3': () => toggleProgressBarVisibility(index, 0, 'key'), // Toggle progressBar visibility
             '8': () => {slideshows[index].errorFlag = !slideshows[index].errorFlag; console.log(`Error flag is now ${slideshows[index].errorFlag ? 'ON' : 'OFF'}`); }, // Toggle error flag
             '4': () => { speedSliderElement[index].value = Math.min(Number(speedSliderElement[index].value) + stepSpeed, maxSpeed); updateSlideshowSpeed(index); },
             '6': () => { speedSliderElement[index].value = Math.max(Number(speedSliderElement[index].value) - stepSpeed, minSpeed); updateSlideshowSpeed(index); }
-            };
+        };
 
         actions[key]?.(); // Execute action if the key is in the actions map
     });
 }
+
 
 /**
 * @brief   Toggles the visibility and height of the progress bar for a slideshow.
