@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ########## SELECT DIRECTORY AS PATH TO IMAGE FOLDER #########
 # Phone SD card directory
 # commit message: Updated list of extracted_photos_with_gps_data.txt (from phone)
-phone_directory = "/storage/0123-4567/DCIM/Camera28"
+phone_directory = "/storage/0123-4567/DCIM/Camera"
 disk_directory = ""
 # -----------------------------------------------------------
 # # Disk directory
