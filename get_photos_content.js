@@ -1,59 +1,63 @@
-const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 const fs = require('fs');
+const path = require('path');
 
-const blogUrl = 'https://metodlangus.github.io'; // Blog URL
 let imageDetailsBuffer = []; // Array to store image details
 
-// Function to fetch data from the blog feed
+const BASE_DIR = __dirname;
+const FEED_FILE = path.join(BASE_DIR, 'data', 'all-posts.json');
+const OUTPUT_FILE = path.join(BASE_DIR, 'list_of_photos.txt');
+
+// Function to fetch data from the local blog feed
 function fetchData() {
-    const feedUrl = `${blogUrl}/data/all-posts.json`;
+    console.log('Loading local feed...');
 
-    fetch(feedUrl)
-        .then(response => response.json())
-        .then(data => {
-            const entries = data.feed.entry;
+    const rawData = fs.readFileSync(FEED_FILE, 'utf8');
+    const data = JSON.parse(rawData);
 
-            entries.forEach(entry => {
-                const postTitle = entry.title.$t;
-                const content = entry.content.$t;
-                const postUrl = entry.link.find(link => link.rel === 'alternate').href.replace(blogUrl + "/posts", "");
-                const $ = cheerio.load(content);
-                const images = $('img');
+    const entries = data.feed.entry;
 
-                images.each((i, img) => {
-                    let imgSrc = $(img).attr('src');
-                    if (imgSrc && imgSrc.startsWith('data:image/svg+xml')) return; // Skip SVG images encoded as text
-                    imgSrc = imgSrc.replace(/\/s\d+\/|\/w\d+-h\d+\//, '/s400/'); // Resize images for uniformity
-                    const imageName = imgSrc.split('/').pop(); // Extract the image name (filename) from the URL
-                    const dataSkip = $(img).attr('data-skip') || 'NA';
-                    // Push image details (filename, URL, data-skip) into the buffer
-                    imageDetailsBuffer.push({ imageName, imgUrl: imgSrc, dataSkip, postTitle, postUrl });
-                });
+    entries.forEach(entry => {
+        const postTitle = entry.title.$t;
+        const content = entry.content.$t;
+        const postUrl = entry.link.find(link => link.rel === 'alternate')?.href?.replace(/^.*?\/posts/, '');
+        const $ = cheerio.load(content);
+        const images = $('img');
+
+            images.each((i, img) => {
+                let imgSrc = $(img).attr('src');
+                if (imgSrc && imgSrc.startsWith('data:image/svg+xml')) return; // Skip SVG images encoded as text
+                imgSrc = imgSrc.replace(/\/s\d+\/|\/w\d+-h\d+\//, '/s400/'); // Resize images for uniformity
+                const imageName = imgSrc.split('/').pop(); // Extract the image name (filename) from the URL
+                const dataSkip = $(img).attr('data-skip') || 'NA';
+                // Push image details (filename, URL, data-skip) into the buffer
+                imageDetailsBuffer.push({ imageName, imgUrl: imgSrc, dataSkip, postTitle, postUrl });
             });
+        });
 
-            // Once all entries are fetched, process duplicates and save results
-            console.log('Fetching complete. Processing duplicates...');
+    // Once feed are loaded, process duplicates and save results
+    console.log('Feed loaded. Processing duplicates...');
 
-            // Process duplicates in a single pass
-            const { uniqueImages, duplicates } = processDuplicates(imageDetailsBuffer);
+    // Process duplicates in a single pass
+    const { uniqueImages, duplicates } = processDuplicates(imageDetailsBuffer);
 
-            if (duplicates.length > 0) {
-                console.log('Duplicate image filenames found:');
-                duplicates.forEach(dup => {
-                    console.log(`${dup.imageName} (Count: ${dup.count})`);
-                });
-            } else {
-                console.log('No duplicate image filenames found.');
-            }
+    if (duplicates.length > 0) {
+        console.log('Duplicate image filenames found:');
+        duplicates.forEach(dup => {
+            console.log(`${dup.imageName} (Count: ${dup.count})`);
+        });
+    } else {
+        console.log('No duplicate image filenames found.');
+    }
 
-            // Save the unique image details (with no duplicates) to a file
-            const output = uniqueImages
-                .map(img => `${img.imageName} Link: ${img.imgUrl} data-skip=${img.dataSkip} "${img.postTitle}" ${img.postUrl}`)
-                .join('\n');
-            fs.writeFileSync('./list_of_photos.txt', output);
-        })
-        .catch(error => console.error('Error fetching data:', error));
+    const output = uniqueImages
+        .map(img =>
+            `${img.imageName} Link: ${img.imgUrl} data-skip=${img.dataSkip} "${img.postTitle}" ${img.postUrl}`
+        )
+        .join('\n');
+
+    fs.writeFileSync(OUTPUT_FILE, output, 'utf8');
+    console.log(`Saved ${uniqueImages.length} images to ${OUTPUT_FILE}`);
 }
 
 // Function to process duplicates and keep only unique images
@@ -121,4 +125,4 @@ function combineDataSkipValues(dataSkips) {
     return uniqueValues.size === 0 ? 'NA' : [...uniqueValues].join(';');
 }
 
-fetchData(); // Start fetching images
+fetchData(); // Start processing

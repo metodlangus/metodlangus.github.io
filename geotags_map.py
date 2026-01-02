@@ -120,6 +120,21 @@ def ensure_output_file(filepath):
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write('var keywords_geo = {\n};')
 
+
+def prepare_output_file(filepath):
+    """Ensure last entry has a comma before appending."""
+    ensure_output_file(filepath)
+    with open(filepath, 'r+', encoding='utf-8') as f:
+        content = f.read().rstrip()
+        if content.endswith('};'):
+            content = re.sub(r'(\S)\s*\n\s*};$', r'\1,\n};', content)
+            content = content[:-2].rstrip()
+        f.seek(0)
+        f.truncate()
+        f.write(content)
+        if not content.endswith('{'):
+            f.write('\n')
+
 # === Main logic ===
 
 def main():
@@ -137,18 +152,7 @@ def main():
     missing = [(pid, raw) for pid, raw in groups if pid not in existing]
     print(f"Missing groups: {len(missing)}")
 
-    ensure_output_file(OUTPUT_FILE)
-
-    # Prepare file for appending: strip final '};' so we can append inside
-    with open(OUTPUT_FILE, 'r+', encoding='utf-8') as f:
-        content = f.read().rstrip()
-        if content.endswith('};'):
-            content = content[:-2].rstrip()
-        f.seek(0)
-        f.truncate()
-        f.write(content)
-        if not content.endswith('{'):
-            f.write('\n')
+    prepare_output_file(OUTPUT_FILE)
 
     lock = Lock()
 
@@ -166,8 +170,7 @@ def main():
                 loc = geolocator.geocode(q, exactly_one=True, timeout=10)
                 if loc:
                     return loc.latitude, loc.longitude
-            except Exception as e:
-                # be quiet but continue
+            except Exception:
                 pass
             time.sleep(GEOCODER_SLEEP)
         return None, None
