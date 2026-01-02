@@ -1,13 +1,7 @@
 name: Update list_of_tracks.txt
 
 on:
-  push:
-    paths:
-      - "GPX_tracks/**"  # Track changes in the GPX folder
-  pull_request:
-    paths:
-      - "GPX_tracks/**"
-  workflow_dispatch:  # Allow manual trigger
+  workflow_dispatch:
 
 jobs:
   update-folder-list:
