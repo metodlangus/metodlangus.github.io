@@ -325,7 +325,92 @@ if (window.location.hostname === "metodlangus.github.io") {
 }
 
 
-/* Gumb 'Na vrh' */
+// Google Analytics (GA4) script injection
+if (window.location.hostname === "metodlangus.github.io") {
+
+    // Load gtag library
+    const gaScript = document.createElement("script");
+    gaScript.src = "https://www.googletagmanager.com/gtag/js?id=G-NMX36M4NT6";
+    gaScript.async = true;
+    document.head.appendChild(gaScript);
+
+    // Init GA after library is available
+    gaScript.onload = function () {
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() { dataLayer.push(arguments); }
+        window.gtag = gtag; // expose globally for custom events
+
+        gtag('js', new Date());
+        gtag('config', 'G-NMX36M4NT6', {
+        anonymize_ip: true   // privacy-friendly
+        });
+    };
+}
+
+
+// Cookie banner
+(function () {
+  // Only run on the live site
+  if (window.location.hostname !== "metodlangus.github.io") return;
+
+  const key = 'cookie-consent-gorski';
+  if (!localStorage.getItem(key)) {
+    // Create the banner element
+    const banner = document.createElement('div');
+    banner.id = 'cookie-banner';
+
+    banner.innerHTML = `
+      <span>This website uses cookies to ensure proper functionality and anonymous visit analysis.</span>
+      <button id="cookie-banner-ok">OK</button>
+    `;
+
+    document.body.appendChild(banner);
+    banner.style.display = 'flex';
+
+    // On click, save consent and hide the banner
+    document.getElementById('cookie-banner-ok').addEventListener('click', () => {
+      localStorage.setItem(key, 'yes');
+      banner.remove();
+    });
+  }
+})();
+
+
+(function() {
+  const gpxExtensions = ['.gpx'];
+
+  // Function to check if a URL ends with a GPX extension
+  function isGPX(url) {
+    return gpxExtensions.some(ext => url.toLowerCase().endsWith(ext));
+  }
+
+  // Listen for clicks on the document
+  document.addEventListener('click', function(e) {
+    let target = e.target;
+
+    // Find the closest <a> element (for normal links and Leaflet buttons)
+    const link = target.closest('a');
+    if (!link) return;
+
+    const href = link.getAttribute('href') || '';
+    if (!href || !isGPX(href)) return;
+
+    // Send event to Google Analytics
+    if (typeof gtag === 'function') {
+      gtag('event', 'download_gpx', {
+        'event_category': 'GPX',
+        'event_label': href,
+        'transport_type': 'beacon'
+      });
+    }
+
+    console.log('Tracked GPX download:', href); // for debugging
+  });
+})();
+
+
+/* Button 'Na vrh' */
 const btn = document.getElementById("backToTop");
 window.addEventListener("scroll", () => {
   btn.style.display = window.scrollY > 400 ? "block" : "none";
