@@ -1,24 +1,18 @@
 .gallery-title {
-    font-size: 1.5em;
-    margin-bottom: 10px;
+  font-size: 1.5em;
+  margin-bottom: 10px;
 }
 
+/* Basic gallery container (legacy / fallback) */
 .gallery-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-.gallery-item {
-    position: relative;
-    width: 200px; /* adjust as needed */
-    overflow: hidden;
-    border-radius: 8px;
-}
-
-
-
-
+/* -------------------------------------------------- */
+/* Main gallery layout */
+/* -------------------------------------------------- */
 .my-gallery-wrapper {
   width: 100%;
   display: flex;
@@ -31,33 +25,64 @@
   gap: 8px;
 }
 
+/* -------------------------------------------------- */
+/* Gallery item */
+/* -------------------------------------------------- */
 .gallery-item {
   position: relative;
+  width: 200px; /* adjust as needed */
   overflow: hidden;
+  border-radius: 8px;
 }
 
 .gallery-item img {
   display: block;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 
+/* -------------------------------------------------- */
+/* Caption overlay */
+/* -------------------------------------------------- */
 .caption {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
+
+  text-align: center;
+  color: #f2f2f2;
+  font-size: 18px;
+  padding: 8px;
   background: rgba(0,0,0,0.6);
-  color: white;
-  font-size: 0.9em;
-  padding: 5px;
+  text-shadow: 
+      2px 2px 4px black,                 /* Sharp black shadow */
+      0 0 30px rgba(0, 0, 0, 0.7),       /* Larger soft black glow */
+      0 0 10px black,                    /* Dark glow */
+      -1px -1px 5px rgba(0, 0, 0, 0.5),  /* Additional top-left shadow */
+      1px -1px 5px rgba(0, 0, 0, 0.5),   /* Additional top-right shadow */
+      -1px 1px 5px rgba(0, 0, 0, 0.5),   /* Additional bottom-left shadow */
+      1px 1px 5px rgba(0, 0, 0, 0.5);    /* Additional bottom-right shadow */
   opacity: 0;
   transition: opacity 0.3s;
+  pointer-events: none;                     /* Allow click through caption to image */
 }
 
+/* Only show background if there is text */
+.caption:empty {
+  background: transparent;
+  padding: 0;
+}
+
+/* Show caption on hover */
 .gallery-item:hover .caption {
   opacity: 1;
 }
 
+/* -------------------------------------------------- */
+/* Loading indicator */
+/* -------------------------------------------------- */
 .loading {
   text-align: center;
   color: #666;
@@ -65,8 +90,9 @@
   padding: 30px 0;
 }
 
-
-
+/* -------------------------------------------------- */
+/* Placeholder shimmer */
+/* -------------------------------------------------- */
 .placeholder-row .placeholder {
   background-size: 400% 100%;
   animation: shimmer 1.2s infinite;
@@ -77,40 +103,13 @@
   100% { background-position: 400px 0; }
 }
 
-
+/* -------------------------------------------------- */
+/* Lazy loading sentinel */
+/* -------------------------------------------------- */
 #lazySentinel {
   height: 1px;
   visibility: hidden;
 }
 
 
-.caption {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    text-align: center;
-    color: #f2f2f2;
-    font-size: 18px;
-    padding: 8px;
-    text-shadow: 
-        2px 2px 4px black,                 /* Sharp black shadow */
-        0 0 30px rgba(0, 0, 0, 0.7),       /* Larger soft black glow */
-        0 0 10px black,                     /* Dark glow */
-        -1px -1px 5px rgba(0, 0, 0, 0.5),  /* Additional top-left shadow */
-        1px -1px 5px rgba(0, 0, 0, 0.5),   /* Additional top-right shadow */
-        -1px 1px 5px rgba(0, 0, 0, 0.5),   /* Additional bottom-left shadow */
-        1px 1px 5px rgba(0, 0, 0, 0.5);    /* Additional bottom-right shadow */
-    opacity: 0;
-    transition: opacity 0.3s;
-}
 
-/* Only show background if there is text */
-.caption:empty {
-    background: transparent;
-    padding: 0;
-}
-
-/* Show caption on hover */
-.gallery-item:hover .caption {
-    opacity: 1;
-}

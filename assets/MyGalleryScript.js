@@ -102,49 +102,42 @@ function fetchData() {
 let lazyIndex = 0;
 const batchSize = 12;
 let loadingInProgress = false;
-let observer = null;
-let sentinel = null;
+let allLoaded = false;
 
 function initLazyGallery() {
     if (!galleryContainer) return;
+
     galleryContainer.innerHTML = '';
     lazyIndex = 0;
     loadingInProgress = false;
-
-    // Remove old sentinel if exists
-    if (sentinel) sentinel.remove();
-
-    sentinel = document.createElement('div');
-    sentinel.id = 'lazySentinel';
-    sentinel.style.position = 'absolute';  // avoid affecting row gaps
-    sentinel.style.height = '1px';
-    sentinel.style.width = '1px';          // minimal size
-    sentinel.style.bottom = '0';           // place at the bottom of container
-    galleryContainer.appendChild(sentinel);
+    allLoaded = false;
 
     // Load first batch immediately
     loadNextBatch();
 
-    // Create / reset observer
-    if (observer) observer.disconnect();
+    // Attach scroll listener
+    window.removeEventListener('scroll', onScrollLoad);
+    window.addEventListener('scroll', onScrollLoad, { passive: true });
+}
 
-    observer = new IntersectionObserver(entries => {
-        for (const entry of entries) {
-            if (entry.isIntersecting && !loadingInProgress) {
-                loadNextBatch();
-            }
-        }
-    }, {
-        rootMargin: '800px 0px', // preload before visible
-        threshold: 0.01
-    });
+function onScrollLoad() {
+    if (loadingInProgress || allLoaded) return;
 
-    observer.observe(sentinel);
+    const scrollPosition = window.innerHeight + window.scrollY;
+    const bottomThreshold = document.documentElement.scrollHeight - 800;
+
+    if (scrollPosition >= bottomThreshold) {
+        loadNextBatch();
+    }
 }
 
 async function loadNextBatch() {
     if (loadingInProgress) return;
-    if (lazyIndex >= gallery.shuffledImages.length) return;
+    if (lazyIndex >= gallery.shuffledImages.length) {
+        allLoaded = true;
+        window.removeEventListener('scroll', onScrollLoad);
+        return;
+    }
 
     loadingInProgress = true;
 
@@ -155,18 +148,10 @@ async function loadNextBatch() {
 
     loadingInProgress = false;
 
-    // Always move sentinel to bottom after each batch
-    if (sentinel && galleryContainer.lastElementChild !== sentinel) {
-        galleryContainer.appendChild(sentinel);
-    }
-
-    // If everything loaded, disconnect observer
-    if (lazyIndex >= gallery.shuffledImages.length) {
-        if (observer && sentinel) {
-            observer.unobserve(sentinel);
-            sentinel.remove();
-        }
-    }
+    // Safety: if user is already near bottom after loading, continue
+    requestAnimationFrame(() => {
+        onScrollLoad();
+    });
 }
 
 
