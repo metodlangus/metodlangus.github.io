@@ -259,6 +259,26 @@ def fix_images_for_lightbox(html_content, post_title):
 
     return soup.prettify()
 
+def remove_leading_hidden_blocks(html: str) -> str:
+    patterns = [
+        # hidden summary div
+        r'^\s*<div\s+style="display:\s*none;">\s*<summary>.*?</summary>\s*</div>\s*',
+
+        # more anchor span
+        r'^\s*<span>\s*<a\s+name="more">\s*</a>\s*</span>\s*',
+
+        # hidden cover photo div
+        r'^\s*<div\s+style="display:\s*none;">\s*<!--.*?-->\s*</div>\s*',
+
+        # lightbox instructions span
+        r'^\s*<span>\s*<!--.*?Lightbox.*?-->\s*</span>\s*',
+    ]
+
+    for pattern in patterns:
+        html = re.sub(pattern, "", html, flags=re.DOTALL | re.IGNORECASE)
+
+    return html
+
 def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
 
     published_raw = entry.get("published", {}).get("$t", "1970-01-01T00:00:00Z")
@@ -1224,6 +1244,15 @@ def fetch_and_save_all_posts(entries):
         author = entry.get("author", {}).get("name", {}).get("$t", "")
         formatted_date, year, month = parse_entry_date(entry, index)
 
+        # --- Format published date for meta without microseconds ---
+        dt_published = datetime.fromisoformat(formatted_date)
+        published_time = dt_published.replace(microsecond=0).isoformat()
+
+        # --- Format modified date for meta without microseconds ---
+        updated_raw = entry.get("updated", {}).get("$t", formatted_date)
+        dt_modified = datetime.fromisoformat(updated_raw)
+        mod_date = dt_modified.replace(microsecond=0).isoformat()
+
         # Replace custom post containers
         content_html = replace_mypost_scripts_with_rendered_posts(
             content_html,
@@ -1254,11 +1283,43 @@ def fetch_and_save_all_posts(entries):
             else:
                 description = title
 
+        # Remove hidden/technical sections before metadata extraction
+        content_html = remove_leading_hidden_blocks(content_html)
+
         og_url = f"{BASE_SITE_URL}/posts/{year}/{month}/{slug}/"
         metadata_html = f"<div class='post-date' data-date='{formatted_date}'></div>"
         nav_html = generate_post_navigation_html(entries, slugs, index, local_tz, year, month)
         labels_html = generate_labels_html(entry, title, slug, year, month, formatted_date, post_id,
                                            label_posts_raw, slugify, remove_first_prefix, remove_all_prefixes)
+
+        # Open Graph / Article meta
+        categories = [c.get("term", "") for c in entry.get("category", [])]
+
+        # Function to remove numeric prefixes like '1. ', '2. ', etc.
+        def strip_prefix(cat):
+            return cat.split(". ", 1)[-1] if ". " in cat else cat
+
+        # Apply the prefix removal
+        categories_clean = [strip_prefix(c) for c in categories]
+
+        # Section is first category, tags are the rest
+        section = categories_clean[0] if categories_clean else ""
+        tags = categories_clean[1:] if len(categories_clean) > 1 else []
+
+        og_meta_html = f"""<meta property="og:title" content="{title}">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="{og_image}">
+  <meta property="og:url" content="{og_url}">
+  <meta property="og:description" content="{description}">
+  <meta property="og:site_name" content="{BLOG_TITLE}">
+  <meta property="article:published_time" content="{published_time}">
+  <meta property="article:modified_time" content="{mod_date}">
+  <meta property="article:author" content="{author}">
+  <meta property="article:section" content="{section}">
+"""
+        
+        for tag in tags:
+            og_meta_html += f'  <meta property="article:tag" content="{tag}">\n'
 
         # Schema.org JSON-LD
         structured_data = f"""<script type="application/ld+json">
@@ -1280,7 +1341,8 @@ def fetch_and_save_all_posts(entries):
       }}
     }},
     "description": "{description}",
-    "datePublished": "{formatted_date}",
+    "datePublished": "{published_time}",
+    "dateModified": "{mod_date}",
     "url": "{og_url}"
   }}
   </script>"""
@@ -1319,12 +1381,7 @@ def fetch_and_save_all_posts(entries):
   <link rel="alternate" href="{og_url}" hreflang="sl" />
   <link rel="alternate" href="{BASE_SITE_URL}" hreflang="x-default" />
 
-  <meta property="og:title" content="{title}">
-  <meta property="og:type" content="article">
-  <meta property="og:image" content="{og_image}">
-  <meta property="og:url" content="{og_url}">
-  <meta property="og:description" content="{description}">
-
+  {og_meta_html}
   <script>
     var postTitle = {title!r};
     var postId = {post_id!r};

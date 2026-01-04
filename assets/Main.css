@@ -601,7 +601,7 @@ div#PageList1 ul li {
 /* Adds a thin black border around text for links and pill buttons */
 .sidebar-container a, .pill-button {
     -webkit-text-stroke: 0.3px black; /* Fallback for Webkit browsers */
-    text-stroke: 0.3px black; /* Thin black border for text */
+    text-shadow: 0.3px black; /* Thin black border for text */
 }
 
 /* Search results layout */
@@ -814,7 +814,7 @@ div#PageList1 ul li {
   position: fixed;
   bottom: 25px;
   right: 25px;
-  background: rgba(243, 137, 29, 0.75)
+  background: rgba(243, 137, 29, 0.75);
   color: #fff;
   border: none;
   border-radius: 50%;
