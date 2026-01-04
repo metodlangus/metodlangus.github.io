@@ -50,6 +50,16 @@ BLOG_TITLE_SVG = """<svg class='logo-svg' height='67' version='1.0' viewBox='0 0
           </g>
         </svg>"""
 
+GA_TRACKING_CODE = """
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NMX36M4NT6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-NMX36M4NT6');
+  </script>"""
+
 OUTPUT_DIR = Path.cwd() # Current path
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 SITEMAP_FILE = "sitemap.xml"
@@ -1315,6 +1325,8 @@ def fetch_and_save_all_posts(entries):
   <meta name="author" content="{BLOG_AUTHOR}" />
 
   <title>{title} | {BLOG_TITLE}</title>
+  {GA_TRACKING_CODE}
+
   <link rel="canonical" href="{og_url}">
   <link rel="alternate" href="{og_url}" hreflang="sl" />
   <link rel="alternate" href="{BASE_SITE_URL}" hreflang="x-default" />
@@ -1485,6 +1497,7 @@ def generate_label_pages(entries, label_posts_raw):
   <meta property="og:type" content="website" />
 
   <title>Prikaz objav z oznako: {label_clean} | {BLOG_TITLE}</title>
+  {GA_TRACKING_CODE}
 
   <!-- Canonical & hreflang -->
   <link rel="canonical" href="{BASE_SITE_URL}/search/labels/{label_slug}/" />
@@ -1642,6 +1655,7 @@ def generate_archive_pages(entries):
   <meta property="og:type" content="website" />
 
   <title>Prikaz objav, dodanih na: {year} | {BLOG_TITLE}</title>
+  {GA_TRACKING_CODE}
 
   <!-- Canonical & hreflang -->
   <link rel="canonical" href="{BASE_SITE_URL}/posts/{year}/" />
@@ -1744,6 +1758,7 @@ def generate_archive_pages(entries):
   <meta property="og:type" content="website" />
 
   <title>Prikaz objav, dodanih na: {month_name_sl}, {year} | {BLOG_TITLE}</title>
+  {GA_TRACKING_CODE}
 
   <!-- Canonical & hreflang -->
   <link rel="canonical" href="{BASE_SITE_URL}/posts/{year}/{month}/" />
@@ -1850,6 +1865,7 @@ def generate_predvajalnik_page(current_page):
   <meta property="og:type" content="website" />
 
   <title>Predvajalnik naključnih fotografij | {BLOG_TITLE}</title>
+  {GA_TRACKING_CODE}
 
   <!-- Canonical & hreflang -->
   <link rel="canonical" href="{BASE_SITE_URL}/predvajalnik-fotografij/" />
@@ -1964,6 +1980,7 @@ def generate_gallery_page(current_page):
   <meta property="og:type" content="website" />
 
   <title>Galerija spominov | {BLOG_TITLE}</title>
+  {GA_TRACKING_CODE}
 
   <!-- Canonical & hreflang -->
   <link rel="canonical" href="{BASE_SITE_URL}/galerija-fotografij/" />
@@ -2081,6 +2098,7 @@ def generate_peak_list_page():
   <meta property="og:type" content="website" />
 
   <title>Seznam vrhov | {BLOG_TITLE}</title>
+  {GA_TRACKING_CODE}
 
   <!-- Canonical & hreflang -->
   <link rel="canonical" href="{BASE_SITE_URL}/seznam-vrhov/" />
@@ -2191,6 +2209,7 @@ def generate_big_map_page():
   <meta property="og:type" content="website" />
 
   <title>Zemljevid spominov | {BLOG_TITLE}</title>
+  {GA_TRACKING_CODE}
 
   <!-- Canonical & hreflang -->
   <link rel="canonical" href="{BASE_SITE_URL}/zemljevid-spominov/" />
@@ -2308,6 +2327,8 @@ def generate_home_en_page(homepage_html):
   <meta name="author" content="{BLOG_AUTHOR}" />
 
   <title>{BLOG_TITLE} | Mountain Adventures Through Pictures | {BLOG_AUTHOR}</title>
+  {GA_TRACKING_CODE}
+
   <link rel="canonical" href="{BASE_SITE_URL}/en/" />
 
   {schema_jsonld}
@@ -2408,6 +2429,8 @@ def generate_home_si_page(homepage_html):
   <meta name="author" content="{BLOG_AUTHOR}" />
 
   <title>{BLOG_TITLE} | Gorske pustolovščine skozi slike | {BLOG_AUTHOR}</title>
+  {GA_TRACKING_CODE}
+
   <link rel="canonical" href="{BASE_SITE_URL}/" />
 
   {schema_jsonld}
@@ -2483,8 +2506,10 @@ def generate_mattia_map_page():
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Mattia Furlan adventures map</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Mattia Furlan adventures map</title>
+{GA_TRACKING_CODE}
 
 <link href='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.css' rel='stylesheet'>
 <link href='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.css' rel='stylesheet'>
@@ -2573,6 +2598,7 @@ def generate_useful_links_page():
   <meta property="og:type" content="website" />
 
   <title>Uporabne povezave | {BLOG_TITLE}</title>
+  {GA_TRACKING_CODE}
 
   <!-- Canonical & hreflang -->
   <link rel="canonical" href="{BASE_SITE_URL}/uporabne-povezave.html" />
@@ -2640,6 +2666,7 @@ def generate_404_page():
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Napaka 404 – Stran ne obstaja | {BLOG_TITLE}</title>
+  {GA_TRACKING_CODE}
 
   <meta name="description" content="Napaka 404 – Stran, ki jo iščete, ne obstaja. Morda je bila odstranjena ali premaknjena. Oglejte si vsebino na {BLOG_TITLE}.">
   <meta name="keywords" content="404, napaka 404, stran ne obstaja, pohodništvo, blog, {BLOG_TITLE}, {BLOG_AUTHOR}">
