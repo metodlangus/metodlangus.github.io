@@ -47,30 +47,6 @@ function initializePersistentDateRange(startId, endId, storageKeyStart, storageK
     const startInput = document.getElementById(startId);
     const endInput = document.getElementById(endId);
 
-    if (!startInput || !endInput) return;
-
-    // Load saved values
-    const savedStart = localStorage.getItem(storageKeyStart);
-    const savedEnd = localStorage.getItem(storageKeyEnd);
-
-    if (savedStart) startInput.value = savedStart;
-    if (savedEnd) endInput.value = savedEnd;
-
-    // Save and reload on change
-    [startInput, endInput].forEach(input => {
-        input.addEventListener('change', () => {
-            localStorage.setItem(storageKeyStart, startInput.value);
-            localStorage.setItem(storageKeyEnd, endInput.value);
-            clearTimeout(reloadTimeout);
-            reloadTimeout = setTimeout(() => location.reload(), 2000);
-        });
-    });
-}
-
-function initializePersistentDateRange(startId, endId, storageKeyStart, storageKeyEnd) {
-    const startInput = document.getElementById(startId);
-    const endInput = document.getElementById(endId);
-
     if (!startInput || !endInput) {
         console.warn(`Date range inputs not found`);
         return;

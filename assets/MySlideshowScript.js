@@ -1200,7 +1200,10 @@ function setupClearFiltersButton() {
  * @return  Returns the shuffled or modified array.
  */
 function shuffleArray(array, index) {
-    const randomizeImages = localStorage.getItem('randomizeImages') === 'true';
+    // default ON unless user explicitly turned it off
+    const randomizeImages = localStorage.getItem('randomizeImages') !== null
+        ? localStorage.getItem('randomizeImages') === 'true'
+        : true;
 
     if (slideshowTitles[index] === "All pictures") {
         if (randomizeImages) {

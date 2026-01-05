@@ -288,7 +288,9 @@ async function buildGalleryBatch(imagesBatch) {
 
 /* --------------------- UTILS --------------------- */
 function shuffleArray(array) {
-    const randomize = localStorage.getItem('randomizeImages') === 'true';
+    const randomize = localStorage.getItem('randomizeImages') !== null
+        ? localStorage.getItem('randomizeImages') === 'true'
+        : randomizeImages; // fallback to default global
     if (randomize) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
