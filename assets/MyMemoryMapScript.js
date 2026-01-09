@@ -1,8 +1,8 @@
 // Constants and Variables
 const isRelive = window.BLOG_CONTEXT?.isRelive === true;
 const gpxFolder = isRelive
-  ? `${WindowBaseUrl}/my_GPX_tracks`
-  : `${WindowBaseUrl}/GPX_tracks`;
+  ? `${WindowBaseUrl}/my_GPX_tracks/`
+  : `${WindowBaseUrl}/GPX_tracks/`;
 const trackListUrl = isRelive
   ? `${WindowBaseUrl}/list_of_relive_tracks.txt`
   : `${WindowBaseUrl}/list_of_tracks.txt`;
