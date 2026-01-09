@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="OruxMaps v.10.5.0 GP" version="1.1" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:om="http://www.oruxmaps.com/oruxmapsextensions/1/0" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<!-- owner: 2904793ebdd931 -->
+<metadata>
+<name><![CDATA[2025-06-07 07:46:28]]></name>
+<link href="https://www.oruxmaps.com">
+<text>OruxMaps GP</text>
+</link>
+<time>2025-06-07T05:46:28.148Z</time><bounds maxlat="46.3568534" maxlon="14.2906102" minlat="46.3563834" minlon="14.2898767"/>
+</metadata>
+<wpt lat="46.3568053" lon="14.2898767">
+<ele>515.47</ele>
+<time>2025-06-07T05:47:19.371Z</time>
+<name><![CDATA[]]></name>
+<sym>Waypoint</sym>
+<type>Starting Point</type>
+<extensions>
+<om:oruxmapsextensions>
+<om:ext type="ICON" subtype="0">38</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+</wpt>
+<wpt lat="46.3567088" lon="14.2901929">
+<ele>564.04</ele>
+<time>2025-06-07T06:14:20.115Z</time>
+<name><![CDATA[]]></name>
+<desc><![CDATA[<p><br /><h3>Name: Segment: 1</h3><br />Type: Undefined<br/>Start time: 07:47 7 Jun 2025<br/>Finish time: 08:13 7 Jun 2025<br/>Distance: 0.2km (00:26)<br/>Moving time: 00:20<br/>Average speed: 0.50 km/h<br/>Avg. Speed Mov: 0.64 km/h<br/>Max. speed: 8.93 km/h<br/>Minimum altitude: 540 m<br/>Maximum altitude: 540 m<br/>Elevation gain: 20 m<br/>Elevation loss: 0 m<br/>Ascent time: 00:13<br/>Descent time: 00:00<br/></p>]]></desc>
+<sym>Waypoint</sym>
+<type>Finishing Point</type>
+<extensions>
+<om:oruxmapsextensions>
+<om:ext type="ICON" subtype="0">15</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+</wpt>
+<trk>
+<name><![CDATA[2025-06-07 07:46:28]]></name>
+<desc><![CDATA[<p>Type: Undefined<br/>Start time: 07:47 7 Jun 2025<br/>Finish time: 08:13 7 Jun 2025<br/>Distance: 0.2 km (00:26)<br/>Moving time: 00:20<br/>Average speed: 0.50 km/h<br/>Avg. Speed Mov: 0.64 km/h<br/>Max. speed: 8.93 km/h<br/>Minimum altitude: 540 m<br/>Maximum altitude: 540 m<br/>Ascent speed: 91.0 m/h<br/>Elevation gain: 20 m<br/>Ascent time: 00:13<br/></p><hr align="center" width="480" style="height: 2px; width: 517px"/>]]></desc>
+<type>Undefined</type>
+<extensions>
+<om:oruxmapsextensions>
+<om:ext type="TYPE" subtype="0">0</om:ext>
+<om:ext type="DIFFICULTY">0</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+<trkseg>
+<trkpt lat="46.3568053" lon="14.2898767">
+<ele>515.47</ele>
+<time>2025-06-07T05:47:17.000Z</time>
+</trkpt>
+<trkpt lat="46.3566958" lon="14.2900948">
+<ele>513.52</ele>
+<time>2025-06-07T05:47:33.000Z</time>
+</trkpt>
+<trkpt lat="46.3567959" lon="14.2903340">
+<ele>511.51</ele>
+<time>2025-06-07T05:49:04.000Z</time>
+</trkpt>
+<trkpt lat="46.3566849" lon="14.2905495">
+<ele>547.47</ele>
+<time>2025-06-07T05:52:53.000Z</time>
+</trkpt>
+<trkpt lat="46.3568534" lon="14.2904471">
+<ele>550.38</ele>
+<time>2025-06-07T06:00:32.000Z</time>
+</trkpt>
+<trkpt lat="46.3567083" lon="14.2906102">
+<ele>545.26</ele>
+<time>2025-06-07T06:07:44.000Z</time>
+</trkpt>
+<trkpt lat="46.3567480" lon="14.2903448">
+<ele>543.47</ele>
+<time>2025-06-07T06:11:07.000Z</time>
+</trkpt>
+<trkpt lat="46.3563834" lon="14.2899110">
+<ele>542.17</ele>
+<time>2025-06-07T06:13:06.000Z</time>
+</trkpt>
+<trkpt lat="46.3565508" lon="14.2900683">
+<ele>550.71</ele>
+<time>2025-06-07T06:13:13.000Z</time>
+</trkpt>
+<trkpt lat="46.3567088" lon="14.2901929">
+<ele>564.04</ele>
+<time>2025-06-07T06:13:23.000Z</time>
+</trkpt>
+</trkseg>
+</trk>
+</gpx>

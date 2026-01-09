@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" creator="OruxMaps v.9.0.4 GP" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<!-- owner: 3af6ec7074c405 -->
+<metadata>
+<name><![CDATA[2021-03-21 14:47:34 čevap na Ljubelju?]]></name>
+<link href="https://www.oruxmaps.com">
+<text>OruxMaps GP</text>
+</link>
+<time>2021-03-21T13:47:34.933Z</time><bounds maxlat="46.4331517" maxlon="14.2620352" minlat="46.4328470" minlon="14.2616340"/>
+</metadata>
+<wpt lat="46.4328470" lon="14.2616340">
+<ele>1043.43</ele>
+<time>2021-03-21T14:09:24.603Z</time>
+<name><![CDATA[0000034]]></name>
+<desc><![CDATA[<p><br /><h3>Name: Segment: 1</h3><br />Start time: 14:47 21 Mar 2021<br/>Finish time: 14:47 21 Mar 2021<br/>Distance: 0,1km (00:00)<br/>Moving time: 00:00<br/>Average speed: 18,69 km/h<br/>Avg. Speed Mov.: 18,69 km/h<br/>Max. speed: 0 km/h<br/>Minimum altitude: 1043 m<br/>Maximum altitude: 1074 m<br/>Ascent speed: 21406 m/h<br/>Descent speed: 19141,9 m/h<br/>Elevation gain: 11 m<br/>Elevation loss: 46 m<br/>Ascent time: 00:00<br/>Descent time: 00:00<br/></p>]]></desc>
+<sym>Waypoint</sym>
+<type>Finishing Point</type>
+<extensions>
+<om:oruxmapsextensions xmlns:om="http://www.oruxmaps.com/oruxmapsextensions/1/0">
+<om:ext type="ICON" subtype="0">15</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+</wpt>
+<trk>
+<name><![CDATA[2021-03-21 14:47:34 čevap na Ljubelju?]]></name>
+<desc><![CDATA[<p>Type: Undefined<br/>Start time: 14:47 21 Mar 2021<br/>Finish time: 14:47 21 Mar 2021<br/>Distance: 0,1 km (00:00)<br/>Moving time: 00:00<br/>Average speed: 18,69 km/h<br/>Avg. Speed Mov.: 18,69 km/h<br/></p><hr align="center" width="480" style="height: 2px; width: 517px"/>]]></desc>
+<type>Undefined</type>
+<extensions>
+<om:oruxmapsextensions xmlns:om="http://www.oruxmaps.com/oruxmapsextensions/1/0">
+<om:ext type="TYPE" subtype="0">0</om:ext>
+<om:ext type="DIFFICULTY">0</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+<trkseg>
+<trkpt lat="46.4331517" lon="14.2620294">
+<ele>1074.98</ele>
+<time>2021-03-21T13:47:43.300Z</time>
+</trkpt>
+<trkpt lat="46.4329525" lon="14.2620352">
+<ele>1047.66</ele>
+<time>2021-03-21T13:47:45.000Z</time>
+</trkpt>
+<trkpt lat="46.4329180" lon="14.2619772">
+<ele>1059.55</ele>
+<time>2021-03-21T13:47:47.000Z</time>
+</trkpt>
+<trkpt lat="46.4328936" lon="14.2618838">
+<ele>1053.90</ele>
+<time>2021-03-21T13:47:49.000Z</time>
+</trkpt>
+<trkpt lat="46.4328791" lon="14.2617928">
+<ele>1049.46</ele>
+<time>2021-03-21T13:47:51.000Z</time>
+</trkpt>
+<trkpt lat="46.4328566" lon="14.2617023">
+<ele>1052.28</ele>
+<time>2021-03-21T13:47:53.000Z</time>
+</trkpt>
+<trkpt lat="46.4328470" lon="14.2616340">
+<ele>1043.43</ele>
+<time>2021-03-21T13:47:54.000Z</time>
+</trkpt>
+</trkseg>
+</trk>
+</gpx>

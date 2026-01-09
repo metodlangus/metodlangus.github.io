@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" creator="OruxMaps v.9.0.4 GP" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<!-- owner: 3af6ec7074c405 -->
+<metadata>
+<name><![CDATA[2022-09-12 08:07:35 Shkodër do gradu]]></name>
+<link href="https://www.oruxmaps.com">
+<text>OruxMaps GP</text>
+</link>
+<time>2022-09-12T06:07:35.745Z</time><bounds maxlat="42.0479832" maxlon="19.4976869" minlat="42.0471838" minlon="19.4950084"/>
+</metadata>
+<wpt lat="42.0477406" lon="19.4976647">
+<ele>33.93</ele>
+<time>2022-09-12T06:07:37.252Z</time>
+<name><![CDATA[]]></name>
+<sym>Waypoint</sym>
+<type>Starting Point</type>
+<extensions>
+<om:oruxmapsextensions xmlns:om="http://www.oruxmaps.com/oruxmapsextensions/1/0">
+<om:ext type="ICON" subtype="0">38</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+</wpt>
+<wpt lat="42.0479766" lon="19.4975696">
+<ele>32.73</ele>
+<time>2022-09-12T06:27:50.310Z</time>
+<name><![CDATA[]]></name>
+<desc><![CDATA[<p><br /><h3>Name: Segment: 1</h3><br />Type: Undefined<br/>Start time: 08:07 12 Sep 2022<br/>Finish time: 08:27 12 Sep 2022<br/>Distance: 0,7km (00:20)<br/>Moving time: 00:12<br/>Average speed: 2,05 km/h<br/>Avg. Speed Mov.: 3,19 km/h<br/>Max. speed: 5,96 km/h<br/>Minimum altitude: 28 m<br/>Maximum altitude: 60 m<br/>Elevation gain: 30 m<br/>Elevation loss: 30 m<br/>Ascent time: 00:-2<br/>Descent time: 00:13<br/></p>]]></desc>
+<sym>Waypoint</sym>
+<type>Finishing Point</type>
+<extensions>
+<om:oruxmapsextensions xmlns:om="http://www.oruxmaps.com/oruxmapsextensions/1/0">
+<om:ext type="ICON" subtype="0">15</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+</wpt>
+<trk>
+<name><![CDATA[2022-09-12 08:07:35 Shkodër do gradu]]></name>
+<desc><![CDATA[<p>Type: Undefined<br/>Start time: 08:07 12 Sep 2022<br/>Finish time: 08:27 12 Sep 2022<br/>Distance: 0,7 km (00:20)<br/>Moving time: 00:12<br/>Average speed: 2,05 km/h<br/>Avg. Speed Mov.: 3,19 km/h<br/>Max. speed: 5,96 km/h<br/>Minimum altitude: 28 m<br/>Maximum altitude: 60 m<br/>Descent speed: 141,5 m/h<br/>Elevation gain: 30 m<br/>Elevation loss: 30 m<br/>Descent time: 00:13<br/></p><hr align="center" width="480" style="height: 2px; width: 517px"/>]]></desc>
+<type>Undefined</type>
+<extensions>
+<om:oruxmapsextensions xmlns:om="http://www.oruxmaps.com/oruxmapsextensions/1/0">
+<om:ext type="TYPE" subtype="0">0</om:ext>
+<om:ext type="DIFFICULTY">0</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+<trkseg>
+<trkpt lat="42.0477406" lon="19.4976647">
+<ele>33.93</ele>
+<time>2022-09-12T06:07:38.005Z</time>
+</trkpt>
+<trkpt lat="42.0478308" lon="19.4974507">
+<ele>26.07</ele>
+<time>2022-09-12T06:08:01.000Z</time>
+</trkpt>
+<trkpt lat="42.0479647" lon="19.4972877">
+<ele>21.75</ele>
+<time>2022-09-12T06:08:18.000Z</time>
+</trkpt>
+<trkpt lat="42.0479832" lon="19.4970330">
+<ele>25.61</ele>
+<time>2022-09-12T06:08:33.000Z</time>
+</trkpt>
+<trkpt lat="42.0479621" lon="19.4967767">
+<ele>30.37</ele>
+<time>2022-09-12T06:08:48.000Z</time>
+</trkpt>
+<trkpt lat="42.0478803" lon="19.4965602">
+<ele>34.12</ele>
+<time>2022-09-12T06:09:08.000Z</time>
+</trkpt>
+<trkpt lat="42.0477285" lon="19.4964061">
+<ele>25.73</ele>
+<time>2022-09-12T06:09:25.000Z</time>
+</trkpt>
+<trkpt lat="42.0475946" lon="19.4962361">
+<ele>30.43</ele>
+<time>2022-09-12T06:09:39.000Z</time>
+</trkpt>
+<trkpt lat="42.0475488" lon="19.4959904">
+<ele>31.73</ele>
+<time>2022-09-12T06:09:59.000Z</time>
+</trkpt>
+<trkpt lat="42.0475935" lon="19.4957407">
+<ele>32.73</ele>
+<time>2022-09-12T06:10:23.000Z</time>
+</trkpt>
+<trkpt lat="42.0477103" lon="19.4955489">
+<ele>34.73</ele>
+<time>2022-09-12T06:10:38.000Z</time>
+</trkpt>
+<trkpt lat="42.0478171" lon="19.4953482">
+<ele>36.65</ele>
+<time>2022-09-12T06:10:53.000Z</time>
+</trkpt>
+<trkpt lat="42.0479216" lon="19.4951485">
+<ele>40.71</ele>
+<time>2022-09-12T06:11:11.000Z</time>
+</trkpt>
+<trkpt lat="42.0477233" lon="19.4951798">
+<ele>50.98</ele>
+<time>2022-09-12T06:11:42.000Z</time>
+</trkpt>
+<trkpt lat="42.0475454" lon="19.4952691">
+<ele>55.73</ele>
+<time>2022-09-12T06:12:01.000Z</time>
+</trkpt>
+<trkpt lat="42.0473690" lon="19.4953257">
+<ele>55.73</ele>
+<time>2022-09-12T06:12:16.000Z</time>
+</trkpt>
+<trkpt lat="42.0471838" lon="19.4953157">
+<ele>57.64</ele>
+<time>2022-09-12T06:12:57.000Z</time>
+</trkpt>
+<trkpt lat="42.0473672" lon="19.4953304">
+<ele>71.04</ele>
+<time>2022-09-12T06:21:49.000Z</time>
+</trkpt>
+<trkpt lat="42.0475325" lon="19.4952206">
+<ele>70.65</ele>
+<time>2022-09-12T06:22:04.000Z</time>
+</trkpt>
+<trkpt lat="42.0477098" lon="19.4951236">
+<ele>68.83</ele>
+<time>2022-09-12T06:22:17.000Z</time>
+</trkpt>
+<trkpt lat="42.0478683" lon="19.4950084">
+<ele>66.71</ele>
+<time>2022-09-12T06:22:30.000Z</time>
+</trkpt>
+<trkpt lat="42.0478473" lon="19.4952583">
+<ele>49.75</ele>
+<time>2022-09-12T06:23:48.000Z</time>
+</trkpt>
+<trkpt lat="42.0477471" lon="19.4954724">
+<ele>44.82</ele>
+<time>2022-09-12T06:24:04.000Z</time>
+</trkpt>
+<trkpt lat="42.0476275" lon="19.4956769">
+<ele>43.73</ele>
+<time>2022-09-12T06:24:18.000Z</time>
+</trkpt>
+<trkpt lat="42.0475337" lon="19.4958875">
+<ele>41.03</ele>
+<time>2022-09-12T06:24:39.000Z</time>
+</trkpt>
+<trkpt lat="42.0475632" lon="19.4961463">
+<ele>38.03</ele>
+<time>2022-09-12T06:24:56.000Z</time>
+</trkpt>
+<trkpt lat="42.0476815" lon="19.4963527">
+<ele>36.81</ele>
+<time>2022-09-12T06:25:09.000Z</time>
+</trkpt>
+<trkpt lat="42.0478248" lon="19.4965226">
+<ele>34.74</ele>
+<time>2022-09-12T06:25:22.000Z</time>
+</trkpt>
+<trkpt lat="42.0479084" lon="19.4967580">
+<ele>30.74</ele>
+<time>2022-09-12T06:25:36.000Z</time>
+</trkpt>
+<trkpt lat="42.0479616" lon="19.4970019">
+<ele>28.74</ele>
+<time>2022-09-12T06:25:50.000Z</time>
+</trkpt>
+<trkpt lat="42.0479256" lon="19.4972554">
+<ele>26.44</ele>
+<time>2022-09-12T06:26:06.000Z</time>
+</trkpt>
+<trkpt lat="42.0477970" lon="19.4974402">
+<ele>26.73</ele>
+<time>2022-09-12T06:26:20.000Z</time>
+</trkpt>
+<trkpt lat="42.0477943" lon="19.4976869">
+<ele>31.70</ele>
+<time>2022-09-12T06:26:37.000Z</time>
+</trkpt>
+<trkpt lat="42.0479766" lon="19.4975696">
+<ele>32.73</ele>
+<time>2022-09-12T06:27:46.000Z</time>
+</trkpt>
+</trkseg>
+</trk>
+</gpx>

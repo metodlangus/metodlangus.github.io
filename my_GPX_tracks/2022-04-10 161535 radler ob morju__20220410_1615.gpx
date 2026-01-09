@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" creator="OruxMaps v.9.0.4 GP" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<!-- owner: 3af6ec7074c405 -->
+<metadata>
+<name><![CDATA[2022-04-10 16:15:35 radler ob morju]]></name>
+<link href="https://www.oruxmaps.com">
+<text>OruxMaps GP</text>
+</link>
+<time>2022-04-10T14:15:35.718Z</time><bounds maxlat="44.3775688" maxlon="15.2650749" minlat="44.3768565" minlon="15.2645694"/>
+</metadata>
+<wpt lat="44.3775688" lon="15.2649728">
+<ele>14.54</ele>
+<time>2022-04-10T14:15:36.723Z</time>
+<name><![CDATA[]]></name>
+<sym>Waypoint</sym>
+<type>Starting Point</type>
+<extensions>
+<om:oruxmapsextensions xmlns:om="http://www.oruxmaps.com/oruxmapsextensions/1/0">
+<om:ext type="ICON" subtype="0">38</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+</wpt>
+<wpt lat="44.3774918" lon="15.2650424">
+<ele>8.33</ele>
+<time>2022-04-10T14:37:44.450Z</time>
+<name><![CDATA[]]></name>
+<desc><![CDATA[<p><br /><h3>Name: Segment: 1</h3><br />Start time: 16:15 10 Apr 2022<br/>Finish time: 16:36 10 Apr 2022<br/>Distance: 0,2km (00:21)<br/>Moving time: 00:03<br/>Average speed: 0,64 km/h<br/>Avg. Speed Mov.: 4,05 km/h<br/>Max. speed: 6 km/h<br/>Minimum altitude: 0 m<br/>Maximum altitude: 0 m<br/>Elevation gain: 0 m<br/>Elevation loss: 12 m<br/>Ascent time: 00:00<br/>Descent time: 00:00<br/></p>]]></desc>
+<sym>Waypoint</sym>
+<type>Finishing Point</type>
+<extensions>
+<om:oruxmapsextensions xmlns:om="http://www.oruxmaps.com/oruxmapsextensions/1/0">
+<om:ext type="ICON" subtype="0">15</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+</wpt>
+<trk>
+<name><![CDATA[2022-04-10 16:15:35 radler ob morju]]></name>
+<desc><![CDATA[<p>Type: Undefined<br/>Start time: 16:15 10 Apr 2022<br/>Finish time: 16:36 10 Apr 2022<br/>Distance: 0,2 km (00:21)<br/>Moving time: 00:03<br/>Average speed: 0,64 km/h<br/>Avg. Speed Mov.: 4,37 km/h<br/>Max. speed: 6 km/h<br/>Minimum altitude: -7 m<br/>Maximum altitude: 9 m<br/>Ascent speed: 209,6 m/h<br/>Descent speed: 926,2 m/h<br/>Elevation gain: 7 m<br/>Elevation loss: 13 m<br/>Ascent time: 00:02<br/>Descent time: 00:00<br/></p><hr align="center" width="480" style="height: 2px; width: 517px"/>]]></desc>
+<type>Undefined</type>
+<extensions>
+<om:oruxmapsextensions xmlns:om="http://www.oruxmaps.com/oruxmapsextensions/1/0">
+<om:ext type="TYPE" subtype="0">0</om:ext>
+<om:ext type="DIFFICULTY">0</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+<trkseg>
+<trkpt lat="44.3775688" lon="15.2649728">
+<ele>14.54</ele>
+<time>2022-04-10T14:15:35.999Z</time>
+</trkpt>
+<trkpt lat="44.3773985" lon="15.2650610">
+<ele>9.64</ele>
+<time>2022-04-10T14:15:48.000Z</time>
+</trkpt>
+<trkpt lat="44.3772184" lon="15.2650749">
+<ele>7.64</ele>
+<time>2022-04-10T14:15:58.000Z</time>
+</trkpt>
+<trkpt lat="44.3771880" lon="15.2648086">
+<ele>2.61</ele>
+<time>2022-04-10T14:16:13.000Z</time>
+</trkpt>
+<trkpt lat="44.3771107" lon="15.2645694">
+<ele>0.64</ele>
+<time>2022-04-10T14:16:30.000Z</time>
+</trkpt>
+<trkpt lat="44.3770062" lon="15.2647880">
+<ele>-4.34</ele>
+<time>2022-04-10T14:34:43.000Z</time>
+</trkpt>
+<trkpt lat="44.3768565" lon="15.2649311">
+<ele>-2.36</ele>
+<time>2022-04-10T14:34:56.000Z</time>
+</trkpt>
+<trkpt lat="44.3770162" lon="15.2648035">
+<ele>-5.06</ele>
+<time>2022-04-10T14:35:31.000Z</time>
+</trkpt>
+<trkpt lat="44.3771249" lon="15.2645961">
+<ele>-7.36</ele>
+<time>2022-04-10T14:35:48.000Z</time>
+</trkpt>
+<trkpt lat="44.3772067" lon="15.2648237">
+<ele>-2.75</ele>
+<time>2022-04-10T14:36:18.000Z</time>
+</trkpt>
+<trkpt lat="44.3773022" lon="15.2650369">
+<ele>3.61</ele>
+<time>2022-04-10T14:36:40.000Z</time>
+</trkpt>
+<trkpt lat="44.3774918" lon="15.2650424">
+<ele>8.33</ele>
+<time>2022-04-10T14:36:55.000Z</time>
+</trkpt>
+</trkseg>
+</trk>
+</gpx>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" creator="OruxMaps v.9.5.0 GP" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<!-- owner: 3af6ec7074c405 -->
+<metadata>
+<name><![CDATA[2022-10-31 14:29:31 Giau - Punta di Zonia]]></name>
+<link href="https://www.oruxmaps.com">
+<text>OruxMaps GP</text>
+</link>
+<time>2022-10-31T13:29:31.569Z</time><bounds maxlat="46.4825885" maxlon="12.0545615" minlat="46.4811373" minlon="12.0535058"/>
+</metadata>
+<wpt lat="46.4811373" lon="12.0535058">
+<ele>2275.84</ele>
+<time>2022-10-31T13:29:33.625Z</time>
+<name><![CDATA[]]></name>
+<sym>Waypoint</sym>
+<type>Starting Point</type>
+<extensions>
+<om:oruxmapsextensions xmlns:om="http://www.oruxmaps.com/oruxmapsextensions/1/0">
+<om:ext type="ICON" subtype="0">38</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+</wpt>
+<wpt lat="46.4825856" lon="12.0545615">
+<ele>2230.93</ele>
+<time>2022-10-31T13:35:42.417Z</time>
+<name><![CDATA[]]></name>
+<desc><![CDATA[<p><br /><h3>Name: Segment: 1</h3><br />Type: Undefined<br/>Start time: 14:29 31 Oct 2022<br/>Finish time: 14:35 31 Oct 2022<br/>Distance: 0,2km (00:05)<br/>Moving time: 00:04<br/>Average speed: 2,33 km/h<br/>Avg. Speed Mov.: 2,87 km/h<br/>Max. speed: 6,23 km/h<br/>Minimum altitude: 2243 m<br/>Maximum altitude: 2252 m<br/>Elevation gain: 0 m<br/>Elevation loss: 32 m<br/>Ascent time: 00:00<br/>Descent time: 00:04<br/></p>]]></desc>
+<sym>Waypoint</sym>
+<type>Finishing Point</type>
+<extensions>
+<om:oruxmapsextensions xmlns:om="http://www.oruxmaps.com/oruxmapsextensions/1/0">
+<om:ext type="ICON" subtype="0">15</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+</wpt>
+<trk>
+<name><![CDATA[2022-10-31 14:29:31 Giau - Punta di Zonia]]></name>
+<desc><![CDATA[<p>Type: Undefined<br/>Start time: 14:29 31 Oct 2022<br/>Finish time: 14:35 31 Oct 2022<br/>Distance: 0,2 km (00:05)<br/>Moving time: 00:04<br/>Average speed: 2,33 km/h<br/>Avg. Speed Mov.: 2,87 km/h<br/>Max. speed: 6,23 km/h<br/>Minimum altitude: 2243 m<br/>Maximum altitude: 2252 m<br/>Descent speed: 401,8 m/h<br/>Elevation loss: 32 m<br/>Descent time: 00:04<br/></p><hr align="center" width="480" style="height: 2px; width: 517px"/>]]></desc>
+<type>Undefined</type>
+<extensions>
+<om:oruxmapsextensions xmlns:om="http://www.oruxmaps.com/oruxmapsextensions/1/0">
+<om:ext type="TYPE" subtype="0">0</om:ext>
+<om:ext type="DIFFICULTY">0</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+<trkseg>
+<trkpt lat="46.4811373" lon="12.0535058">
+<ele>2275.84</ele>
+<time>2022-10-31T13:29:33.003Z</time>
+</trkpt>
+<trkpt lat="46.4812192" lon="12.0537436">
+<ele>2276.05</ele>
+<time>2022-10-31T13:31:39.000Z</time>
+</trkpt>
+<trkpt lat="46.4814031" lon="12.0537878">
+<ele>2271.87</ele>
+<time>2022-10-31T13:31:55.000Z</time>
+</trkpt>
+<trkpt lat="46.4815781" lon="12.0538837">
+<ele>2263.14</ele>
+<time>2022-10-31T13:32:27.000Z</time>
+</trkpt>
+<trkpt lat="46.4817598" lon="12.0538590">
+<ele>2256.87</ele>
+<time>2022-10-31T13:33:11.000Z</time>
+</trkpt>
+<trkpt lat="46.4819435" lon="12.0538829">
+<ele>2250.15</ele>
+<time>2022-10-31T13:33:28.000Z</time>
+</trkpt>
+<trkpt lat="46.4821319" lon="12.0538983">
+<ele>2244.14</ele>
+<time>2022-10-31T13:33:47.000Z</time>
+</trkpt>
+<trkpt lat="46.4823080" lon="12.0539534">
+<ele>2237.84</ele>
+<time>2022-10-31T13:34:25.000Z</time>
+</trkpt>
+<trkpt lat="46.4824622" lon="12.0538183">
+<ele>2237.14</ele>
+<time>2022-10-31T13:34:41.000Z</time>
+</trkpt>
+<trkpt lat="46.4825809" lon="12.0540187">
+<ele>2235.84</ele>
+<time>2022-10-31T13:34:57.000Z</time>
+</trkpt>
+<trkpt lat="46.4825885" lon="12.0542899">
+<ele>2233.15</ele>
+<time>2022-10-31T13:35:09.000Z</time>
+</trkpt>
+<trkpt lat="46.4825856" lon="12.0545615">
+<ele>2230.93</ele>
+<time>2022-10-31T13:35:22.000Z</time>
+</trkpt>
+</trkseg>
+</trk>
+</gpx>

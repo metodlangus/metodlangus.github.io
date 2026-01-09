@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="OruxMaps v.10.1.9 GP" version="1.1" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:om="http://www.oruxmaps.com/oruxmapsextensions/1/0" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<!-- owner: 2904793ebdd931 -->
+<metadata>
+<name><![CDATA[2023-11-25 09:07:15 Test po formatiranju]]></name>
+<link href="https://www.oruxmaps.com">
+<text>OruxMaps GP</text>
+</link>
+<time>2023-11-25T08:07:15.948Z</time><bounds maxlat="46.3569997" maxlon="14.2912949" minlat="46.3564187" minlon="14.2901673"/>
+</metadata>
+<wpt lat="46.3565592" lon="14.2904034">
+<ele>519.47</ele>
+<time>2023-11-25T08:19:33.685Z</time>
+<name><![CDATA[]]></name>
+<sym>Waypoint</sym>
+<type>Starting Point</type>
+<extensions>
+<om:oruxmapsextensions>
+<om:ext type="ICON" subtype="0">38</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+</wpt>
+<wpt lat="46.3564187" lon="14.2906118">
+<ele>513.16</ele>
+<time>2023-11-25T08:30:01.166Z</time>
+<name><![CDATA[]]></name>
+<desc><![CDATA[<p><br /><h3>Name: Segment: 1</h3><br />Type: Undefined<br/>Start time: 09:19 25 Nov 2023<br/>Finish time: 09:30 25 Nov 2023<br/>Distance: 0.4km (00:10)<br/>Moving time: 00:09<br/>Average speed: 2.29 km/h<br/>Avg. Speed Mov: 2.42 km/h<br/>Max. speed: 7.33 km/h<br/>Minimum altitude: 509 m<br/>Maximum altitude: 528 m<br/>Ascent speed: 290.9 m/h<br/>Descent speed: 212.1 m/h<br/>Elevation gain: 18 m<br/>Elevation loss: 10 m<br/>Ascent time: 00:03<br/>Descent time: 00:03<br/></p>]]></desc>
+<sym>Waypoint</sym>
+<type>Finishing Point</type>
+<extensions>
+<om:oruxmapsextensions>
+<om:ext type="ICON" subtype="0">15</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+</wpt>
+<trk>
+<name><![CDATA[2023-11-25 09:07:15 Test po formatiranju]]></name>
+<desc><![CDATA[<p>Type: Undefined<br/>Start time: 09:19 25 Nov 2023<br/>Finish time: 09:30 25 Nov 2023<br/>Distance: 0.4 km (00:10)<br/>Moving time: 00:09<br/>Average speed: 2.29 km/h<br/>Avg. Speed Mov: 2.42 km/h<br/>Max. speed: 7.33 km/h<br/>Minimum altitude: 509 m<br/>Maximum altitude: 528 m<br/>Ascent speed: 290.9 m/h<br/>Descent speed: 212.1 m/h<br/>Elevation gain: 18 m<br/>Elevation loss: 10 m<br/>Ascent time: 00:03<br/>Descent time: 00:03<br/></p><hr align="center" width="480" style="height: 2px; width: 517px"/>]]></desc>
+<type>Undefined</type>
+<extensions>
+<om:oruxmapsextensions>
+<om:ext type="TYPE" subtype="0">0</om:ext>
+<om:ext type="DIFFICULTY">0</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+<trkseg>
+<trkpt lat="46.3565592" lon="14.2904034">
+<ele>519.47</ele>
+<time>2023-11-25T08:19:33.000Z</time>
+</trkpt>
+<trkpt lat="46.3568082" lon="14.2904015">
+<ele>461.37</ele>
+<time>2023-11-25T08:19:35.009Z</time>
+</trkpt>
+<trkpt lat="46.3569997" lon="14.2903970">
+<ele>475.11</ele>
+<time>2023-11-25T08:19:44.000Z</time>
+</trkpt>
+<trkpt lat="46.3568194" lon="14.2904169">
+<ele>495.56</ele>
+<time>2023-11-25T08:20:11.000Z</time>
+</trkpt>
+<trkpt lat="46.3567659" lon="14.2901673">
+<ele>518.46</ele>
+<time>2023-11-25T08:22:36.000Z</time>
+</trkpt>
+<trkpt lat="46.3566382" lon="14.2903616">
+<ele>528.47</ele>
+<time>2023-11-25T08:23:54.000Z</time>
+</trkpt>
+<trkpt lat="46.3565518" lon="14.2905931">
+<ele>527.47</ele>
+<time>2023-11-25T08:24:01.000Z</time>
+</trkpt>
+<trkpt lat="46.3567285" lon="14.2906935">
+<ele>524.77</ele>
+<time>2023-11-25T08:25:01.000Z</time>
+</trkpt>
+<trkpt lat="46.3566171" lon="14.2909172">
+<ele>527.47</ele>
+<time>2023-11-25T08:25:46.000Z</time>
+</trkpt>
+<trkpt lat="46.3566873" lon="14.2906684">
+<ele>528.38</ele>
+<time>2023-11-25T08:26:18.000Z</time>
+</trkpt>
+<trkpt lat="46.3566893" lon="14.2909561">
+<ele>528.47</ele>
+<time>2023-11-25T08:26:30.000Z</time>
+</trkpt>
+<trkpt lat="46.3568499" lon="14.2910816">
+<ele>528.68</ele>
+<time>2023-11-25T08:26:34.000Z</time>
+</trkpt>
+<trkpt lat="46.3569601" lon="14.2912949">
+<ele>528.47</ele>
+<time>2023-11-25T08:26:50.000Z</time>
+</trkpt>
+<trkpt lat="46.3569637" lon="14.2910279">
+<ele>526.17</ele>
+<time>2023-11-25T08:27:02.000Z</time>
+</trkpt>
+<trkpt lat="46.3569769" lon="14.2907661">
+<ele>528.47</ele>
+<time>2023-11-25T08:27:20.000Z</time>
+</trkpt>
+<trkpt lat="46.3568001" lon="14.2906524">
+<ele>527.47</ele>
+<time>2023-11-25T08:28:06.000Z</time>
+</trkpt>
+<trkpt lat="46.3566600" lon="14.2904829">
+<ele>531.38</ele>
+<time>2023-11-25T08:28:45.000Z</time>
+</trkpt>
+<trkpt lat="46.3567735" lon="14.2906935">
+<ele>532.38</ele>
+<time>2023-11-25T08:29:24.000Z</time>
+</trkpt>
+<trkpt lat="46.3564187" lon="14.2906118">
+<ele>513.16</ele>
+<time>2023-11-25T08:30:00.000Z</time>
+</trkpt>
+</trkseg>
+</trk>
+</gpx>

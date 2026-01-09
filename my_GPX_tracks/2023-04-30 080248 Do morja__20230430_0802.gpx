@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="OruxMaps v.10.0.4 GP" version="1.1" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:om="http://www.oruxmaps.com/oruxmapsextensions/1/0" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<!-- owner: 3af6ec7074c405 -->
+<metadata>
+<name><![CDATA[2023-04-30 08:02:48 Do morja]]></name>
+<link href="https://www.oruxmaps.com">
+<text>OruxMaps GP</text>
+</link>
+<time>2023-04-30T06:02:48.324Z</time><bounds maxlat="39.4343537" maxlon="9.6314602" minlat="39.4338284" minlon="9.6304943"/>
+</metadata>
+<wpt lat="39.4343537" lon="9.6305037">
+<ele>5.02</ele>
+<time>2023-04-30T06:02:48.558Z</time>
+<name><![CDATA[]]></name>
+<sym>Waypoint</sym>
+<type>Starting Point</type>
+<extensions>
+<om:oruxmapsextensions>
+<om:ext type="ICON" subtype="0">38</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+</wpt>
+<wpt lat="39.4343443" lon="9.6304943">
+<ele>-4.14</ele>
+<time>2023-04-30T06:10:16.086Z</time>
+<name><![CDATA[]]></name>
+<desc><![CDATA[<p><br /><h3>Name: Segment: 1</h3><br />Type: Undefined<br/>Start time: 08:02 30 Apr 2023<br/>Finish time: 08:10 30 Apr 2023<br/>Distance: 0,2km (00:07)<br/>Moving time: 00:05<br/>Average speed: 1,66 km/h<br/>Avg. Speed Mov: 2,14 km/h<br/>Max. speed: 3,16 km/h<br/>Minimum altitude: -2 m<br/>Maximum altitude: -2 m<br/>Elevation gain: 0 m<br/>Elevation loss: 6 m<br/>Ascent time: 00:00<br/>Descent time: 00:01<br/></p>]]></desc>
+<sym>Waypoint</sym>
+<type>Finishing Point</type>
+<extensions>
+<om:oruxmapsextensions>
+<om:ext type="ICON" subtype="0">15</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+</wpt>
+<trk>
+<name><![CDATA[2023-04-30 08:02:48 Do morja]]></name>
+<desc><![CDATA[<p>Type: Undefined<br/>Start time: 08:02 30 Apr 2023<br/>Finish time: 08:10 30 Apr 2023<br/>Distance: 0,2 km (00:07)<br/>Moving time: 00:05<br/>Average speed: 1,66 km/h<br/>Avg. Speed Mov: 2,14 km/h<br/>Max. speed: 3,16 km/h<br/>Minimum altitude: -2 m<br/>Maximum altitude: -2 m<br/>Descent speed: 208,2 m/h<br/>Elevation loss: 6 m<br/>Descent time: 00:01<br/></p><hr align="center" width="480" style="height: 2px; width: 517px"/>]]></desc>
+<type>Undefined</type>
+<extensions>
+<om:oruxmapsextensions>
+<om:ext type="TYPE" subtype="0">0</om:ext>
+<om:ext type="DIFFICULTY">0</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+<trkseg>
+<trkpt lat="39.4343537" lon="9.6305037">
+<ele>5.02</ele>
+<time>2023-04-30T06:02:47.005Z</time>
+</trkpt>
+<trkpt lat="39.4342438" lon="9.6306982">
+<ele>-1.93</ele>
+<time>2023-04-30T06:03:11.000Z</time>
+</trkpt>
+<trkpt lat="39.4341375" lon="9.6308943">
+<ele>-1.93</ele>
+<time>2023-04-30T06:03:34.000Z</time>
+</trkpt>
+<trkpt lat="39.4339928" lon="9.6310434">
+<ele>-1.93</ele>
+<time>2023-04-30T06:04:03.000Z</time>
+</trkpt>
+<trkpt lat="39.4339236" lon="9.6312590">
+<ele>-0.93</ele>
+<time>2023-04-30T06:04:39.000Z</time>
+</trkpt>
+<trkpt lat="39.4338284" lon="9.6314602">
+<ele>-0.93</ele>
+<time>2023-04-30T06:05:47.000Z</time>
+</trkpt>
+<trkpt lat="39.4338870" lon="9.6312292">
+<ele>-3.62</ele>
+<time>2023-04-30T06:08:13.000Z</time>
+</trkpt>
+<trkpt lat="39.4339799" lon="9.6310223">
+<ele>-3.93</ele>
+<time>2023-04-30T06:08:49.000Z</time>
+</trkpt>
+<trkpt lat="39.4341039" lon="9.6308473">
+<ele>-2.93</ele>
+<time>2023-04-30T06:09:21.000Z</time>
+</trkpt>
+<trkpt lat="39.4342215" lon="9.6306670">
+<ele>-2.93</ele>
+<time>2023-04-30T06:09:45.000Z</time>
+</trkpt>
+<trkpt lat="39.4343443" lon="9.6304943">
+<ele>-4.14</ele>
+<time>2023-04-30T06:10:10.000Z</time>
+</trkpt>
+</trkseg>
+</trk>
+</gpx>

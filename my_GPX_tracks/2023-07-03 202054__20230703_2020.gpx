@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="OruxMaps v.10.1.6 GP" version="1.1" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:om="http://www.oruxmaps.com/oruxmapsextensions/1/0" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<!-- owner: 3af6ec7074c405 -->
+<metadata>
+<name><![CDATA[2023-07-03 20:20:54]]></name>
+<link href="https://www.oruxmaps.com">
+<text>OruxMaps GP</text>
+</link>
+<time>2023-07-03T18:20:54.803Z</time><bounds maxlat="46.3569713" maxlon="14.2902812" minlat="46.3568407" minlon="14.2897764"/>
+</metadata>
+<wpt lat="46.3569713" lon="14.2902812">
+<ele>601.47</ele>
+<time>2023-07-03T18:21:39.870Z</time>
+<name><![CDATA[]]></name>
+<sym>Waypoint</sym>
+<type>Starting Point</type>
+<extensions>
+<om:oruxmapsextensions>
+<om:ext type="ICON" subtype="0">38</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+</wpt>
+<wpt lat="46.3568407" lon="14.2897764">
+<ele>625.71</ele>
+<time>2023-07-03T18:21:53.647Z</time>
+<name><![CDATA[]]></name>
+<desc><![CDATA[<p><br /><h3>Name: Segment: 1</h3><br />Type: Undefined<br/>Start time: 20:21 3 Jul 2023<br/>Finish time: 20:21 3 Jul 2023<br/>Distance: 0,0km (00:00)<br/>Moving time: 00:00<br/>Average speed: 14,01 km/h<br/>Avg. Speed Mov: 14,01 km/h<br/>Max. speed: 0,00 km/h<br/>Elevation gain: 0 m<br/>Elevation loss: 0 m<br/>Ascent time: 00:00<br/>Descent time: 00:00<br/></p>]]></desc>
+<sym>Waypoint</sym>
+<type>Finishing Point</type>
+<extensions>
+<om:oruxmapsextensions>
+<om:ext type="ICON" subtype="0">15</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+</wpt>
+<trk>
+<name><![CDATA[2023-07-03 20:20:54]]></name>
+<desc><![CDATA[<p>Type: Undefined<br/>Start time: 20:21 3 Jul 2023<br/>Finish time: 20:21 3 Jul 2023<br/>Distance: 0,0 km (00:00)<br/>Moving time: 00:00<br/>Average speed: 14,01 km/h<br/>Avg. Speed Mov: 14,01 km/h<br/></p><hr align="center" width="480" style="height: 2px; width: 517px"/>]]></desc>
+<type>Undefined</type>
+<extensions>
+<om:oruxmapsextensions>
+<om:ext type="TYPE" subtype="0">0</om:ext>
+<om:ext type="DIFFICULTY">0</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+<trkseg>
+<trkpt lat="46.3569713" lon="14.2902812">
+<ele>601.47</ele>
+<time>2023-07-03T18:21:40.000Z</time>
+</trkpt>
+<trkpt lat="46.3568564" lon="14.2900408">
+<ele>617.26</ele>
+<time>2023-07-03T18:21:49.000Z</time>
+</trkpt>
+<trkpt lat="46.3568407" lon="14.2897764">
+<ele>625.71</ele>
+<time>2023-07-03T18:21:51.000Z</time>
+</trkpt>
+</trkseg>
+</trk>
+</gpx>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="OruxMaps v.10.1.8 GP" version="1.1" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:om="http://www.oruxmaps.com/oruxmapsextensions/1/0" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<!-- owner: 3af6ec7074c405 -->
+<metadata>
+<name><![CDATA[2023-09-02 15:51:38 passo Muraglione]]></name>
+<link href="https://www.oruxmaps.com">
+<text>OruxMaps GP</text>
+</link>
+<time>2023-09-02T13:51:38.603Z</time><bounds maxlat="43.9335995" maxlon="11.6570007" minlat="43.9323910" minlon="11.6548465"/>
+</metadata>
+<wpt lat="43.9332411" lon="11.6567676">
+<ele>902.75</ele>
+<time>2023-09-02T13:51:39.455Z</time>
+<name><![CDATA[]]></name>
+<sym>Waypoint</sym>
+<type>Starting Point</type>
+<extensions>
+<om:oruxmapsextensions>
+<om:ext type="ICON" subtype="0">38</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+</wpt>
+<wpt lat="43.9332861" lon="11.6567296">
+<ele>903.26</ele>
+<time>2023-09-02T14:01:07.451Z</time>
+<name><![CDATA[]]></name>
+<desc><![CDATA[<p><br /><h3>Name: Segment: 1</h3><br />Type: Undefined<br/>Start time: 15:51 2 Sep 2023<br/>Finish time: 16:00 2 Sep 2023<br/>Distance: 0,6km (00:09)<br/>Moving time: 00:08<br/>Average speed: 3,59 km/h<br/>Avg. Speed Mov: 4,07 km/h<br/>Max. speed: 6,79 km/h<br/>Minimum altitude: 905 m<br/>Maximum altitude: 907 m<br/>Elevation gain: 7 m<br/>Elevation loss: 0 m<br/>Ascent time: 00:00<br/>Descent time: 00:00<br/></p>]]></desc>
+<sym>Waypoint</sym>
+<type>Finishing Point</type>
+<extensions>
+<om:oruxmapsextensions>
+<om:ext type="ICON" subtype="0">15</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+</wpt>
+<trk>
+<name><![CDATA[2023-09-02 15:51:38 passo Muraglione]]></name>
+<desc><![CDATA[<p>Type: Undefined<br/>Start time: 15:51 2 Sep 2023<br/>Finish time: 16:00 2 Sep 2023<br/>Distance: 0,6 km (00:09)<br/>Moving time: 00:08<br/>Average speed: 3,59 km/h<br/>Avg. Speed Mov: 4,07 km/h<br/>Max. speed: 6,79 km/h<br/>Minimum altitude: 905 m<br/>Maximum altitude: 907 m<br/>Ascent speed: 476,9 m/h<br/>Elevation gain: 7 m<br/>Ascent time: 00:00<br/></p><hr align="center" width="480" style="height: 2px; width: 517px"/>]]></desc>
+<type>Undefined</type>
+<extensions>
+<om:oruxmapsextensions>
+<om:ext type="TYPE" subtype="0">0</om:ext>
+<om:ext type="DIFFICULTY">0</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+<trkseg>
+<trkpt lat="43.9332411" lon="11.6567676">
+<ele>902.75</ele>
+<time>2023-09-02T13:51:40.013Z</time>
+</trkpt>
+<trkpt lat="43.9330800" lon="11.6566469">
+<ele>912.36</ele>
+<time>2023-09-02T13:51:51.000Z</time>
+</trkpt>
+<trkpt lat="43.9328934" lon="11.6566373">
+<ele>916.05</ele>
+<time>2023-09-02T13:52:04.000Z</time>
+</trkpt>
+<trkpt lat="43.9327027" lon="11.6566210">
+<ele>913.27</ele>
+<time>2023-09-02T13:52:18.000Z</time>
+</trkpt>
+<trkpt lat="43.9325387" lon="11.6565051">
+<ele>910.27</ele>
+<time>2023-09-02T13:52:33.000Z</time>
+</trkpt>
+<trkpt lat="43.9325654" lon="11.6562415">
+<ele>908.97</ele>
+<time>2023-09-02T13:52:46.000Z</time>
+</trkpt>
+<trkpt lat="43.9326498" lon="11.6560010">
+<ele>907.27</ele>
+<time>2023-09-02T13:53:02.000Z</time>
+</trkpt>
+<trkpt lat="43.9327504" lon="11.6557920">
+<ele>909.27</ele>
+<time>2023-09-02T13:53:16.000Z</time>
+</trkpt>
+<trkpt lat="43.9328576" lon="11.6555742">
+<ele>907.68</ele>
+<time>2023-09-02T13:53:32.000Z</time>
+</trkpt>
+<trkpt lat="43.9329449" lon="11.6553465">
+<ele>907.26</ele>
+<time>2023-09-02T13:54:00.000Z</time>
+</trkpt>
+<trkpt lat="43.9328969" lon="11.6551027">
+<ele>902.29</ele>
+<time>2023-09-02T13:54:17.000Z</time>
+</trkpt>
+<trkpt lat="43.9329032" lon="11.6548465">
+<ele>903.27</ele>
+<time>2023-09-02T13:54:57.000Z</time>
+</trkpt>
+<trkpt lat="43.9327853" lon="11.6550398">
+<ele>904.27</ele>
+<time>2023-09-02T13:55:28.000Z</time>
+</trkpt>
+<trkpt lat="43.9326688" lon="11.6552415">
+<ele>907.26</ele>
+<time>2023-09-02T13:55:43.000Z</time>
+</trkpt>
+<trkpt lat="43.9325594" lon="11.6554498">
+<ele>908.06</ele>
+<time>2023-09-02T13:56:04.000Z</time>
+</trkpt>
+<trkpt lat="43.9324679" lon="11.6556701">
+<ele>909.27</ele>
+<time>2023-09-02T13:56:18.000Z</time>
+</trkpt>
+<trkpt lat="43.9324021" lon="11.6559049">
+<ele>911.56</ele>
+<time>2023-09-02T13:56:32.000Z</time>
+</trkpt>
+<trkpt lat="43.9323910" lon="11.6561607">
+<ele>907.27</ele>
+<time>2023-09-02T13:58:00.000Z</time>
+</trkpt>
+<trkpt lat="43.9324277" lon="11.6564107">
+<ele>906.27</ele>
+<time>2023-09-02T13:58:15.000Z</time>
+</trkpt>
+<trkpt lat="43.9325380" lon="11.6566145">
+<ele>900.40</ele>
+<time>2023-09-02T13:58:37.000Z</time>
+</trkpt>
+<trkpt lat="43.9327301" lon="11.6566607">
+<ele>903.94</ele>
+<time>2023-09-02T13:58:49.000Z</time>
+</trkpt>
+<trkpt lat="43.9329166" lon="11.6566557">
+<ele>907.18</ele>
+<time>2023-09-02T13:59:00.000Z</time>
+</trkpt>
+<trkpt lat="43.9330960" lon="11.6566824">
+<ele>909.27</ele>
+<time>2023-09-02T13:59:13.000Z</time>
+</trkpt>
+<trkpt lat="43.9332525" lon="11.6568134">
+<ele>908.27</ele>
+<time>2023-09-02T13:59:26.000Z</time>
+</trkpt>
+<trkpt lat="43.9334338" lon="11.6568947">
+<ele>910.25</ele>
+<time>2023-09-02T13:59:38.000Z</time>
+</trkpt>
+<trkpt lat="43.9335995" lon="11.6570007">
+<ele>906.38</ele>
+<time>2023-09-02T13:59:51.000Z</time>
+</trkpt>
+<trkpt lat="43.9334601" lon="11.6568220">
+<ele>902.26</ele>
+<time>2023-09-02T14:00:44.000Z</time>
+</trkpt>
+<trkpt lat="43.9332861" lon="11.6567296">
+<ele>903.26</ele>
+<time>2023-09-02T14:00:59.000Z</time>
+</trkpt>
+</trkseg>
+</trk>
+</gpx>

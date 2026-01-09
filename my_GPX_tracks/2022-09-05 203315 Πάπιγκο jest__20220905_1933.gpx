@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" creator="OruxMaps v.9.0.4 GP" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<!-- owner: 3af6ec7074c405 -->
+<metadata>
+<name><![CDATA[2022-09-05 20:33:15 Πάπιγκο jest]]></name>
+<link href="https://www.oruxmaps.com">
+<text>OruxMaps GP</text>
+</link>
+<time>2022-09-05T17:33:15.496Z</time><bounds maxlat="39.9691640" maxlon="20.7189758" minlat="39.9679831" minlon="20.7182110"/>
+</metadata>
+<wpt lat="39.9679831" lon="20.7182110">
+<ele>897.43</ele>
+<time>2022-09-05T17:33:16.536Z</time>
+<name><![CDATA[]]></name>
+<sym>Waypoint</sym>
+<type>Starting Point</type>
+<extensions>
+<om:oruxmapsextensions xmlns:om="http://www.oruxmaps.com/oruxmapsextensions/1/0">
+<om:ext type="ICON" subtype="0">38</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+</wpt>
+<wpt lat="39.9688387" lon="20.7185596">
+<ele>920.73</ele>
+<time>2022-09-05T17:53:27.651Z</time>
+<name><![CDATA[]]></name>
+<desc><![CDATA[<p><br /><h3>Name: Segment: 1</h3><br />Type: Undefined<br/>Start time: 20:33 5 Sep 2022<br/>Finish time: 20:39 5 Sep 2022<br/>Distance: 0,2km (00:06)<br/>Moving time: 00:04<br/>Average speed: 2,18 km/h<br/>Avg. Speed Mov.: 2,85 km/h<br/>Max. speed: 4,86 km/h<br/>Minimum altitude: 918 m<br/>Maximum altitude: 922 m<br/>Elevation gain: 17 m<br/>Elevation loss: 0 m<br/>Ascent time: 00:01<br/>Descent time: 00:00<br/></p>]]></desc>
+<sym>Waypoint</sym>
+<type>Finishing Point</type>
+<extensions>
+<om:oruxmapsextensions xmlns:om="http://www.oruxmaps.com/oruxmapsextensions/1/0">
+<om:ext type="ICON" subtype="0">15</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+</wpt>
+<trk>
+<name><![CDATA[2022-09-05 20:33:15 Πάπιγκο jest]]></name>
+<desc><![CDATA[<p>Type: Undefined<br/>Start time: 19:33 5 Sep 2022<br/>Finish time: 19:39 5 Sep 2022<br/>Distance: 0,2 km (00:06)<br/>Moving time: 00:04<br/>Average speed: 2,18 km/h<br/>Avg. Speed Mov.: 2,85 km/h<br/>Max. speed: 4,86 km/h<br/>Minimum altitude: 918 m<br/>Maximum altitude: 922 m<br/>Ascent speed: 709,9 m/h<br/>Elevation gain: 17 m<br/>Ascent time: 00:01<br/></p><hr align="center" width="480" style="height: 2px; width: 517px"/>]]></desc>
+<type>Undefined</type>
+<extensions>
+<om:oruxmapsextensions xmlns:om="http://www.oruxmaps.com/oruxmapsextensions/1/0">
+<om:ext type="TYPE" subtype="0">0</om:ext>
+<om:ext type="DIFFICULTY">0</om:ext>
+</om:oruxmapsextensions>
+</extensions>
+<trkseg>
+<trkpt lat="39.9679831" lon="20.7182110">
+<ele>897.43</ele>
+<time>2022-09-05T17:33:17.000Z</time>
+</trkpt>
+<trkpt lat="39.9680987" lon="20.7183958">
+<ele>896.10</ele>
+<time>2022-09-05T17:33:37.000Z</time>
+</trkpt>
+<trkpt lat="39.9682199" lon="20.7185790">
+<ele>915.12</ele>
+<time>2022-09-05T17:34:04.000Z</time>
+</trkpt>
+<trkpt lat="39.9683425" lon="20.7187596">
+<ele>920.43</ele>
+<time>2022-09-05T17:34:29.000Z</time>
+</trkpt>
+<trkpt lat="39.9685220" lon="20.7188169">
+<ele>913.43</ele>
+<time>2022-09-05T17:34:48.000Z</time>
+</trkpt>
+<trkpt lat="39.9686550" lon="20.7189758">
+<ele>917.33</ele>
+<time>2022-09-05T17:35:21.000Z</time>
+</trkpt>
+<trkpt lat="39.9687223" lon="20.7187525">
+<ele>924.34</ele>
+<time>2022-09-05T17:36:01.000Z</time>
+</trkpt>
+<trkpt lat="39.9688414" lon="20.7185724">
+<ele>926.72</ele>
+<time>2022-09-05T17:36:16.000Z</time>
+</trkpt>
+<trkpt lat="39.9689792" lon="20.7184132">
+<ele>927.44</ele>
+<time>2022-09-05T17:38:04.000Z</time>
+</trkpt>
+<trkpt lat="39.9691640" lon="20.7183765">
+<ele>928.11</ele>
+<time>2022-09-05T17:38:26.000Z</time>
+</trkpt>
+<trkpt lat="39.9689854" lon="20.7184224">
+<ele>925.46</ele>
+<time>2022-09-05T17:38:56.000Z</time>
+</trkpt>
+<trkpt lat="39.9688387" lon="20.7185596">
+<ele>920.73</ele>
+<time>2022-09-05T17:39:28.000Z</time>
+</trkpt>
+</trkseg>
+</trk>
+</gpx>
