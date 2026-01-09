@@ -48,7 +48,10 @@ const imageCache = new LRUCacheBySize(50 * 1024 * 1024);
 
 /* --------------------- FETCHING DATA --------------------- */
 function fetchData() {
-    const feedUrl = `${WindowBaseUrl}/data/all-posts.json`;
+    const isRelive = window.BLOG_CONTEXT?.isRelive === true;
+    const feedUrl = isRelive
+      ? `${WindowBaseUrl}/data/all-relive-posts.json`
+      : `${WindowBaseUrl}/data/all-posts.json`;
 
     fetch(feedUrl)
         .then(res => res.json())

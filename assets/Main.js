@@ -122,10 +122,15 @@ document.addEventListener("DOMContentLoaded", function() {
 /* Searchbox */
 let posts = [];
 
-fetch("https://metodlangus.github.io/data/all-posts.json")
-  .then(response => response.json())
-  .then(data => {
-    const entries = data.feed.entry || [];
+Promise.all([
+  fetch(`${WindowBaseUrl}/data/all-posts.json`).then(r => r.json()),
+  fetch(`${WindowBaseUrl}/data/all-relive-posts.json`).then(r => r.json())
+])
+  .then(([normalData, reliveData]) => {
+    const normalEntries = normalData.feed?.entry || [];
+    const reliveEntries = reliveData.feed?.entry || [];
+
+    const entries = [...normalEntries, ...reliveEntries];
 
     posts = entries.map((entry, i) => {
       const title = entry.title?.$t || `untitled-${i}`;
@@ -137,7 +142,7 @@ fetch("https://metodlangus.github.io/data/all-posts.json")
     });
   })
   .catch(error => {
-    console.error("Napaka pri nalaganju Blogger feeda:", error);
+    console.error("Error loading feeds:", error);
   });
 
 document.addEventListener("DOMContentLoaded", function () {

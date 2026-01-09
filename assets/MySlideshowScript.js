@@ -728,7 +728,10 @@ function fetchData(index) {
     
     // Determine the feed URL based on the slideshow title
     if (slideshowTitles[index] === "All pictures") {
-        feedUrl = `${WindowBaseUrl}/data/all-posts.json`;
+        const isRelive = window.BLOG_CONTEXT?.isRelive === true;
+        feedUrl = isRelive
+          ? `${WindowBaseUrl}/data/all-relive-posts.json`
+          : `${WindowBaseUrl}/data/all-posts.json`;
     } else if (slideshowTitles[index] === "Make post slideshow" || slideshowTitles[index] === "Make trip slideshow") {
         feedUrl = `${WindowBaseUrl}/data/posts/${postId}.json`; // Get by postID
     } else {

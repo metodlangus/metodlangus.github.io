@@ -1,6 +1,14 @@
 // Constants and Variables
-const gpxFolder = 'https://metodlangus.github.io/GPX_tracks/';
-const trackListUrl = 'https://metodlangus.github.io/list_of_tracks.txt';
+const isRelive = window.BLOG_CONTEXT?.isRelive === true;
+const gpxFolder = isRelive
+  ? `${WindowBaseUrl}/my_GPX_tracks`
+  : `${WindowBaseUrl}/GPX_tracks`;
+const trackListUrl = isRelive
+  ? `${WindowBaseUrl}/list_of_relive_tracks.txt`
+  : `${WindowBaseUrl}/list_of_tracks.txt`;
+const photoListUrl = isRelive
+  ? `${WindowBaseUrl}/extracted_relive_photos_with_gps_data.txt`
+  : `${WindowBaseUrl}/extracted_photos_with_gps_data.txt`;
 const trackColors = ['orange', 'blue', 'green', 'red', 'purple', 'brown', 'yellow', 'pink', 
     'cyan', 'magenta', 'lime', 'teal', 'indigo', 'violet', 'coral', 'navy', 'olive', 'maroon', 
     'turquoise', 'gold', 'salmon', 'crimson', 'darkorange', 'darkgreen', 'darkred', 'hotpink', 
@@ -239,7 +247,7 @@ function addMarkers(data) {
 }
 
 // Fetch metadata and add markers
-fetch('https://metodlangus.github.io/extracted_photos_with_gps_data.txt')
+fetch(photoListUrl)
     .then(response => response.text())
     .then(data => addMarkers(data))
     .catch(error => console.error('Error fetching photos metadata:', error)
@@ -264,7 +272,7 @@ document.getElementById('applyFilters').addEventListener('click', function () {
     localStorage.setItem('dailyTimeFilterEnd', dailyTimeFilterEnd);
 
     // Reload markers with updated filters
-    fetch('https://metodlangus.github.io/extracted_photos_with_gps_data.txt')
+    fetch(photoListUrl)
         .then(response => response.text())
         .then(data => {
             // Clear existing markers

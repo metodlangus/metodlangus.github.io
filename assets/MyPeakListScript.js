@@ -107,7 +107,11 @@ async function main() {
 
         let labelMap = {};
 
-        const feedUrl = `${WindowBaseUrl}/data/all-posts.json`;
+        const isRelive = window.BLOG_CONTEXT?.isRelive === true;
+        const feedUrl = isRelive
+          ? `${WindowBaseUrl}/data/all-relive-posts.json`
+          : `${WindowBaseUrl}/data/all-posts.json`;
+
         const jsonData = await fetchJSON(feedUrl);
         const entries = jsonData.feed.entry || [];
 
