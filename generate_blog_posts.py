@@ -847,14 +847,9 @@ def generate_sidebar_html(picture_settings, map_settings, current_page):
     """
 def generate_header_html():
     return f"""
-    <h1>
-      <span style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;">
-        {BLOG_TITLE}
-      </span>
-      <a class='logo-svg' href="{BASE_SITE_URL}">
-        {BLOG_TITLE_SVG}
-      </a>
-    </h1>
+    <a class='logo-svg' href="{BASE_SITE_URL}" aria-label="Gorski užitki – domov">
+      {BLOG_TITLE_SVG}
+    </a>
     <div class="header-left">
       <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
     </div>
@@ -1117,15 +1112,18 @@ def generate_sitemap_from_folder(folder_path: Path, exclude_dirs=None, exclude_f
 
         changefreq = "monthly"
 
-        urlset.append(generate_url_element(url, lastmod=lastmod, changefreq=changefreq, priority=priority))
+        # Convert lastmod to date-only for sitemap (YYYY-MM-DD)
+        sitemap_lastmod = lastmod.split("T", 1)[0]
 
-    # Save updated DB (this was missing)
+        urlset.append( generate_url_element(url, lastmod=sitemap_lastmod, changefreq=changefreq, priority=priority))
+
+    # Save updated DB
     save_lastmod_db(new_lastmod_db)
 
     # Pretty-print & write XML
     indent_xml(urlset)
-    ElementTree(urlset).write(SITEMAP_FILE, encoding="utf-8", xml_declaration=True)
-    print(f"Sitemap je bil ustvarjen in shranjen kot {SITEMAP_FILE}")
+    ElementTree(urlset).write(SITEMAP_FILE, encoding="UTF-8", xml_declaration=True)
+    print(f"Generated sitemap: {SITEMAP_FILE}")
 
 def submit_changed_files_to_indexnow(folder_path: Path,
                                      exclude_dirs=None,
@@ -1232,6 +1230,8 @@ def fetch_and_save_all_posts(entries):
 
     local_tz = ZoneInfo("Europe/Ljubljana")
     label_posts_raw = defaultdict(list)
+
+    # Generate unique slugs for all entries
     slugs = generate_unique_slugs(entries, local_tz)
 
     for index, entry in enumerate(entries):  # Only first 5 entries entries[:5]
@@ -1242,13 +1242,13 @@ def fetch_and_save_all_posts(entries):
         full_id = entry.get("id", {}).get("$t", "")
         post_id = full_id.split("post-")[-1] if "post-" in full_id else ""
         author = entry.get("author", {}).get("name", {}).get("$t", "")
-        formatted_date, year, month = parse_entry_date(entry, index)
 
-        # --- Format published date for meta without microseconds ---
+        # Parse published date
+        formatted_date, year, month = parse_entry_date(entry, index)
         dt_published = datetime.fromisoformat(formatted_date)
         published_time = dt_published.replace(microsecond=0).isoformat()
 
-        # --- Format modified date for meta without microseconds ---
+        # Parse modified date
         updated_raw = entry.get("updated", {}).get("$t", formatted_date)
         dt_modified = datetime.fromisoformat(updated_raw)
         mod_date = dt_modified.replace(microsecond=0).isoformat()
@@ -1265,14 +1265,15 @@ def fetch_and_save_all_posts(entries):
         # Fix images for lightbox
         content_html = fix_images_for_lightbox(content_html, title)
 
-        # First image for og:image
+        # Extract first image for Open Graph
         soup = BeautifulSoup(content_html, "html.parser")
         first_img_tag = soup.find("img")
         og_image = first_img_tag["src"] if first_img_tag else DEFAULT_OG_IMAGE
 
-        # Description extraction
+        # Extract description
         def normalize(text): return ' '.join(text.split()).strip().lower()
-        unwanted = [normalize("Summary, only on the post-container view."), normalize("Kaj češ lepšega, kot biti v naravi.")]
+        unwanted = [normalize("Summary, only on the post-container view."),
+                    normalize("Kaj češ lepšega, kot biti v naravi.")]
         summary_tag = soup.find("summary")
         if summary_tag and normalize(summary_tag.get_text()) not in unwanted:
             description = summary_tag.get_text().strip()
@@ -1283,16 +1284,18 @@ def fetch_and_save_all_posts(entries):
             else:
                 description = title
 
-        # Remove hidden/technical sections before metadata extraction
+        # Remove hidden/technical blocks before further processing
         content_html = remove_leading_hidden_blocks(content_html)
 
         og_url = f"{BASE_SITE_URL}/posts/{year}/{month}/{slug}/"
         metadata_html = f"<div class='post-date' data-date='{formatted_date}'></div>"
+
+        # Navigation and labels
         nav_html = generate_post_navigation_html(entries, slugs, index, local_tz, year, month)
         labels_html = generate_labels_html(entry, title, slug, year, month, formatted_date, post_id,
                                            label_posts_raw, slugify, remove_first_prefix, remove_all_prefixes)
 
-        # Open Graph / Article meta
+        # Open Graph and tags
         categories = [c.get("term", "") for c in entry.get("category", [])]
 
         # Function to remove numeric prefixes like '1. ', '2. ', etc.
@@ -1312,22 +1315,39 @@ def fetch_and_save_all_posts(entries):
   <meta property="og:url" content="{og_url}">
   <meta property="og:description" content="{description}">
   <meta property="og:site_name" content="{BLOG_TITLE}">
+  <meta property="og:locale" content="sl_SI">
   <meta property="article:published_time" content="{published_time}">
   <meta property="article:modified_time" content="{mod_date}">
   <meta property="article:author" content="{author}">
   <meta property="article:section" content="{section}">
 """
-        
         for tag in tags:
             og_meta_html += f'  <meta property="article:tag" content="{tag}">\n'
 
+        # Generate keywords from <div class="peak-tag">
+        peak_divs = soup.find_all("div", class_="peak-tag")
+        keywords_list = []
+        for div in peak_divs:
+            text = div.get_text(separator=",").strip()
+            if text:
+                # Remove extra newlines and spaces, then split by comma
+                parts = [p.strip() for p in text.replace("\n", "").split(",") if p.strip()]
+                keywords_list.extend(parts)
+        # Append blog title and author as keywords
+        keywords_list.extend([BLOG_TITLE, BLOG_AUTHOR])
+        keywords = ", ".join(keywords_list) if keywords_list else f"{BLOG_TITLE}, {BLOG_AUTHOR}"
+
         # Schema.org JSON-LD
-        structured_data = f"""<script type="application/ld+json">
+        schema_jsonld = f"""<script type="application/ld+json">
   {{
     "@context": "https://schema.org",
     "@type": "BlogPosting",
+    "mainEntityOfPage": {{
+      "@type": "WebPage",
+      "@id": "{og_url}"
+    }},
     "headline": "{title}",
-    "image": "{og_image}",
+    "image": ["{og_image}"],
     "author": {{
       "@type": "Person",
       "name": "{BLOG_AUTHOR}"
@@ -1340,10 +1360,38 @@ def fetch_and_save_all_posts(entries):
         "url": "{BASE_SITE_URL}/photos/favicon.ico"
       }}
     }},
-    "description": "{description}",
     "datePublished": "{published_time}",
     "dateModified": "{mod_date}",
-    "url": "{og_url}"
+    "description": "{description}",
+    "url": "{og_url}",
+    "inLanguage": "sl"
+  }}
+  </script>"""
+
+        # Breadcrumb JSON-LD
+        breadcrumb_json_ld = f"""<script type="application/ld+json">
+  {{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Dnevnik",
+        "item": "{BASE_SITE_URL}/"
+      }},
+      {{
+        "@type": "ListItem",
+        "position": 2,
+        "name": "{section}",
+        "item": "{BASE_SITE_URL}/search/labels/{slugify(section)}/"
+      }},
+      {{
+        "@type": "ListItem",
+        "position": 3,
+        "name": "{title}"
+      }}
+    ]
   }}
   </script>"""
 
@@ -1370,16 +1418,20 @@ def fetch_and_save_all_posts(entries):
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-site-verification" content="{SITE_VERIFICATION}" />
   <meta name="description" content="{description}" />
-  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}" />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}, {keywords}" />
   <meta name="author" content="{BLOG_AUTHOR}" />
+  <meta name="robots" content="max-image-preview:large">
 
   <title>{title} | {BLOG_TITLE}</title>
   <link rel="canonical" href="{og_url}">
   <link rel="alternate" href="{og_url}" hreflang="sl" />
   <link rel="alternate" href="{BASE_SITE_URL}" hreflang="x-default" />
+
+  <!-- Sitemap reference -->
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="https://metodlangus.github.io/sitemap.xml">
 
   {og_meta_html}
   <script>
@@ -1388,7 +1440,9 @@ def fetch_and_save_all_posts(entries):
     var author = {author!r};
   </script>
 
-  {structured_data}
+  {schema_jsonld}
+
+  {breadcrumb_json_ld}
 
   <!-- Favicon -->
   <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
@@ -1421,8 +1475,11 @@ def fetch_and_save_all_posts(entries):
       {sidebar_html}
       <div class="content-wrapper">
         {searchbox_html}
-        <h2>{title}</h2>
+        <h1>{title}</h1>
         {metadata_html}
+        <p class="post-summary">
+          {description}
+        </p>
         {content_html}
         {labels_html}
         {nav_html}
@@ -1528,10 +1585,10 @@ def generate_label_pages(entries, label_posts_raw):
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-site-verification" content="{SITE_VERIFICATION}" />
   <meta name="description" content="Prikaz objav z oznako: {label_clean} - gorske avanture in nepozabni trenutki." />
-  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}" />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}, {label_clean}" />
   <meta name="author" content="{BLOG_AUTHOR}" />
 
   <meta property="og:title" content="Prikaz objav z oznako: {label_clean}" />
@@ -1685,10 +1742,10 @@ def generate_archive_pages(entries):
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-site-verification" content="{SITE_VERIFICATION}" />
   <meta name="description" content="Prikaz objav, dodanih na: {year} - gorske avanture in nepozabni trenutki." />
-  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}" />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}, {year}" />
   <meta name="author" content="{BLOG_AUTHOR}" />
 
   <meta property="og:title" content="Prikaz objav, dodanih na: {year}" />
@@ -1787,10 +1844,10 @@ def generate_archive_pages(entries):
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-site-verification" content="{SITE_VERIFICATION}" />
   <meta name="description" content="Prikaz objav, dodanih na: {month_name_sl}, {year} - gorske avanture in nepozabni trenutki." />
-  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}" />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}, {month_name_sl}, {year}" />
   <meta name="author" content="{BLOG_AUTHOR}" />
 
   <meta property="og:title" content="Prikaz objav, dodanih na: {month_name_sl}, {year}" />
@@ -1893,10 +1950,10 @@ def generate_predvajalnik_page(current_page):
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-site-verification" content="{SITE_VERIFICATION}" />
   <meta name="description" content="Predvajalnik naključnih fotografij gorskih avantur in nepozabnih trenutkov." />
-  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}" />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}, predvajalnik fotografij, naključne slike, razgledi" />
   <meta name="author" content="{BLOG_AUTHOR}" />
 
   <meta property="og:title" content="Predvajalnik naključnih fotografij" />
@@ -2007,10 +2064,10 @@ def generate_gallery_page(current_page):
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-site-verification" content="{SITE_VERIFICATION}" />
   <meta name="description" content="Galerija gorskih avantur in nepozabnih trenutkov." />
-  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}" />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}, galerija fotografij, spomini, razgledi" />
   <meta name="author" content="{BLOG_AUTHOR}" />
 
   <meta property="og:title" content="Galerija fotografij" />
@@ -2124,10 +2181,10 @@ def generate_peak_list_page():
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-site-verification" content="{SITE_VERIFICATION}" />
   <meta name="description" content="Seznam obiskanih vrhov na gorskih avanturah." />
-  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}" />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}, hribi, gore, vrhovi, planinski vrhovi, pohodniške ture, seznam vrhov" />
   <meta name="author" content="{BLOG_AUTHOR}" />
 
   <meta property="og:title" content="Seznam vrhov" />
@@ -2235,10 +2292,10 @@ def generate_big_map_page():
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-site-verification" content="{SITE_VERIFICATION}" />
   <meta name="description" content="Gorske avanture in nepozabni trenutki na zemljevidu spominov." />
-  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}" />
+  <meta name="keywords" content="gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}, zemljevid, pohodniške poti, sledi poti, geolokacija, spomini" />
   <meta name="author" content="{BLOG_AUTHOR}" />
   <meta property="og:title" content="Zemljevid spominov" />
   <meta property="og:description" content="Zemljevid spominov, ki zajema slike ter sledi poti." />
@@ -2357,11 +2414,11 @@ def generate_home_en_page(homepage_html):
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-site-verification" content="{SITE_VERIFICATION}" />
 
   <meta name="description" content="Mountain adventures and unforgettable moments: Discover the beauty of the mountain world and enjoy the image slideshows that take you through the adventures." />
-  <meta name="keywords" content="mountain adventures, hiking, mountains, photography, nature, free time, {BLOG_TITLE}, {BLOG_AUTHOR}" />
+  <meta name="keywords" content="mountain adventures, hiking, mountains, photography, nature, free time, {BLOG_TITLE}, {BLOG_AUTHOR}, mountain trails, scenic views, alpine peaks, outdoor activities, adventure travel" />
   <meta name="author" content="{BLOG_AUTHOR}" />
 
   <title>{BLOG_TITLE} | Mountain Adventures Through Pictures | {BLOG_AUTHOR}</title>
@@ -2457,11 +2514,11 @@ def generate_home_si_page(homepage_html):
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-site-verification" content="{SITE_VERIFICATION}" />
 
   <meta name="description" content="Gorske avanture in nepozabni trenutki: Lepote gorskega sveta in predvajalniki slik, ki vas popeljejo skozi dogodivščine." />
-  <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}" />
+  <meta name="keywords" content="gorske avanture, pustolovščine, pohodništvo, gore, fotografije, narava, prosti čas, {BLOG_TITLE}, {BLOG_AUTHOR}, gorski vrhovi, razgledi, pohodniške poti, lepote narave" />
   <meta name="author" content="{BLOG_AUTHOR}" />
 
   <title>{BLOG_TITLE} | Gorske pustolovščine skozi slike | {BLOG_AUTHOR}</title>
@@ -2541,7 +2598,7 @@ def generate_mattia_map_page():
 <head>
 <meta charset="UTF-8">
 <title>Mattia Furlan adventures map</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link href='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.css' rel='stylesheet'>
 <link href='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.css' rel='stylesheet'>
@@ -2616,10 +2673,10 @@ def generate_useful_links_page():
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=350, initial-scale=1, maximum-scale=2.0, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-site-verification" content="{SITE_VERIFICATION}" />
   <meta name="description" content="Seznam uporabnih povezav do drugih blogov in vsebin." />
-  <meta name="keywords" content="uporabne povezave, blog, pohodništvo, gore, narava, {BLOG_TITLE}, {BLOG_AUTHOR}" />
+  <meta name="keywords" content="uporabne povezave, blog, pohodništvo, gore, narava,{BLOG_TITLE}, {BLOG_AUTHOR}, izleti, planinske poti" />
   <meta name="author" content="{BLOG_AUTHOR}" />
 
   <meta property="og:title" content="Uporabne povezave" />
@@ -2694,12 +2751,12 @@ def generate_404_page():
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Napaka 404 – Stran ne obstaja | {BLOG_TITLE}</title>
 
   <meta name="description" content="Napaka 404 – Stran, ki jo iščete, ne obstaja. Morda je bila odstranjena ali premaknjena. Oglejte si vsebino na {BLOG_TITLE}.">
-  <meta name="keywords" content="404, napaka 404, stran ne obstaja, pohodništvo, blog, {BLOG_TITLE}, {BLOG_AUTHOR}">
+  <meta name="keywords" content="404, napaka 404, stran ne obstaja, napaka, blog, pohodništvo, gore, {BLOG_TITLE}, {BLOG_AUTHOR}" />
   <meta name="author" content="{BLOG_AUTHOR}">
 
   <!-- Canonical & hreflang -->
@@ -3021,16 +3078,16 @@ if __name__ == "__main__":
     run_section(16, "Generate sitemap",
         lambda: generate_sitemap_from_folder(
             Path(LOCAL_REPO_PATH),
-            exclude_dirs=["plugins"],
-            exclude_files=["mattia-adventures-map.html"]),
+            exclude_dirs=["plugins", "relive"],
+            exclude_files=["mattia-adventures-map.html", "404.html"]),
         pattern_iter=pattern_iter)
 
     # 17. Submit changed files to IndexNow
     run_section(17, "Submit changed files to IndexNow",
         lambda: submit_changed_files_to_indexnow(
             Path(LOCAL_REPO_PATH),
-            exclude_dirs=["plugins"],
-            exclude_files=["mattia-adventures-map.html"],
+            exclude_dirs=["plugins", "relive"],
+            exclude_files=["mattia-adventures-map.html", "404.html"],
             index=True),
         pattern_iter=pattern_iter)
 

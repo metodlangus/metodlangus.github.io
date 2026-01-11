@@ -843,3 +843,16 @@ div#PageList1 ul li {
     border-radius: 12px; /* Slightly more rounded for modern look */
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
+
+/* invisible post summary paragraph */
+.post-summary {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
