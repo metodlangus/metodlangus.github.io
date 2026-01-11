@@ -303,7 +303,7 @@ def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
     label_six_link = f"{BASE_SITE_URL}/search/labels/{slugify_func(label_six)}/" if label_six else ""
 
     page_number = 1 if entries_per_page == 0 else (index // entries_per_page + 1)
-    style_attr = "" if entries_per_page == 0 else ' style="display:none;"'
+    hidden_class = "" if page_number == 1 else " visually-hidden"
 
     # --- Extract summary / description for alt text ---
     content_html = entry.get("content", {}).get("$t", "")
@@ -342,7 +342,7 @@ def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
 
     # --- Render HTML ---
     return f"""
-          <div class="photo-entry" data-page="{page_number}"{style_attr}>
+          <div class="photo-entry{hidden_class}" data-page="{page_number}">
             <article class="my-post-outer-container">
               <div class="post">
                 {'<div class="my-tag-container"><a href="' + label_six_link + '" class="my-labels label-six">' + label_six + '</a></div>' if label_six else ""}

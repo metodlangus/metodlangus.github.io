@@ -256,9 +256,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function showPage(page) {
         entries.forEach(entry => {
-            entry.style.display = entry.getAttribute("data-page") == page ? "block" : "none";
+            if (parseInt(entry.dataset.page) === page) {
+                entry.classList.remove("visually-hidden");
+            } else {
+                entry.classList.add("visually-hidden");
+            }
         });
         renderPager(page);
+        // Scroll to top of blog list for better UX
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function renderPager(page) {
@@ -273,7 +279,9 @@ document.addEventListener("DOMContentLoaded", function () {
         pager.innerHTML = '';
 
         // Previous button
-        pager.innerHTML += `<span class="displaypageNum"><a href="#" onclick="redirectpage(${page - 1}); return false" ${page === 1 ? 'style="pointer-events:none;opacity:0.5;"' : ''}>&laquo;</a></span>`;
+        pager.innerHTML += `<span class="displaypageNum">
+            <a href="#" onclick="redirectpage(${page - 1}); return false" ${page === 1 ? 'style="pointer-events:none;opacity:0.5;"' : ''}>&laquo;</a>
+        </span>`;
 
         // First page
         if (page === 1) {
@@ -311,7 +319,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // Next button
-        pager.innerHTML += `<span class="displaypageNum"><a href="#" onclick="redirectpage(${page + 1}); return false" ${page === totalPages ? 'style="pointer-events:none;opacity:0.5;"' : ''}>&raquo;</a></span>`;
+        pager.innerHTML += `<span class="displaypageNum">
+            <a href="#" onclick="redirectpage(${page + 1}); return false" ${page === totalPages ? 'style="pointer-events:none;opacity:0.5;"' : ''}>&raquo;</a>
+        </span>`;
     }
 
     window.redirectpage = redirectpage;
