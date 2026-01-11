@@ -610,11 +610,26 @@ document.addEventListener("DOMContentLoaded", function() {
     </details>
   </details>
   <details open>
-    <summary><a href="https://metodlangus.github.io/relive/posts/2020/">2020</a>&nbsp;<span class="post-count" dir="ltr">(1)</span></summary>
+    <summary><a href="https://metodlangus.github.io/relive/posts/2020/">2020</a>&nbsp;<span class="post-count" dir="ltr">(11)</span></summary>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/relive/posts/2020/12/">december 2020</a>&nbsp;<span class="post-count" dir="ltr">(1)</span></summary>
+      <summary><a href="https://metodlangus.github.io/relive/posts/2020/12/">december 2020</a>&nbsp;<span class="post-count" dir="ltr">(4)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/relive/posts/2020/12/robic/">Robič</a></li>
+        <li><a href="https://metodlangus.github.io/relive/posts/2020/12/hjanzevo-sedlo/">Hjanževo sedlo</a></li>
+        <li><a href="https://metodlangus.github.io/relive/posts/2020/12/begunjscica/">Begunjščica</a></li>
+        <li><a href="https://metodlangus.github.io/relive/posts/2020/12/na-vodalah/">Na vodalah</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary><a href="https://metodlangus.github.io/relive/posts/2020/11/">november 2020</a>&nbsp;<span class="post-count" dir="ltr">(7)</span></summary>
+      <ul>
+        <li><a href="https://metodlangus.github.io/relive/posts/2020/11/tolsta-kosuta/">Tolsta Košuta</a></li>
+        <li><a href="https://metodlangus.github.io/relive/posts/2020/11/pod-kladivom/">Pod Kladivom</a></li>
+        <li><a href="https://metodlangus.github.io/relive/posts/2020/11/zajmenove-peci/">Zajmenove peči</a></li>
+        <li><a href="https://metodlangus.github.io/relive/posts/2020/11/kriska-gora/">Kriška gora</a></li>
+        <li><a href="https://metodlangus.github.io/relive/posts/2020/11/skalna-pec-kisovec/">Skalna peč, Kisovec</a></li>
+        <li><a href="https://metodlangus.github.io/relive/posts/2020/11/kosutnikov-turn/">Košutnikov turn</a></li>
+        <li><a href="https://metodlangus.github.io/relive/posts/2020/11/spodnji-plot/">Spodnji plot</a></li>
       </ul>
     </details>
   </details>
