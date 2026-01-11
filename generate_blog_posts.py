@@ -8,7 +8,7 @@ from babel.dates import format_datetime
 from xml.etree.ElementTree import Element, SubElement, ElementTree
 from zoneinfo import ZoneInfo  # Python 3.9+
 from dateutil import parser  # pip install python-dateutil
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, NavigableString
 from collections import defaultdict
 from urllib.parse import urlparse, urlunparse, urljoin
 import os
@@ -287,7 +287,6 @@ def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
     # Format published date in Slovenian (Unicode-safe)
     published = format_datetime(published_dt, "EEEE, d. MMMM y", locale="sl")
 
-
     title = entry.get("title", {}).get("$t", f"untitled-{index}")
     thumbnail = entry.get("media$thumbnail", {}).get("url", NO_IMAGE)
     link_list = entry.get("link", [])
@@ -304,12 +303,20 @@ def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
     label_six_link = f"{BASE_SITE_URL}/search/labels/{slugify_func(label_six)}/" if label_six else ""
 
     page_number = 1 if entries_per_page == 0 else (index // entries_per_page + 1)
-
     style_attr = "" if entries_per_page == 0 else ' style="display:none;"'
 
     # --- Extract summary / description for alt text ---
     content_html = entry.get("content", {}).get("$t", "")
     soup = BeautifulSoup(content_html, "html.parser")
+
+    # Normalize whitespace in text nodes (prevents newlines in extracted text)
+    for text_node in soup.find_all(string=True):
+        if isinstance(text_node, NavigableString):
+            if text_node.parent.name in ("script", "style", "pre", "code"):
+                continue
+            cleaned = " ".join(text_node.split())
+            if cleaned:
+                text_node.replace_with(cleaned)
 
     def normalize(text):
         return ' '.join(text.split()).strip().lower()
@@ -322,16 +329,16 @@ def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
     # Try extracting a <summary> or <meta name="description">
     summary_tag = soup.find("summary")
     if summary_tag and normalize(summary_tag.get_text()) not in unwanted:
-        description = summary_tag.get_text().strip()
+        description = " ".join(summary_tag.get_text().split())
     else:
         meta_tag = soup.find("meta", attrs={"name": "description"})
         if meta_tag and normalize(meta_tag.get("content", "")) not in unwanted:
-            description = meta_tag["content"].strip()
+            description = " ".join(meta_tag.get("content", "").split())
         else:
             description = title
 
     # Fallback alt text content
-    alt_text = f"{description}"
+    alt_text = description
 
     # --- Render HTML ---
     return f"""
@@ -1276,11 +1283,11 @@ def fetch_and_save_all_posts(entries):
                     normalize("Kaj češ lepšega, kot biti v naravi.")]
         summary_tag = soup.find("summary")
         if summary_tag and normalize(summary_tag.get_text()) not in unwanted:
-            description = summary_tag.get_text().strip()
+            description = " ".join(summary_tag.get_text().split())
         else:
             meta_tag = soup.find("meta", attrs={"name": "description"})
             if meta_tag and normalize(meta_tag.get("content", "")) not in unwanted:
-                description = meta_tag["content"].strip()
+                description = " ".join(meta_tag.get("content", "").split())
             else:
                 description = title
 
@@ -1328,10 +1335,10 @@ def fetch_and_save_all_posts(entries):
         peak_divs = soup.find_all("div", class_="peak-tag")
         keywords_list = []
         for div in peak_divs:
-            text = div.get_text(separator=",").strip()
+            text = " ".join(div.get_text(separator=",").split())
             if text:
-                # Remove extra newlines and spaces, then split by comma
-                parts = [p.strip() for p in text.replace("\n", "").split(",") if p.strip()]
+                # Remove extra spaces, then split by comma
+                parts = [p.strip() for p in text.split(",") if p.strip()]
                 keywords_list.extend(parts)
         # Append blog title and author as keywords
         keywords_list.extend([BLOG_TITLE, BLOG_AUTHOR])
