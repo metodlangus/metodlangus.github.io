@@ -92,7 +92,9 @@ function addMarkers(data) {
         var imageLink = match[2];   // Extract image link
         var dataSkip = match[3] || null; // Extract data-skip value
         var postTitle = match[4];   // Extract post title
-        var postLink = WindowBaseUrl + "/posts/" +(match[5] || ""); // Construct full post link from extracted link part
+        var postLink = isRelive     // Construct full post link from extracted link part
+          ? WindowBaseUrl + "/relive/posts/" + (match[5] || "")
+          : WindowBaseUrl + "/posts/" + (match[5] || "");
         var latitude = parseFloat(match[6]); // Extract latitude
         var longitude = parseFloat(match[7]); // Extract longitude
 
