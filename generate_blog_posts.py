@@ -1484,7 +1484,7 @@ def fetch_and_save_all_posts(entries):
         {searchbox_html}
         <h1>{title}</h1>
         {metadata_html}
-        <p class="post-summary">
+        <p class="visually-hidden">
           {description}
         </p>
         {content_html}
