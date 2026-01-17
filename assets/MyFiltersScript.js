@@ -1,3 +1,5 @@
+const isRelive = window.BLOG_CONTEXT?.isRelive === true;
+
 /**
  * Initializes a toggle button that persists its ON/OFF state and reloads page when changed.
  * @param {string} buttonId - The ID of the toggle button element.
@@ -174,12 +176,17 @@ function initializePersistentSlider(sliderId, valueDisplayId, storageKey) {
     }
 
     // Define special titles for specific values
-    const specialTitle = {
-        "3": "Največ slik",
-        "2": "Več slik",
-        "1": "Malo slik",
-        "0": "Najboljše"
-    };
+    const specialTitle = isRelive
+      ? {                               // If this is a Relive page
+          "0": "Vse",                   // All photos are shown
+          "-1": "Naslovne"              // Only cover photos are shown
+        }
+      : {                               // If this is a normal (non-Relive) page
+          "3": "Največ slik",
+          "2": "Več slik",
+          "1": "Malo slik",
+          "0": "Najboljše"
+        };
 
     // Load the saved value from localStorage and apply it to the slider and display
     const savedValue = localStorage.getItem(storageKey);

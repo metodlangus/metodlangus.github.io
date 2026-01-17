@@ -5,6 +5,7 @@ const stepSpeed = 0.25;
 const initQuality = 4;
 const SLIDESHOW_HIDDEN = true;
 const SLIDESHOW_VISIBLE = false;
+const isRelive = window.BLOG_CONTEXT?.isRelive === true;
 
 let randomizeImages = true; // default ON
 let slideshowIndex = 0;
@@ -740,7 +741,6 @@ function fetchData(index) {
     
     // Determine the feed URL based on the slideshow title
     if (slideshowTitles[index] === "All pictures") {
-        const isRelive = window.BLOG_CONTEXT?.isRelive === true;
         feedUrl = isRelive
           ? `${WindowBaseUrl}/data/all-relive-posts.json`
           : `${WindowBaseUrl}/data/all-posts.json`;
@@ -2804,12 +2804,17 @@ function initializePersistentSlider(sliderId, valueDisplayId, storageKey) {
     }
 
     // Define special titles for specific values
-    const specialTitle = {
-        "3": "Največ slik",
-        "2": "Več slik",
-        "1": "Malo slik",
-        "0": "Najboljše"
-    };
+    const specialTitle = isRelive
+      ? {                               // If this is a Relive page
+          "0": "Vse",                   // All photos are shown
+          "-1": "Naslovne"              // Only cover photos are shown
+        }
+      : {                               // If this is a normal (non-Relive) page
+          "3": "Največ slik",
+          "2": "Več slik",
+          "1": "Malo slik",
+          "0": "Najboljše"
+        };
 
     // Load the saved value from localStorage and apply it to the slider and display
     const savedValue = localStorage.getItem(storageKey);
