@@ -77,6 +77,8 @@
 .my-slideshow-container .mySlides img {
   max-width: 100%; /* Set the maximum width to the width of the container */
   max-height: 100%; /* Set the maximum height to the height of the container */
+  width: 100%;  /* Stretch to fill slide width, even for lower-quality images */
+  height: 100%; /* Stretch to fill slide height, even for lower-quality images */
   object-fit: contain; /* Maintain aspect ratio without cropping */
   border-radius: 0; /* Remove border radius if needed */
 }
@@ -86,7 +88,8 @@
 }
 
 .my-slideshow-container .text,
-.my-slideshow-container .uppertext {
+.my-slideshow-container .uppertext,
+.my-slideshow-container .date {
   color: #f2f2f2;
   font-size: 18px;
   padding: 8px;
@@ -109,6 +112,14 @@
 
 .my-slideshow-container .uppertext {
   top: 0;
+}
+
+.my-slideshow-container .date {
+  right: -7px;
+  bottom: -12px;
+  width: auto;
+  text-align: right;
+  font-size: 12px;
 }
 
 /* Base styles for light theme */
@@ -294,12 +305,18 @@
   .my-slideshow-container .uppertext {
     font-size: 14px;
   }
+  .my-slideshow-container .date {
+    font-size: 12px;
+  }
 }
 
 @media only screen and (max-width: 300px) {
   .my-slideshow-container .text,
   .my-slideshow-container .uppertext {
     font-size: 12px;
+  }
+  .my-slideshow-container .date {
+    font-size: 10px;
   }
 }
 

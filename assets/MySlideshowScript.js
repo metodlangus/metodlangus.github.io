@@ -368,18 +368,21 @@ function insertSlideshowContainer(slideshowTitle, coverPhoto, index) {
                     <!-- First image (Previous) -->
                     <div class='mySlides slide1' id="slide1-${index}">
                         <div class='uppertext'></div>
+                        <div class='date'></div>
                         <img alt='' src=''/>
                         <div class='text' id="descriptionControllStyle0-${index}"></div>
                     </div>
                     <!-- Second image (Current) -->
                     <div class='mySlides slide2' id="slide2-${index}">
                         <div class='uppertext'></div>
+                        <div class='date'></div>
                         <img alt='' src=''/>
                         <div class='text' id="descriptionControllStyle1-${index}"></div>
                     </div>
                     <!-- Third image (Next) -->
                     <div class='mySlides slide3' id="slide3-${index}">
                         <div class='uppertext'></div>
+                        <div class='date'></div>
                         <img alt='Next Image' src=''/>
                         <div class='text' id="descriptionControllStyle2-${index}"></div>
                     </div>
@@ -647,13 +650,22 @@ function autoSetQuality(index) {
         const padding = Math.max(containerWidth / 60, 8); // Padding based on container width, but minimum 8px
 
         // Apply font size to text elements
-        const textElements = slideshowContainer[index].querySelectorAll('.text, .uppertext');
-        if (textElements.length > 0) {
-            textElements.forEach(textElement => {
+        const textElements = slideshowContainer[index].querySelectorAll('.text, .uppertext, .date');
+        textElements.forEach(textElement => {
+            if (textElement.classList.contains('date')) {
+                // Keep date smaller in ratio
+                const dateFont = Math.round(fontSize * 0.7777); // e.g., 14px if base 18px
+                textElement.style.fontSize = `${dateFont}px`;
+                textElement.style.padding = `${Math.round(padding * 0.7777)}px`;
+
+                // Set bottom negative equal to font size
+                textElement.style.bottom = `-${dateFont}px`;
+            } else {
+                // Normal text/uppertext
                 textElement.style.fontSize = `${fontSize}px`; // Set font-size to the calculated value
                 textElement.style.padding = `${padding}px`; // Set padding to the calculated value
-            });
-        }
+            }
+        });
 
         // Assign the bigger value to a third variable
         const containerSize = Math.max(containerWidth, containerHeight); // Determine the larger value
@@ -918,6 +930,7 @@ function fetchData(index) {
                                     src: element.src,
                                     caption: element.caption,
                                     title: postTitle, // Ensure the correct title is passed
+                                    date: postDate,
                                 });
                             } else if (element.type === 'script') {
                                 const additionalPostId = element.postId;
@@ -1281,7 +1294,8 @@ function initializeSlides(index) {
 
             // Set captions
             slideContainers[index][i].querySelector('.text').textContent = imageObj.caption || '';
-            slideContainers[index][i].querySelector('.uppertext').textContent = ``;
+            slideContainers[index][i].querySelector('.uppertext').textContent = imageObj.title || '';
+            slideContainers[index][i].querySelector('.date').textContent = imageObj.date || '';
         }
     }
 }
@@ -1481,6 +1495,10 @@ function processEntry(index, entry) {
     const htmlDoc = parser.parseFromString(content, 'text/html');
     const images = htmlDoc.getElementsByTagName('img');
     const postTitle = entry.title.$t;
+    const postDateRaw = entry.published?.$t || '';
+    const postDate = postDateRaw
+        ? new Date(postDateRaw).toLocaleDateString('sl-SI')
+        : '';
     const captions = getCaptions(htmlDoc);
 
     // Get the width and height of the slideshow container in pixels
@@ -1537,7 +1555,7 @@ function processEntry(index, entry) {
                 .replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//, `/s${containerSize}-rw/`);
             
             const caption = captions[i] || '';
-            slideshows[index].imageBuffer.push({ src: imgSrc, caption, title: postTitle });
+            slideshows[index].imageBuffer.push({ src: imgSrc, caption, title: postTitle, date: postDate });
         }
     }        
 }
@@ -2080,6 +2098,7 @@ async function updateSlide(index, slideContainer, entry, direction) {
     const imgElement = slideContainer.querySelector('img');
     const captionElement = slideContainer.querySelector('.text');
     const upperTextElement = slideContainer.querySelector('.uppertext');
+    const dateElement = slideContainer.querySelector('.date');
 
     // Stop slideshow if the flag is set
     if (slideshows[index].pauseSlideshowFlag) {
@@ -2098,8 +2117,10 @@ async function updateSlide(index, slideContainer, entry, direction) {
         // Set upper text based on the entry title
         if (slideshowTitles[index] === "All pictures") {
             upperTextElement.textContent = entry.title || ''; // Set the title from the entry object
+            dateElement.textContent = entry.date || ''; // Set date if available
         } else {
             upperTextElement.textContent = ''; // Clear if not applicable
+            dateElement.textContent = '';
         }
 
         // Set flag to stop slideshow if it reaches the end
@@ -2117,7 +2138,7 @@ async function updateSlide(index, slideContainer, entry, direction) {
             await updateSlide(index, slideContainer, nextEntry, direction);
         } else {
             // Use placeholder if no valid entry is found
-            setPlaceholderImage(imgElement, captionElement, upperTextElement);
+            setPlaceholderImage(imgElement, captionElement, upperTextElement, dateElement);
         }
     }
 
@@ -2161,13 +2182,15 @@ function getNextOrPreviousEntry(index, currentEntry, direction) {
  * @param   imgElement      The image element where the placeholder image will be set.
  * @param   captionElement  The caption element where the placeholder caption will be displayed.
  * @param   upperTextElement The upper text element where placeholder text will be shown.
+ * @param   dateElement     The date element where placeholder date text will be shown.
  *
  * @return  None.
  */
-function setPlaceholderImage(imgElement, captionElement, upperTextElement) {
+function setPlaceholderImage(imgElement, captionElement, upperTextElement, dateElement) {
     imgElement.src = defaultImgSrc; // Default placeholder
     captionElement.textContent = "FOTO: Matej"; // Placeholder caption
     upperTextElement.textContent = "Cima dell'Uomo (3010 m)"; // Placeholder upper text
+    dateElement.textContent = ""; // Placeholder date
 }
 
 
