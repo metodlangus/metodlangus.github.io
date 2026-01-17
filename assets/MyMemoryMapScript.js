@@ -625,14 +625,21 @@ function handleSliderChange() {
     const slider = document.getElementById('photosMapSliderElement');
     const valueDisplay = document.getElementById('photosMapValueElement');
 
-    let specialTitle = {
-      "3": "Največ slik",
-      "2": "Več slik",
-      "1": "Malo slik",
-      "0": "Najboljše",
-      "-1": "Naslovne",
-      "-2": "Z vrhov"
-    };
+    // Define titles for different photo ranges
+    let specialTitle = isRelive
+      ? {                               // If this is a Relive page
+          "0": "Vse",                   // All photos are shown
+          "-1": "Naslovne"              // Only cover photos are shown
+        }
+      : {                               // If this is a normal (non-Relive) page
+          "3": "Največ slik",           // Many photos
+          "2": "Več slik",              // More photos
+          "1": "Malo slik",             // Few photos
+          "0": "Najboljše",             // Best photos
+          "-1": "Naslovne",             // Cover photos
+          "-2": "Z vrhov"               // Summit photos
+        };
+
 
     // Update value display
     valueDisplay.textContent = specialTitle[slider.value] || slider.value;
@@ -647,14 +654,19 @@ document.addEventListener('DOMContentLoaded', function () {
     const valueDisplay = document.getElementById('photosMapValueElement');
 
     // Define special titles for specific values
-    const specialTitle = {
-        "3": "Največ slik",
-        "2": "Več slik",
-        "1": "Malo slik",
-        "0": "Najboljše",
-        "-1": "Naslovne",
-        "-2": "Z vrhov"
-    };
+    const specialTitle = isRelive
+      ? {                               // If this is a Relive page
+          "0": "Vse",                   // All photos are shown
+          "-1": "Naslovne"              // Only cover photos are shown
+        }
+      : {                               // If this is a normal (non-Relive) page
+          "3": "Največ slik",           // Many photos
+          "2": "Več slik",              // More photos
+          "1": "Malo slik",             // Few photos
+          "0": "Najboljše",             // Best photos
+          "-1": "Naslovne",             // Cover photos
+          "-2": "Z vrhov"               // Summit photos
+        };
 
     // Retrieve the stored value from localStorage, if available
     const storedValue = localStorage.getItem('photosMapSliderValue');

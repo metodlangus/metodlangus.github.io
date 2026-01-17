@@ -4,7 +4,7 @@ from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
 from datetime import datetime
 from ppadb.client import Client as AdbClient
-import base64  # Added to decode new image links
+import re
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -74,6 +74,27 @@ def adb_pull(image_path, local_path):
     result = subprocess.run(["adb", "pull", image_path, local_path], capture_output=True, text=True)
     return result.stdout.strip()
 
+def normalize_filename(name: str) -> str:
+    """
+    Normalize image filenames:
+      - VideoCapture_YYYYMMDD-HHMMSS.jpg -> YYYYMMDD_HHMMSS.jpg
+      - YYYYMMDD_HHMMSS_001.jpg -> YYYYMMDD_HHMMSS.jpg
+      - Otherwise keep original
+    """
+    base = name.split('/')[-1]
+
+    # VideoCapture_YYYYMMDD-HHMMSS.jpg
+    m = re.match(r"VideoCapture_(\d{8})-(\d{6})\.jpg", base, re.IGNORECASE)
+    if m:
+        return f"{m.group(1)}_{m.group(2)}.jpg"
+
+    # YYYYMMDD_HHMMSS_001.jpg -> YYYYMMDD_HHMMSS.jpg
+    m = re.match(r"(\d{8}_\d{6})_\d+\.jpg", base, re.IGNORECASE)
+    if m:
+        return f"{m.group(1)}.jpg"
+
+    return base
+
 def get_gps_coordinates(exif_data):
     """
     Extract GPS coordinates from EXIF data if present.
@@ -137,7 +158,7 @@ def load_existing_entries(output_file, saved_without_location):
             # Extract the image name, link, and check if the image already has GPS data
             parts = line.split(', ')
             if len(parts) > 2:
-                image_name = parts[0].split()[0].strip()  # Extract just the image name
+                image_name = normalize_filename(parts[0].split()[0].strip())  # Extract just the image name
                 image_link = parts[1].replace("Link:", "").strip()  # Extract the image link
                 # Only add entries with valid GPS data
                 if "No location" not in line:
@@ -175,21 +196,10 @@ def process_images(list_of_photos_file, images_folder, output_file, saved_withou
             print(f"Skipping malformed line: {line}")
             continue
         
+        image_name = normalize_filename(parts[0])
         image_link = parts[2].replace("Link:", "").strip()
         picture_quality_tag = parts[3]
         
-        # Decode image link from base64 to get the actual filename
-        try:
-            decoded_url = base64.b64decode(parts[0]).decode("utf-8")
-            original_filename = os.path.basename(decoded_url)
-            # Extract correct image name without extra timestamp
-            image_name = original_filename.split('_')[0] + '_' + original_filename.split('_')[1]
-            if not image_name.lower().endswith('.jpg'):
-                image_name += ".jpg"
-        except Exception as e:
-            print(f"Error decoding image name from link {parts[0]}: {e}")
-            image_name = parts[0]  # fallback
-
         # Extract post title (between quotes)
         remaining_parts = parts[4].split('"', 2)
         if len(remaining_parts) < 3:
@@ -229,12 +239,12 @@ def process_images(list_of_photos_file, images_folder, output_file, saved_withou
 
         # Using ADB to list images
         folder_images_raw = device.shell(f"ls -1 {images_folder}")  # Get raw output with one file per line
-        folder_images = folder_images_raw.splitlines()  # Split the output by newlines
+        folder_images = [normalize_filename(name) for name in folder_images_raw.splitlines()]  # Split the output by newlines
     else:
         # Using local directory listing
         folder_images = [
-            image_name for image_name in os.listdir(images_folder)
-            if image_name.lower().endswith(('.jpg', '.jpeg', '.png'))
+            normalize_filename(name) for name in os.listdir(images_folder)
+            if name.lower().endswith(('.jpg', '.jpeg', '.png'))
         ]
 
     # Print the selected directory and processing information
@@ -336,13 +346,7 @@ def process_images(list_of_photos_file, images_folder, output_file, saved_withou
 
     with open(output_file, 'w', encoding="utf-8") as f:
         for line in existing_lines:
-            if not line.strip():  # skip empty lines
-                continue
-            parts = line.split(', ')
-            if not parts:
-                continue
-            image_name = parts[0].split()[0].strip()
-
+            image_name = normalize_filename(line.split(', ')[0].split()[0].strip())
             if image_name in updated_entries:
                 data = updated_entries[image_name]
                 gps_data = data['gps_coordinates']
@@ -365,10 +369,10 @@ def process_images(list_of_photos_file, images_folder, output_file, saved_withou
     print(f"\n\nFile updated from directory: {images_folder}")
     print(f" - {len(updated_entries)} entries rewritten with location")
     print(f" - {photos_without_location} photos in current directory are without location data.\n")
-    print(f"About photos from others directoryes:")
+    print(f"About photos from other directories:")
     print(f" - {all_photos_in_file} photos are in input file.")
     print(f" - {saved_without_location} photos are saved without location.")
-    print(f" - {unprocessed_photos - saved_without_location} photos ramains unprocessed.\n")
+    print(f" - {unprocessed_photos - saved_without_location} photos remain unprocessed.\n")
     
     if use_adb:
         adb_disconnect()  # Disconnect from ADB

@@ -655,7 +655,7 @@ def render_sidebar_settings(picture_settings=True, map_settings=True, current_pa
             <label for='photosSliderElement'>
                 <b>Obseg prikazanih slik:</b> <span id='photosValueElement'></span>
             </label>
-            <input id='photosSliderElement' max='3' min='0' step='1' type='range' value='initPhotos' style="width: 160px;"/>
+            <input id='photosSliderElement' max='1' min='0' step='1' type='range' value='initPhotos' style="width: 160px;"/>
         </div>
         """
 
@@ -686,7 +686,7 @@ def render_sidebar_settings(picture_settings=True, map_settings=True, current_pa
             <!-- Slider Section -->
             <div style='display: flex; flex-direction: column; margin-left: 5px; margin-top: 5px; margin-bottom: 10px;'>
                 <label for='photosMapSliderElement'>Obseg prikazanih slik: <span id='photosMapValueElement'/></label>
-                <input id='photosMapSliderElement' max='3' min='-2' step='1' style='width: 160px;' type='range' value='initMapPhotos'/>
+                <input id='photosMapSliderElement' max='1' min='0' step='1' style='width: 160px;' type='range' value='initMapPhotos'/>
             </div>
 
             <!-- Date and Time Filters -->

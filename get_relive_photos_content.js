@@ -8,7 +8,38 @@ const BASE_DIR = __dirname;
 const FEED_FILE = path.join(BASE_DIR, 'data', 'all-relive-posts.json');
 const OUTPUT_FILE = path.join(BASE_DIR, 'list_of_relive_photos.txt');
 
-// Function to fetch data from the local blog feed
+/**
+ * Normalize image filenames from Relive URLs to standard format.
+ * Handles:
+ *   IMG_YYYYMMDD_HHMMSS.jpg_1669540460000.jpg
+ *   VideoCapture_YYYYMMDD-HHMMSS.jpg_1682747035000.jpg
+ *   20210907_110040_001.jpg
+ *   Already correct YYYYMMDD_HHMMSS.jpg
+ */
+function normalizeFilename(name) {
+    let base = name.split('/').pop(); // extract filename
+
+    // Case 1: Relive URLs with extra millisecond suffix
+    let m = base.match(/^(.+?\.jpg)(?:_\d+\.jpg)?$/i);
+    if (m) base = m[1];
+
+    // Case 2: VideoCapture_YYYYMMDD-HHMMSS.jpg -> YYYYMMDD_HHMMSS.jpg
+    m = base.match(/^VideoCapture_(\d{8})-(\d{6})\.jpg$/i);
+    if (m) return `${m[1]}_${m[2]}.jpg`;
+
+    // Case 3: IMG_YYYYMMDD_HHMMSS.jpg -> YYYYMMDD_HHMMSS.jpg
+    m = base.match(/^IMG_(\d{8})_(\d{6})\.jpg$/i);
+    if (m) return `${m[1]}_${m[2]}.jpg`;
+
+    // Case 4: Extra _001 or _002 suffix -> remove it
+    m = base.match(/^(\d{8}_\d{6})_\d+\.jpg$/i);
+    if (m) return `${m[1]}.jpg`;
+
+    // Case 5: Already normalized
+    return base;
+}
+
+// Function to fetch and parse the feed
 function fetchData() {
     console.log('Loading local feed...');
 
@@ -24,16 +55,16 @@ function fetchData() {
         const $ = cheerio.load(content);
         const images = $('img');
 
-            images.each((i, img) => {
-                let imgSrc = $(img).attr('src');
-                if (imgSrc && imgSrc.startsWith('data:image/svg+xml')) return; // Skip SVG images encoded as text
-                imgSrc = imgSrc.replace(/\/s\d+\/|\/w\d+-h\d+\//, '/s400/'); // Resize images for uniformity
-                const imageName = imgSrc.split('/').pop(); // Extract the image name (filename) from the URL
-                const dataSkip = $(img).attr('data-skip') || 'NA';
-                // Push image details (filename, URL, data-skip) into the buffer
-                imageDetailsBuffer.push({ imageName, imgUrl: imgSrc, dataSkip, postTitle, postUrl });
-            });
+        images.each((i, img) => {
+            let imgSrc = $(img).attr('src');
+            if (!imgSrc || imgSrc.startsWith('data:image/svg+xml')) return; // Skip SVG images encoded as text
+            imgSrc = imgSrc.replace(/\/s\d+\/|\/w\d+-h\d+\//, '/s400/'); // Uniform size
+            const imageName = normalizeFilename(imgSrc); // Normalize filename
+            const dataSkip = $(img).attr('data-skip') || 'NA';
+            // Push image details (filename, URL, data-skip) into the buffer
+            imageDetailsBuffer.push({ imageName, imgUrl: imgSrc, dataSkip, postTitle, postUrl });
         });
+    });
 
     // Once feed are loaded, process duplicates and save results
     console.log('Feed loaded. Processing duplicates...');
@@ -67,8 +98,9 @@ function processDuplicates(imageDetails) {
     const duplicates = [];      // To store duplicate info for logging
 
     imageDetails.forEach(({ imageName, imgUrl, dataSkip, postTitle, postUrl }) => {
-        if (!filenameCounts[imageName]) {
-            filenameCounts[imageName] = {
+        const normName = normalizeFilename(imageName);
+        if (!filenameCounts[normName]) {
+            filenameCounts[normName] = {
                 count: 0,
                 firstImgUrl: imgUrl,       // Store only the first image URL
                 dataSkips: [],
@@ -76,17 +108,17 @@ function processDuplicates(imageDetails) {
                 firstPostUrl: postUrl      // Store only the first post URL
             };
         }
-        filenameCounts[imageName].count += 1;
-        filenameCounts[imageName].dataSkips.push(dataSkip);
+        filenameCounts[normName].count += 1;
+        filenameCounts[normName].dataSkips.push(dataSkip);
 
         // Only add the image to uniqueImages the first time we encounter it
-        if (filenameCounts[imageName].count === 1) {
+        if (filenameCounts[normName].count === 1) {
             uniqueImages.push({
-                imageName,
-                imgUrl: filenameCounts[imageName].firstImgUrl,
+                imageName: normName,
+                imgUrl: filenameCounts[normName].firstImgUrl,
                 dataSkip,
-                postTitle: filenameCounts[imageName].firstPostTitle,
-                postUrl: filenameCounts[imageName].firstPostUrl
+                postTitle: filenameCounts[normName].firstPostTitle,
+                postUrl: filenameCounts[normName].firstPostUrl
             });
         }
     });

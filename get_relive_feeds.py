@@ -9,9 +9,10 @@
  * - Builds HTML content and JSON feed entries.
  * - Adds cover photo to feed in CDN format (width 600).
  * - Matches GPX files by timestamp or filename.
+ * - Using Blogger links for images when available
  *
  * @author Metod Langus
- * @date 2025-12-08
+ * @date 2026-01-17
  */
 """
 
@@ -20,7 +21,7 @@ import ast
 import base64
 import re
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from slugify import slugify
 from urllib.parse import unquote
@@ -43,6 +44,9 @@ source_file = r"C:\Spletna_stran_Github\Dump_relive_data\relive_data.txt"
 
 gpx_list_file = f"C:\Spletna_stran_Github\metodlangus.github.io\list_of_relive_tracks.txt"
 GPX_BASE_URL = "https://metodlangus.github.io/my_GPX_tracks/"
+
+BLOGGER_LIST_FILE = r"C:\Spletna_stran_Github\metodlangus.github.io\list_of_relive_photos.txt"
+MASTER_IMAGE_FILE = r"C:\Spletna_stran_Github\metodlangus.github.io\all_public_images_combined.txt"
 
 data_root = Path("data")
 data_root.mkdir(exist_ok=True)
@@ -97,6 +101,105 @@ def relive_cdn(url: str, width: int) -> str:
     """
     b64 = base64.b64encode(url.encode("utf-8")).decode("utf-8")
     return f"https://img.relive.com/-/w:{width}/{b64}"
+
+def normalize_filename(url: str) -> str:
+    base = url.split("/")[-1]
+    clean = re.sub(r"_[0-9]+\.jpg$", ".jpg", base, flags=re.IGNORECASE)
+
+    dt_match = re.search(r"(\d{8})[-_]?(\d{6})", clean)
+    if dt_match:
+        return f"{dt_match.group(1)}_{dt_match.group(2)}.jpg"
+
+    return clean
+
+def find_blogger_match(filename: str, blogger_map: dict) -> str:
+    """
+    Try to find exact Blogger match, or +/- 1 second mismatch.
+    Prints warning if mismatch detected.
+    """
+    if filename in blogger_map:
+        return blogger_map[filename]
+
+    # Try +/- 1 second if timestamped filename
+    match = re.match(r"(\d{8})_(\d{6})\.jpg", filename)
+    if not match:
+        return ""
+
+    date_part, time_part = match.groups()
+
+    dt = datetime.strptime(date_part + time_part, "%Y%m%d%H%M%S")
+
+    for delta in (-1, 1):
+        new_dt = dt + timedelta(seconds=delta)
+        new_key = new_dt.strftime("%Y%m%d_%H%M%S.jpg")
+        if new_key in blogger_map:
+            print(f"⚠ Timestamp mismatch for 1s for image name {filename}")
+            return blogger_map[new_key]
+
+    return ""
+
+# ---------------- Load Blogger links ----------------
+blogger_map = {}
+with open(BLOGGER_LIST_FILE, "r", encoding="utf-8") as f:
+    for line in f:
+        line = line.strip()
+        if not line:
+            continue
+        match = re.match(r"(.+?\.jpg)\s+Link:\s+(\S+)", line, re.IGNORECASE)
+        if match:
+            blogger_map[match.group(1)] = match.group(2)
+
+# ---------------- Build master image list ----------------
+images_dict = {}  # key=original_url, value=(datetime, cdn_url, blogger_url)
+
+with open(source_file, "r", encoding="utf-8") as f:
+    for line in f:
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            activity = ast.literal_eval(line)
+        except Exception:
+            continue
+        info = activity.get("activity_info", {})
+
+        # Skip private activities
+        privacy = info.get("privacy", {})
+        if EXCLUDE_PRIVATE and privacy.get("value") == "private":
+            continue
+
+        start_date = info.get("start_date_local") or info.get("start_date")
+        dt = datetime.fromisoformat(start_date.replace("Z", "+00:00")) if start_date else datetime.utcnow()
+
+        # Cover photo
+        cover = info.get("cover", {})
+        cover_url = None
+        if cover and cover.get("type") == 'url' and 'image' in cover and 'url' in cover['image']:
+            cover_url = str(unquote(cover['image']['url']))
+            filename = normalize_filename(cover_url)
+            blogger_url = find_blogger_match(filename, blogger_map)
+            images_dict[cover_url] = (dt, relive_cdn(cover_url, CDN_SRC_WIDTH), blogger_url)
+
+        # Media images
+        media_list = info.get("media", []) or []
+        for media in media_list:
+            variants = media.get("variants", []) or []
+            if not variants:
+                continue
+            original_url = str(unquote(variants[0].get('url', '')))
+            if not original_url or (cover_url and original_url == cover_url):
+                continue
+            filename = normalize_filename(original_url)
+            blogger_url = find_blogger_match(filename, blogger_map)
+            images_dict[original_url] = (dt, relive_cdn(original_url, CDN_SRC_WIDTH), blogger_url)
+
+# Sort by datetime descending and save
+sorted_images = sorted(images_dict.items(), key=lambda x: x[1][0], reverse=True)
+with open(MASTER_IMAGE_FILE, "w", encoding="utf-8") as out_f:
+    for original_url, (dt, cdn_url, blogger_url) in sorted_images:
+        out_f.write(f"{original_url}\t{cdn_url}\t{blogger_url}\n")
+print(f"✅ Master image list saved: {MASTER_IMAGE_FILE} ({len(sorted_images)} unique images)")
+
 
 # GPX index loading & parsing
 def parse_datetime_from_token(token):
@@ -278,8 +381,10 @@ with open(source_file, 'r', encoding='utf-8') as f:
 
         # Cover image with separate CDN widths
         if cover_photo_url:
-            src_cdn = relive_cdn(cover_photo_url, CDN_SRC_WIDTH)
-            href_cdn = relive_cdn(cover_photo_url, CDN_HREF_WIDTH)
+            filename = normalize_filename(cover_photo_url)
+            blogger_url = find_blogger_match(filename, blogger_map)
+            src_cdn = blogger_url if blogger_url else relive_cdn(cover_photo_url, CDN_SRC_WIDTH)
+            href_cdn = src_cdn if blogger_url else relive_cdn(cover_photo_url, CDN_HREF_WIDTH)
             content_html += f"""
 <a href="{href_cdn}" style="display: block; padding: 1em 0px; text-align: center;">
   <img data-skip="0;-1" alt="{activity_name}" border="0" src="{src_cdn}" width="{cover_width}" />
@@ -324,8 +429,11 @@ with open(source_file, 'r', encoding='utf-8') as f:
             else:
                 data_skip = "1"
 
-            src_cdn = relive_cdn(original_url, CDN_SRC_WIDTH)
-            href_cdn = relive_cdn(original_url, CDN_HREF_WIDTH)
+            # Compute blogger_url for each image separately
+            filename = normalize_filename(original_url)
+            blogger_url = find_blogger_match(filename, blogger_map)
+            src_cdn = blogger_url if blogger_url else relive_cdn(original_url, CDN_SRC_WIDTH)
+            href_cdn = src_cdn if blogger_url else relive_cdn(original_url, CDN_HREF_WIDTH)
 
             images_html += f"""
 <div class="separator" style="clear: both;">
