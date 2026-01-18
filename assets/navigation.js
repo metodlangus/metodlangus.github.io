@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/karavanke/'>Karavanke</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/karnijske-alpe/'>Karnijske Alpe</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/kriske-alpe/'>Kriške Alpe</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/labotniske-alpe/'>Labotniške Alpe</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/matra/'>Mátra</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/nizke-tatre/'>Nizke Tatre</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/nizke-ture/'>Nizke Ture</a></li>
