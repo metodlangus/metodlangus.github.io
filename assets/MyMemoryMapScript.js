@@ -1,14 +1,10 @@
-// Constants and Variables
-const isRelive = window.BLOG_CONTEXT?.isRelive === true;
-const gpxFolder = isRelive
-  ? `${WindowBaseUrl}/my_GPX_tracks/`
-  : `${WindowBaseUrl}/GPX_tracks/`;
-const trackListUrl = isRelive
-  ? `${WindowBaseUrl}/list_of_relive_tracks.txt`
-  : `${WindowBaseUrl}/list_of_tracks.txt`;
-const photoListUrl = isRelive
-  ? `${WindowBaseUrl}/extracted_relive_photos_with_gps_data.txt`
-  : `${WindowBaseUrl}/extracted_photos_with_gps_data.txt`;
+const masterLayerGroup = L.layerGroup();
+const clusteredMarkers = L.markerClusterGroup();
+const nonClusteredMarkers = L.layerGroup();
+const tracks = {};  // Store currently displayed GPX tracks
+const hiddenTracks = {};  // Store temporarily hidden GPX tracks
+let currentlySelectedTrack = null;  // Track the selected track
+let wasZoomedFromTopo = false; // Flag to track if the map was zoomed in from OpenTopoMap beyond 17.25
 const trackColors = ['orange', 'blue', 'green', 'red', 'purple', 'brown', 'yellow', 'pink', 
     'cyan', 'magenta', 'lime', 'teal', 'indigo', 'violet', 'coral', 'navy', 'olive', 'maroon', 
     'turquoise', 'gold', 'salmon', 'crimson', 'darkorange', 'darkgreen', 'darkred', 'hotpink', 
@@ -26,13 +22,31 @@ const trackColors = ['orange', 'blue', 'green', 'red', 'purple', 'brown', 'yello
     'darkgoldenrod', 'darkseagreen', 'darkslategray'
 ];
 
-const masterLayerGroup = L.layerGroup();
-const clusteredMarkers = L.markerClusterGroup();
-const nonClusteredMarkers = L.layerGroup();
-const tracks = {};  // Store currently displayed GPX tracks
-const hiddenTracks = {};  // Store temporarily hidden GPX tracks
-let currentlySelectedTrack = null;  // Track the selected track
-let wasZoomedFromTopo = false; // Flag to track if the map was zoomed in from OpenTopoMap beyond 17.25
+function createBlogConfig() {
+  const isRelive = window.BLOG_CONTEXT?.isRelive === true;
+
+  const gpxFolder = isRelive
+    ? `${WindowBaseUrl}/my_GPX_tracks/`
+    : `${WindowBaseUrl}/GPX_tracks/`;
+
+  const trackListUrl = isRelive
+    ? `${WindowBaseUrl}/list_of_relive_tracks.txt`
+    : `${WindowBaseUrl}/list_of_tracks.txt`;
+
+  const photoListUrl = isRelive
+    ? `${WindowBaseUrl}/extracted_relive_photos_with_gps_data.txt`
+    : `${WindowBaseUrl}/extracted_photos_with_gps_data.txt`;
+
+  return {
+    isRelive,
+    gpxFolder,
+    trackListUrl,
+    photoListUrl,
+  };
+}
+
+// Initialize blog configuration
+const { gpxFolder, trackListUrl, photoListUrl } = createBlogConfig();
 
 // Initialize map
 const map = L.map('map').setView([46.27396640, 14.30939080], 8); // Coordinates of Bistrica pri Tržiču

@@ -1,9 +1,17 @@
 const WindowBaseUrl = window.location.origin;
 // const WindowBaseUrl = window.location.origin + "/metodlangus.github.io/";
 
-const isRelive = window.BLOG_CONTEXT?.isRelive === true;
-const initPhotos = 1; // Determine range of photos to be shown on slideshows and in posts
-const initMapPhotos = isRelive ? 0 : -1; // Determine range of photos to be shown on map
+function getInitialPhotoConfig() {
+  const isRelive = window.BLOG_CONTEXT?.isRelive === true;
+
+  return {
+    initMapPhotos: isRelive ? 0 : -1, // range of photos shown on map
+    initPhotos: 1,                    // range of photos shown in slideshows and posts
+  };
+}
+
+// Initialize blog configuration
+const { initMapPhotos, initPhotos } = getInitialPhotoConfig();
 
 // Format date
 document.addEventListener('DOMContentLoaded', function () {

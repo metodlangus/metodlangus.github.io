@@ -24,12 +24,14 @@ import winsound
 
 GITHUB_USER_NAME = "metodlangus"
 GITHUB_REPO_NAME = "metodlangus.github.io"
-LOCAL_HOST_URL = f"http://127.0.0.1:5501"
+LOCAL_HOST_URL = f"http://127.0.0.1:5502"
 LOCAL_REPO_PATH  = os.path.dirname(os.path.abspath(__file__))
 
 # Nastavitve - Change this one line when switching local <-> GitHub Pages
 BASE_SITE_URL = f"https://{GITHUB_REPO_NAME}"
+DEBUG_NUM_ENTRIES = None  # Set to None to process all entries
 # BASE_SITE_URL = f"{LOCAL_HOST_URL}/{GITHUB_REPO_NAME}"
+# DEBUG_NUM_ENTRIES = 5
 
 BLOG_AUTHOR = "Metod Langus"
 BLOG_TITLE = "Gorski užitki"
@@ -1249,7 +1251,10 @@ def fetch_and_save_all_posts(entries):
     # Generate unique slugs for all entries
     slugs = generate_unique_slugs(entries, local_tz)
 
-    for index, entry in enumerate(entries):  # Only first 5 entries entries[:5]
+    if DEBUG_NUM_ENTRIES is not None:
+        entries = entries[:DEBUG_NUM_ENTRIES]
+
+    for index, entry in enumerate(entries):
         title = entry.get("title", {}).get("$t", f"untitled-{index}")
         content_html = entry.get("content", {}).get("$t", "")
         slug = slugs[index]
@@ -2027,8 +2032,8 @@ def generate_predvajalnik_page(current_page):
   {footer_html}
 
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/MySlideshowScript.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyFiltersScript.js" defer></script>
+  <script src="{BASE_SITE_URL}/assets/MySlideshowScript.js" defer></script>
 </body>
 </html>"""
 

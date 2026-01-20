@@ -71,17 +71,16 @@ def main():
     local_tz = pytz.timezone("Europe/Ljubljana")
     slug_counts = defaultdict(lambda: defaultdict(int))
 
-    for i, post in enumerate(posts):
-        post_id = extract_post_id(post["id"]["$t"])
+    # --- Step 1: Generate stable slugs oldest → newest ---
+    posts_for_slugs = sorted(
+        posts,
+        key=lambda p: parser.isoparse(p.get("published", {}).get("$t", ""))
+    )
+
+    slug_mapping = {}  # post_id -> unique_slug
+    for i, post in enumerate(posts_for_slugs):
         title = post["title"]["$t"]
         published = post.get("published", {}).get("$t", "")
-        updated = post.get("updated", {}).get("$t", "")
-        content = post.get("content", {}).get("$t", "")
-        labels = [cat["term"] for cat in post.get("category", [])]
-        author_name = post.get("author", [{}])[0].get("name", {}).get("$t", "")
-        original_link = next((l["href"] for l in post.get("link", []) if l["rel"] == "alternate"), "")
-
-        # Get year/month from published date
         try:
             parsed_date = parser.isoparse(published).astimezone(local_tz)
             pub_year = str(parsed_date.year)
@@ -105,7 +104,37 @@ def main():
         unique_slug = base_slug if slug_count == 0 else f"{base_slug}-{slug_count}"
         slug_counts[pub_year][(pub_month, base_slug)] += 1
 
-        # Extract year/month from original link
+        post_id = extract_post_id(post["id"]["$t"])
+        slug_mapping[post_id] = unique_slug
+
+    # --- Step 2: Prepare feed newest → oldest ---
+    posts_for_feed = sorted(
+        posts,
+        key=lambda p: parser.isoparse(p.get("published", {}).get("$t", "")),
+        reverse=True
+    )
+
+    for i, post in enumerate(posts_for_feed):
+        post_id = extract_post_id(post["id"]["$t"])
+        title = post["title"]["$t"]
+        published = post.get("published", {}).get("$t", "")
+        updated = post.get("updated", {}).get("$t", "")
+        content = post.get("content", {}).get("$t", "")
+        labels = [cat["term"] for cat in post.get("category", [])]
+        author_name = post.get("author", [{}])[0].get("name", {}).get("$t", "")
+        original_link = next((l["href"] for l in post.get("link", []) if l["rel"] == "alternate"), "")
+        unique_slug = slug_mapping[post_id]
+
+        # Get year/month from published date
+        try:
+            parsed_date = parser.isoparse(published).astimezone(local_tz)
+            pub_year = str(parsed_date.year)
+            pub_month = f"{parsed_date.month:02d}"
+        except Exception as e:
+            print(f"Date parse error at index {i}: {e}")
+            pub_year, pub_month = "unknown", "unknown"
+
+        # Build updated original link
         if original_link:
             parts = original_link.rstrip("/").split("/")
             if len(parts) >= 5:
@@ -192,7 +221,7 @@ def main():
 
         blogger_feed["feed"]["entry"].append(summary_entry)
 
-    # Save all-posts.json (with full content now)
+    # Save all-posts.json (newest → oldest)
     with open(DATA_DIR / "all-posts.json", "w", encoding="utf-8") as sf:
         json.dump(blogger_feed, sf, ensure_ascii=False, indent=2)
 

@@ -1,5 +1,3 @@
-const isRelive = window.BLOG_CONTEXT?.isRelive === true;
-
 /**
  * Initializes a toggle button that persists its ON/OFF state and reloads page when changed.
  * @param {string} buttonId - The ID of the toggle button element.
@@ -176,6 +174,7 @@ function initializePersistentSlider(sliderId, valueDisplayId, storageKey) {
     }
 
     // Define special titles for specific values
+    const isRelive = window.BLOG_CONTEXT?.isRelive === true;
     const specialTitle = isRelive
       ? {                               // If this is a Relive page
           "0": "Vse",                   // All photos are shown

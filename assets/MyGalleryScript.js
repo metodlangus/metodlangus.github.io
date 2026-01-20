@@ -363,11 +363,3 @@ function estimateImageSize(url) {
 
 /* --------------------- ONLOAD --------------------- */
 window.addEventListener('load', fetchData);
-document.addEventListener('DOMContentLoaded', () => {
-    initializePersistentSlider('photosSliderElement', 'photosValueElement', 'photosSliderValue');
-    initializePersistentToggle('toggleRandomButton', 'randomizeImages');
-    initializePersistentDateRange('startDateInput', 'endDateInput', 'startDateRange', 'endDateRange');
-    restoreCollapseState();
-    initializePersistentLabelFilter();
-    setupClearFiltersButton();
-});

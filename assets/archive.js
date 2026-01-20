@@ -9,10 +9,10 @@ document.addEventListener("DOMContentLoaded", function() {
       <summary><a href="https://metodlangus.github.io/posts/2026/01/">januar 2026</a>&nbsp;<span class="post-count" dir="ltr">(6)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2026/01/dleskovec-1967-m/">Dleskovec (1967 m)</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2026/01/smucisce-dreilandereck/">Smučišče Dreiländereck</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/01/smucisce-dreilandereck-1/">Smučišče Dreiländereck</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/01/skok-v-zimsko-pravljico/">Skok v zimsko pravljico</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/01/sentanski-vrh-1635-m/">Šentanski vrh (1635 m)</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2026/01/smucisce-dreilandereck-1/">Smučišče Dreiländereck</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/01/smucisce-dreilandereck/">Smučišče Dreiländereck</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/01/hochtristen-2536-m-knoten-2214-m/">Hochtristen (2536 m), Knoten (2214 m)</a></li>
       </ul>
     </details>
@@ -22,13 +22,13 @@ document.addEventListener("DOMContentLoaded", function() {
     <details class="month-group">
       <summary><a href="https://metodlangus.github.io/posts/2025/12/">december 2025</a>&nbsp;<span class="post-count" dir="ltr">(11)</span></summary>
       <ul>
-        <li><a href="https://metodlangus.github.io/posts/2025/12/sentanski-vrh-1635-m/">Šentanski vrh (1635 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/12/sentanski-vrh-1635-m-1/">Šentanski vrh (1635 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/12/murnovec-1864-m-schwarzkogel-kresisce-1842-m/">Murnovec (1864 m), Schwarzkogel / Kresišče (1842 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/12/vrh-velikih-gac-1053-m/">Vrh Velikih Gač (1053 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/12/latschur-2236-m/">Latschur (2236 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/12/bela-pec-1583-m/">Bela peč (1583 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/12/cez-psico-na-storzic-2132-m/">Čez Psico na Storžič (2132 m)</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2025/12/sentanski-vrh-1635-m-1/">Šentanski vrh (1635 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/12/sentanski-vrh-1635-m/">Šentanski vrh (1635 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/12/gorenji-krivi-rob-2008-m/">Gorenji Krivi rob (2008 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/12/spik-2473-m/">Špik (2473 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/12/potoska-gora-1283-m/">Potoška gora (1283 m)</a></li>
@@ -142,12 +142,12 @@ document.addEventListener("DOMContentLoaded", function() {
     <details class="month-group">
       <summary><a href="https://metodlangus.github.io/posts/2025/02/">februar 2025</a>&nbsp;<span class="post-count" dir="ltr">(6)</span></summary>
       <ul>
-        <li><a href="https://metodlangus.github.io/posts/2025/02/turno-smucanje-po-kaninu/">Turno smučanje po Kaninu</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/02/turno-smucanje-po-kaninu-2/">Turno smučanje po Kaninu</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/02/kriska-gora-1472-m/">Kriška gora (1472 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/02/breska-planina/">Breška planina</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/02/sentanski-vrh-1635-m-dobrca-1634-m/">Šentanski vrh (1635 m), Dobrča (1634 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/02/turno-smucanje-po-kaninu-1/">Turno smučanje po Kaninu</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2025/02/turno-smucanje-po-kaninu-2/">Turno smučanje po Kaninu</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/02/turno-smucanje-po-kaninu/">Turno smučanje po Kaninu</a></li>
       </ul>
     </details>
     <details class="month-group">
@@ -253,8 +253,8 @@ document.addEventListener("DOMContentLoaded", function() {
     <details class="month-group">
       <summary><a href="https://metodlangus.github.io/posts/2024/04/">april 2024</a>&nbsp;<span class="post-count" dir="ltr">(5)</span></summary>
       <ul>
-        <li><a href="https://metodlangus.github.io/posts/2024/04/vrh-ljubeljscice-1705-m/">Vrh Ljubeljščice (1705 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/04/vrh-ljubeljscice-1705-m-1/">Vrh Ljubeljščice (1705 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2024/04/vrh-ljubeljscice-1705-m/">Vrh Ljubeljščice (1705 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/04/sentanski-vrh-1635-m-dobrca-1634-m/">Šentanski vrh (1635 m), Dobrča (1634 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/04/hribcki-nad-vasico-chiusaforte-z-najvisjim-monte-plananizza-1555-m/">Hribčki nad vasico Chiusaforte, z najvišjim Monte Plananizza (1555 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/04/od-alpe-piccola-1304-m-do-monte-acuto-1781-m/">Od Alpe Piccola (1304 m) do Monte Acuto (1781 m)</a></li>
