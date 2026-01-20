@@ -291,6 +291,10 @@
   color: white; /* Original tooltip text color */
 }
 
+.my-slideshow-container.fullscreen .date {
+  right: 10px; /* push a little to the left */
+}
+
 
 /* Responsive styles 
 @media only screen and (max-width: 1200px) {

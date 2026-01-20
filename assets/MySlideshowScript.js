@@ -1685,8 +1685,8 @@ function preloadAllImages(index) {
  *
  * @details This function checks if the document is currently in fullscreen mode. If it is, it exits fullscreen and
  *          removes the fullscreen class from all relevant slideshow containers. If it is not in fullscreen, it requests
- *          fullscreen for the specified slideshow and adds the fullscreen class. Additionally, the function toggles the 
- *          light theme for the slideshow and calls `autoSetQuality` with a slight delay.
+ *          fullscreen for the specified slideshow, adds the fullscreen class, and forces landscape orientation on mobile.
+ *          Additionally, the function toggles the light theme for the slideshow and calls `autoSetQuality` with a slight delay.
  *
  * @param   index  The index of the slideshow that should enter or exit fullscreen mode.
  *
@@ -1700,24 +1700,41 @@ function toggleFullscreen(index) {
         // Exit fullscreen
         document.exitFullscreen().then(() => {
             activeFullscreenIndex = null; // Reset fullscreen index
+
+            // Unlock orientation on mobile
+            if (screen.orientation && screen.orientation.unlock) {
+                screen.orientation.unlock();
+            }
         });
-        [progressBarContainer[index], slideshowContainer[index], slideshowOuterContainer[index], mySlideshowContainer[index]].forEach(el => el.classList.remove('fullscreen')); // Remove fullscreen class
+
+        [progressBarContainer[index], slideshowContainer[index], slideshowOuterContainer[index], mySlideshowContainer[index]]
+            .forEach(el => el.classList.remove('fullscreen')); // Remove fullscreen class
     } else {
         // Enter fullscreen
         wrapper.requestFullscreen().then(() => {
             activeFullscreenIndex = index; // Set the active fullscreen slideshow
+
+            // Force landscape orientation on mobile
+            if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').catch(() => {
+                    console.warn('Orientation lock not supported on this device/browser.');
+                });
+            }
         });
-        [progressBarContainer[index], slideshowContainer[index], slideshowOuterContainer[index], mySlideshowContainer[index]].forEach(el => el.classList.add('fullscreen')); // Add fullscreen class
+
+        [progressBarContainer[index], slideshowContainer[index], slideshowOuterContainer[index], mySlideshowContainer[index]]
+            .forEach(el => el.classList.add('fullscreen')); // Add fullscreen class
     }
 
-    // Toggle light theme when exiting fullscreen
+    // Toggle light theme
     if (document.fullscreenElement) {
         slideshowContainer[index].classList.remove('light-theme'); // Remove light theme if in fullscreen
     } else {
         slideshowContainer[index].classList.add('light-theme'); // Add light theme if not in fullscreen
     }
 
-    setTimeout(() => autoSetQuality(index), 250); // Delay execution of autoSetQuality by 1/4 second
+    // Delay execution of autoSetQuality
+    setTimeout(() => autoSetQuality(index), 250);
 }
 
 
