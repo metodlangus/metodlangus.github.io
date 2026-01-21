@@ -1,3 +1,21 @@
+(function (window) {
+
+let map;
+let config;
+let gpxFolder;
+let trackListUrl;
+let photoListUrl;
+let isRelive;
+
+// Tile layers
+let opentopoMap;
+let openstreetMap;
+let esriSatellite;
+
+// Marker clusters
+let markers;
+
+// GPX layers and tracks
 const masterLayerGroup = L.layerGroup();
 const clusteredMarkers = L.markerClusterGroup();
 const nonClusteredMarkers = L.layerGroup();
@@ -21,52 +39,161 @@ const trackColors = ['orange', 'blue', 'green', 'red', 'purple', 'brown', 'yello
     'lightcoral', 'sandybrown', 'mediumvioletred', 'gold', 'lightslategray', 'darkgray', 
     'darkgoldenrod', 'darkseagreen', 'darkslategray'
 ];
+// -----------------
+// INIT
+// -----------------
 
-function createBlogConfig() {
-  const isRelive = window.BLOG_CONTEXT?.isRelive === true;
+// Populate filter inputs with stored or default value
+function populateFilterInputs() {
+    const defaults = {
+        dayFilterStart: "1970-01-01",
+        dayFilterEnd: "9999-12-31",
+        timeFilterStart: "00:00",
+        timeFilterEnd: "23:59",
+        dailyTimeFilterStart: "00:00",
+        dailyTimeFilterEnd: "23:59",
+    };
 
-  const gpxFolder = isRelive
-    ? `${WindowBaseUrl}/my_GPX_tracks/`
-    : `${WindowBaseUrl}/GPX_tracks/`;
-
-  const trackListUrl = isRelive
-    ? `${WindowBaseUrl}/list_of_relive_tracks.txt`
-    : `${WindowBaseUrl}/list_of_tracks.txt`;
-
-  const photoListUrl = isRelive
-    ? `${WindowBaseUrl}/extracted_relive_photos_with_gps_data.txt`
-    : `${WindowBaseUrl}/extracted_photos_with_gps_data.txt`;
-
-  return {
-    isRelive,
-    gpxFolder,
-    trackListUrl,
-    photoListUrl,
-  };
+    Object.keys(defaults).forEach((id) => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.value = localStorage.getItem(id) || defaults[id];
+        }
+    });
 }
 
-// Initialize blog configuration
-const blogConfig = createBlogConfig();
-const { gpxFolder, trackListUrl, photoListUrl } = blogConfig;
+// Function to handle and store the slider value in localStorage
+function handleSliderChange() {
+    const slider = document.getElementById('photosMapSliderElement');
+    const valueDisplay = document.getElementById('photosMapValueElement');
 
-// Initialize map
-const map = L.map('map').setView([46.27396640, 14.30939080], 8); // Coordinates of Bistrica pri Tržiču
+    // Define titles for different photo ranges
+    let specialTitle = isRelive
+      ? {                               // If this is a Relive page
+          "0": "Vse",                   // All photos are shown
+          "-1": "Naslovne"              // Only cover photos are shown
+        }
+      : {                               // If this is a normal (non-Relive) page
+          "3": "Največ slik",           // Many photos
+          "2": "Več slik",              // More photos
+          "1": "Malo slik",             // Few photos
+          "0": "Najboljše",             // Best photos
+          "-1": "Naslovne",             // Cover photos
+          "-2": "Z vrhov"               // Summit photos
+        };
 
-// Tile layers
-const opentopoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-    attribution: 'Map data &copy; <a href="http://www.opentopomap.org">OpenTopoMap</a>',
-    minZoom: 1, updateWhenIdle: true
-});
 
-const openstreetMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    minZoom: 1, updateWhenIdle: true
-});
+    // Update value display
+    valueDisplay.textContent = specialTitle[slider.value] || slider.value;
+    
+    // Store the slider value in localStorage
+    localStorage.setItem('photosMapSliderValue', slider.value);
+}
 
-const esriSatellite = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
-    attribution: "Tiles © Esri — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye",
-    minZoom: 1, updateWhenIdle: true
-});
+// Initialize slider (called from init / createMap)
+function initPhotoSlider() {
+    const slider = document.getElementById('photosMapSliderElement');
+    const valueDisplay = document.getElementById('photosMapValueElement');
+
+    if (!slider || !valueDisplay) return;
+
+    // Define special titles for specific values
+    const specialTitle = config.isRelive
+      ? {                               // Relive page
+          "0": "Vse",
+          "-1": "Naslovne"
+        }
+      : {                               // Normal page
+          "3": "Največ slik",
+          "2": "Več slik",
+          "1": "Malo slik",
+          "0": "Najboljše",
+          "-1": "Naslovne",
+          "-2": "Z vrhov"
+        };
+
+    // Retrieve stored slider value
+    const storedValue = localStorage.getItem('photosMapSliderValue');
+
+    const initialValue =
+        storedValue !== null
+            ? storedValue
+            : String(config.initPhotosValue);
+
+    slider.value = initialValue;
+    valueDisplay.textContent =
+        specialTitle[initialValue] || initialValue;
+
+    // Update value on change
+    slider.addEventListener('input', handleSliderChange);
+}
+
+function init(userConfig) {
+    config = {
+        mapId: userConfig.mapId || 'map',
+        baseUrl: userConfig.baseUrl,
+        isRelive: userConfig.isRelive || false,
+        initPhotosValue: userConfig.initPhotosValue ?? 2,
+        center: userConfig.center || [46.27396640, 14.30939080],
+        zoom: userConfig.zoom || 8
+    };
+
+    window.WindowBaseUrl = config.baseUrl;
+    window.BLOG_CONTEXT = { isRelive: config.isRelive };
+
+    const blogCfg = createblogCfg();
+    gpxFolder = blogCfg.gpxFolder;
+    trackListUrl = blogCfg.trackListUrl;
+    photoListUrl = blogCfg.photoListUrl;
+    isRelive = blogCfg.isRelive;
+
+    createMap();
+    initPhotoSlider();
+    populateFilterInputs();
+}
+
+// -----------------
+// BLOG CONFIG
+// -----------------
+function createblogCfg() {
+    const isRelive = config.isRelive === true;
+    return {
+        isRelive,
+        gpxFolder: isRelive
+          ? `${WindowBaseUrl}/my_GPX_tracks/`
+          : `${WindowBaseUrl}/GPX_tracks/`,
+
+        trackListUrl: isRelive
+          ? `${WindowBaseUrl}/list_of_relive_tracks.txt`
+          : `${WindowBaseUrl}/list_of_tracks.txt`,
+
+        photoListUrl: isRelive
+          ? `${WindowBaseUrl}/extracted_relive_photos_with_gps_data.txt`
+          : `${WindowBaseUrl}/extracted_photos_with_gps_data.txt`
+    };
+}
+
+// -----------------
+// CREATE MAP
+// -----------------
+function createMap() {
+    map = L.map(config.mapId).setView(config.center, config.zoom);
+
+    // Tile layers
+    opentopoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data &copy; <a href="http://www.opentopomap.org">OpenTopoMap</a>',
+        minZoom: 1, updateWhenIdle: true
+    });
+
+    openstreetMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        minZoom: 1, updateWhenIdle: true
+    });
+
+    esriSatellite = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+        attribution: "Tiles © Esri",
+        minZoom: 1, updateWhenIdle: true
+    });
 
 // Custom red marker start icon
 const startMarkerIcon = L.icon({
@@ -86,14 +213,9 @@ const photoMarkerIcon = L.icon({
     shadowUrl: null // No shadow
 });
 
-// Initialize marker cluster group
-var markers = L.markerClusterGroup({
-    maxClusterRadius: 20
-});
 
 // Function to parse and add markers to the map
 function addMarkers(data) {
-    const isRelive = blogConfig.isRelive;
     // Split the input data into individual lines
     var lines = data.split('\n');
     lines.forEach(function (line) {
@@ -108,7 +230,7 @@ function addMarkers(data) {
         var imageLink = match[2];   // Extract image link
         var dataSkip = match[3] || null; // Extract data-skip value
         var postTitle = match[4];   // Extract post title
-        var postLink = isRelive     // Construct full post link from extracted link part
+        var postLink = config.isRelive     // Construct full post link from extracted link part
           ? WindowBaseUrl + "/relive/posts/" + (match[5] || "")
           : WindowBaseUrl + "/posts/" + (match[5] || "");
         var latitude = parseFloat(match[6]); // Extract latitude
@@ -272,7 +394,9 @@ fetch(photoListUrl)
 );
 
 // Apply filters when the button is clicked
-document.getElementById('applyFilters').addEventListener('click', function () {
+const applyBtn = document.getElementById('applyFilters');
+if (applyBtn) {
+  applyBtn.addEventListener('click', function () {
     // Get filter values from input fields
     const dayFilterStart = document.getElementById('dayFilterStart').value || "1970-01-01";
     const dayFilterEnd = document.getElementById('dayFilterEnd').value || "9999-12-31";
@@ -299,7 +423,8 @@ document.getElementById('applyFilters').addEventListener('click', function () {
             addMarkers(data);
         })
         .catch(error => console.error('Error fetching photos metadata:', error));
-});
+  });
+}
 
 
 // Function to retrieve stored slider value for use in the markers filter
@@ -568,138 +693,68 @@ function handleZoomChange() {
         }
     }
 }
+    // Marker clusters
+    markers = L.markerClusterGroup({ maxClusterRadius: 20 });
 
-// Add default tile layer
-opentopoMap.addTo(map);
+    // Add default tile layer
+    opentopoMap.addTo(map);
 
-// Add master layer group
-masterLayerGroup.addTo(map);
+    // Add master layers
+    masterLayerGroup.addTo(map);
+    masterLayerGroup.addLayer(clusteredMarkers);
+    masterLayerGroup.addLayer(nonClusteredMarkers);
 
-masterLayerGroup.addLayer(clusteredMarkers);
-masterLayerGroup.addLayer(nonClusteredMarkers);
+    // Layer control
+    L.control.layers(
+        {"OpenTopoMap": opentopoMap, "OpenStreetMap": openstreetMap, "Esri Satellite": esriSatellite},
+        {"GPX sledi": masterLayerGroup, "Slike": markers},
+        {position: 'topright'}
+    ).addTo(map);
 
-// Add layer control to toggle between OpenTopoMap and OpenStreetMap
-L.control.layers(
-    {"OpenTopoMap": opentopoMap, "OpenStreetMap": openstreetMap, "Esri Satellite": esriSatellite},
-    {'GPX sledi': masterLayerGroup, 'Slike': markers},
-    {position: 'topright'}
-).addTo(map);
-
-// Add search functionality with Leaflet Control Geocoder
-L.Control.geocoder({
-    defaultMarkGeocode: false, // Do not add a marker
-    position: 'topright'
-})
-.on('markgeocode', function(e) {
-    var center = e.geocode.center; // Get the center of the searched location
-    map.setView(center, 12); // Pan and zoom into the location
-})
-.addTo(map);
-
-// Add fullscreen control
-map.addControl(
-    new L.Control.Fullscreen({
-        position: 'topleft',
-        title: 'Show fullscreen',
-        titleCancel: 'Exit fullscreen'
-    })
-);
-
-// Add custom map controls
-map.addControl(new ShowTracksControl());
-map.addControl(new ClearTracksControl());
-
-// Handle map click and zoom events
-map.on('click', handleTrackClick);
-map.on('zoomend', handleZoomChange);
-
-// Initialize track markers
-loadTrackMarkers();
-
-
-// Populate filter inputs with stored or default value
-function populateFilterInputs() {
-    const defaults = {
-        dayFilterStart: "1970-01-01",
-        dayFilterEnd: "9999-12-31",
-        timeFilterStart: "00:00",
-        timeFilterEnd: "23:59",
-        dailyTimeFilterStart: "00:00",
-        dailyTimeFilterEnd: "23:59",
-    };
-
-    Object.keys(defaults).forEach((id) => {
-        const element = document.getElementById(id);
-        if (element) {
-            element.value = localStorage.getItem(id) || defaults[id];
-        }
-    });
-}
-
-// Function to handle and store the slider value in localStorage
-function handleSliderChange() {
-    const slider = document.getElementById('photosMapSliderElement');
-    const valueDisplay = document.getElementById('photosMapValueElement');
-    const isRelive = blogConfig.isRelive;
-
-    // Define titles for different photo ranges
-    let specialTitle = isRelive
-      ? {                               // If this is a Relive page
-          "0": "Vse",                   // All photos are shown
-          "-1": "Naslovne"              // Only cover photos are shown
-        }
-      : {                               // If this is a normal (non-Relive) page
-          "3": "Največ slik",           // Many photos
-          "2": "Več slik",              // More photos
-          "1": "Malo slik",             // Few photos
-          "0": "Najboljše",             // Best photos
-          "-1": "Naslovne",             // Cover photos
-          "-2": "Z vrhov"               // Summit photos
-        };
-
-
-    // Update value display
-    valueDisplay.textContent = specialTitle[slider.value] || slider.value;
-    
-    // Store the slider value in localStorage
-    localStorage.setItem('photosMapSliderValue', slider.value);
-}
-
-// Initialize slider value on page load
-document.addEventListener('DOMContentLoaded', function () {
-    const slider = document.getElementById('photosMapSliderElement');
-    const valueDisplay = document.getElementById('photosMapValueElement');
-    const isRelive = blogConfig.isRelive;
-
-    // Define special titles for specific values
-    const specialTitle = isRelive
-      ? {                               // If this is a Relive page
-          "0": "Vse",                   // All photos are shown
-          "-1": "Naslovne"              // Only cover photos are shown
-        }
-      : {                               // If this is a normal (non-Relive) page
-          "3": "Največ slik",           // Many photos
-          "2": "Več slik",              // More photos
-          "1": "Malo slik",             // Few photos
-          "0": "Najboljše",             // Best photos
-          "-1": "Naslovne",             // Cover photos
-          "-2": "Z vrhov"               // Summit photos
-        };
-
-    // Retrieve the stored value from localStorage, if available
-    const storedValue = localStorage.getItem('photosMapSliderValue');
-
-    if (storedValue !== null) {
-        slider.value = storedValue; // Set slider to the stored value
-        valueDisplay.textContent = specialTitle[storedValue] || storedValue; // Display correct text
-    } else {
-        slider.value = initMapPhotos; // Default value
-        valueDisplay.textContent = specialTitle[initMapPhotos] || initMapPhotos;
+    // Add geocoder
+    if (L.Control.geocoder) {
+        L.Control.geocoder({ defaultMarkGeocode: false, position: 'topright' })
+            .on('markgeocode', e => map.setView(e.geocode.center, 12))
+            .addTo(map);
     }
 
-    // Add event listener to update value on change
-    slider.addEventListener('input', handleSliderChange);
-});
+    // Fullscreen
+    if (L.Control.Fullscreen) {
+        map.addControl(new L.Control.Fullscreen({ position: 'topleft', title: 'Show fullscreen', titleCancel: 'Exit fullscreen' }));
+    }
 
-// Init photo filters
-populateFilterInputs();
+    // Custom controls
+    map.addControl(new ShowTracksControl());
+    map.addControl(new ClearTracksControl());
+
+    // Events
+    map.on('click', handleTrackClick);
+    map.on('zoomend', handleZoomChange);
+
+    // Initialize track markers
+    loadTrackMarkers();
+
+}
+
+// -----------------
+// ZOOM SWITCH
+// -----------------
+function handleZoomChange() {
+    const z = map.getZoom();
+    if (map.hasLayer(opentopoMap) && z > 15.5) {
+        map.removeLayer(opentopoMap);
+        map.addLayer(openstreetMap);
+        wasZoomedFromTopo = true;
+    } else if (wasZoomedFromTopo && z <= 15.5) {
+        map.removeLayer(openstreetMap);
+        map.addLayer(opentopoMap);
+        wasZoomedFromTopo = false;
+    }
+}
+
+// -----------------
+// EXPORT
+// -----------------
+window.MyMapModule = { init };
+
+})(window);
