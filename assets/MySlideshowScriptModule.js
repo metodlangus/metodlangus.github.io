@@ -15,12 +15,12 @@
         defaultImgSrc: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiU8RYSJ0I45O63GlKYXw5-U_r7GwP48_st9F1LG7_Z3STuILVQxMO4qLgzP_wxg0v_77s-YwidwwZQIDS1K6SUmY-W3QMwcIyEvt28cLalvCVQu4qWTQIm-B_FvgEmCCe6ydGld4fQgMMd2xNdqMMFtuHgeVXB4gRPco3XP90OOKHpf6HyZ6AeEZqNJQo/s1600/IMG20241101141924.jpg",
         doubleClickThreshold: 300,
         WindowBaseUrl: "",
-        isBlogger: false,
-        postSlideshowId: ""
+        isRelive: false,
+        isBlogger: false
     };
 
     // Module-level variables that will be set by init
-    let initSpeed, maxSpeed, minSpeed, stepSpeed, initQuality, SLIDESHOW_HIDDEN, SLIDESHOW_VISIBLE, randomizeImages, defaultImgSrc_png, defaultImgSrc, doubleClickThreshold, WindowBaseUrl, isBlogger, postSlideshowId;
+    let initSpeed, maxSpeed, minSpeed, stepSpeed, initQuality, SLIDESHOW_HIDDEN, SLIDESHOW_VISIBLE, randomizeImages, defaultImgSrc_png, defaultImgSrc, doubleClickThreshold, WindowBaseUrl, isRelive, isBlogger;
 
     // SVG path end image with Triglav silhouette
     const endImage = {
@@ -745,24 +745,28 @@
      */
     function fetchData(index) {
         var feedUrl;
-        const isRelive = window.BLOG_CONTEXT?.isRelive === true;
         // const postId = getPostIdFromAnchor();
-
-        if(isBlogger) {
-            const postId = postSlideshowId;
-        }
-
+        
         // Determine the feed URL based on the slideshow title
-        if (slideshowTitles[index] === "All pictures") {
-            feedUrl = isRelive
-              ? `${WindowBaseUrl}/data/all-relive-posts.json`
-              : `${WindowBaseUrl}/data/all-posts.json`;
-        } else if (slideshowTitles[index] === "Make post slideshow" || slideshowTitles[index] === "Make trip slideshow") {
-            feedUrl = `${WindowBaseUrl}/data/posts/${postId}.json`; // Get by postID
+        if(isBlogger) {
+            if (slideshowTitles[index] === "All pictures") {
+                feedUrl = `${WindowBaseUrl}feeds/posts/default?start-index=${slideshows[index].startIndex}&max-results=${slideshows[index].maxResults}&alt=json`;
+            } else if (slideshowTitles[index] === "Make post slideshow" || slideshowTitles[index] === "Make trip slideshow") {
+                feedUrl = `${WindowBaseUrl}/feeds/posts/default/${postId}?alt=json`; // Get by postID
+            } else {
+                feedUrl = `${WindowBaseUrl}/feeds/posts/default?q=${encodeURIComponent(slideshowTitles[index])}&alt=json`;
+            }
         } else {
-            feedUrl = `${WindowBaseUrl}/data/posts/${encodeURIComponent(slideshowTitles[index])}.json`;
+            if (slideshowTitles[index] === "All pictures") {
+                feedUrl = isRelive
+                  ? `${WindowBaseUrl}/data/all-relive-posts.json`
+                  : `${WindowBaseUrl}/data/all-posts.json`;
+            } else if (slideshowTitles[index] === "Make post slideshow" || slideshowTitles[index] === "Make trip slideshow") {
+                feedUrl = `${WindowBaseUrl}/data/posts/${postId}.json`; // Get by postID
+            } else {
+                feedUrl = `${WindowBaseUrl}/data/posts/${encodeURIComponent(slideshowTitles[index])}.json`;
+            }
         }
-        // console.log("feedUrl:",feedUrl)
 
         // Fetch the data from the constructed feed URL
         fetch(feedUrl)
@@ -921,16 +925,16 @@
                             const scriptMatches = content.match(/<script>[\s\S]*?var\s+postID\d+\s*=\s*'([^']+)';[\s\S]*?<\/script>/g);
                             const scripts = scriptMatches
                                 ? scriptMatches.map(script => {
-                                        const match = script.match(/var\s+postID\d+\s*=\s*'([^']+)'/);
-                                        return match
-                                            ? {
+                                      const match = script.match(/var\s+postID\d+\s*=\s*'([^']+)'/);
+                                      return match
+                                          ? {
                                                 type: 'script',
                                                 postId: match[1],
                                                 scriptContent: script,
                                                 position: htmlDoc.body.innerHTML.indexOf(script) // Get the position of the <script> in the content
                                             }
-                                            : null;
-                                    }).filter(Boolean)
+                                          : null;
+                                  }).filter(Boolean)
                                 : [];
 
                             // Combine filtered images and scripts into a single array
@@ -953,7 +957,11 @@
                                     });
                                 } else if (element.type === 'script') {
                                     const additionalPostId = element.postId;
-                                    const additionalPostUrl = `${WindowBaseUrl}/data/posts/${additionalPostId}.json`;
+                                    if(isBlogger) {
+                                        const additionalPostUrl = `${WindowBaseUrl}/feeds/posts/default/${additionalPostId}?alt=json`;
+                                    } else {
+                                        const additionalPostUrl = `${WindowBaseUrl}/data/posts/${additionalPostId}.json`;
+                                    }
                                     
 
                                     try {
@@ -1010,9 +1018,11 @@
                     buildSlides(index);
                 }
 
-                // Recursively fetch more data for "All pictures" (DISABLED: now single JSON file)
-                // slideshows[index].startIndex += slideshows[index].maxResults;
-                // fetchData(index); // Fetch the next batch of pictures
+                // Recursively fetch more data for "All pictures"
+                if (isBlogger && slideshowTitles[index] === "All pictures") {
+                    slideshows[index].startIndex += slideshows[index].maxResults;
+                    fetchData(index); // Fetch the next batch of pictures
+                }
 
             })
             .catch(error => {
@@ -2613,8 +2623,8 @@
         defaultImgSrc = config.defaultImgSrc;
         doubleClickThreshold = config.doubleClickThreshold;
         WindowBaseUrl = config.WindowBaseUrl;
+        isRelive = config.isRelive;
         isBlogger = config.isBlogger;
-        postSlideshowId = config.postSlideshowId;
 
         // Now call the initialization functions
         // Call the function to generate the slideshow containers
