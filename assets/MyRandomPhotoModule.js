@@ -4,17 +4,18 @@
     let currentBatchIndex = 0;
     let slideshowContainer;
     let slideContainers = [];
-    let slideIndex = 0;
     let shuffledImages = [];
     let activeSlide = 0;
 
     // Module-level variables
     let WindowBaseUrl;
     let initPhotos;
+    let isRelive;
 
     const defaults = {
         WindowBaseUrl: '',
-        initPhotos: 3
+        initPhotos: 1,
+        isRelive: false
     };
 
     function getCaptions(htmlDoc) {
@@ -42,7 +43,6 @@
     }
 
     function fetchData() {
-        const isRelive = window.BLOG_CONTEXT?.isRelive === true;
         const feedUrl = isRelive
           ? `${WindowBaseUrl}/data/all-relive-posts.json`
           : `${WindowBaseUrl}/data/all-posts.json`;
@@ -239,6 +239,7 @@
         WindowBaseUrl = settings.WindowBaseUrl;
         initPhotos = settings.initPhotos;
 
+        isRelive = settings.isRelive;
         // Attach event listeners
         window.addEventListener('scroll', startRandomSlideshowOnInteraction, { once: true });
         window.addEventListener('mousemove', startRandomSlideshowOnInteraction, { once: true });
@@ -252,6 +253,3 @@
     window.MyRandomPhoto = { init };
 
 })(window);
-
-// Export for module usage (optional)
-export default window.MyRandomPhoto;
