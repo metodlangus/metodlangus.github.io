@@ -1,6 +1,6 @@
 /* Custom Blog Posts Design Implementation - start */
 
-.blog-posts.hfeed.container.home {
+.content-wrapper .blog-posts.hfeed.container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 15px;

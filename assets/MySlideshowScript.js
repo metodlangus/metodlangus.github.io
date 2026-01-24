@@ -850,6 +850,10 @@ function fetchData(index) {
                         const parser = new DOMParser();
                         const htmlDoc = parser.parseFromString(content, 'text/html');
                         const postTitle = entry.title?.$t || "Untitled Post"; // Ensure a valid post title
+                        const postDateRaw = entry.published?.$t || '';
+                        const postDate = postDateRaw
+                            ? new Date(postDateRaw).toLocaleDateString('sl-SI')
+                            : '';
                         const captions = getCaptions(htmlDoc);
 
                         // Parse <img> elements
@@ -1602,19 +1606,21 @@ function toggleSlideshowOrImageVisibility(index) {
         });
 
         // Change SVG and button text for "Presentation" mode
-        toggleButton.innerHTML = `
-            <svg version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" xml:space="preserve" width="80px" height="60px" fill="#000000">
-                <g id="SVGRepo_iconCarrier"> 
-                    <style type="text/css"> .st0{fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;} </style> 
-                    <polyline class="st0" points="25,11 27,13 25,15 "></polyline> 
-                    <polyline class="st0" points="7,11 5,13 7,15 "></polyline> 
-                    <path class="st0" d="M29,23H3c-1.1,0-2-0.9-2-2V5c0-1.1,0.9-2,2-2h26c1.1,0,2,0.9,2,2v16C31,22.1,30.1,23,29,23z"></path> 
-                    <circle class="st0" cx="16" cy="28" r="1"></circle> 
-                    <circle class="st0" cx="10" cy="28" r="1"></circle> 
-                    <circle class="st0" cx="22" cy="28" r="1"></circle> 
-                </g>
-            </svg>
-        `;
+        if (toggleButton) {
+            toggleButton.innerHTML = `
+                <svg version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" xml:space="preserve" width="80px" height="60px" fill="#000000">
+                    <g id="SVGRepo_iconCarrier"> 
+                        <style type="text/css"> .st0{fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;} </style> 
+                        <polyline class="st0" points="25,11 27,13 25,15 "></polyline> 
+                        <polyline class="st0" points="7,11 5,13 7,15 "></polyline> 
+                        <path class="st0" d="M29,23H3c-1.1,0-2-0.9-2-2V5c0-1.1,0.9-2,2-2h26c1.1,0,2,0.9,2,2v16C31,22.1,30.1,23,29,23z"></path> 
+                        <circle class="st0" cx="16" cy="28" r="1"></circle> 
+                        <circle class="st0" cx="10" cy="28" r="1"></circle> 
+                        <circle class="st0" cx="22" cy="28" r="1"></circle> 
+                    </g>
+                </svg>
+            `;
+        }
     } else {
         // Show all slideshows and hide images
         mySlideshowContainer.forEach(function(slideshowDiv) {
@@ -1631,18 +1637,20 @@ function toggleSlideshowOrImageVisibility(index) {
         });
 
         // Change SVG and button text for "Image" mode
-        toggleButton.innerHTML = `
-            <svg fill="#000000" width="120px" height="120px" viewBox="0 0 36 36" version="1.1" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                <g id="SVGRepo_iconCarrier"> 
-                    <path fill="#000000" d="M32.12,10H3.88A1.88,1.88,0,0,0,2,11.88V30.12A1.88,1.88,0,0,0,3.88,32H32.12A1.88,1.88,0,0,0,34,30.12V11.88A1.88,1.88,0,0,0,32.12,10ZM32,30H4V12H32Z" class="clr-i-outline clr-i-outline-path-1"></path>
-                    <path fill="#000000" d="M8.56,19.45a3,3,0,1,0-3-3A3,3,0,0,0,8.56,19.45Zm0-4.6A1.6,1.6,0,1,1,7,16.45,1.6,1.6,0,0,1,8.56,14.85Z" class="clr-i-outline clr-i-outline-path-2"></path>
-                    <path fill="#000000" d="M7.9,28l6-6,3.18,3.18L14.26,28h2l7.46-7.46L30,26.77v-2L24.2,19a.71.71,0,0,0-1,0l-5.16,5.16L14.37,20.5a.71.71,0,0,0-1,0L5.92,28Z" class="clr-i-outline clr-i-outline-path-3"></path>
-                    <path fill="#000000" d="M30.14,3h0a1,1,0,0,0-1-1h-22a1,1,0,0,0-1,1h0V4h24Z" class="clr-i-outline clr-i-outline-path-4"></path>
-                    <path fill="#000000" d="M32.12,7V7a1,1,0,0,0-1-1h-26a1,1,0,0,0-1,1h0V8h28Z" class="clr-i-outline clr-i-outline-path-5"></path> 
-                    <rect x="0" y="0" width="36" height="36" fill-opacity="0"></rect> 
-                </g>
-            </svg>
-        `;
+        if (toggleButton) {
+            toggleButton.innerHTML = `
+                <svg fill="#000000" width="120px" height="120px" viewBox="0 0 36 36" version="1.1" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <g id="SVGRepo_iconCarrier"> 
+                        <path fill="#000000" d="M32.12,10H3.88A1.88,1.88,0,0,0,2,11.88V30.12A1.88,1.88,0,0,0,3.88,32H32.12A1.88,1.88,0,0,0,34,30.12V11.88A1.88,1.88,0,0,0,32.12,10ZM32,30H4V12H32Z" class="clr-i-outline clr-i-outline-path-1"></path>
+                        <path fill="#000000" d="M8.56,19.45a3,3,0,1,0-3-3A3,3,0,0,0,8.56,19.45Zm0-4.6A1.6,1.6,0,1,1,7,16.45,1.6,1.6,0,0,1,8.56,14.85Z" class="clr-i-outline clr-i-outline-path-2"></path>
+                        <path fill="#000000" d="M7.9,28l6-6,3.18,3.18L14.26,28h2l7.46-7.46L30,26.77v-2L24.2,19a.71.71,0,0,0-1,0l-5.16,5.16L14.37,20.5a.71.71,0,0,0-1,0L5.92,28Z" class="clr-i-outline clr-i-outline-path-3"></path>
+                        <path fill="#000000" d="M30.14,3h0a1,1,0,0,0-1-1h-22a1,1,0,0,0-1,1h0V4h24Z" class="clr-i-outline clr-i-outline-path-4"></path>
+                        <path fill="#000000" d="M32.12,7V7a1,1,0,0,0-1-1h-26a1,1,0,0,0-1,1h0V8h28Z" class="clr-i-outline clr-i-outline-path-5"></path> 
+                        <rect x="0" y="0" width="36" height="36" fill-opacity="0"></rect> 
+                    </g>
+                </svg>
+            `;
+        }
     }
 }
 
