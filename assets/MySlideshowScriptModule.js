@@ -14,11 +14,13 @@
         defaultImgSrc_png: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEicpyIovkBboaA3DOVcPNZQQ47-GSa5AidzIeUbL2N8iue6yM1XIxd0BL5W8e2ty7ntqz4K8ovfmT7DV1c3_NXVFWWDLeKYMpbD_C1wK1qh4Y1zGLh_tHUi5d1pHtDxxQKunZLAkL3ibt5gjhI3KQX9cHtQMn0m9liFgtLc00VQH4YHc5I6aAO-mw84w8Q/s600/end_cover_photo.png",
         defaultImgSrc: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiU8RYSJ0I45O63GlKYXw5-U_r7GwP48_st9F1LG7_Z3STuILVQxMO4qLgzP_wxg0v_77s-YwidwwZQIDS1K6SUmY-W3QMwcIyEvt28cLalvCVQu4qWTQIm-B_FvgEmCCe6ydGld4fQgMMd2xNdqMMFtuHgeVXB4gRPco3XP90OOKHpf6HyZ6AeEZqNJQo/s1600/IMG20241101141924.jpg",
         doubleClickThreshold: 300,
-        WindowBaseUrl: ""
+        WindowBaseUrl: "",
+        isBlogger: false,
+        postSlideshowId: ""
     };
 
     // Module-level variables that will be set by init
-    let initSpeed, maxSpeed, minSpeed, stepSpeed, initQuality, SLIDESHOW_HIDDEN, SLIDESHOW_VISIBLE, randomizeImages, defaultImgSrc_png, defaultImgSrc, doubleClickThreshold, WindowBaseUrl;
+    let initSpeed, maxSpeed, minSpeed, stepSpeed, initQuality, SLIDESHOW_HIDDEN, SLIDESHOW_VISIBLE, randomizeImages, defaultImgSrc_png, defaultImgSrc, doubleClickThreshold, WindowBaseUrl, isBlogger, postSlideshowId;
 
     // SVG path end image with Triglav silhouette
     const endImage = {
@@ -745,7 +747,11 @@
         var feedUrl;
         const isRelive = window.BLOG_CONTEXT?.isRelive === true;
         // const postId = getPostIdFromAnchor();
-        
+
+        if(isBlogger) {
+            const postId = postSlideshowId;
+        }
+
         // Determine the feed URL based on the slideshow title
         if (slideshowTitles[index] === "All pictures") {
             feedUrl = isRelive
@@ -2607,6 +2613,8 @@
         defaultImgSrc = config.defaultImgSrc;
         doubleClickThreshold = config.doubleClickThreshold;
         WindowBaseUrl = config.WindowBaseUrl;
+        isBlogger = config.isBlogger;
+        postSlideshowId = config.postSlideshowId;
 
         // Now call the initialization functions
         // Call the function to generate the slideshow containers
