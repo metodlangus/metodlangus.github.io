@@ -1,9 +1,12 @@
 const PeakListModule = (() => {
 
     let config = {
-        baseUrl: '',
-        isRelive: false
+        WindowBaseUrl: '',
+        isRelive: false,
+        isBlogger:false
     };
+
+    let WindowBaseUrl, isRelive, isBlogger;
 
     // Function to fetch JSON data from the provided URL
     async function fetchJSON(url) {
@@ -117,71 +120,93 @@ const PeakListModule = (() => {
             loadingMessage.style.display = 'block';
             mountainContainer.style.display = 'none';
 
-            const feedUrl = config.isRelive
-                ? `${config.baseUrl}/data/all-relive-posts.json`
-                : `${config.baseUrl}/data/all-posts.json`;
-
-            const jsonData = await fetchJSON(feedUrl);
-            const entries = jsonData.feed?.entry || [];
-
+            const maxResults = 25; // Number of blog posts to fetch per request
+            let startIndex = 1; // Start index of blog posts to fetch
+            let hasMoreEntries = true;
+            var feedUrl;
             const labelMap = {};
 
-            entries.forEach(entry => {
-                const content = entry.content.$t;
-
-                const peakTags =
-                    content.match(/<div class="peak-tag"[^>]*>(.*?)<\/div>/gs) || [];
-                const peakTag2 =
-                    content.match(/<div class="peak-tag2"[^>]*>(.*?)<\/div>/gs) || [];
-
-                function processPeaks(tag, label3Index) {
-                    const doc = new DOMParser().parseFromString(tag, 'text/html');
-                    const span = doc.querySelector('b span');
-                    if (!span) return;
-
-                    span.textContent
-                        .split(',')
-                        .map(normalizeSpaces)
-                        .forEach(peakName => {
-
-                            const fullUrl =
-                                entry.link.find(l => l.rel === 'alternate')?.href;
-                            if (!fullUrl) return;
-
-                            const postLink = getParentDirectoryUrl(fullUrl);
-
-                            const label2 =
-                                entry.category?.find(c => c.term.startsWith('2.'));
-                            const label3s =
-                                entry.category?.filter(c => c.term.startsWith('3.')) || [];
-
-                            const l2 = label2 ? label2.term.slice(2) : "Ostalo";
-                            const l3 = label3s[label3Index]?.term.slice(2) ?? "Ostalo";
-
-                            labelMap[l2] ??= {};
-                            labelMap[l2][l3] ??= [];
-
-                            const d = new Date(entry.published.$t);
-                            const date = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
-
-                            const existing = labelMap[l2][l3].find(
-                                p => normalizeSpaces(p.peakName) === normalizeSpaces(peakName)
-                            );
-
-                            if (existing) {
-                                existing.publishedDates.push({ date, link: postLink });
-                            } else {
-                                labelMap[l2][l3].push({
-                                    peakName,
-                                    publishedDates: [{ date, link: postLink }]
-                                });
-                            }
-                        });
+            while (hasMoreEntries) {
+                if (isBlogger) {
+                    feedUrl = `${WindowBaseUrl}feeds/posts/default?start-index=${startIndex}&max-results=${maxResults}&alt=json`;
+                } else {
+                    feedUrl = isRelive
+                      ? `${WindowBaseUrl}/data/all-relive-posts.json`
+                      : `${WindowBaseUrl}/data/all-posts.json`;
                 }
 
-                peakTags.forEach(t => processPeaks(t, 0));
-                peakTag2.forEach(t => processPeaks(t, 1));
-            });
+                const jsonData = await fetchJSON(feedUrl);
+                const entries = jsonData.feed.entry || [];
+
+                if (isBlogger) {
+                    if (entries.length === 0) {
+                        hasMoreEntries = false;
+                        break;
+                    }
+                } else {
+                    hasMoreEntries = false;
+                }
+                
+
+                entries.forEach(entry => {
+                    const content = entry.content.$t;
+
+                    const peakTags =
+                        content.match(/<div class="peak-tag"[^>]*>(.*?)<\/div>/gs) || [];
+                    const peakTag2 =
+                        content.match(/<div class="peak-tag2"[^>]*>(.*?)<\/div>/gs) || [];
+
+                    function processPeaks(tag, label3Index) {
+                        const doc = new DOMParser().parseFromString(tag, 'text/html');
+                        const span = doc.querySelector('b span');
+                        if (!span) return;
+
+                        span.textContent
+                            .split(',')
+                            .map(normalizeSpaces)
+                            .forEach(peakName => {
+
+                                const fullUrl =
+                                    entry.link.find(l => l.rel === 'alternate')?.href;
+                                if (!fullUrl) return;
+
+                                const postLink = getParentDirectoryUrl(fullUrl);
+
+                                const label2 =
+                                    entry.category?.find(c => c.term.startsWith('2.'));
+                                const label3s =
+                                    entry.category?.filter(c => c.term.startsWith('3.')) || [];
+
+                                const l2 = label2 ? label2.term.slice(2) : "Ostalo";
+                                const l3 = label3s[label3Index]?.term.slice(2) ?? "Ostalo";
+
+                                labelMap[l2] ??= {};
+                                labelMap[l2][l3] ??= [];
+
+                                const d = new Date(entry.published.$t);
+                                const date = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+
+                                const existing = labelMap[l2][l3].find(
+                                    p => normalizeSpaces(p.peakName) === normalizeSpaces(peakName)
+                                );
+
+                                if (existing) {
+                                    existing.publishedDates.push({ date, link: postLink });
+                                } else {
+                                    labelMap[l2][l3].push({
+                                        peakName,
+                                        publishedDates: [{ date, link: postLink }]
+                                    });
+                                }
+                            });
+                    }
+
+                    peakTags.forEach(t => processPeaks(t, 0));
+                    peakTag2.forEach(t => processPeaks(t, 1));
+                });
+
+                startIndex += maxResults;
+            }
 
             renderSortedPeaks(sortPeaksAlphabetically(labelMap));
 
@@ -196,9 +221,12 @@ const PeakListModule = (() => {
     // Public API
     function init(userConfig = {}) {
         config = { ...config, ...userConfig };
+        WindowBaseUrl = config.WindowBaseUrl;
+        isRelive = config.isRelive;
+        isBlogger = config.isBlogger;
 
-        if (!config.baseUrl) {
-            console.warn('PeakListModule: baseUrl is missing');
+        if (!WindowBaseUrl) {
+            console.warn('PeakListModule: WindowBaseUrl is missing');
             return;
         }
 
