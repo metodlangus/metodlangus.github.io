@@ -11,7 +11,9 @@ const GalleryModule = (() => {
     let WindowBaseUrl, randomizeImages, initPhotos, isRelive, isBlogger;
 
     const gallery = { imageBuffer: [], shuffledImages: [] };
-    const galleryContainer = document.getElementById('galleryContainer');
+
+    let galleryContainer = null;
+    let imagesLoadedCountEl = null;
 
     // Function to fetch JSON data from the provided URL
     async function fetchJSON(url) {
@@ -98,7 +100,7 @@ const GalleryModule = (() => {
         let entries = allEntries;
 
         if (!entries?.length) {
-            document.getElementById('imagesLoadedCount').textContent = gallery.imageBuffer.length;
+            if (imagesLoadedCountEl) imagesLoadedCountEl.textContent = gallery.imageBuffer.length;
             return;
         }
 
@@ -121,7 +123,7 @@ const GalleryModule = (() => {
 
         entries.forEach(entry => processEntry(entry));
         const imgCount = gallery.imageBuffer.length;
-        document.getElementById('imagesLoadedCount').textContent = imgCount;
+        if (imagesLoadedCountEl) imagesLoadedCountEl.textContent = imgCount;
 
         if (!imgCount) {
             if (galleryContainer)
@@ -192,6 +194,8 @@ const GalleryModule = (() => {
 
     /* --------------------- BUILD GALLERY BATCH (with placeholders) --------------------- */
     async function buildGalleryBatch(imagesBatch) {
+        if (!galleryContainer) return; // safeguard
+
         const gap = 8;
         const containerWidth = galleryContainer.clientWidth || window.innerWidth - 40;
         const imagesPerRowEstimate = Math.max(2, Math.floor(containerWidth / 300));
@@ -276,7 +280,6 @@ const GalleryModule = (() => {
                 const imgEl = document.createElement('img');
                 imgEl.src = imageCache.get(item.src) || item.src;
 
-                // --- ALT TAG LOGIC ---
                 let altText = '';
                 const tag = (item.tag || '').toLowerCase();
                 const hasCaption = !!item.caption;
@@ -290,8 +293,6 @@ const GalleryModule = (() => {
                 }
 
                 imgEl.alt = altText;
-                // --- END ALT LOGIC ---
-
                 imgEl.loading = 'lazy';
                 imgEl.style.width = '100%';
                 imgEl.style.height = '100%';
@@ -335,11 +336,13 @@ const GalleryModule = (() => {
     }
 
     function processEntry(entry) {
+        if (!galleryContainer) return;
+
         const htmlDoc = new DOMParser().parseFromString(entry.content.$t, 'text/html');
         const images = htmlDoc.getElementsByTagName('img');
         const captions = getCaptions(htmlDoc);
         const postTitle = entry.title.$t;
-        const containerSize = Math.max(galleryContainer.offsetWidth, galleryContainer.offsetHeight);
+        const containerSize = Math.max(galleryContainer.offsetWidth || 0, galleryContainer.offsetHeight || 0);
         const PhotosRange = localStorage.getItem('photosSliderValue') || initPhotos;
 
         for (let i = 1; i < images.length; i++) {
@@ -358,7 +361,7 @@ const GalleryModule = (() => {
                     src: imgSrc,
                     caption: captions[i] || '',
                     title: postTitle,
-                    tag: (images[i].getAttribute('data-skip') || '').toLowerCase() // 👈 save original data-skip tag
+                    tag: (images[i].getAttribute('data-skip') || '').toLowerCase()
                 });
             }
         }
@@ -401,8 +404,11 @@ const GalleryModule = (() => {
         isRelive = config.isRelive;
         isBlogger = config.isBlogger;
 
-        if (!WindowBaseUrl) {
-            console.warn('GalleryModule: WindowBaseUrl is missing');
+        galleryContainer = document.getElementById('galleryContainer');
+        imagesLoadedCountEl = document.getElementById('imagesLoadedCount');
+
+        if (!galleryContainer) {
+            console.warn('GalleryModule: #galleryContainer not found');
             return;
         }
 
