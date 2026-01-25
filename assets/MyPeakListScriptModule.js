@@ -103,12 +103,13 @@ const PeakListModule = (() => {
         }
     }
 
-    // Get parent directory URL
-    function getParentDirectoryUrl(fullUrl) {
+    // Strip "index.html" from the URL if it exists
+    function stripIndexHtml(fullUrl) {
         const url = new URL(fullUrl);
-        const segments = url.pathname.split('/').filter(Boolean);
-        segments.pop();
-        return `${url.origin}/${segments.join('/')}/`;
+        if (url.pathname.endsWith('/index.html')) {
+            url.pathname = url.pathname.replace(/\/index\.html$/, '/');
+        }
+        return url.toString();
     }
 
     // Main function to parse the JSON data and extract mountain names, heights, post links, and dates
@@ -170,7 +171,7 @@ const PeakListModule = (() => {
                                     entry.link.find(l => l.rel === 'alternate')?.href;
                                 if (!fullUrl) return;
 
-                                const postLink = getParentDirectoryUrl(fullUrl);
+                                const postLink = stripIndexHtml(fullUrl);
 
                                 const label2 =
                                     entry.category?.find(c => c.term.startsWith('2.'));
