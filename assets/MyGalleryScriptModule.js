@@ -14,6 +14,7 @@ const GalleryModule = (() => {
 
     let galleryContainer = null;
     let imagesLoadedCountEl = null;
+    let loadingMessage = null;
 
     // Function to fetch JSON data from the provided URL
     async function fetchJSON(url) {
@@ -70,6 +71,10 @@ const GalleryModule = (() => {
         let hasMoreEntries = true;
         var feedUrl;
         const allEntries = [];
+
+        if (loadingMessage) {
+            loadingMessage.style.display = 'block';
+        }
 
         while (hasMoreEntries) {
             if (isBlogger) {
@@ -149,6 +154,10 @@ const GalleryModule = (() => {
         lazyIndex = 0;
         loadingInProgress = false;
         allLoaded = false;
+
+        if (loadingMessage) {
+            loadingMessage.style.display = 'none';
+        }
 
         // Load first batch immediately
         loadNextBatch();
@@ -406,6 +415,7 @@ const GalleryModule = (() => {
 
         galleryContainer = document.getElementById('galleryContainer');
         imagesLoadedCountEl = document.getElementById('imagesLoadedCount');
+        loadingMessage = document.getElementById('loadingMessage');
 
         if (!galleryContainer) {
             console.warn('GalleryModule: #galleryContainer not found');

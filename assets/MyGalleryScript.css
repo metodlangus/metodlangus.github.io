@@ -111,5 +111,11 @@
   visibility: hidden;
 }
 
+#loadingMessage {
+  font-size: 24px;
+  text-align: center;
+  margin: 60px 0;
+}
+
 
 
