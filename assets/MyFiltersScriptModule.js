@@ -229,3 +229,115 @@ function initializePersistentSlider(sliderId, valueDisplayId, storageKey) {
 
 window.FilterSlideshowModule = FilterSlideshowModule;
 window.toggleSection = FilterSlideshowModule.toggleSection;
+
+
+
+const BloggerLabelFilter = (() => {
+
+  const prefixTitles = {
+    1: "Kategorija",
+    2: "Država",
+    3: "Gorstvo",
+    4: "Časovno",
+    5: "Ostalo",
+    99: "Ostalo"
+  };
+
+  function extractPrefix(label) {
+    const m = label.match(/^(\d+)/);
+    return m ? parseInt(m[1], 10) : 99;
+  }
+
+  function cleanLabel(label) {
+    return label.replace(/^\d+\.\s*/, '');
+  }
+
+  function render(groups) {
+    const mount = document.getElementById('labelFilterMount');
+    if (!mount) return;
+
+    let html = `
+      <section class='label-filter-section' style='display:flex;flex-direction:column;margin-left:5px;margin-top:15px;'>
+        <b>Prikaz slik iz objav z izbranimi oznakami:</b>
+    `;
+
+    Object.keys(groups).sort((a,b)=>a-b).forEach(prefix => {
+      const labels = groups[prefix].sort((a,b)=>a.localeCompare(b));
+      const title = prefixTitles[prefix] || "Ostalo";
+      const sectionId = `section_${prefix}`;
+
+      html += `
+        <div style="margin-bottom: 10px;">
+          <button type="button" class="collapse-btn"
+            onclick="FilterSlideshowModule.toggleSection('${sectionId}', this)"
+            style="background:none;border:none;cursor:pointer;font-weight:bold;display:flex;align-items:center;gap:5px;">
+            <span class="arrow-icon">▶</span> ${title}
+          </button>
+
+          <div id="${sectionId}" style="display:none; margin-top: 5px;">
+            <ul class='label-filter-list'>
+      `;
+
+      labels.forEach(raw => {
+        const clean = cleanLabel(raw);
+        html += `
+          <li>
+            <label>
+              <input type='checkbox'
+                     class='label-filter-checkbox'
+                     data-prefix='${prefix}'
+                     value='${clean}'> ${clean}
+            </label>
+          </li>
+        `;
+      });
+
+      html += `
+            </ul>
+          </div>
+        </div>
+      `;
+    });
+
+    html += `
+      <div style="margin-top: 10px;">
+        <button type="button" id="clear-filters-btn"
+          style="background:#eee; border:1px solid #ccc; padding:5px 10px; cursor:pointer; border-radius:4px;">
+          🗑️ Počisti filtre
+        </button>
+      </div>
+    </section>
+    `;
+
+    mount.innerHTML = html;
+  }
+
+  function loadLabels() {
+    // Blogger feed endpoint
+    const feedUrl = '/feeds/posts/default?alt=json&max-results=0';
+
+    fetch(feedUrl)
+      .then(r => r.json())
+      .then(data => {
+        const categories = data.feed.category || [];
+        const labels = categories.map(c => c.term);
+
+        const groups = {};
+        labels.forEach(label => {
+          const p = extractPrefix(label);
+          if (!groups[p]) groups[p] = [];
+          groups[p].push(label);
+        });
+
+        render(groups);
+      })
+      .catch(err => console.error('Label feed error:', err));
+  }
+
+  return {
+    init: loadLabels
+  };
+
+})();
+
+window.BloggerLabelFilter = BloggerLabelFilter;
