@@ -223,7 +223,10 @@ function initializePersistentSlider(sliderId, valueDisplayId, storageKey) {
 
     return {
         init,
-        toggleSection
+        toggleSection,
+        initializePersistentLabelFilter,
+        restoreCollapseState,
+        reloadTimeout
     };
 })();
 
@@ -330,6 +333,32 @@ const BloggerLabelFilter = (() => {
         });
 
         render(groups);
+
+        // Attach persistent checkbox behavior + reload
+        if (window.FilterSlideshowModule?.initializePersistentLabelFilter) {
+            FilterSlideshowModule.initializePersistentLabelFilter();
+        }
+
+        // Restore collapsed state
+        if (window.FilterSlideshowModule?.restoreCollapseState) {
+            FilterSlideshowModule.restoreCollapseState();
+        }
+
+        // Attach Clear Filters button behavior
+        const clearBtn = document.getElementById('clear-filters-btn');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                document.querySelectorAll('.label-filter-checkbox').forEach(cb => cb.checked = false);
+                localStorage.removeItem('selectedLabels');
+                localStorage.removeItem('startDateRange');
+                localStorage.removeItem('endDateRange');
+
+                console.log('[filters cleared]');
+                clearTimeout(window.FilterSlideshowModule?.reloadTimeout);
+                window.FilterSlideshowModule.reloadTimeout = setTimeout(() => location.reload(), 2000);
+            });
+        }
+
       })
       .catch(err => console.error('Label feed error:', err));
   }
