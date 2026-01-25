@@ -1,7 +1,7 @@
 const FilterSlideshowModule = (() => {
 
     let config = {
-        initPhotos: 3,
+        initPhotos: 1,
         isRelive: false
     };
 

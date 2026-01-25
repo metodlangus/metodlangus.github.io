@@ -186,6 +186,6 @@
     }
 
     // Expose module
-    window.GPXMapModule = { init };
+    window.MyMapModule = { init };
 
 })(window);

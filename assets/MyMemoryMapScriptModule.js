@@ -1,11 +1,15 @@
 (function (window) {
 
-let map;
-let config;
-let gpxFolder;
-let trackListUrl;
-let photoListUrl;
-let isRelive;
+let config = {
+    mapId: 'map',
+    baseUrl: '',
+    isRelive: false,
+    initPhotosValue: -2,
+    center: [46.27396640, 14.30939080],
+    zoom: 8
+};
+
+let map, gpxFolder, trackListUrl, photoListUrl, isRelive;
 
 // Tile layers
 let opentopoMap;
@@ -128,25 +132,18 @@ function initPhotoSlider() {
     slider.addEventListener('input', handleSliderChange);
 }
 
-function init(userConfig) {
-    config = {
-        mapId: userConfig.mapId || 'map',
-        baseUrl: userConfig.baseUrl,
-        isRelive: userConfig.isRelive || false,
-        initPhotosValue: userConfig.initPhotosValue ?? 2,
-        center: userConfig.center || [46.27396640, 14.30939080],
-        zoom: userConfig.zoom || 8
-    };
+function init(userConfig = {}) {
+    // Merge user config into defaults
+    config = { ...config, ...userConfig };
 
-    window.WindowBaseUrl = config.baseUrl;
-    window.BLOG_CONTEXT = { isRelive: config.isRelive };
-
+    // Create blog-specific paths
     const blogCfg = createblogCfg();
     gpxFolder = blogCfg.gpxFolder;
     trackListUrl = blogCfg.trackListUrl;
     photoListUrl = blogCfg.photoListUrl;
     isRelive = blogCfg.isRelive;
 
+    // Initialize map and UI
     createMap();
     initPhotoSlider();
     populateFilterInputs();
@@ -755,6 +752,6 @@ function handleZoomChange() {
 // -----------------
 // EXPORT
 // -----------------
-window.MyMapModule = { init };
+window.MyMemoryMapModule = { init };
 
 })(window);
