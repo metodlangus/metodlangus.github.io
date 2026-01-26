@@ -746,9 +746,9 @@
     function fetchData(index) {
         var feedUrl;
         // const postId = getPostIdFromAnchor();
-        
+
         // Determine the feed URL based on the slideshow title
-        if(isBlogger) {
+        if (isBlogger) {
             if (slideshowTitles[index] === "All pictures") {
                 feedUrl = `${WindowBaseUrl}feeds/posts/default?start-index=${slideshows[index].startIndex}&max-results=${slideshows[index].maxResults}&alt=json`;
             } else if (slideshowTitles[index] === "Make post slideshow" || slideshowTitles[index] === "Make trip slideshow") {
@@ -789,81 +789,47 @@
                     setSlideshowQuality(index);
 
                     if (!entries || entries.length === 0) {
-                        console.log('No new entries, using existing imageBuffer:', slideshows[index].imageBuffer.length);
-                        const imagesLoadedCountEl = document.getElementById('imagesLoadedCount');
-                        if (imagesLoadedCountEl) {
-                            imagesLoadedCountEl.textContent = slideshows[index].imageBuffer.length;
-                        }
-                    } else {
-                        // Date and labels filter
-                        const startDate = localStorage.getItem('startDateRange'),
-                              endDate = localStorage.getItem('endDateRange'),
-                              selectedLabels = JSON.parse(localStorage.getItem('selectedLabels') || '{}'); // object grouped by prefix
-
-                        // Log currently applied filters
-                        console.log("Applied Filters:", {
-                            startDate: startDate || 'none',
-                            endDate: endDate || 'none',
-                            selectedLabels: selectedLabels
-                        });
-
-                        if (startDate || endDate || Object.keys(selectedLabels).length > 0) {
-                            entries = entries.filter(entry => {
-                                const entryDate = new Date(entry.published?.$t || entry.published);
-
-                                // Date filter
-                                if (startDate && entryDate < new Date(startDate)) return false;
-                                if (endDate && entryDate > new Date(endDate)) return false;
-
-                                // Label filter (group-based AND logic)
-                                if (Object.keys(selectedLabels).length > 0) {
-                                    const entryLabels = (entry.category || []).map(cat => cat.term.replace(/^\d+\.\s*/, ''));
-
-                                    for (const group in selectedLabels) {
-                                        const groupLabels = selectedLabels[group];
-                                        if (!groupLabels.some(label => entryLabels.includes(label))) {
-                                            return false;
-                                        }
-                                    }
-                                }
-
-                                return true;
-                            });
-                        }
-
-                        // Procesiraj filtrirane vnose
-                        for (let entry of entries) {
-                            processEntry(index, entry);
-                        }
-                    }
-
-                    const imgCount = slideshows[index].imageBuffer.length;
-
-                    if (imgCount === 0) {
-                        // ✅ Ni slik po filtrih → prikaži sporočilo
-                        const container = document.getElementById(`slideShow-${index}`);
-                        container.innerHTML = `<p style="text-align:center; font-size:18px; padding:20px;">Ni slik za izbrane filtre</p>`;
-                        console.warn('No images to display for selected filters');
+                        console.log('Fetched all', slideshows[index].imageBuffer.length, 'images from blog');
+                        finalizeAllPicturesSlideshow(index);
                         return;
                     }
 
-                    // Če slike obstajajo → zgradi slideshow
-                    console.log('Fetched', imgCount, 'images for All pictures');
-                    const imagesLoadedCountEl = document.getElementById('imagesLoadedCount');
-                    if (imagesLoadedCountEl) {
-                        imagesLoadedCountEl.textContent = imgCount;
-                    }
+                    // Date and label filtering
+                    const startDate = localStorage.getItem('startDateRange');
+                    const endDate = localStorage.getItem('endDateRange');
+                    const selectedLabels = JSON.parse(localStorage.getItem('selectedLabels') || '{}');
 
-                    slideshows[index].shuffledImages = shuffleArray(slideshows[index].imageBuffer.slice(), index);
-                    buildSlides(index);
-                    return;
+                    if (entries && (startDate || endDate || Object.keys(selectedLabels).length > 0)) {
+                        entries = entries.filter(entry => {
+                            const entryDate = new Date(entry.published?.$t || entry.published);
+
+                            // Date filter
+                            if (startDate && entryDate < new Date(startDate)) return false;
+                            if (endDate && entryDate > new Date(endDate)) return false;
+
+                            // Label filter (group-based AND logic)
+                            if (Object.keys(selectedLabels).length > 0) {
+                                const entryLabels = (entry.category || [])
+                                .map(cat => cat.term.replace(/^\d+\.\s*/, ''));
+
+                                for (const group in selectedLabels) {
+                                    const groupLabels = selectedLabels[group];
+                                    if (!groupLabels.some(label => entryLabels.includes(label))) {
+                                        return false;
+                                    }
+                                }
+                            }
+
+                            return true;
+                        });
+                    }
                 }
 
                 // Set the slideshow quality for the current index
                 setSlideshowQuality(index);
 
-                // Process each entry
-                for (let entry of entries) {
+                // Loop over filtered entries
+                for (const entry of entries) {
                     if (slideshowTitles[index] !== "Make trip slideshow") {
                         // Process the main entry if it's not "Make trip slideshow"
                         processEntry(index, entry);
@@ -873,18 +839,22 @@
                             const parser = new DOMParser();
                             const htmlDoc = parser.parseFromString(content, 'text/html');
                             const postTitle = entry.title?.$t || "Untitled Post"; // Ensure a valid post title
+                            const postDateRaw = entry.published?.$t || '';
+                            const postDate = postDateRaw
+                                ? new Date(postDateRaw).toLocaleDateString('sl-SI')
+                                : '';
                             const captions = getCaptions(htmlDoc);
 
                             // Parse <img> elements
                             const images = [...htmlDoc.querySelectorAll('img')]
-                            .slice(1) // Exclude the first <img> element
-                            .map((img, idx) => ({
-                                type: 'img',
-                                src: img.getAttribute('src'),
-                                caption: captions[idx + 1] || '', // Shift index to match remaining images
-                                position: htmlDoc.body.innerHTML.indexOf(img.outerHTML), // Get the position of the <img> in the content
-                                dataSkip: img.getAttribute('data-skip') || "3" // Default value if missing
-                            }));
+                              .slice(1) // Exclude the first <img> element
+                              .map((img, idx) => ({
+                                  type: 'img',
+                                  src: img.getAttribute('src'),
+                                  caption: captions[idx + 1] || '', // Shift index to match remaining images
+                                  position: htmlDoc.body.innerHTML.indexOf(img.outerHTML), // Get the position of the <img> in the content
+                                  dataSkip: img.getAttribute('data-skip') || "3" // Default value if missing
+                              }));
 
                             // Get saved slider value
                             const PhotosRange = localStorage.getItem('photosSliderValue') || initPhotos; // Default value if not set
@@ -957,12 +927,12 @@
                                     });
                                 } else if (element.type === 'script') {
                                     const additionalPostId = element.postId;
+                                    var additionalPostUrl;
                                     if(isBlogger) {
-                                        const additionalPostUrl = `${WindowBaseUrl}/feeds/posts/default/${additionalPostId}?alt=json`;
+                                        additionalPostUrl = `${WindowBaseUrl}/feeds/posts/default/${additionalPostId}?alt=json`;
                                     } else {
-                                        const additionalPostUrl = `${WindowBaseUrl}/data/posts/${additionalPostId}.json`;
+                                        additionalPostUrl = `${WindowBaseUrl}/data/posts/${additionalPostId}.json`;
                                     }
-                                    
 
                                     try {
                                         const additionalPostResponse = await fetch(additionalPostUrl);
@@ -1014,14 +984,18 @@
                         }
                     }
 
-                    slideshows[index].shuffledImages = shuffleArray(slideshows[index].imageBuffer.slice(), index);
-                    buildSlides(index);
+                    finalizeAllPicturesSlideshow(index);
                 }
 
-                // Recursively fetch more data for "All pictures"
-                if (isBlogger && slideshowTitles[index] === "All pictures") {
-                    slideshows[index].startIndex += slideshows[index].maxResults;
-                    fetchData(index); // Fetch the next batch of pictures
+                
+                if (isBlogger) {
+                    // Recursively fetch more data for "All pictures"
+                    if (slideshowTitles[index] === "All pictures") {
+                        slideshows[index].startIndex += slideshows[index].maxResults;
+                        fetchData(index); // Fetch the next batch of pictures
+                    }
+                } else {
+                    finalizeAllPicturesSlideshow(index);
                 }
 
             })
@@ -1035,6 +1009,37 @@
                     wrapperDiv.style.display = 'none'; // Hide the slideshow div
                 }
             });
+    }
+
+
+    function finalizeAllPicturesSlideshow(index) {
+        const imgCount = slideshows[index].imageBuffer.length;
+
+        if (imgCount === 0) {
+            // No images after filters → show message
+            const container = document.getElementById(`slideShow-${index}`);
+            if (container) {
+                container.innerHTML = `
+                    <p style="text-align:center; font-size:18px; padding:20px;">
+                        Ni slik za izbrane filtre
+                    </p>`;
+            }
+
+            console.warn("No images to display for selected filters");
+            return false;
+        }
+
+        // Images exist → build slideshow
+        console.log("Fetched", imgCount, "images for All pictures");
+        const counter = document.getElementById("imagesLoadedCount");
+        if (counter) counter.textContent = imgCount;
+
+        slideshows[index].shuffledImages = shuffleArray(
+            slideshows[index].imageBuffer.slice(),
+            index
+        );
+
+        buildSlides(index);
     }
 
 
