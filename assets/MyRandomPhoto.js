@@ -2,7 +2,6 @@ var imageBuffer = [];
 var currentBatchIndex = 0;
 let slideshowContainer;
 let slideContainers = [];
-let slideIndex = 0;
 let shuffledImages = [];
 let activeSlide = 0;
 

@@ -1,17 +1,123 @@
 const WindowBaseUrl = window.location.origin;
 // const WindowBaseUrl = window.location.origin + "/metodlangus.github.io/";
 
-function getInitialPhotoConfig() {
-  const isRelive = window.BLOG_CONTEXT?.isRelive === true;
+// Module-scoped variable to track if this is a Relive page
+let isRelive = false;
 
-  return {
-    initMapPhotos: isRelive ? 0 : -1, // range of photos shown on map
-    initPhotos: 1,                    // range of photos shown in slideshows and posts
-  };
+/**
+ * Get initial photo configuration based on BLOG_CONTEXT
+ */
+function getInitialPhotoConfig() {
+    const reliveFlag = window.BLOG_CONTEXT?.isRelive === true;
+    isRelive = reliveFlag; // update module-scoped variable
+
+    return {
+        initPhotos: 1, // default range of photos shown in slideshows and posts
+    };
 }
 
-// Initialize blog configuration
-const { initMapPhotos, initPhotos } = getInitialPhotoConfig();
+// Initialize photo configuration
+const { initPhotos } = getInitialPhotoConfig();
+const initMapPhotos = isRelive ? 0 : -2; // default map photo range depending on Relive
+
+// Utility function to run a function if the object is defined
+function runIfDefined(obj, fn) {
+    if (obj && typeof fn === 'function') {
+        fn();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    // Memory Map
+    runIfDefined(window.MyMemoryMapModule, () => {
+        MyMemoryMapModule.init({
+            mapId: 'map',
+            baseUrl: WindowBaseUrl,
+            initPhotosValue: initMapPhotos,
+            isRelive: isRelive
+        });
+
+        document.getElementById('applyFilters')?.click();
+    });
+
+    // Map
+    runIfDefined(window.MyMapModule, () => {
+        MyMapModule.init({
+            usePostTitle: false,
+            trackColour: 'orange'
+        });
+    });
+
+    // Peak List
+    runIfDefined(window.PeakListModule, () => {
+        PeakListModule.init({
+            WindowBaseUrl: WindowBaseUrl,
+            isRelive: isRelive
+        }); 
+    });
+
+    // Slideshow
+    runIfDefined(window.MySlideshowModule, () => {
+        MySlideshowModule.init({
+            initSpeed: 3,
+            maxSpeed: 10,
+            minSpeed: 1.75,
+            stepSpeed: 0.25,
+            initQuality: 4,
+            SLIDESHOW_HIDDEN: true,
+            SLIDESHOW_VISIBLE: false,
+            randomizeImages: true,
+            defaultImgSrc_png: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEicpyIovkBboaA3DOVcPNZQQ47-GSa5AidzIeUbL2N8iue6yM1XIxd0BL5W8e2ty7ntqz4K8ovfmT7DV1c3_NXVFWWDLeKYMpbD_C1wK1qh4Y1zGLh_tHUi5d1pHtDxxQKunZLAkL3ibt5gjhI3KQX9cHtQMn0m9liFgtLc00VQH4YHc5I6aAO-mw84w8Q/s600/end_cover_photo.png",
+            defaultImgSrc: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiU8RYSJ0I45O63GlKYXw5-U_r7GwP48_st9F1LG7_Z3STuILVQxMO4qLgzP_wxg0v_77s-YwidwwZQIDS1K6SUmY-W3QMwcIyEvt28cLalvCVQu4qWTQIm-B_FvgEmCCe6ydGld4fQgMMd2xNdqMMFtuHgeVXB4gRPco3XP90OOKHpf6HyZ6AeEZqNJQo/s1600/IMG20241101141924.jpg",
+            doubleClickThreshold: 300,
+            WindowBaseUrl: WindowBaseUrl,
+            isRelive: isRelive
+        });
+    });
+
+    // Random Photo
+    runIfDefined(window.MyRandomPhoto, () => {
+        MyRandomPhoto.init({
+            WindowBaseUrl: WindowBaseUrl,
+            initPhotos: initPhotos,
+            isRelive: isRelive
+        });
+    });
+
+    // Post Container
+    runIfDefined(window.MyPostContainerModule, () => {
+        MyPostContainerModule.init({
+            WindowBaseUrl: WindowBaseUrl,
+            isRelive: isRelive
+        });
+    });
+
+    // Gallery
+    runIfDefined(window.GalleryModule, () => {
+        GalleryModule.init({
+            WindowBaseUrl: WindowBaseUrl,
+            randomizeImages: true,
+            initPhotos: initPhotos,
+            isRelive: isRelive
+        });
+    });
+
+    // Slideshow filters
+    runIfDefined(window.FilterSlideshowModule, () => {
+        FilterSlideshowModule.init({
+            initPhotos: initPhotos,
+            isRelive: isRelive
+        });
+    });
+
+    // Fit text on 404 page
+    runIfDefined(window.FitTextModule, () => {
+        FitTextModule.init();
+    });
+
+});
+
 
 // Format date
 document.addEventListener('DOMContentLoaded', function () {

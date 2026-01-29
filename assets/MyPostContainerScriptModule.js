@@ -1,5 +1,5 @@
-// MyPostContainerScriptModule
-const MyPostContainerScriptModule = (function() {
+// MyPostContainerModule
+const MyPostContainerModule = (function() {
     let postDetails = [];
 
     const defaults = {
@@ -257,6 +257,6 @@ const MyPostContainerScriptModule = (function() {
     }
 
     // Expose the init function
-    window.MyPostContainerScriptModule = { init };
+    window.MyPostContainerModule = { init };
 
 })(window);

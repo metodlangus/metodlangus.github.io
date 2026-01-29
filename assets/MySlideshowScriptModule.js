@@ -987,16 +987,15 @@
                     finalizeAllPicturesSlideshow(index);
                 }
 
-                
-                if (isBlogger) {
+                if (slideshowTitles[index] === "All pictures") {
                     // Recursively fetch more data for "All pictures"
-                    if (slideshowTitles[index] === "All pictures") {
+                    if (isBlogger) {
                         slideshows[index].startIndex += slideshows[index].maxResults;
                         fetchData(index); // Fetch the next batch of pictures
+                    } else {
+                        finalizeAllPicturesSlideshow(index);
                     }
-                } else {
-                    finalizeAllPicturesSlideshow(index);
-                }
+                }  
 
             })
             .catch(error => {
