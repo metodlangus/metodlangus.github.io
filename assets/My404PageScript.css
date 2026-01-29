@@ -1,6 +1,7 @@
-  html, body {
-    margin: 0;
-    padding: 0;
+.custom-404-page {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     background: #fff;
@@ -8,29 +9,29 @@
     justify-content: center;
     align-items: center;
     overflow: hidden;
-  }
+}
 
-  .background {
+.custom-404-page .background-404-page {
     position: relative;
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-  }
+}
 
-  .background svg {
+.custom-404-page .background-404-page svg {
     max-width: 100vw;
     max-height: 100vh;
     width: auto;
     height: auto;
     display: block;
     border: none;
-  }
+}
 
-  .quarter {
+.custom-404-page .quarter-404-page {
     position: absolute;
-    top: 0;
+    /* top: 0; */
     left: 0;
     width: 50%;
     height: 50%;
@@ -41,28 +42,28 @@
     justify-content: flex-start;
     text-align: left;
     pointer-events: auto;
-  }
+}
 
-  .message-overlay {
+.custom-404-page .message-overlay-404-page {
     padding: 5% 1% 1% 2%;
     text-align: center;
     pointer-events: auto;
-  }
+}
 
-  .message-overlay h1 {
+.custom-404-page .message-overlay-404-page h1 {
     color: #f3891d;
     font-weight: bold;
     margin: 0 0 0.3em 0;
     line-height: 1.1;
     white-space: nowrap;
-  }
+}
 
-  .message-overlay p {
+.custom-404-page .message-overlay-404-page p {
     color: #333;
     margin: 0.2em 0;
-  }
+}
 
-  .message-overlay a {
+.custom-404-page .message-overlay-404-page a {
     display: inline-block;
     margin-top: 0.8em;
     padding: 0.3em 0.6em;
@@ -73,12 +74,12 @@
     font-weight: bold;
     transition: background 0.3s ease;
     white-space: nowrap;
-  }
+}
 
-  .message-overlay a:hover {
+.custom-404-page .message-overlay-404-page a:hover {
     background: #f3891d;
-  }
+}
 
-  .centered {
+.custom-404-page .centered-404-page {
     position: absolute;
-  }
+}

@@ -1,8 +1,8 @@
 const FitTextModule = (() => {
 
     // Internal configuration (no external input)
-    const containerSelector = '.quarter';
-    const overlaySelector = '.message-overlay';
+    const containerSelector = '.quarter-404-page';
+    const overlaySelector = '.message-overlay-404-page';
     const elementSelectors = 'h1, p, a';
 
     const maxFontSizes = {

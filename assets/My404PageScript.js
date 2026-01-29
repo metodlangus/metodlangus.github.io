@@ -34,8 +34,8 @@ function fitTextToParent(element, parent, maxFontSizes) {
 }
 
 // Apply to all text elements
-const quarter = document.querySelector('.quarter');
-const overlay = quarter.querySelector('.message-overlay');
+const quarter = document.querySelector('.quarter-404-page');
+const overlay = quarter.querySelector('.message-overlay-404-page');
 const elements = overlay.querySelectorAll('h1, p, a');
 
 // Define different max font sizes per tag
