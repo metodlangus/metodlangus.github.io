@@ -116,6 +116,17 @@ document.addEventListener('DOMContentLoaded', () => {
         FitTextModule.init();
     });
 
+    // Links page
+    runIfDefined(window.UsefulLinksModule, () => {
+        UsefulLinksModule.init({
+              containerId: 'useful-links-container',
+              mapOverlayId: 'mapOverlay',
+              mapFrameId: 'mapOverlayFrame',
+              mapPageUrl: 'https://metodlangus.github.io/mattia-adventures-map.html',
+              mapTriggerUrl: 'https://mattia-furlan.github.io/mont/escursioni/introduzione/'
+          });
+    });
+
 });
 
 
