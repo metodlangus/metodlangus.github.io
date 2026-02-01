@@ -4,10 +4,17 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("archive-placeholder").innerHTML = `<aside class="sidebar-archive">
   <h2>Arhiv</h2>
   <details open>
-    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(6)</span></summary>
+    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(8)</span></summary>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/posts/2026/01/">januar 2026</a>&nbsp;<span class="post-count" dir="ltr">(6)</span></summary>
+      <summary><a href="https://metodlangus.github.io/posts/2026/02/">februar 2026</a>&nbsp;<span class="post-count" dir="ltr">(1)</span></summary>
       <ul>
+        <li><a href="https://metodlangus.github.io/posts/2026/02/mrezce-1965-m-debela-pec-2014-m/">Mrežce (1965 m), Debela peč (2014 m)</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary><a href="https://metodlangus.github.io/posts/2026/01/">januar 2026</a>&nbsp;<span class="post-count" dir="ltr">(7)</span></summary>
+      <ul>
+        <li><a href="https://metodlangus.github.io/posts/2026/01/monte-cocco-1941-m/">Monte Cocco (1941 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/01/dleskovec-1967-m/">Dleskovec (1967 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/01/smucisce-dreilandereck-1/">Smučišče Dreiländereck</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/01/skok-v-zimsko-pravljico/">Skok v zimsko pravljico</a></li>
