@@ -856,3 +856,38 @@ div#PageList1 ul li {
   clip: rect(0 0 0 0) !important;
   white-space: nowrap !important;
 }
+
+/* about page */
+.about-image-right {
+  float: right;
+  max-width: 40%;
+  margin: 0 0 1rem 1.5rem;
+}
+.about-image-right img {
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  height: auto;
+}
+@media (max-width: 768px) {
+  .about-image-right { float: none; max-width: 100%; margin: 0 0 1rem 0; }
+}
+.about-cite {
+  margin-top: 2rem;
+  font-style: italic;
+  color: #555;
+  border-top: 1px solid #ddd;
+  padding-top: 1rem;
+}
+
+.image-caption {
+  margin-top: 0.5rem;
+  font-style: italic;
+  color: #555;
+  font-size: 1rem;
+}
+
+/* blog content */
+.content-wrapper p {
+  text-align: justify;
+}

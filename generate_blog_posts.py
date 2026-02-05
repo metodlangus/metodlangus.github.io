@@ -846,6 +846,7 @@ def generate_sidebar_html(picture_settings, map_settings, current_page):
               <li><a href="{BASE_SITE_URL}/seznam-vrhov/">Seznam vrhov</a></li>
               <li><a href="{BASE_SITE_URL}/zemljevid-spominov/">Zemljevid spominov</a></li>
               <li><a href="{BASE_SITE_URL}/uporabne-povezave/">Uporabne povezave</a></li>
+              <li><a href="{BASE_SITE_URL}/o-strani/">O strani</a></li>
             </ul>
           </aside>
         </div>
@@ -1929,6 +1930,133 @@ def generate_archive_pages(entries):
             print(f"Generated month archive page: {month_filename}")
 
 
+def generate_about_page(current_page):
+    output_dir = OUTPUT_DIR / "o-strani"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / "index.html"
+
+    sidebar_html = generate_sidebar_html(
+        picture_settings=False,
+        map_settings=False,
+        current_page=current_page
+    )
+    header_html = generate_header_html()
+    searchbox_html = generate_searchbox_html()
+    footer_html = generate_footer_html()
+    back_to_top_html = generate_back_to_top_html()
+
+    about_page = f"""<section class="text-block">
+          <div class="about-image-right">
+            <img alt="Cima dell'Uomo (3010 m)" loading="lazy" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiU8RYSJ0I45O63GlKYXw5-U_r7GwP48_st9F1LG7_Z3STuILVQxMO4qLgzP_wxg0v_77s-YwidwwZQIDS1K6SUmY-W3QMwcIyEvt28cLalvCVQu4qWTQIm-B_FvgEmCCe6ydGld4fQgMMd2xNdqMMFtuHgeVXB4gRPco3XP90OOKHpf6HyZ6AeEZqNJQo/s600/IMG20241101141924.jpg" />
+            <p class="image-caption">Ljubitelj gorskega sveta, neokrnjene narave, brezpotnih stezic, adrenalinskih prehodov, čudovitih razgledov ...</p>
+          </div>
+          <p>Najprej lepo pozdravljen/-a na moji spletni strani z imenom »Gorski užitki«. Ljubezen do gora, neokrnjene narave in miru, ki ga ponujajo, me spremlja že kar nekaj časa. Z odkrivanjem gorskega sveta se mi je čez leta začelo nabirati veliko fotografij, na katerih so ujeti številni lepi trenutki, preživeti v naravi.</p>
+          <p>Številne lepe slike so se med množico drugih izgubile in ostale shranjene zgolj zase. Zato se je pojavila želja, da bi jih zbral na enem mestu in jim dal prostor, ki si ga zaslužijo. Tako se je rodila ideja o spletni strani, kjer objave temeljijo predvsem na fotografijah, ob katerih se lahko vsak za trenutek ustavi, in podoživi vzdušje ture.</p>
+          <p>Hitro sem ugotovil, da je pomembno, da so slike prikazane v dobri kakovosti, hkrati pa ne preveliki, kar s tehničnega vidika upočasni njihovo nalaganje. Razvil sem predvajalnik slik, ki omogoča pregleden ogled slik iz celotnega dnevnika – od vseh fotografij, pa do skrbno izbranih utrinkov posamezne ture.</p>
+          <p>Za lažje raziskovanje vsebine sem dodal še »Seznam vrhov« s povezavami do objav, »Zemljevid spominov« z lokacijami nastanka fotografij ter iskanje objav po ključnih besedah. Tako lahko vsak poišče tisto, kar ga zanima, ali pa se preprosto prepusti naključnemu brskanju.</p>
+          <p>Stran ni vodnik, temveč zbirka utrinkov z gorskih dogodivščin. Nekatere objave imajo več opisa, druge manj, nekatere vsebujejo le slike, ker že same povedo dovolj ali pa za drugo še ni bilo časa. Veliko je še starega, sproti pa prihaja novo gradivo, zato se stran nenehno dopolnjuje in razvija. Morda tukaj najdete kakšno idejo za prihodnjo turo ali pa le trenutek oddiha ob gledanju fotografij.</p>
+          <div class="about-contact">
+            <p>
+              Če imaš kakšen predlog, pripombo, vprašanje ali pa bi le delil kakšno misel, mi lahko pišeš na naslov:&nbsp;<span class="about-contact-email" style="font-style: italic;">langus.metod<span class="obf">@</span>gmail<span class="obf">.</span>com
+              </span>
+            </p>
+          </div>
+          <div class="about-warning">
+            <p>Predvsem pa, kamorkoli se podate, naj bo tura dobro načrtovana in prilagojena vašemu znanju, izkušnjam ter trenutnim razmeram. Gore zahtevajo spoštovanje, dobro pripravo in premišljene odločitve.</p>
+          </div>
+          <div class="about-cite">
+            <p>"Kdor išče cilj, bo ostal prazen, ko ga bo dosegel, kdor pa najde pot, bo cilj vedno nosil v sebi." (Nejc Zaplotnik)</p>
+          </div>
+        </section>"""
+
+    # --- Schema.org structured data (JSON-LD)
+    schema_jsonld = f"""<script type="application/ld+json">
+    {{
+      "@context": "https://schema.org",
+      "@type": "AboutPage",
+      "name": "O strani",
+      "url": "{BASE_SITE_URL}/o-strani/",
+      "inLanguage": "sl",
+      "description": "Osebna predstavitev spletne strani »Gorski užitki«.",
+      "isPartOf": {{
+        "@type": "WebSite",
+        "name": "{BLOG_TITLE}",
+        "url": "{BASE_SITE_URL}/"
+      }},
+      "publisher": {{
+        "@type": "Person",
+        "name": "{BLOG_AUTHOR}",
+        "url": "{BASE_SITE_URL}/"
+      }}
+    }}
+    </script>"""
+
+    html_content = f"""<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-site-verification" content="{SITE_VERIFICATION}" />
+  <meta name="description" content="Osebna predstavitev spletne strani »Gorski užitki«." />
+  <meta name="keywords" content="{BLOG_AUTHOR}, {BLOG_TITLE}, gorske avanture, pohodništvo, gore, fotografije, narava, prosti čas" />
+  <meta name="author" content="{BLOG_AUTHOR}" />
+
+  <meta property="og:title" content="O strani | {BLOG_TITLE}" />
+  <meta property="og:description" content="Osebna predstavitev spletne strani »Gorski užitki«." />
+  <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
+  <meta property="og:image:alt" content="O strani | {BLOG_TITLE}" />
+  <meta property="og:url" content="{BASE_SITE_URL}/o-strani/" />
+  <meta property="og:type" content="website" />
+
+  <title>O strani | {BLOG_TITLE} | {BLOG_AUTHOR}</title>
+
+  <!-- Canonical & hreflang -->
+  <link rel="canonical" href="{BASE_SITE_URL}/o-strani/" />
+  <link rel="alternate" href="{BASE_SITE_URL}/o-strani/" hreflang="sl" />
+  <link rel="alternate" href="{BASE_SITE_URL}" hreflang="x-default" />
+
+  {schema_jsonld}
+
+  <!-- Favicon -->
+  <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
+
+  <!-- Fonts & CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
+</head>
+
+<body>
+  <div class="page-wrapper">
+    <!-- Top Header -->
+    <header class="top-header">
+      {header_html}
+    </header>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+      {sidebar_html}
+      <div class="content-wrapper">
+        {searchbox_html}
+        <h1>O strani</h1>
+        {about_page}
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  {back_to_top_html}
+  {footer_html}
+
+  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
+</body>
+</html>"""
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(html_content)
+
+    print(f"Generated about page: {output_path}")
+
+
 def generate_predvajalnik_page(current_page):
     output_dir = OUTPUT_DIR / "predvajalnik-fotografij"
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -2908,17 +3036,17 @@ def generate_404_page():
 
 COMMIT_AFTER_SECTIONS = {
     1:  "Update blog feeds",
-    17: "Update blog posts",
-    18: "Update list_of_tracks.txt with start coordinates",
-    20: "Update photo data and skip attributes",
-    21: "Update list of extracted_photos_with_gps_data.txt"
+    18: "Update blog posts",
+    19: "Update list_of_tracks.txt with start coordinates",
+    21: "Update photo data and skip attributes",
+    22: "Update list of extracted_photos_with_gps_data.txt"
 }
 
 # List of patterns running 
 PATTERNS = {
-    "full_run": "r" * 21,
-    "skip_geotag_photos" : "rrrrrrrrrrrrrrrrrrrrs",  # skip geotaging photos
-    "just_geotag_photos" : "ssssssssssssssssssssr",  # run just geotaging photos
+    "full_run": "r" * 22,
+    "skip_geotag_photos" : "rrrrrrrrrrrrrrrrrrrrrs",  # skip geotaging photos
+    "just_geotag_photos" : "sssssssssssssssssssssr",  # run just geotaging photos
 }
 
 def choose_pattern():
@@ -3070,36 +3198,40 @@ if __name__ == "__main__":
         lambda: generate_label_pages(entries, label_posts_raw),
         pattern_iter=pattern_iter)
 
-    run_section(8, "Generate slideshow page",
+    run_section(8, "Generate about page",
+        lambda: generate_about_page(current_page="about_page"),
+        pattern_iter=pattern_iter)
+
+    run_section(9, "Generate slideshow page",
         lambda: generate_predvajalnik_page(current_page="slideshow_page"),
         pattern_iter=pattern_iter)
 
-    run_section(9, "Generate gallery page",
+    run_section(10, "Generate gallery page",
         lambda: generate_gallery_page(current_page="gallery_page"),
         pattern_iter=pattern_iter)
 
-    run_section(10, "Generate peak list page",
+    run_section(11, "Generate peak list page",
         generate_peak_list_page, pattern_iter=pattern_iter)
 
-    run_section(11, "Generate big map page",
+    run_section(12, "Generate big map page",
         generate_big_map_page, pattern_iter=pattern_iter)
 
-    run_section(12, "Generate useful links page",
+    run_section(13, "Generate useful links page",
         generate_useful_links_page, pattern_iter=pattern_iter)
 
-    run_section(13, "Generate homepage EN",
+    run_section(14, "Generate homepage EN",
         lambda: generate_home_en_page(generate_homepage_html(entries)),
         pattern_iter=pattern_iter)
 
-    run_section(14, "Generate homepage SI",
+    run_section(15, "Generate homepage SI",
         lambda: generate_home_si_page(generate_homepage_html(entries)),
         pattern_iter=pattern_iter)
 
-    run_section(15, "Generate 404 page",
+    run_section(16, "Generate 404 page",
         generate_404_page, pattern_iter=pattern_iter)
 
     # 16 Generate sitemap
-    run_section(16, "Generate sitemap",
+    run_section(17, "Generate sitemap",
         lambda: generate_sitemap_from_folder(
             Path(LOCAL_REPO_PATH),
             exclude_dirs=["plugins", "relive"],
@@ -3107,7 +3239,7 @@ if __name__ == "__main__":
         pattern_iter=pattern_iter)
 
     # 17. Submit changed files to IndexNow
-    run_section(17, "Submit changed files to IndexNow",
+    run_section(18, "Submit changed files to IndexNow",
         lambda: submit_changed_files_to_indexnow(
             Path(LOCAL_REPO_PATH),
             exclude_dirs=["plugins", "relive"],
@@ -3116,17 +3248,17 @@ if __name__ == "__main__":
         pattern_iter=pattern_iter)
 
     # 18. Update list_of_tracks.txt
-    run_section(18, "Update list_of_tracks.txt",
+    run_section(19, "Update list_of_tracks.txt",
         lambda: subprocess.run(["python", "generate_track_list.py"], check=True),
         pattern_iter=pattern_iter)
 
     # 19. Update photos content
-    run_section(19, "Update photos content",
+    run_section(20, "Update photos content",
         lambda: subprocess.run(["node", "get_photos_content.js"], check=True),
         pattern_iter=pattern_iter)
 
     # 20. Update data-skip attributes
-    run_section(20, "Update data-skip attributes",
+    run_section(21, "Update data-skip attributes",
         lambda: subprocess.run(["python", "update_data-skip_atributes.py"], check=True),
         pattern_iter=pattern_iter)
     
@@ -3136,6 +3268,6 @@ if __name__ == "__main__":
     input("Please connect your phone and ensure ADB is enabled. Press Enter to continue...")
 
     # 21. Update extracted_photos_with_gps_data.txt
-    run_section(21, "Update extracted_photos_with_gps_data.txt",
+    run_section(22, "Update extracted_photos_with_gps_data.txt",
         lambda: subprocess.run(["python", "apped_location_to_photos.py"], check=True),
         pattern_iter=pattern_iter)
