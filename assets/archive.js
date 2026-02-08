@@ -4,10 +4,13 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("archive-placeholder").innerHTML = `<aside class="sidebar-archive">
   <h2>Arhiv</h2>
   <details open>
-    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(8)</span></summary>
+    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(11)</span></summary>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/posts/2026/02/">februar 2026</a>&nbsp;<span class="post-count" dir="ltr">(1)</span></summary>
+      <summary><a href="https://metodlangus.github.io/posts/2026/02/">februar 2026</a>&nbsp;<span class="post-count" dir="ltr">(4)</span></summary>
       <ul>
+        <li><a href="https://metodlangus.github.io/posts/2026/02/vrsic-1737-m/">Vršič (1737 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/02/pec-ofen-monte-forno-1508-m/">Peč / Ofen / Monte Forno (1508 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/02/dobratsch-2166-m/">Dobratsch (2166 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/02/mrezce-1965-m-debela-pec-2014-m/">Mrežce (1965 m), Debela peč (2014 m)</a></li>
       </ul>
     </details>
