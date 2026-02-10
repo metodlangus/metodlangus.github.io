@@ -74,8 +74,8 @@ function handleSliderChange() {
     // Define titles for different photo ranges
     let specialTitle = isRelive
       ? {                               // If this is a Relive page
-          "0": "Vse",                   // All photos are shown
-          "-1": "Naslovne"              // Only cover photos are shown
+          "1": "Vse",                   // All photos are shown
+          "0": "Naslovne"              // Only cover photos are shown
         }
       : {                               // If this is a normal (non-Relive) page
           "3": "Največ slik",           // Many photos
@@ -104,7 +104,7 @@ function initPhotoSlider() {
     // Define special titles for specific values
     const specialTitle = config.isRelive
       ? {                               // Relive page
-          "0": "Vse",
+          "1": "Vse",
           "-1": "Naslovne"
         }
       : {                               // Normal page

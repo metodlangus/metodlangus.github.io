@@ -178,7 +178,7 @@ function initializePersistentSlider(sliderId, valueDisplayId, storageKey) {
     // Define special titles for specific values
     const specialTitle = isRelive
       ? {                               // If this is a Relive page
-          "0": "Vse",                   // All photos are shown
+          "1": "Vse",                   // All photos are shown
           "-1": "Naslovne"              // Only cover photos are shown
         }
       : {                               // If this is a normal (non-Relive) page
