@@ -72,7 +72,7 @@ function handleSliderChange() {
     const valueDisplay = document.getElementById('photosMapValueElement');
 
     // Define titles for different photo ranges
-    let specialTitle = isRelive
+    let specialTitle = config.isRelive
       ? {                               // If this is a Relive page
           "1": "Vse",                   // All photos are shown
           "0": "Naslovne"              // Only cover photos are shown
@@ -105,7 +105,7 @@ function initPhotoSlider() {
     const specialTitle = config.isRelive
       ? {                               // Relive page
           "1": "Vse",
-          "-1": "Naslovne"
+          "0": "Naslovne"
         }
       : {                               // Normal page
           "3": "Največ slik",
@@ -428,7 +428,7 @@ if (applyBtn) {
 function getPhotosMapSliderValue() {
     // Retrieve the photosMapSliderValue from localStorage
     let photosMapSliderValue = localStorage.getItem('photosMapSliderValue');
-    return photosMapSliderValue ? Number(photosMapSliderValue) : 2; // Default to 2 if not found
+    return photosMapSliderValue ? Number(photosMapSliderValue) : config.initPhotosValue; // Default to config.initPhotosValue if not found
 }
 
 
