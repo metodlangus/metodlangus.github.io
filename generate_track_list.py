@@ -27,7 +27,7 @@ def extract_gpx_and_cover():
         content = entry["content"]["$t"]
 
         # Find all GPX JS variable assignments
-        gpx_matches = re.findall(r"var gpxURL\d+\s*=\s*['\"]([^'\"]+\.gpx)['\"]", content)
+        gpx_matches = re.findall(r"var gpxURL\d+\s*=\s*['\"`](.+?\.gpx)['\"`]", content)
         if not gpx_matches:
             continue
 

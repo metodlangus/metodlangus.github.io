@@ -69,6 +69,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/moji-najljubsi/'>Moji najljubši</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/otok/'>Otok</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/polotok/'>Polotok</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/puscava/'>Puščava</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/slap/'>Slap</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/soteska/'>Soteska</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/grad/'>Grad</a></li>

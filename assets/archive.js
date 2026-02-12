@@ -4,14 +4,15 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("archive-placeholder").innerHTML = `<aside class="sidebar-archive">
   <h2>Arhiv</h2>
   <details open>
-    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(11)</span></summary>
+    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(12)</span></summary>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/posts/2026/02/">februar 2026</a>&nbsp;<span class="post-count" dir="ltr">(4)</span></summary>
+      <summary><a href="https://metodlangus.github.io/posts/2026/02/">februar 2026</a>&nbsp;<span class="post-count" dir="ltr">(5)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2026/02/vrsic-1737-m/">Vršič (1737 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/02/pec-ofen-monte-forno-1508-m/">Peč / Ofen / Monte Forno (1508 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/02/dobratsch-2166-m/">Dobratsch (2166 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/02/mrezce-1965-m-debela-pec-2014-m/">Mrežce (1965 m), Debela peč (2014 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/02/mesto-ifrane/">Mesto Ifrane</a></li>
       </ul>
     </details>
     <details class="month-group">
@@ -28,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function() {
     </details>
   </details>
   <details open>
-    <summary><a href="https://metodlangus.github.io/posts/2025/">2025</a>&nbsp;<span class="post-count" dir="ltr">(80)</span></summary>
+    <summary><a href="https://metodlangus.github.io/posts/2025/">2025</a>&nbsp;<span class="post-count" dir="ltr">(102)</span></summary>
     <details class="month-group">
       <summary><a href="https://metodlangus.github.io/posts/2025/12/">december 2025</a>&nbsp;<span class="post-count" dir="ltr">(11)</span></summary>
       <ul>
@@ -66,10 +67,32 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/posts/2025/09/">september 2025</a>&nbsp;<span class="post-count" dir="ltr">(3)</span></summary>
+      <summary><a href="https://metodlangus.github.io/posts/2025/09/">september 2025</a>&nbsp;<span class="post-count" dir="ltr">(25)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2025/09/maroko-9-25-9-2025/">Maroko (9. – 25. 9. 2025)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/marakes-treviz/">Marakeš – Treviž</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/mesto-marakes/">Mesto Marakeš</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/paradise-valley/">Paradise Valley</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/hribcek-nad-vasico-tagherat-1090-m/">Hribček nad vasico Tagherat (1090 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/douira-atlantska-obala/">Douira (atlantska obala)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/hribcek-nad-prelazom-tizi-n-test-2510-m/">Hribček nad prelazom Tizi-n-Test (2510 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/slap-boygndaz/">Slap Boygndaz</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/narodni-park-ifrane/">Narodni park Ifrane</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/oaza-reke-ziz/">Oaza reke Ziz</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/kanjon-reke-ziz-tamrrakecht/">Kanjon reke Ziz (Tamrrakecht)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/dolina-ziz/">Dolina Ziz</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/sipina-grande-dune-de-merzouga/">Sipina Grande Dune de Merzouga</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/puscava-merzouga/">Puščava Merzouga</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/jebel-asstef-2061-m/">Jebel Asstef (2061 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/mesto-tinghir/">Mesto Tinghir</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/soteska-dades/">Soteska Dades</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/atlas-studios/">Atlas Studios</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/vas-ait-ben-haddou/">Vas Ait Ben Haddou</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/prelaz-tizi-n-tichka/">Prelaz Tizi n&#x27;Tichka</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/mesto-ait-ourir/">Mesto Ait Ourir</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/09/jebel-toubkal-4167-m/">Jebel Toubkal (4167 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/aourirt-n-ouassif-2726-m/">Aourirt n&#x27;Ouassif (2726 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/treviz-marakes/">Treviž – Marakeš </a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/09/dolkova-spica-2591-m-skrlatica-2740-m-kriz-2410-m/">Dolkova špica (2591 m), Škrlatica (2740 m), Križ (2410 m)</a></li>
       </ul>
     </details>
