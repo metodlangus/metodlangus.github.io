@@ -128,14 +128,18 @@ const MyPostContainerModule = (function() {
                 // Find a category starting with "1. "
                 var titleLabel = post.category.find(category => category.term.startsWith("1. "));
                 if (titleLabel) {
-                  // Remove the prefix from the term
-                  var cleanTerm = titleLabel.term.replace(/^\d+\.\s*/, '');
+                  // Keep the full term including the prefix
+                  var cleanTerm = titleLabel.term;
 
                   // Create the new label for "1. " category
                   var labelOne = document.createElement('a');
                   labelOne.classList.add('my-labels');
-                  labelOne.href = WindowBaseUrl + '/search/labels/' + slugify(cleanTerm) + '/';
-                  labelOne.textContent = cleanTerm;
+                  if (isBlogger) {
+                    labelOne.href = WindowBaseUrl + '/search/label/' + encodeURIComponent(cleanTerm);
+                  } else {
+                    labelOne.href = WindowBaseUrl + '/search/labels/' + slugify(cleanTerm.replace(/^\d+\.\s*/, '')) + '/';
+                  }
+                  labelOne.textContent = cleanTerm.replace(/^\d+\.\s*/, '');
 
                   // Append the label to the tag container
                   titleContainer.appendChild(labelOne);
@@ -182,8 +186,8 @@ const MyPostContainerModule = (function() {
                 // Check if there's a category starting with "6. "
                 var sixCategory = post.category.find(category => category.term.startsWith("6. "));
                 if (sixCategory) {
-                  // Remove the prefix from the term
-                  var cleanTerm = sixCategory.term.replace(/^\d+\.\s*/, '');
+                  // Keep the full term including the prefix
+                  var cleanTerm = sixCategory.term;
 
                   // Create the new tag container
                   var tagContainer = document.createElement('div');
@@ -192,8 +196,12 @@ const MyPostContainerModule = (function() {
                   // Create the new label for "6. " category
                   var labelSix = document.createElement('a');
                   labelSix.classList.add('my-labels', 'label-six');
-                  labelSix.href = WindowBaseUrl + '/search/labels/' + slugify(cleanTerm) + '';
-                  labelSix.textContent = cleanTerm;
+                  if (isBlogger) {
+                    labelSix.href = WindowBaseUrl + '/search/label/' + encodeURIComponent(cleanTerm);
+                  } else {
+                    labelSix.href = WindowBaseUrl + '/search/labels/' + slugify(cleanTerm.replace(/^\d+\.\s*/, '')) + '';
+                  }
+                  labelSix.textContent = cleanTerm.replace(/^\d+\.\s*/, '');
 
                   // Append the label to the tag container
                   tagContainer.appendChild(labelSix);
