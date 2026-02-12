@@ -157,16 +157,16 @@ function createblogCfg() {
     return {
         isRelive,
         gpxFolder: isRelive
-          ? `${WindowBaseUrl}/my_GPX_tracks/`
-          : `${WindowBaseUrl}/GPX_tracks/`,
+          ? `${config.baseUrl}/my_GPX_tracks/`
+          : `${config.baseUrl}/GPX_tracks/`,
 
         trackListUrl: isRelive
-          ? `${WindowBaseUrl}/list_of_relive_tracks.txt`
-          : `${WindowBaseUrl}/list_of_tracks.txt`,
+          ? `${config.baseUrl}/list_of_relive_tracks.txt`
+          : `${config.baseUrl}/list_of_tracks.txt`,
 
         photoListUrl: isRelive
-          ? `${WindowBaseUrl}/extracted_relive_photos_with_gps_data.txt`
-          : `${WindowBaseUrl}/extracted_photos_with_gps_data.txt`
+          ? `${config.baseUrl}/extracted_relive_photos_with_gps_data.txt`
+          : `${config.baseUrl}/extracted_photos_with_gps_data.txt`
     };
 }
 
@@ -228,8 +228,8 @@ function addMarkers(data) {
         var dataSkip = match[3] || null; // Extract data-skip value
         var postTitle = match[4];   // Extract post title
         var postLink = config.isRelive     // Construct full post link from extracted link part
-          ? WindowBaseUrl + "/relive/posts/" + (match[5] || "")
-          : WindowBaseUrl + "/posts/" + (match[5] || "");
+          ? config.baseUrl + "/relive/posts/" + (match[5] || "")
+          : config.baseUrl + "/posts/" + (match[5] || "");
         var latitude = parseFloat(match[6]); // Extract latitude
         var longitude = parseFloat(match[7]); // Extract longitude
 
