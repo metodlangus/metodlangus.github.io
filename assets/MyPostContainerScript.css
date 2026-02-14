@@ -16,6 +16,8 @@
 article.my-post-outer-container {
   max-width: 600px;
   margin: auto;
+  opacity: 0;
+  animation: fadeIn 0.3s ease-in 0.1s forwards;
 }
 
 .my-post-outer-container a {
@@ -47,6 +49,21 @@ article.my-post-outer-container {
   position: absolute;
   inset: 0;
   z-index: 1;
+}
+
+.my-thumbnail {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background-color: #f0f0f0;
+}
+
+.my-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .my-post-outer-container .my-meta-data {
@@ -127,6 +144,25 @@ article.my-post-outer-container {
   transition: all 200ms ease;
 }
 
+.post-container {
+  position: relative;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.overlay-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  text-align: center;
+}
+
 /* Custom Blog Posts Design Implementation - end */
 
 .my-post-container .photo-entry article.my-post-outer-container {
@@ -148,4 +184,14 @@ article.my-post-outer-container {
 h2.my-title {
     border-bottom: none;
     padding-bottom: 0px;
+}
+
+/* Fade-in animation for smooth content display */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
