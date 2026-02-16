@@ -909,7 +909,7 @@ def generate_footer_html():
         GitHub
       </a>
     </p>
-    <p>© 2026 Metod Langus. Vse pravice pridržane.</p>
+    <p>© {datetime.now().year} Metod Langus. Vse pravice pridržane.</p>
   </footer>"""
 
 def generate_back_to_top_html():
@@ -1524,6 +1524,7 @@ def fetch_and_save_all_posts(entries):
   <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
   <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
+  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyMapScriptModule.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyFiltersScriptModule.js" defer></script>
@@ -1663,6 +1664,7 @@ def generate_label_pages(entries, label_posts_raw):
   {back_to_top_html}
   {footer_html}
 
+  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
 </body>
 </html>"""
@@ -1819,6 +1821,7 @@ def generate_archive_pages(entries):
   {back_to_top_html}
   {footer_html}
 
+  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
 </body>
 </html>"""
@@ -1921,6 +1924,7 @@ def generate_archive_pages(entries):
   {back_to_top_html}
   {footer_html}
 
+  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
 </body>
 </html>"""
@@ -2047,6 +2051,7 @@ def generate_about_page(current_page):
   {back_to_top_html}
   {footer_html}
 
+  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
 </body>
 </html>"""
@@ -2160,6 +2165,7 @@ def generate_predvajalnik_page(current_page):
   {back_to_top_html}
   {footer_html}
 
+  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyFiltersScriptModule.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MySlideshowScriptModule.js" defer></script>
@@ -2278,6 +2284,7 @@ def generate_gallery_page(current_page):
 
   <script src='https://metodlangus.github.io/plugins/lightbox2/2.11.1/js/lightbox-plus-jquery.min.js'></script>
   <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
+  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyFiltersScriptModule.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyGalleryScriptModule.js" defer></script>
@@ -2390,6 +2397,7 @@ def generate_peak_list_page():
   {back_to_top_html}
   {footer_html}
 
+  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyPeakListScriptModule.js" defer></script>
 </body>
@@ -2518,6 +2526,7 @@ def generate_big_map_page():
   <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
   <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
+  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyMemoryMapScriptModule.js" defer></script>
 </body>
@@ -2621,6 +2630,7 @@ def generate_home_en_page(homepage_html):
   {back_to_top_html}
   {footer_html}
 
+  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyRandomPhotoModule.js" defer></script>
 </body>
@@ -2721,6 +2731,7 @@ def generate_home_si_page(homepage_html):
   {back_to_top_html}
   {footer_html}
 
+  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyRandomPhotoModule.js" defer></script>
 </body>
@@ -2883,6 +2894,7 @@ def generate_useful_links_page():
   {back_to_top_html}
   {footer_html}
 
+  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyUsefulLinksScript.js" defer></script>
 </body>
