@@ -132,6 +132,8 @@ function initPhotoSlider() {
     slider.addEventListener('input', handleSliderChange);
 }
 
+let pendingTrackToLoad = null; // Store track parameter from URL if present
+
 function init(userConfig = {}) {
     // Merge user config into defaults
     config = { ...config, ...userConfig };
@@ -142,6 +144,13 @@ function init(userConfig = {}) {
     trackListUrl = blogCfg.trackListUrl;
     photoListUrl = blogCfg.photoListUrl;
     isRelive = blogCfg.isRelive;
+
+    // Check for track parameter in URL
+    const params = new URLSearchParams(window.location.search);
+    const trackParam = params.get('track');
+    if (trackParam) {
+        pendingTrackToLoad = decodeURIComponent(trackParam);
+    }
 
     // Initialize map and UI
     createMap();
@@ -442,7 +451,7 @@ function extractTrackName(filename) {
 }
 
 // Load GPX track
-async function loadGPXTrack(gpxURL, trackColor, marker) {
+async function loadGPXTrack(gpxURL, trackColor, marker, fitBounds = false) {
     try {
         const response = await fetch(gpxURL);
         const gpx = await response.text();
@@ -452,6 +461,11 @@ async function loadGPXTrack(gpxURL, trackColor, marker) {
         if (!polyline) {
             console.error('Polyline creation failed for', gpxURL);
             return;
+        }
+
+        // Fit bounds if requested
+        if (fitBounds) {
+            map.fitBounds(polyline.getBounds());
         }
 
         const arrowLayer = L.polylineDecorator(polyline, {
@@ -660,6 +674,14 @@ function loadTrackMarkers() {
 
                 marker.on('click', () => loadGPXTrack(gpxURL, randomColor, marker));
                 clusteredMarkers.addLayer(marker);
+
+                // Check if this is the track to load from URL parameter
+                if (pendingTrackToLoad && filename === pendingTrackToLoad) {
+                    setTimeout(() => {
+                        loadGPXTrack(gpxURL, randomColor, marker, true); // true = fitBounds
+                        pendingTrackToLoad = null; // Clear the pending track
+                    }, 500); // Small delay to ensure map is ready
+                }
             });
         })
         .catch(error => console.error('Error loading track markers:', error));
