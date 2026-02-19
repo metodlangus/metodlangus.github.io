@@ -96,18 +96,34 @@ document.addEventListener("DOMContentLoaded", function() {
   const showMoreBtn = document.querySelector(".show-more");
   const showLessBtn = document.querySelector(".show-less");
   const remainingItems = document.querySelector(".remaining-items");
+  // Restore saved state from localStorage
+  const saved = localStorage.getItem('labelsExpanded');
+  const expanded = saved === 'true';
 
   if (showMoreBtn && showLessBtn && remainingItems) {
+    // Apply initial state
+    if (expanded) {
+      remainingItems.classList.remove('hidden');
+      showMoreBtn.classList.add('hidden');
+      showLessBtn.classList.remove('hidden');
+    } else {
+      remainingItems.classList.add('hidden');
+      showMoreBtn.classList.remove('hidden');
+      showLessBtn.classList.add('hidden');
+    }
+
     showMoreBtn.addEventListener("click", function() {
       remainingItems.classList.remove("hidden");
       showMoreBtn.classList.add("hidden");
       showLessBtn.classList.remove("hidden");
+      localStorage.setItem('labelsExpanded', 'true');
     });
 
     showLessBtn.addEventListener("click", function() {
       remainingItems.classList.add("hidden");
       showMoreBtn.classList.remove("hidden");
       showLessBtn.classList.add("hidden");
+      localStorage.setItem('labelsExpanded', 'false');
     });
   }
 });
@@ -156,6 +172,50 @@ document.addEventListener("DOMContentLoaded", function () {
       searchBox.focus();
     }
   });
+
+  // Ensure only one archive details (month/year) is open at a time.
+  (function () {
+    const detailSelector = 'details.month-group, details.year-group';
+    const allDetails = Array.from(document.querySelectorAll(detailSelector));
+
+    if (allDetails.length === 0) return;
+
+    // When a details element is toggled open, close all others
+    allDetails.forEach(d => {
+      d.addEventListener('toggle', () => {
+        if (d.open) {
+          allDetails.forEach(other => { if (other !== d) other.open = false; });
+        }
+      });
+    });
+
+    // If user clicks an internal archive link (month/year link), open its parent details and close others
+    allDetails.forEach(d => {
+      d.querySelectorAll && d.querySelectorAll('a').forEach(a => {
+        a.addEventListener('click', function (e) {
+          const parent = a.closest('details');
+          if (!parent) return; // nothing to do
+
+          // Close all details except the parent
+          allDetails.forEach(other => { if (other !== parent) other.open = false; });
+          parent.open = true;
+
+          // If the clicked details contains nested month groups, open the last month
+          const monthDescendants = parent.querySelectorAll('details.month-group');
+          if (monthDescendants && monthDescendants.length > 0) {
+            const lastMonth = monthDescendants[monthDescendants.length - 1];
+            // Close any other month-group details outside this parent
+            allDetails.forEach(other => {
+              if (other.matches && other.matches('details.month-group') && other !== lastMonth) other.open = false;
+            });
+            lastMonth.open = true;
+          }
+
+          // allow navigation to proceed
+        });
+      });
+    });
+  })();
 
   // Close button inside search container clears and closes search
   searchClose.addEventListener("click", () => {
