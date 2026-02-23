@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
       <summary><a href="https://metodlangus.github.io/posts/2026/02/">februar 2026</a>&nbsp;<span class="post-count" dir="ltr">(8)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2026/02/murnovec-1864-m-schwarzkogel-kresisce-1842-m/">Murnovec (1864 m), Schwarzkogel / Kresišče (1842 m)</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2026/02/pticji-vrh-1550-veliki-vrh-struska-1944-m-korenjscica-1764-m/">Ptičji vrh (1550 ), Veliki vrh (Struška) (1944 m), Korenjščica (1764 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/02/pticji-vrh-1551-m-veliki-vrh-struska-1944-m-korenjscica-1764-m/">Ptičji vrh (1551 m), Veliki vrh (Struška) (1944 m), Korenjščica (1764 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/02/monte-lussari-1788-m/">Monte Lussari (1788 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/02/vrsic-1737-m/">Vršič (1737 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/02/pec-ofen-monte-forno-1508-m/">Peč / Ofen / Monte Forno (1508 m)</a></li>
