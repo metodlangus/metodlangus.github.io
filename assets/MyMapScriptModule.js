@@ -15,14 +15,16 @@
         shadowUrl: null
     });
 
-    let baseUrl = WindowBaseUrl;
+    let baseUrl = '';
     let usePostTitle = false;  // Set to true to use post title, false to use extracted GPX name
     let trackColour = 'orange';
+    let isBlogger = true;
 
     function init(userConfig = {}) {
         usePostTitle = userConfig.usePostTitle ?? false;
         trackColour = userConfig.trackColour ?? 'orange';
         baseUrl = userConfig.baseUrl || baseUrl;
+        isBlogger = userConfig.isBlogger;
 
         let mapIndex = 0;
 
@@ -85,7 +87,11 @@
             button.innerText = 'Zemljevid spominov';
             button.onclick = function () {
                 const trackFilename = gpxURL.split("/").pop();
-                window.location.href = baseUrl + "/zemljevid-spominov/?track=" + encodeURIComponent(trackFilename);
+                if (isBlogger) {
+                    window.location.href = baseUrl + "/p/zemljevid-spominov.html?track=" + encodeURIComponent(trackFilename);
+                } else {
+                    window.location.href = baseUrl + "/zemljevid-spominov/?track=" + encodeURIComponent(trackFilename);
+                }
             };
 
             const map = L.map(mapDiv.id, {
