@@ -25,7 +25,7 @@ jobs:
         run: echo '${{ secrets.GA4_SERVICE_ACCOUNT }}' > ga4-key.json
 
       - name: Fetch popular posts
-        run: node scripts/fetch-popular-posts.js
+        run: node assets/fetch-popular-posts.js
         env:
           GA_PROPERTY_ID: ${{ secrets.GA4_PROPERTY_ID }}
 
