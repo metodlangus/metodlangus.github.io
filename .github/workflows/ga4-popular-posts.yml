@@ -1,0 +1,38 @@
+name: Sync Popular Posts from GA4
+
+on:
+  schedule:
+    - cron: "0 * * * *"   # vsako uro
+  workflow_dispatch:       # omogoča ročni zagon
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
+        run: npm install @google-analytics/data
+
+      - name: Create GA credentials file
+        run: echo '${{ secrets.GA4_SERVICE_ACCOUNT }}' > ga4-key.json
+
+      - name: Fetch popular posts
+        run: node scripts/fetch-popular-posts.js
+        env:
+          GA_PROPERTY_ID: ${{ secrets.GA4_PROPERTY_ID }}
+
+      - name: Commit results
+        run: |
+          git config --global user.name "analytics-bot"
+          git config --global user.email "bot@users.noreply.github.com"
+          git add data/popular-posts.json
+          git commit -m "Update popular posts" || echo "No changes"
+          git push
