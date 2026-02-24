@@ -2,8 +2,9 @@ name: Sync Popular Posts from GA4
 
 on:
   schedule:
-    - cron: "0 * * * *"   # vsako uro
-  workflow_dispatch:       # omogoča ročni zagon
+    # Run once per day at 4 AM UTC
+    - cron: "0 4 * * *"
+  workflow_dispatch:       # allow manual trigger
 
 jobs:
   sync:
