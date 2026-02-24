@@ -7,9 +7,11 @@ const client = new BetaAnalyticsDataClient({
   keyFilename: "ga4-key.json"
 });
 
+// Extract post ID only for "real" posts (skip archive paths)
 function extractPostIdFromPath(path) {
-  const match = path.match(/\/posts\/(\d+)\/|\/posts\/.*\/index\.html/);
-  return match ? match[1] || path : null;
+  // Match /posts/YYYY/MM/slug/
+  const match = path.match(/^\/posts\/(\d{4})\/(\d{2})\/[^\/]+\/$/);
+  return match ? match[1] : null;
 }
 
 async function run() {
@@ -29,20 +31,21 @@ async function run() {
 
   const results = [];
 
-  response.rows.forEach(row => {
+  for (const row of response.rows) {
     const path = row.dimensionValues[0].value;
 
-    if (!path.includes("/posts/")) return;
+    // Only consider "real post" pages
+    if (!path.startsWith("/posts/")) continue;
+    if (!/^\/posts\/\d{4}\/\d{2}\/[^\/]+\/$/.test(path)) continue;
 
     const postId = extractPostIdFromPath(path);
-
     if (postId) {
-      results.push({
-        path,
-        postId
-      });
+      results.push({ path, postId });
     }
-  });
+
+    // Stop after 3 posts
+    if (results.length >= 3) break;
+  }
 
   fs.mkdirSync("data", { recursive: true });
 
@@ -51,7 +54,7 @@ async function run() {
     JSON.stringify(results, null, 2)
   );
 
-  console.log("Popular posts updated");
+  console.log("Popular posts updated:", results);
 }
 
 run();
