@@ -831,11 +831,12 @@ div#PageList1 ul li {
   transform: translateY(-2px);
 }
 
-/* Comments */
-#comments h2 {
-  font-size: 18px; /* adjust to your preferred size */
-  font-weight: bold; /* optional, keeps it bold */
-  margin-bottom: 10px; /* optional, space below the title */
+/* Comments + Popular posts title */
+#comments h2,
+#popularPostsTitle {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
 /* cover photo style */

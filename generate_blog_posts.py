@@ -1505,6 +1505,7 @@ def fetch_and_save_all_posts(entries):
         {labels_html}
         {nav_html}
         {comments_html}
+        <div id="popularPostsContainer" class="blog-posts hfeed container"></div>
       </div>
     </div>
   </div>
@@ -1529,6 +1530,7 @@ def fetch_and_save_all_posts(entries):
   <script src="{BASE_SITE_URL}/assets/MyMapScriptModule.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyFiltersScriptModule.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MySlideshowScriptModule.js" defer></script>
+  <script src="{BASE_SITE_URL}/assets/MyPopularPostsModule.js" defer></script>
 </body>
 </html>""")
 

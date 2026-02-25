@@ -126,6 +126,14 @@ document.addEventListener('DOMContentLoaded', () => {
               mapTriggerUrl: 'https://mattia-furlan.github.io/mont/escursioni/introduzione/'
           });
     });
+    
+    // Popular posts
+    runIfDefined(window.PopularPostsModule, () => {
+        PopularPostsModule.init({
+              WindowBaseUrl: WindowBaseUrl,
+              maxPosts: 3
+          });
+    });
 
 });
 

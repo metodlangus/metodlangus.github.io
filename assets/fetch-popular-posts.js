@@ -16,18 +16,18 @@ function extractPostIdFromPath(path) {
 
 async function run() {
   const [response] = await client.runReport({
-    property: `properties/${propertyId}`,
-    dateRanges: [{ startDate: "7daysAgo", endDate: "today" }],
-    dimensions: [{ name: "pagePath" }],
-    metrics: [{ name: "screenPageViews" }],
-    orderBys: [
-      {
-        metric: { metricName: "screenPageViews" },
-        desc: true
-      }
-    ],
-    limit: 10
-  });
+  property: `properties/${propertyId}`,
+    dateRanges: [{ startDate: "365daysAgo", endDate: "today" }],
+  dimensions: [{ name: "pagePath" }],
+  metrics: [{ name: "screenPageViews" }],
+  orderBys: [
+    {
+      metric: { metricName: "screenPageViews" },
+      desc: true
+    }
+  ],
+  limit: 10
+});
 
   const results = [];
 
@@ -43,8 +43,8 @@ async function run() {
       results.push({ path, postId });
     }
 
-    // Stop after 3 posts
-    if (results.length >= 3) break;
+    // Stop after 5 posts
+    if (results.length >= 5) break;
   }
 
   fs.mkdirSync("data", { recursive: true });
