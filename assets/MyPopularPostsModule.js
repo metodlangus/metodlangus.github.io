@@ -19,9 +19,14 @@ const PopularPostsModule = (() => {
 
   function slugify(text) {
     return text
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/ß/g, 'ss')  // important to replicate python-slugify
       .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
       .replace(/\s+/g, '-')
-      .replace(/[^a-z0-9-]/g, '');
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
   }
 
   function stripIndexHtml(fullUrl) {
