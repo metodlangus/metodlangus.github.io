@@ -4,10 +4,17 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("archive-placeholder").innerHTML = `<aside class="sidebar-archive">
   <h2>Arhiv</h2>
   <details open>
-    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(15)</span></summary>
+    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(17)</span></summary>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/posts/2026/02/">februar 2026</a>&nbsp;<span class="post-count" dir="ltr">(8)</span></summary>
+      <summary><a href="https://metodlangus.github.io/posts/2026/03/">marec 2026</a>&nbsp;<span class="post-count" dir="ltr">(1)</span></summary>
       <ul>
+        <li><a href="https://metodlangus.github.io/posts/2026/03/sentanski-vrh-1635-m/">Šentanski vrh (1635 m)</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary><a href="https://metodlangus.github.io/posts/2026/02/">februar 2026</a>&nbsp;<span class="post-count" dir="ltr">(9)</span></summary>
+      <ul>
+        <li><a href="https://metodlangus.github.io/posts/2026/02/vrh-strmali-forca-dei-disteis/">Vrh Strmali (Forca dei Disteis)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/02/murnovec-1864-m-schwarzkogel-kresisce-1842-m/">Murnovec (1864 m), Schwarzkogel / Kresišče (1842 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/02/pticji-vrh-1551-m-veliki-vrh-struska-1944-m-korenjscica-1764-m/">Ptičji vrh (1551 m), Veliki vrh (Struška) (1944 m), Korenjščica (1764 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/02/monte-lussari-1788-m/">Monte Lussari (1788 m)</a></li>
