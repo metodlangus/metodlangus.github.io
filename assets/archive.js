@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function() {
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2026/02/vrh-strmali-forca-dei-disteis/">Vrh Strmali (Forca dei Disteis)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/02/murnovec-1864-m-schwarzkogel-kresisce-1842-m/">Murnovec (1864 m), Schwarzkogel / Kresišče (1842 m)</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2026/02/pticji-vrh-1551-m-veliki-vrh-struska-1944-m-korenjscica-1764-m/">Ptičji vrh (1551 m), Veliki vrh (Struška) (1944 m), Korenjščica (1764 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/02/pticji-vrh-1551-m-veliki-vrh-struska-1944-m-korenscica-1764-m/">Ptičji vrh (1551 m), Veliki vrh (Struška) (1944 m), Korenščica (1764 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/02/monte-lussari-1788-m/">Monte Lussari (1788 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/02/vrsic-1737-m/">Vršič (1737 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/02/pec-ofen-monte-forno-1508-m/">Peč / Ofen / Monte Forno (1508 m)</a></li>
@@ -197,7 +197,7 @@ document.addEventListener("DOMContentLoaded", function() {
       <summary><a href="https://metodlangus.github.io/posts/2025/01/">januar 2025</a>&nbsp;<span class="post-count" dir="ltr">(4)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2025/01/vosca-1737-m-zajcnik-1746-m-trupejevo-poldne-1931-m/">Vošca (1737 m), Zajčnik (1746 m), Trupejevo poldne (1931 m)</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2025/01/pticji-vrh-1551-m-korenjscica-1764-m/">Ptičji vrh (1551 m), Korenjščica (1764 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/01/pticji-vrh-1551-m-korenscica-1764-m/">Ptičji vrh (1551 m), Korenščica (1764 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/01/lepenatka-1425-m-veliki-rogatec-1557-m/">Lepenatka (1425 m), Veliki Rogatec (1557 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/01/zimska-pravljica-na-kriski-gori/">Zimska pravljica na Kriški gori</a></li>
       </ul>
