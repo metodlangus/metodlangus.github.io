@@ -61,29 +61,31 @@ def update_photo_data(local_list_path, local_file_path):
 
     updated_lines = []
     for line in extracted_lines:
-        parts = line.split(', Link: ', 1)
-        if len(parts) > 1:
-            image_name, rest = parts[0], parts[1]
+        image_name = line.split(',')[0].strip()
 
-            # Retrieve updated data if available
-            if image_name in photo_dict:
-                skip_data = photo_dict[image_name]["data_skip"]
-                post_title = photo_dict[image_name]["post_title"]
-                post_link = photo_dict[image_name]["post_link"]
+        # Retrieve updated data if available
+        if image_name in photo_dict:
+            skip_data = photo_dict[image_name]["data_skip"]
+            post_title = photo_dict[image_name]["post_title"]
+            post_link = photo_dict[image_name]["post_link"]
 
-                # Update or insert data-skip
-                if "data-skip=" in line:
-                    line = re.sub(data_skip_regex, f"data-skip={skip_data},", line)
-                else:
-                    # Insert data-skip if missing
-                    line = line.replace(rest, f"{rest} data-skip={skip_data},")
+            # Update or insert data-skip
+            if "data-skip=" in line:
+                line = re.sub(data_skip_regex, f"data-skip={skip_data},", line)
+            else:
+                line = line.replace(", GPS", f", data-skip={skip_data}, GPS")
 
-                # Update post title
-                line = re.sub(r'"[^"]*"', f'"{post_title}"', line)
+            # Update post title
+            line = re.sub(r'"[^"]*"', f'"{post_title}"', line)
 
-                # update post link ONLY if it exists
-                if post_link:
-                    line = re.sub(r'\d{4}/\d{2}/[\w-]+/index\.html', post_link, line)
+            # Update post link ONLY if it exists
+            if post_link:
+                # Replace the link that comes immediately after the closing quote
+                line = re.sub(
+                    r'(".*?")\s*,\s*[^,]+/',
+                    rf'\1, {post_link}',
+                    line
+                )
 
         updated_lines.append(line)
 
