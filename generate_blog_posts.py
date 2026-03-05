@@ -18,6 +18,7 @@ import hashlib
 import time
 import sys
 import winsound
+from dotenv import load_dotenv
 
 ##### Commit message: #####
 # Update blog posts
@@ -35,7 +36,11 @@ DEBUG_NUM_ENTRIES = None  # Set to None to process all entries
 
 BLOG_AUTHOR = "Metod Langus"
 BLOG_TITLE = "Gorski užitki"
-SITE_VERIFICATION = "4bTHS88XDAVpieH98J47AZPNSkKkTj0yHn97H5On5SU"
+
+load_dotenv()
+SITE_VERIFICATION = os.getenv("SITE_VERIFICATION")
+if not SITE_VERIFICATION:
+    raise ValueError("SITE_VERIFICATION is not set")
 
 # Constants
 entries_per_page = 12 # Set pagination on home and label pages
@@ -61,7 +66,9 @@ REMOTE_DB_URL = f"{BASE_SITE_URL}/.build/lastmod.json"
 
 # Indexnow settings
 INDEXNOW_ENDPOINT = "https://www.bing.com/indexnow"
-KEY = "96686b98e4974b89a7268c29fa7756a8"
+KEY = os.getenv("INDEXNOW_KEY")
+if not KEY:
+    raise ValueError("INDEXNOW_KEY is not set")
 KEY_LOCATION = f"{BASE_SITE_URL}/{KEY}.txt"
 
 def load_lastmod_db():
