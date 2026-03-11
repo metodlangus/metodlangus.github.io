@@ -189,13 +189,11 @@
         map.addControl(new L.Control.DownloadGPX({ position: 'topleft', title: 'Download GPX', gpxUrl: gpxURL, fileName }));
     }
 
-    function addExternalLink(container, url, className, bottomPx = 0) {
+    function addExternalLink(container, url, className) {
         const btn = document.createElement('a');
         btn.href = url;
         btn.target = '_blank';
         btn.className = 'button ' + className;
-        btn.style.position = 'absolute';
-        btn.style.bottom = bottomPx + 'px';
         container.appendChild(btn);
     }
 
