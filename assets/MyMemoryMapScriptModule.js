@@ -6,7 +6,8 @@ let config = {
     isRelive: false,
     initPhotosValue: -2,
     center: [46.27396640, 14.30939080],
-    zoom: 8
+    zoom: 8,
+    isSignedIn: false
 };
 
 let map, gpxFolder, trackListUrl, photoListUrl, isRelive;
@@ -97,7 +98,17 @@ function handleSliderChange() {
 // Initialize slider (called from init / createMap)
 function initPhotoSlider() {
     const slider = document.getElementById('photosMapSliderElement');
+    if (slider) {
+        slider.disabled = !config.isSignedIn;
+        slider.style.cursor = config.isSignedIn ? 'pointer' : 'not-allowed';
+        slider.style.opacity = config.isSignedIn ? '1' : '0.7';
+    }
     const valueDisplay = document.getElementById('photosMapValueElement');
+    if (valueDisplay) {
+        valueDisplay.disabled = !config.isSignedIn;
+        valueDisplay.style.cursor = config.isSignedIn ? 'pointer' : 'not-allowed';
+        valueDisplay.style.opacity = config.isSignedIn ? '1' : '0.7';
+    }
 
     if (!slider || !valueDisplay) return;
 
@@ -323,6 +334,28 @@ function addMarkers(data) {
             return; // Skip this entry on error
         }
 
+        // Group all filter-related elements
+        const filterElements = [
+            document.getElementById('photosMapSliderElement'),
+            document.getElementById('photosMapValueElement'),
+            document.getElementById('dayFilterStart'),
+            document.getElementById('dayFilterEnd'),
+            document.getElementById('timeFilterStart'),
+            document.getElementById('timeFilterEnd'),
+            document.getElementById('dailyTimeFilterStart'),
+            document.getElementById('dailyTimeFilterEnd'),
+            document.getElementById('applyFilters')
+        ];
+
+        // Enable/disable all at once based on signin status
+        filterElements.forEach(el => {
+            if (el) {
+                el.disabled = !config.isSignedIn;
+                el.style.cursor = config.isSignedIn ? 'pointer' : 'not-allowed';
+                el.style.opacity = config.isSignedIn ? '1' : '0.7';
+            }
+        });
+
         // Retrieve selected time filters from local storage
         const timeFilterStart = localStorage.getItem('timeFilterStart') || "00:00"; // Default to midnight
         const timeFilterEnd = localStorage.getItem('timeFilterEnd') || "23:59"; // Default to end of the day
@@ -381,10 +414,18 @@ function addMarkers(data) {
         //     </div>`;
 
         // Create and bind marker for valid entries
-        const photoMarker = L.marker([latitude, longitude], { icon: photoMarkerIcon })
-            .bindPopup(popupContent, {
-                className: 'photo-popup' // Assign the specific photo-popup class
+        const photoMarker = L.marker([latitude, longitude], { icon: photoMarkerIcon });
+
+        if (config.isSignedIn) {
+            photoMarker.bindPopup(popupContent, { className: 'photo-popup' });
+        } else {
+            // Prevent any click from opening popup
+            photoMarker.on('click', (e) => {
+                e.originalEvent.stopPropagation();
+                e.originalEvent.preventDefault();
             });
+        }
+
         markers.addLayer(photoMarker);
     });
 
@@ -402,6 +443,10 @@ fetch(photoListUrl)
 // Apply filters when the button is clicked
 const applyBtn = document.getElementById('applyFilters');
 if (applyBtn) {
+  applyBtn.disabled = !config.isSignedIn;
+  applyBtn.style.cursor = config.isSignedIn ? 'pointer' : 'not-allowed';
+  applyBtn.style.opacity = config.isSignedIn ? '1' : '0.7';
+
   applyBtn.addEventListener('click', function () {
     // Get filter values from input fields
     const dayFilterStart = document.getElementById('dayFilterStart').value || "1970-01-01";
@@ -614,9 +659,16 @@ const ShowTracksControl = L.Control.extend({
         button.href = '#';
         button.title = 'Show Tracks';
         button.innerHTML = '<span>&#x2713;</span>';
+
+        if (!config.isSignedIn) {
+            button.style.opacity = 0.7;
+            button.style.pointerEvents = 'none';
+        } else {
         L.DomEvent.on(button, 'click', L.DomEvent.stopPropagation)
             .on(button, 'click', L.DomEvent.preventDefault)
             .on(button, 'click', function () { showTracksInCurrentMapArea(); });
+        }
+
         return container;
     }
 });
@@ -630,9 +682,16 @@ const ClearTracksControl = L.Control.extend({
         button.href = '#';
         button.title = 'Clear All Tracks';
         button.innerHTML = '<span>&#x2715;</span>';
+
+        if (!config.isSignedIn) {
+            button.style.opacity = 0.7;
+            button.style.pointerEvents = 'none';
+        } else {
         L.DomEvent.on(button, 'click', L.DomEvent.stopPropagation)
             .on(button, 'click', L.DomEvent.preventDefault)
             .on(button, 'click', function () { clearTracks(); });
+        }
+
         return container;
     }
 });
@@ -670,13 +729,23 @@ function loadTrackMarkers() {
 
                 const marker = L.marker([parseFloat(lat), parseFloat(lng)], { 
                     icon: startMarkerIcon, title: filename 
-                }).bindPopup(popupContent, { className: 'track-popup' });
+                });
 
-                marker.on('click', () => loadGPXTrack(gpxURL, randomColor, marker));
+                if (config.isSignedIn) {
+                    marker.bindPopup(popupContent, { className: 'track-popup' });
+                    marker.on('click', () => loadGPXTrack(gpxURL, randomColor, marker));
+                } else {
+                    // Prevent default popup opening if somehow clicked
+                    marker.on('click', (e) => {
+                        e.originalEvent.stopPropagation();
+                        e.originalEvent.preventDefault();
+                    });
+                }
+
                 clusteredMarkers.addLayer(marker);
 
-                // Check if this is the track to load from URL parameter
-                if (pendingTrackToLoad && filename === pendingTrackToLoad) {
+                // Load pending track from URL parameter if applicable
+                if (pendingTrackToLoad && filename === pendingTrackToLoad && config.isSignedIn) {
                     setTimeout(() => {
                         loadGPXTrack(gpxURL, randomColor, marker, true); // true = fitBounds
                         pendingTrackToLoad = null; // Clear the pending track
@@ -746,34 +815,38 @@ function handleZoomChange() {
     map.addControl(new ShowTracksControl());
     map.addControl(new ClearTracksControl());
 
-    // Events
-    map.on('click', handleTrackClick);
-    map.on('zoomend', handleZoomChange);
+    // Only bind events if user is signed in
+    if (config.isSignedIn) {
+        map.on('click', handleTrackClick);
+        map.on('zoomend', handleZoomChange);
+    }
 
     // Initialize track markers
     loadTrackMarkers();
 
 }
 
-// -----------------
-// ZOOM SWITCH
-// -----------------
-function handleZoomChange() {
-    const z = map.getZoom();
-    if (map.hasLayer(opentopoMap) && z > 15.5) {
-        map.removeLayer(opentopoMap);
-        map.addLayer(openstreetMap);
-        wasZoomedFromTopo = true;
-    } else if (wasZoomedFromTopo && z <= 15.5) {
-        map.removeLayer(openstreetMap);
-        map.addLayer(opentopoMap);
-        wasZoomedFromTopo = false;
-    }
-}
 
 // -----------------
 // EXPORT
 // -----------------
-window.MyMemoryMapModule = { init };
+window.MyMemoryMapModule = { 
+    init,
+    getMap: () => map,        // helper to access the current map
+    destroy: () => {          // destroy helper
+        if (map) {
+            map.remove();
+            map = null;
+
+            // also reset other global-ish states
+            masterLayerGroup.clearLayers();
+            clusteredMarkers.clearLayers();
+            nonClusteredMarkers.clearLayers();
+            Object.keys(tracks).forEach(k => delete tracks[k]);
+            Object.keys(hiddenTracks).forEach(k => delete hiddenTracks[k]);
+            currentlySelectedTrack = null;
+        }
+    }
+};
 
 })(window);

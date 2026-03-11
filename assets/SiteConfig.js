@@ -31,11 +31,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Memory Map
     runIfDefined(window.MyMemoryMapModule, () => {
+        auth.onAuthStateChanged(user => {
+        
+        const overlay = document.getElementById("authOverlay");
+        if (!overlay) return;
+        if (user) {
+          console.log("User signed in:", user.displayName || user.email);
+          overlay.style.display = "none";
+        } else {
+          console.log("User not signed in");
+          overlay.style.display = "flex";
+        }
+
+        // Destroy previous map safely
+        if (MyMemoryMapModule.getMap()) {
+            MyMemoryMapModule.destroy();
+        }
+
+        // Re-initialize the module with current signin status
         MyMemoryMapModule.init({
             mapId: 'map',
             baseUrl: WindowBaseUrl,
             initPhotosValue: initMapPhotos,
-            isRelive: isRelive
+            isRelive: isRelive,
+            isSignedIn: !!user
+        });
         });
 
         document.getElementById('applyFilters')?.click();
@@ -135,6 +155,27 @@ document.addEventListener('DOMContentLoaded', () => {
           });
     });
 
+    const googleBtn = document.getElementById("googleLoginBtn");
+    const githubBtn = document.getElementById("githubLoginBtn");
+
+    // Google login
+    googleBtn?.addEventListener("click", async () => {
+      try {
+        await signInWithGoogle();
+      } catch (err) {
+        console.error("Google login failed:", err);
+      }
+    });
+
+    // Github login
+    githubBtn?.addEventListener("click", async () => {
+      try {
+        await signInWithGithub();
+      } catch (err) {
+        console.error("Github login failed:", err);
+      }
+    });
+
 });
 
 
@@ -232,3 +273,90 @@ if (window.location.hostname === "metodlangus.github.io") {
     console.log('Tracked GPX download:', href); // for debugging
   });
 })();
+
+
+/* --------------------------------------------------
+   FIREBASE AUTH (classic script version)
+-------------------------------------------------- */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBmXpwWj65ZbTVqaHMJXyEeSjzsp5TuzZI",
+  authDomain: "gorski-uzitki-auth.firebaseapp.com",
+  projectId: "gorski-uzitki-auth",
+  storageBucket: "gorski-uzitki-auth.firebasestorage.app",
+  messagingSenderId: "893128496936",
+  appId: "1:893128496936:web:1cbe8ee4521bd0a9c0a21d",
+  measurementId: "G-HCKFX55W6D"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Auth objects
+const auth = firebase.auth();
+const googleProvider = new firebase.auth.GoogleAuthProvider();
+const githubProvider = new firebase.auth.GithubAuthProvider();
+
+// expose globally
+window.auth = auth;
+window.googleProvider = googleProvider;
+window.githubProvider = githubProvider;
+
+
+// -------- AUTH HELPERS --------
+function checkSignIn() {
+  return new Promise(resolve => {
+    auth.onAuthStateChanged(user => {
+      resolve(!!user);
+    });
+  });
+}
+
+async function signIn(provider, name) {
+  try {
+    // If user already logged in → just link provider
+    if (auth.currentUser) {
+      const result = await auth.currentUser.linkWithPopup(provider);
+      console.log(`${name} successfully linked to account`);
+      alert(`${name} prijava je bila uspešno dodana vašemu računu.`);
+      return result;
+    }
+    // Normal login
+    const result = await auth.signInWithPopup(provider);
+    console.log(`${name} login success:`, result.user);
+    return result.user;
+  } catch (err) {
+    if (err.code === "auth/account-exists-with-different-credential") {
+      const email = err.customData?.email;
+      const pendingCred = err.credential;
+      try {
+        const methods = await auth.fetchSignInMethodsForEmail(email);
+        const providerMap = {
+          "google.com": "Google",
+          "github.com": "GitHub",
+          "password": "Email"
+        };
+        const providerName = providerMap[methods?.[0]] || "drugim ponudnikom";
+        alert(`Račun z emailom ${email} že obstaja. Prosimo, prijavite se z ${providerName}.`);
+      } catch (e) {
+        console.error("Provider detection failed:", e);
+      }
+    } else {
+      console.error(`${name} login failed:`, err);
+    }
+  }
+}
+
+function signInWithGoogle() {
+  return signIn(googleProvider, "Google");
+}
+
+function signInWithGithub() {
+  return signIn(githubProvider, "GitHub");
+}
+
+// Expose to window
+window.checkSignIn = checkSignIn;
+window.signInWithGoogle = signInWithGoogle;
+window.signInWithGithub = signInWithGithub;
+window.onAuthStateChanged = auth.onAuthStateChanged.bind(auth);

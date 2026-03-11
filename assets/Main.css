@@ -892,3 +892,76 @@ div#PageList1 ul li {
 .content-wrapper p {
   text-align: justify;
 }
+
+
+/* 🔒 Auth overlay styles */
+
+/* Overlay covers the whole map */
+#authOverlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 1000; /* above Leaflet map controls */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: all; /* catch all interactions */
+}
+
+/* The white box in the center */
+.auth-box {
+  background: #fff;
+  padding: 35px 25px;
+  border-radius: 14px;
+  text-align: center;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+  max-width: 360px;
+  width: 90%;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Title */
+.auth-box h2 {
+  margin: 0 0 15px;
+  font-size: 20px;
+  color: #333;
+}
+
+/* Description text */
+.auth-box p {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+/* Buttons styling */
+.auth-box button {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 12px 0;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Google button style */
+#googleLoginBtn {
+  background: #db4437;
+  color: white;
+}
+#googleLoginBtn:hover {
+  background: #c1351d;
+}
+
+/* Github button style */
+#githubLoginBtn {
+  background: #333;
+  color: white;
+}
+#githubLoginBtn:hover {
+  background: #555;
+}

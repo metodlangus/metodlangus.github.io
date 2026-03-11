@@ -2515,7 +2515,16 @@ def generate_big_map_page():
       <div class="content-wrapper">
         {searchbox_html}
         <h1>Zemljevid spominov</h1>
-        <div id="map"></div>
+        <div id="map">
+          <div id="authOverlay" style="display:none;">
+            <div class="auth-box">
+              <h2>Za ogled vsebine je potrebna prijava</h2>
+              <p>Za ogled zemljevida s fotografijami ter sledmi poti je potrebna prijava z eno od spodnjih možnosti:</p>
+              <button id="googleLoginBtn">Prijava z Google</button>
+              <button id="githubLoginBtn">Prijava z Github</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -2535,6 +2544,8 @@ def generate_big_map_page():
   <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
   <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyMemoryMapScriptModule.js" defer></script>
