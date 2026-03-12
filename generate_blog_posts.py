@@ -1527,11 +1527,13 @@ def fetch_and_save_all_posts(entries):
   <script src='https://metodlangus.github.io/plugins/@raruto/leaflet-elevation/dist/leaflet-elevation.min.js'></script>
   <script src='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
   <script src='https://metodlangus.github.io/plugins/leaflet-polylinedecorator/1.1.0/leaflet.polylineDecorator.min.js'></script>
-  <script src='https://metodlangus.github.io/scripts/leaflet-download-gpx-button.js'></script>
+  <script src='{BASE_SITE_URL}/scripts/leaflet-download-gpx-button.js'></script>
   <script src='https://metodlangus.github.io/plugins/lightbox2/2.11.1/js/lightbox-plus-jquery.min.js'></script>
   <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
   <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyMapScriptModule.js" defer></script>

@@ -5,7 +5,8 @@ L.Control.DownloadGPX = L.Control.extend({
         position: "topleft",
         title: "Download GPX",
         gpxUrl: null,
-        fileName: null
+        fileName: null,
+        isSignedIn: true
     },
     onAdd: function(map) {
         var container = L.DomUtil.create("div", "leaflet-control-download-gpx leaflet-bar leaflet-control");
@@ -13,12 +14,46 @@ L.Control.DownloadGPX = L.Control.extend({
         this.link.href = "#";
         this._map = map;
         this.link.title = this.options.title;
+        this._updateAppearance();
+
+        // React to auth state changes live
+        if (window.auth) {
+            window.auth.onAuthStateChanged(user => {
+                this.options.isSignedIn = !!user;
+                this._updateAppearance();
+
+                // If user just signed in and overlay is visible → hide it
+                if (user) {
+                    const overlay = document.getElementById("authOverlay");
+                    if (overlay) overlay.style.display = "none";
+                }
+            });
+        }
+
         L.DomEvent.on(this.link, "click", this._click, this);
         return container;
+    },
+    _updateAppearance: function() {
+        if (this.options.isSignedIn) {
+            this.link.style.opacity = "1";
+            this.link.title = this.options.title;
+        } else {
+            this.link.style.opacity = "0.7";
+            this.link.title = "Za prenos GPX datoteke je potrebna prijava";
+        }
     },
     _click: function(e) {
         L.DomEvent.stopPropagation(e);
         L.DomEvent.preventDefault(e);
+
+        // Check live auth state instead of stale option
+        const currentUser = window.auth?.currentUser;
+        if (!currentUser) {
+            const overlay = document.getElementById("authOverlay");
+            if (overlay) overlay.style.display = "flex";
+            return;
+        }
+
         this.downloadGPX();
     },
     downloadGPX: function() {
@@ -27,6 +62,10 @@ L.Control.DownloadGPX = L.Control.extend({
         
         if (!gpxUrl) {
             console.error("GPX URL not provided.");
+            return;
+        }
+        if (!fileName) {
+            console.error("File name not provided.");
             return;
         }
         

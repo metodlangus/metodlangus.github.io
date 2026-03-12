@@ -1,5 +1,5 @@
-const WindowBaseUrl = window.location.origin;
-// const WindowBaseUrl = window.location.origin + "/metodlangus.github.io/";
+// const WindowBaseUrl = window.location.origin;
+const WindowBaseUrl = window.location.origin + "/metodlangus.github.io/";
 
 // Module-scoped variable to track if this is a Relive page
 let isRelive = false;
@@ -33,29 +33,29 @@ document.addEventListener('DOMContentLoaded', () => {
     runIfDefined(window.MyMemoryMapModule, () => {
         auth.onAuthStateChanged(user => {
         
-        const overlay = document.getElementById("authOverlay");
-        if (!overlay) return;
-        if (user) {
-          console.log("User signed in:", user.displayName || user.email);
-          overlay.style.display = "none";
-        } else {
-          console.log("User not signed in");
-          overlay.style.display = "flex";
-        }
+            const overlay = document.getElementById("authOverlay");
+            if (!overlay) return;
+            if (user) {
+              console.log("User signed in:", user.displayName || user.email);
+              overlay.style.display = "none";
+            } else {
+              console.log("User not signed in");
+              overlay.style.display = "flex";
+            }
 
-        // Destroy previous map safely
-        if (MyMemoryMapModule.getMap()) {
-            MyMemoryMapModule.destroy();
-        }
+            // Destroy previous map safely
+            if (MyMemoryMapModule.getMap()) {
+                MyMemoryMapModule.destroy();
+            }
 
-        // Re-initialize the module with current signin status
-        MyMemoryMapModule.init({
-            mapId: 'map',
-            baseUrl: WindowBaseUrl,
-            initPhotosValue: initMapPhotos,
-            isRelive: isRelive,
-            isSignedIn: !!user
-        });
+            // Re-initialize the module with current signin status
+            MyMemoryMapModule.init({
+                mapId: 'map',
+                baseUrl: WindowBaseUrl,
+                initPhotosValue: initMapPhotos,
+                isRelive: isRelive,
+                isSignedIn: !!user
+            });
         });
 
         document.getElementById('applyFilters')?.click();
@@ -63,9 +63,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Map
     runIfDefined(window.MyMapModule, () => {
-        MyMapModule.init({
-            usePostTitle: false,
-            trackColour: 'orange'
+        let mapInitialized = false;
+
+        auth.onAuthStateChanged(user => {
+            if (!mapInitialized) {
+                mapInitialized = true;
+                MyMapModule.init({
+                    usePostTitle: false,
+                    trackColour: 'orange',
+                    isSignedIn: !!user
+                });
+                console.log("MyMapModule initialized. User signed in:", !!user);
+            }
         });
     });
 
@@ -155,26 +164,26 @@ document.addEventListener('DOMContentLoaded', () => {
           });
     });
 
-    const googleBtn = document.getElementById("googleLoginBtn");
-    const githubBtn = document.getElementById("githubLoginBtn");
+    // Attach auth overlay listeners (works for both static and dynamic overlays)
+    function attachAuthOverlayListeners(container) {
+        // Google login
+        container.querySelector('#googleLoginBtn')?.addEventListener('click', async () => {
+            try { await signInWithGoogle(); }
+            catch (err) { console.error("Google login failed:", err); }
+        });
 
-    // Google login
-    googleBtn?.addEventListener("click", async () => {
-      try {
-        await signInWithGoogle();
-      } catch (err) {
-        console.error("Google login failed:", err);
-      }
-    });
+        // Github login
+        container.querySelector('#githubLoginBtn')?.addEventListener('click', async () => {
+            try { await signInWithGithub(); }
+            catch (err) { console.error("Github login failed:", err); }
+        });
 
-    // Github login
-    githubBtn?.addEventListener("click", async () => {
-      try {
-        await signInWithGithub();
-      } catch (err) {
-        console.error("Github login failed:", err);
-      }
-    });
+    }
+    window.attachAuthOverlayListeners = attachAuthOverlayListeners;
+
+    // For static overlay in HTML (MemoryMap page)
+    const staticOverlay = document.getElementById('authOverlay');
+    if (staticOverlay) attachAuthOverlayListeners(staticOverlay);
 
 });
 

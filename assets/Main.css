@@ -901,22 +901,25 @@ div#PageList1 ul li {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(0,0,0,0.6);
-  z-index: 1000; /* above Leaflet map controls */
+  z-index: 1000;
   display: flex;
   justify-content: center;
   align-items: center;
-  pointer-events: all; /* catch all interactions */
+  pointer-events: all;
+  padding: 53px; /* ← prevents box from touching screen edges on narrow phones */
+  box-sizing: border-box;
 }
 
 /* The white box in the center */
 .auth-box {
+  position: relative;
   background: #fff;
   padding: 35px 25px;
   border-radius: 14px;
   text-align: center;
   box-shadow: 0 15px 40px rgba(0,0,0,0.2);
   max-width: 360px;
-  width: 90%;
+  width: 100%;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -934,8 +937,8 @@ div#PageList1 ul li {
   margin-bottom: 20px;
 }
 
-/* Buttons styling */
-.auth-box button {
+/* Login buttons only — excludes close button */
+.auth-box button:not(.auth-close-btn) {
   display: block;
   width: 100%;
   margin: 10px 0;
@@ -964,4 +967,28 @@ div#PageList1 ul li {
 }
 #githubLoginBtn:hover {
   background: #555;
+}
+
+/* Close button */
+.auth-close-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 50%;
+  font-size: 24px;
+  font-weight: bold;
+  color: #555;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+.auth-close-btn:hover {
+  background: #e0e0e0;
+  color: #000;
 }

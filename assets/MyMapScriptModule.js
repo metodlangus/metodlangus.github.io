@@ -4,7 +4,8 @@
         iconSize: [25, 41],
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
-        shadowUrl: null
+        shadowUrl: null,
+        isSignedIn: false
     });
 
     const endMarkerIcon = L.icon({
@@ -25,6 +26,7 @@
         trackColour = userConfig.trackColour ?? 'orange';
         baseUrl = userConfig.baseUrl || baseUrl;
         isBlogger = userConfig.isBlogger;
+        isSignedIn = userConfig.isSignedIn ?? false;
 
         let mapIndex = 0;
 
@@ -38,7 +40,7 @@
         }
     }
 
-    function insertMapContainer(gpxURL, reliveURL, stravaURL, index) {
+    function insertMapContainer(gpxURL, reliveURL, stravaURL, index, userConfig = {}) {
         console.log(`Inserting map container for index ${index}: GPX URL=${gpxURL}, Relive URL=${reliveURL}, Strava URL=${stravaURL}`);
         const scriptTags = document.getElementsByTagName('script');
         let targetScriptTag;
@@ -50,7 +52,7 @@
         }
         if (!targetScriptTag) return console.error('Script tag for gpxURL' + index + ' not found.');
 
-        // Insert container UI
+        // Insert container UI above script tag
         const hrBefore = document.createElement('hr');
         targetScriptTag.parentNode.insertBefore(hrBefore, targetScriptTag);
 
@@ -76,8 +78,36 @@
         const mapDiv = document.createElement('div');
         mapDiv.id = 'map-' + index;
         mapDiv.className = 'map-container';
+        mapDiv.style.position = 'relative'; // needed for overlay positioning
         mapDiv.style.display = 'none';
         targetScriptTag.parentNode.insertBefore(mapDiv, targetScriptTag.nextSibling);
+
+        // --- ADD AUTH OVERLAY INSIDE MAP DIV ---
+        const authOverlay = document.createElement('div');
+        authOverlay.id = 'authOverlay';
+        authOverlay.style.display = 'none'; // hidden initially
+
+        authOverlay.innerHTML = `
+          <div class="auth-box">
+            <button class="auth-close-btn" aria-label="Close overlay">&times;</button>
+            <h2>Za prenos GPX sledi je potrebna prijava</h2>
+            <p>Za prenos GPX datoteke s sledjo poti se prosimo prijavite z eno od spodnjih možnosti:</p>
+            <button id="googleLoginBtn">Prijava z Google</button>
+            <button id="githubLoginBtn">Prijava z GitHub</button>
+          </div>
+        `;
+        mapDiv.appendChild(authOverlay);
+
+        // Reuse the shared listener setup
+        if (typeof window.attachAuthOverlayListeners === 'function') {
+            window.attachAuthOverlayListeners(authOverlay);
+        }
+
+        // --- ADD CLOSE BUTTON FUNCTIONALITY ---
+        const closeBtn = authOverlay.querySelector('.auth-close-btn');
+        closeBtn.addEventListener('click', () => {
+          authOverlay.style.display = 'none';
+        });
 
         // Button click initializes the map
         button.onclick = function() {
@@ -166,10 +196,10 @@
                     const overlayLayers = { 'GPX track': GPXtrack };
                     L.control.layers(baseLayers, overlayLayers).addTo(map);
 
-                    useGPXname(geojson.features[0].properties?.name || `Track-${index}`, map, gpxURL);
+                    useGPXname(geojson.features[0].properties?.name || `Track-${index}`, map, gpxURL, userConfig.isSignedIn);
 
                     // Elevation
-                    const elevation_options = { collapsed: true, distanceMarkers: false, downloadLink: true, edgeScale: false, hotline: false, wptIcons: false, polyline: { opacity: 0 } };
+                    const elevation_options = { collapsed: true, distanceMarkers: false, downloadLink: false, edgeScale: false, hotline: false, wptIcons: false, polyline: { opacity: 0 } };
                     const controlElevation = L.control.elevation(elevation_options).addTo(map);
                     controlElevation.load(gpxURL);
 
@@ -184,9 +214,15 @@
         };
     }
 
-    function useGPXname(GPXname, map, gpxURL) {
+    function useGPXname(GPXname, map, gpxURL, isSignedIn) {
         const fileName = usePostTitle ? (window.postTitle || GPXname) : GPXname;
-        map.addControl(new L.Control.DownloadGPX({ position: 'topleft', title: 'Download GPX', gpxUrl: gpxURL, fileName }));
+        map.addControl(new L.Control.DownloadGPX({
+            position: 'topleft',
+            title: 'Download GPX',
+            gpxUrl: gpxURL,
+            fileName,
+            isSignedIn
+        }));
     }
 
     function addExternalLink(container, url, className) {
