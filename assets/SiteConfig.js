@@ -1,5 +1,5 @@
-// const WindowBaseUrl = window.location.origin;
-const WindowBaseUrl = window.location.origin + "/metodlangus.github.io/";
+const WindowBaseUrl = window.location.origin;
+// const WindowBaseUrl = window.location.origin + "/metodlangus.github.io/";
 
 // Module-scoped variable to track if this is a Relive page
 let isRelive = false;

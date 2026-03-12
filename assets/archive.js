@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("archive-placeholder").innerHTML = `<aside class="sidebar-archive">
   <h2>Arhiv</h2>
   <details open>
-    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(17)</span></summary>
+    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(16)</span></summary>
     <details class="month-group">
       <summary><a href="https://metodlangus.github.io/posts/2026/03/">marec 2026</a>&nbsp;<span class="post-count" dir="ltr">(1)</span></summary>
       <ul>
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/posts/2026/02/">februar 2026</a>&nbsp;<span class="post-count" dir="ltr">(9)</span></summary>
+      <summary><a href="https://metodlangus.github.io/posts/2026/02/">februar 2026</a>&nbsp;<span class="post-count" dir="ltr">(8)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2026/02/vrh-strmali-forca-dei-disteis/">Vrh Strmali (Forca dei Disteis)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/02/murnovec-1864-m-schwarzkogel-kresisce-1842-m/">Murnovec (1864 m), Schwarzkogel / Kresišče (1842 m)</a></li>
@@ -22,7 +22,6 @@ document.addEventListener("DOMContentLoaded", function() {
         <li><a href="https://metodlangus.github.io/posts/2026/02/pec-ofen-monte-forno-1508-m/">Peč / Ofen / Monte Forno (1508 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/02/dobratsch-2166-m/">Dobratsch (2166 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/02/mrezce-1965-m-debela-pec-2014-m/">Mrežce (1965 m), Debela peč (2014 m)</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2026/02/mesto-ifrane/">Mesto Ifrane</a></li>
       </ul>
     </details>
     <details class="month-group">
@@ -39,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function() {
     </details>
   </details>
   <details open>
-    <summary><a href="https://metodlangus.github.io/posts/2025/">2025</a>&nbsp;<span class="post-count" dir="ltr">(102)</span></summary>
+    <summary><a href="https://metodlangus.github.io/posts/2025/">2025</a>&nbsp;<span class="post-count" dir="ltr">(103)</span></summary>
     <details class="month-group">
       <summary><a href="https://metodlangus.github.io/posts/2025/12/">december 2025</a>&nbsp;<span class="post-count" dir="ltr">(11)</span></summary>
       <ul>
@@ -77,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/posts/2025/09/">september 2025</a>&nbsp;<span class="post-count" dir="ltr">(25)</span></summary>
+      <summary><a href="https://metodlangus.github.io/posts/2025/09/">september 2025</a>&nbsp;<span class="post-count" dir="ltr">(26)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2025/09/maroko-9-25-9-2025/">Maroko (9. – 25. 9. 2025)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/09/marakes-treviz/">Marakeš – Treviž</a></li>
@@ -87,6 +86,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <li><a href="https://metodlangus.github.io/posts/2025/09/douira-atlantska-obala/">Douira (atlantska obala)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/09/hribcek-nad-prelazom-tizi-n-test-2510-m/">Hribček nad prelazom Tizi-n-Test (2510 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/09/slap-boygndaz/">Slap Boygndaz</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/09/mesto-ifrane/">Mesto Ifrane</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/09/narodni-park-ifrane/">Narodni park Ifrane</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/09/oaza-reke-ziz/">Oaza reke Ziz</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/09/kanjon-reke-ziz-tamrrakecht/">Kanjon reke Ziz (Tamrrakecht)</a></li>
