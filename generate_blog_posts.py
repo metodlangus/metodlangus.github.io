@@ -2866,14 +2866,14 @@ def generate_useful_links_page():
   <meta property="og:description" content="Seznam uporabnih povezav do drugih blogov in vsebin." />
   <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
   <meta property="og:image:alt" content="Uporabne povezave" />
-  <meta property="og:url" content="{BASE_SITE_URL}/uporabne-povezave.html" />
+  <meta property="og:url" content="{BASE_SITE_URL}/uporabne-povezave/" />
   <meta property="og:type" content="website" />
 
   <title>Uporabne povezave | {BLOG_TITLE}</title>
 
   <!-- Canonical & hreflang -->
-  <link rel="canonical" href="{BASE_SITE_URL}/uporabne-povezave.html" />
-  <link rel="alternate" href="{BASE_SITE_URL}/uporabne-povezave.html" hreflang="sl" />
+  <link rel="canonical" href="{BASE_SITE_URL}/uporabne-povezave/" />
+  <link rel="alternate" href="{BASE_SITE_URL}/uporabne-povezave/" hreflang="sl" />
   <link rel="alternate" href="{BASE_SITE_URL}" hreflang="x-default" />
 
   {schema_jsonld}

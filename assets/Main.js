@@ -145,7 +145,8 @@ Promise.all([
     posts = entries.map((entry, i) => {
       const title = entry.title?.$t || `untitled-${i}`;
       const content = entry.content?.$t || "";
-      const link = entry.link.find(l => l.rel === "alternate" && l.type === "text/html")?.href || "#";
+      const rawLink = entry.link.find(l => l.rel === "alternate" && l.type === "text/html")?.href || "#";
+      const link = rawLink.replace(/\/index\.html$/, '/');
       const thumbnail = entry.media$thumbnail?.url || "";
 
       return { title, content, link, thumbnail };

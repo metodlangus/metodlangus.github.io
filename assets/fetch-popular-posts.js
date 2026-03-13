@@ -26,7 +26,7 @@ async function run() {
       desc: true
     }
   ],
-  limit: 10
+  limit: 50
 });
 
   const results = [];
