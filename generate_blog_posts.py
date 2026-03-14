@@ -679,25 +679,25 @@ def render_sidebar_settings(picture_settings=True, map_settings=True, current_pa
 
             <!-- Date and Time Filters -->
             <div class='form-group'>
-                <label for='dayFilterStart'>Od dne:</label>
+                <label for='dayFilterStart'>Slike od dne:</label>
                 <input class='input-field' id='dayFilterStart' type='date'/>
             </div>
-            <div class='form-group'>
+            <div class='form-group'style="display:none;">
                 <label for='timeFilterStart'>od ure:</label>
                 <input class='input-field' id='timeFilterStart' type='time'/>
             </div>
             <div class='form-group'>
-                <label for='dayFilterEnd'>Do dne:</label>
+                <label for='dayFilterEnd'>do dne:</label>
                 <input class='input-field' id='dayFilterEnd' type='date'/>
             </div>
-            <div class='form-group'>
+            <div class='form-group'style="display:none;">
                 <label for='timeFilterEnd'>do ure:</label>
                 <input class='input-field' id='timeFilterEnd' type='time'/>
             </div>
 
             <!-- Daily Time Filters -->
             <div class='form-group'>
-                <label for='dailyTimeFilterStart'>Med:</label>
+                <label for='dailyTimeFilterStart'>med:</label>
                 <input class='input-field' id='dailyTimeFilterStart' type='time' value='00:00'/>
             </div>
             <div class='form-group'>
@@ -705,6 +705,24 @@ def render_sidebar_settings(picture_settings=True, map_settings=True, current_pa
                 <input class='input-field' id='dailyTimeFilterEnd' type='time' value='23:59'/>
             </div>
 
+            <div style="height:12px;"></div>
+            <!-- Track Filters -->
+            <div class='form-group'>
+                <label for='trackDayFilterStart'>Sledi od dne:</label>
+                <input class='input-field' id='trackDayFilterStart' type='date'/>
+            </div>
+            <div class='form-group'>
+                <label for='trackDayFilterEnd'>do dne:</label>
+                <input class='input-field' id='trackDayFilterEnd' type='date'/>
+            </div>
+            <div style="margin-top: 6px;">
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                    <input type="checkbox" id="usePhotoFilterForTracks">
+                    Uporabi filter slik
+                </label>
+            </div>
+
+            <div style="height:12px;"></div>
             <!-- Apply Filters Button -->
             <div class='form-group' style='display: flex; justify-content: center;'>
                 <button class='pill-button' id='applyFilters'>Uporabi filtre</button>

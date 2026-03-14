@@ -57,6 +57,8 @@ function populateFilterInputs() {
         timeFilterEnd: "23:59",
         dailyTimeFilterStart: "00:00",
         dailyTimeFilterEnd: "23:59",
+        trackDayFilterStart: "1970-01-01",
+        trackDayFilterEnd: "9999-12-31",
     };
 
     Object.keys(defaults).forEach((id) => {
@@ -64,6 +66,33 @@ function populateFilterInputs() {
         if (element) {
             element.value = localStorage.getItem(id) || defaults[id];
         }
+    });
+
+    // Restore checkbox state and apply its effect
+    const checkbox = document.getElementById('usePhotoFilterForTracks');
+    if (checkbox) {
+        checkbox.checked = localStorage.getItem('usePhotoFilterForTracks') === 'true';
+        applyPhotoFilterToTracks(checkbox.checked);
+
+        // Update disabled state whenever checkbox changes
+        checkbox.addEventListener('change', function() {
+            localStorage.setItem('usePhotoFilterForTracks', this.checked);
+            applyPhotoFilterToTracks(this.checked);
+        });
+    }
+}
+
+function applyPhotoFilterToTracks(checked) {
+    setTrackFilterFieldsDisabled(checked);
+}
+
+function setTrackFilterFieldsDisabled(disabled) {
+    ['trackDayFilterStart', 'trackDayFilterEnd'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.disabled = disabled;
+        el.style.cursor = disabled ? 'not-allowed' : '';
+        el.style.opacity = disabled ? '0.7' : '';
     });
 }
 
@@ -344,7 +373,8 @@ function addMarkers(data) {
             document.getElementById('timeFilterEnd'),
             document.getElementById('dailyTimeFilterStart'),
             document.getElementById('dailyTimeFilterEnd'),
-            document.getElementById('applyFilters')
+            document.getElementById('applyFilters'),
+            document.getElementById('usePhotoFilterForTracks')
         ];
 
         // Enable/disable all at once based on signin status
@@ -368,35 +398,18 @@ function addMarkers(data) {
         const filterStartDate = new Date(`${dayFilterStart}T${timeFilterStart}`);
         const filterEndDate = new Date(`${dayFilterEnd}T${timeFilterEnd}`);
 
-        // Validate that filterStartDate and filterEndDate are valid dates
-        if (isNaN(filterStartDate.getTime()) || isNaN(filterEndDate.getTime())) {
-            console.error('Invalid date filter range:', filterStartDate, filterEndDate);
-            return;
+        // Invalid dates → show all; reversed range → show nothing
+        if (!isNaN(filterStartDate.getTime()) && !isNaN(filterEndDate.getTime())) {
+            if (filterStartDate > filterEndDate) return; // Reversed → hide photo
+            if (captureDate < filterStartDate || captureDate > filterEndDate) return; // Outside range → hide photo
         }
 
-        // Ensure filterStartDate is before or equal to filterEndDate
-        if (filterStartDate > filterEndDate) {
-            console.error('Start date cannot be after end date:', filterStartDate, filterEndDate);
-            return;
-        }
+        // Extract just HH:MM from capture date for daily time comparison
+        const captureHHMM = captureDate.toTimeString().slice(0, 5); // "HH:MM"
 
-        // Check if captureDate is within the range
-        if (captureDate < filterStartDate || captureDate > filterEndDate) {
-            return; // Exclude photos outside the time range
-        }
-
-        // Parse daily time filters into individual Date objects
-        const dailyStartTime = new Date(`${dayFilterStart}T${dailyTimeFilterStart}:00`);
-        const dailyEndTime = new Date(`${dayFilterEnd}T${dailyTimeFilterEnd}:00`);
-        
-        // Extract just the time from the capture date for comparison
-        const captureTimeOnly = new Date(`${captureDate.toISOString().slice(0, 10)}T${captureDate.toTimeString().slice(0, 8)}`);
-
-        // Validate date range
-        if (captureDate < dayFilterStart || captureDate > dayFilterEnd) return; // Skip if outside date range
-
-        // Validate time range for the specific day
-        if (captureTimeOnly < dailyStartTime || captureTimeOnly > dailyEndTime) return; // Skip if outside time range
+        // Only apply daily time filter if range is valid and correctly ordered
+        if (dailyTimeFilterStart > dailyTimeFilterEnd) return; // Reversed → hide photo
+        if (captureHHMM < dailyTimeFilterStart || captureHHMM > dailyTimeFilterEnd) return; // Outside range → hide photo
 
         // Create popup content with a clickable image and caption  <a href="${postLink}" target="_blank">
         var popupContent = `
@@ -456,24 +469,40 @@ if (applyBtn) {
     const dailyTimeFilterStart = document.getElementById('dailyTimeFilterStart').value || "00:00";
     const dailyTimeFilterEnd = document.getElementById('dailyTimeFilterEnd').value || "23:59";
 
-    // Store the values in localStorage
+    // Track filter values — use photo range if checkbox is checked
+    const checkbox = document.getElementById('usePhotoFilterForTracks');
+    const usePhotoFilter = checkbox && checkbox.checked;
+
+    const trackDayFilterStart = usePhotoFilter ? dayFilterStart
+        : (document.getElementById('trackDayFilterStart').value || "1970-01-01");
+    const trackDayFilterEnd = usePhotoFilter ? dayFilterEnd
+        : (document.getElementById('trackDayFilterEnd').value || "9999-12-31");
+
+    // Store ALL values in localStorage
     localStorage.setItem('dayFilterStart', dayFilterStart);
     localStorage.setItem('dayFilterEnd', dayFilterEnd);
     localStorage.setItem('timeFilterStart', timeFilterStart);
     localStorage.setItem('timeFilterEnd', timeFilterEnd);
     localStorage.setItem('dailyTimeFilterStart', dailyTimeFilterStart);
     localStorage.setItem('dailyTimeFilterEnd', dailyTimeFilterEnd);
+    localStorage.setItem('usePhotoFilterForTracks', String(usePhotoFilter));
+    localStorage.setItem('trackDayFilterStart', trackDayFilterStart);
+    localStorage.setItem('trackDayFilterEnd', trackDayFilterEnd);
 
     // Reload markers with updated filters
     fetch(photoListUrl)
         .then(response => response.text())
         .then(data => {
-            // Clear existing markers
             markers.clearLayers();
-            // Re-add markers with new filters
             addMarkers(data);
+            // Re-apply disabled state after addMarkers runs
+            applyPhotoFilterToTracks(usePhotoFilter);
         })
         .catch(error => console.error('Error fetching photos metadata:', error));
+
+    // Reload track markers with updated filters
+    clearTracks();
+    loadTrackMarkers();
   });
 }
 
@@ -630,22 +659,30 @@ function showTracksInCurrentMapArea() {
 
     clusteredMarkers.eachLayer(marker => {
         if (bounds.contains(marker.getLatLng()) && !tracks[marker.options.title]) {
-            const trackColor = trackColors[Math.floor(Math.random() * trackColors.length)];
-            loadGPXTrack(`${gpxFolder}${marker.options.title}`, trackColor, marker);
+            // Check if track is within the date/time filters before loading
+            const { trackDate } = extractTrackName(marker.options.title);
+            if (isTrackWithinFilters(trackDate)) {
+                const trackColor = trackColors[Math.floor(Math.random() * trackColors.length)];
+                loadGPXTrack(`${gpxFolder}${marker.options.title}`, trackColor, marker);
+            }
         }
     });
 
     Object.entries(hiddenTracks).forEach(([key, trackData]) => {
         if (bounds.contains(trackData.marker.getLatLng())) {
-            // Add polyline and arrow layer back to the map
-            map.addLayer(trackData.polyline);
-            if (trackData.arrowLayer) {
-                map.addLayer(trackData.arrowLayer);
+            // Check if track is within the date/time filters before restoring
+            const { trackDate } = extractTrackName(key);
+            if (isTrackWithinFilters(trackDate)) {
+                // Add polyline and arrow layer back to the map
+                map.addLayer(trackData.polyline);
+                if (trackData.arrowLayer) {
+                    map.addLayer(trackData.arrowLayer);
+                }
+                clusteredMarkers.removeLayer(trackData.marker);
+                nonClusteredMarkers.addLayer(trackData.marker);
+                tracks[key] = trackData;
+                delete hiddenTracks[key];
             }
-            clusteredMarkers.removeLayer(trackData.marker);
-            nonClusteredMarkers.addLayer(trackData.marker);
-            tracks[key] = trackData;
-            delete hiddenTracks[key];
         }
     });
 }
@@ -698,6 +735,11 @@ const ClearTracksControl = L.Control.extend({
 
 // Fetch and display track markers with track-popup style (same as photo-popup style)
 function loadTrackMarkers() {
+    // Full reset before re-populating — prevents duplicate markers on filter re-apply
+    clusteredMarkers.clearLayers();
+    nonClusteredMarkers.clearLayers();
+    Object.keys(hiddenTracks).forEach(k => delete hiddenTracks[k]);
+
     fetch(trackListUrl)
         .then(response => response.text())
         .then(data => {
@@ -708,6 +750,11 @@ function loadTrackMarkers() {
                 const { trackName, trackDate } = extractTrackName(filename);
                 const gpxURL = `${gpxFolder}${filename}`;
                 const randomColor = trackColors[Math.floor(Math.random() * trackColors.length)];
+
+                // Check if track is within the date/time filters
+                if (!isTrackWithinFilters(trackDate)) {
+                    return; // Skip tracks outside the filter range
+                }
 
                 // Build popup content using track-popup style
                 let popupContent;
@@ -754,6 +801,38 @@ function loadTrackMarkers() {
             });
         })
         .catch(error => console.error('Error loading track markers:', error));
+}
+
+// Function to check if a track is within the date/time filters
+function isTrackWithinFilters(trackDate) {
+    // Parse track date from "DD.MM.YYYY." format
+    const trackDateParts = trackDate.split('.');
+    if (trackDateParts.length !== 4) return true; // Invalid format → show track
+
+    const day   = parseInt(trackDateParts[0], 10);
+    const month = parseInt(trackDateParts[1], 10) - 1; // 0-indexed
+    const year  = parseInt(trackDateParts[2], 10);
+
+    // Build a date-only Date for the track (midnight UTC avoids TZ drift)
+    const trackDateTime = new Date(Date.UTC(year, month, day));
+    if (isNaN(trackDateTime.getTime())) return true; // Unparseable → show track
+
+    // Read filter bounds from localStorage
+    const filterStartStr = localStorage.getItem('trackDayFilterStart') || "1970-01-01";
+    const filterEndStr   = localStorage.getItem('trackDayFilterEnd')   || "9999-12-31";
+
+    // Parse as date-only boundaries (no time component mixed in)
+    const filterStart = new Date(filterStartStr + 'T00:00:00Z');
+    const filterEnd   = new Date(filterEndStr   + 'T23:59:59Z');
+
+    // Validate
+    if (isNaN(filterStart.getTime()) || isNaN(filterEnd.getTime())) return true;
+    if (filterStart > filterEnd) return false;
+
+    // Check date range
+    if (trackDateTime < filterStart || trackDateTime > filterEnd) return false;
+
+    return true; // Within range
 }
 
 // Function to handle zoom level changes and map layer switching
