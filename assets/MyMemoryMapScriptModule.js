@@ -259,6 +259,9 @@ const photoMarkerIcon = L.icon({
     shadowUrl: null // No shadow
 });
 
+let trackMarkersLoading = false; // Guard against concurrent loadTrackMarkers calls
+let trackMarkersAbortController = null; // Cancel in-flight fetch
+
 
 // Function to parse and add markers to the map
 function addMarkers(data) {
@@ -735,14 +738,22 @@ const ClearTracksControl = L.Control.extend({
 
 // Fetch and display track markers with track-popup style (same as photo-popup style)
 function loadTrackMarkers() {
-    // Full reset before re-populating — prevents duplicate markers on filter re-apply
+    // Cancel any in-flight request
+    if (trackMarkersAbortController) {
+        trackMarkersAbortController.abort();
+    }
+    trackMarkersAbortController = new AbortController();
+    const signal = trackMarkersAbortController.signal;
+
+    // Full reset before re-populating
     clusteredMarkers.clearLayers();
     nonClusteredMarkers.clearLayers();
     Object.keys(hiddenTracks).forEach(k => delete hiddenTracks[k]);
 
-    fetch(trackListUrl)
+    fetch(trackListUrl, { signal })
         .then(response => response.text())
         .then(data => {
+            if (signal.aborted) return; // Discard stale result
             // Split lines and filter for at least 3 columns
             const trackList = data.split('\n').map(line => line.split(';')).filter(parts => parts.length >= 3);
 
@@ -751,10 +762,7 @@ function loadTrackMarkers() {
                 const gpxURL = `${gpxFolder}${filename}`;
                 const randomColor = trackColors[Math.floor(Math.random() * trackColors.length)];
 
-                // Check if track is within the date/time filters
-                if (!isTrackWithinFilters(trackDate)) {
-                    return; // Skip tracks outside the filter range
-                }
+                if (!isTrackWithinFilters(trackDate)) return;
 
                 // Build popup content using track-popup style
                 let popupContent;
@@ -774,8 +782,8 @@ function loadTrackMarkers() {
                         </div>`;
                 }
 
-                const marker = L.marker([parseFloat(lat), parseFloat(lng)], { 
-                    icon: startMarkerIcon, title: filename 
+                const marker = L.marker([parseFloat(lat), parseFloat(lng)], {
+                    icon: startMarkerIcon, title: filename
                 });
 
                 if (config.isSignedIn) {
@@ -800,7 +808,11 @@ function loadTrackMarkers() {
                 }
             });
         })
-        .catch(error => console.error('Error loading track markers:', error));
+        .catch(error => {
+            if (error.name !== 'AbortError') {
+                console.error('Error loading track markers:', error);
+            }
+        });
 }
 
 // Function to check if a track is within the date/time filters
