@@ -29,53 +29,74 @@ function runIfDefined(obj, fn) {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Memory Map
+    // Memory Map — auth only on non-Relive pages
     runIfDefined(window.MyMemoryMapModule, () => {
-        auth.onAuthStateChanged(user => {
-        
-            const overlay = document.getElementById("authOverlay");
-            if (!overlay) return;
-            if (user) {
-              console.log("User signed in:", user.displayName || user.email);
-              overlay.style.display = "none";
-            } else {
-              console.log("User not signed in");
-              overlay.style.display = "flex";
-            }
-
-            // Destroy previous map safely
-            if (MyMemoryMapModule.getMap()) {
-                MyMemoryMapModule.destroy();
-            }
-
-            // Re-initialize the module with current signin status
+        if (isRelive) {
+            // Relive pages: init directly without auth
             MyMemoryMapModule.init({
                 mapId: 'map',
                 baseUrl: WindowBaseUrl,
                 initPhotosValue: initMapPhotos,
                 isRelive: isRelive,
-                isSignedIn: !!user
+                isSignedIn: false
             });
-        });
+        } else {
+            auth.onAuthStateChanged(user => {
+
+                const overlay = document.getElementById("authOverlay");
+                if (!overlay) return;
+                if (user) {
+                    console.log("User signed in:", user.displayName || user.email);
+                    overlay.style.display = "none";
+                } else {
+                    console.log("User not signed in");
+                    overlay.style.display = "flex";
+                }
+
+                // Destroy previous map safely
+                if (MyMemoryMapModule.getMap()) {
+                    MyMemoryMapModule.destroy();
+                }
+
+                // Re-initialize the module with current signin status
+                MyMemoryMapModule.init({
+                    mapId: 'map',
+                    baseUrl: WindowBaseUrl,
+                    initPhotosValue: initMapPhotos,
+                    isRelive: isRelive,
+                    isSignedIn: !!user
+                });
+            });
+        }
 
         document.getElementById('applyFilters')?.click();
     });
 
-    // Map
+    // Map — auth only on non-Relive pages
     runIfDefined(window.MyMapModule, () => {
-        let mapInitialized = false;
+        if (isRelive) {
+            // Relive pages: init directly without auth
+            MyMapModule.init({
+                usePostTitle: false,
+                trackColour: 'orange',
+                isSignedIn: false
+            });
+            console.log("MyMapModule initialized (Relive, no auth).");
+        } else {
+            let mapInitialized = false;
 
-        auth.onAuthStateChanged(user => {
-            if (!mapInitialized) {
-                mapInitialized = true;
-                MyMapModule.init({
-                    usePostTitle: false,
-                    trackColour: 'orange',
-                    isSignedIn: !!user
-                });
-                console.log("MyMapModule initialized. User signed in:", !!user);
-            }
-        });
+            auth.onAuthStateChanged(user => {
+                if (!mapInitialized) {
+                    mapInitialized = true;
+                    MyMapModule.init({
+                        usePostTitle: false,
+                        trackColour: 'orange',
+                        isSignedIn: !!user
+                    });
+                    console.log("MyMapModule initialized. User signed in:", !!user);
+                }
+            });
+        }
     });
 
     // Peak List
@@ -288,84 +309,88 @@ if (window.location.hostname === "metodlangus.github.io") {
    FIREBASE AUTH (classic script version)
 -------------------------------------------------- */
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBmXpwWj65ZbTVqaHMJXyEeSjzsp5TuzZI",
-  authDomain: "gorski-uzitki-auth.firebaseapp.com",
-  projectId: "gorski-uzitki-auth",
-  storageBucket: "gorski-uzitki-auth.firebasestorage.app",
-  messagingSenderId: "893128496936",
-  appId: "1:893128496936:web:1cbe8ee4521bd0a9c0a21d",
-  measurementId: "G-HCKFX55W6D"
-};
+// Only initialize Firebase if the SDK is loaded on this page
+if (typeof firebase !== 'undefined') {
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+    const firebaseConfig = {
+      apiKey: "AIzaSyBmXpwWj65ZbTVqaHMJXyEeSjzsp5TuzZI",
+      authDomain: "gorski-uzitki-auth.firebaseapp.com",
+      projectId: "gorski-uzitki-auth",
+      storageBucket: "gorski-uzitki-auth.firebasestorage.app",
+      messagingSenderId: "893128496936",
+      appId: "1:893128496936:web:1cbe8ee4521bd0a9c0a21d",
+      measurementId: "G-HCKFX55W6D"
+    };
 
-// Auth objects
-const auth = firebase.auth();
-const googleProvider = new firebase.auth.GoogleAuthProvider();
-const githubProvider = new firebase.auth.GithubAuthProvider();
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
 
-// expose globally
-window.auth = auth;
-window.googleProvider = googleProvider;
-window.githubProvider = githubProvider;
+    // Auth objects
+    const auth = firebase.auth();
+    const googleProvider = new firebase.auth.GoogleAuthProvider();
+    const githubProvider = new firebase.auth.GithubAuthProvider();
+
+    // expose globally
+    window.auth = auth;
+    window.googleProvider = googleProvider;
+    window.githubProvider = githubProvider;
 
 
-// -------- AUTH HELPERS --------
-function checkSignIn() {
-  return new Promise(resolve => {
-    auth.onAuthStateChanged(user => {
-      resolve(!!user);
-    });
-  });
-}
-
-async function signIn(provider, name) {
-  try {
-    // If user already logged in → just link provider
-    if (auth.currentUser) {
-      const result = await auth.currentUser.linkWithPopup(provider);
-      console.log(`${name} successfully linked to account`);
-      alert(`${name} prijava je bila uspešno dodana vašemu računu.`);
-      return result;
+    // -------- AUTH HELPERS --------
+    function checkSignIn() {
+      return new Promise(resolve => {
+        auth.onAuthStateChanged(user => {
+          resolve(!!user);
+        });
+      });
     }
-    // Normal login
-    const result = await auth.signInWithPopup(provider);
-    console.log(`${name} login success:`, result.user);
-    return result.user;
-  } catch (err) {
-    if (err.code === "auth/account-exists-with-different-credential") {
-      const email = err.customData?.email;
-      const pendingCred = err.credential;
+
+    async function signIn(provider, name) {
       try {
-        const methods = await auth.fetchSignInMethodsForEmail(email);
-        const providerMap = {
-          "google.com": "Google",
-          "github.com": "GitHub",
-          "password": "Email"
-        };
-        const providerName = providerMap[methods?.[0]] || "drugim ponudnikom";
-        alert(`Račun z emailom ${email} že obstaja. Prosimo, prijavite se z ${providerName}.`);
-      } catch (e) {
-        console.error("Provider detection failed:", e);
+        // If user already logged in → just link provider
+        if (auth.currentUser) {
+          const result = await auth.currentUser.linkWithPopup(provider);
+          console.log(`${name} successfully linked to account`);
+          alert(`${name} prijava je bila uspešno dodana vašemu računu.`);
+          return result;
+        }
+        // Normal login
+        const result = await auth.signInWithPopup(provider);
+        console.log(`${name} login success:`, result.user);
+        return result.user;
+      } catch (err) {
+        if (err.code === "auth/account-exists-with-different-credential") {
+          const email = err.customData?.email;
+          const pendingCred = err.credential;
+          try {
+            const methods = await auth.fetchSignInMethodsForEmail(email);
+            const providerMap = {
+              "google.com": "Google",
+              "github.com": "GitHub",
+              "password": "Email"
+            };
+            const providerName = providerMap[methods?.[0]] || "drugim ponudnikom";
+            alert(`Račun z emailom ${email} že obstaja. Prosimo, prijavite se z ${providerName}.`);
+          } catch (e) {
+            console.error("Provider detection failed:", e);
+          }
+        } else {
+          console.error(`${name} login failed:`, err);
+        }
       }
-    } else {
-      console.error(`${name} login failed:`, err);
     }
-  }
-}
 
-function signInWithGoogle() {
-  return signIn(googleProvider, "Google");
-}
+    function signInWithGoogle() {
+      return signIn(googleProvider, "Google");
+    }
 
-function signInWithGithub() {
-  return signIn(githubProvider, "GitHub");
-}
+    function signInWithGithub() {
+      return signIn(githubProvider, "GitHub");
+    }
 
-// Expose to window
-window.checkSignIn = checkSignIn;
-window.signInWithGoogle = signInWithGoogle;
-window.signInWithGithub = signInWithGithub;
-window.onAuthStateChanged = auth.onAuthStateChanged.bind(auth);
+    // Expose to window
+    window.checkSignIn = checkSignIn;
+    window.signInWithGoogle = signInWithGoogle;
+    window.signInWithGithub = signInWithGithub;
+    window.onAuthStateChanged = auth.onAuthStateChanged.bind(auth);
+}
