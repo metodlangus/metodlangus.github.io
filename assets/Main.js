@@ -317,8 +317,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 entry.classList.add("visually-hidden");
             }
         });
+
+        // Lazy-load deferred images on the newly visible page
+        document.querySelectorAll(`.photo-entry[data-page="${page}"] img[data-src]`).forEach(img => {
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+        });
+
         renderPager(page);
-        // Scroll to top of blog list for better UX
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 

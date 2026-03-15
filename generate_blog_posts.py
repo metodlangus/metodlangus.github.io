@@ -366,7 +366,9 @@ def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
                 </div>
                 <div class="my-thumbnail" id="post-snippet-{post_id}">
                   <div class="my-snippet-thumbnail">
-                    {'<img src="' + thumbnail.replace('/s72-c', '/s600-rw') + '" alt="' + alt_text + '">' if thumbnail else ""}
+                    {'<img src="' + thumbnail.replace('/s72-c', '/s600-rw') + '" alt="' + alt_text + '" loading="lazy">' if thumbnail else ""}
+                    if page_number == 1 else
+                    {'<img data-src="' + thumbnail.replace('/s72-c', '/s600-rw') + '" src="data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\'/%3E" alt="' + alt_text + '" loading="lazy">' if thumbnail else ""}
                   </div>
                 </div>
                 <a href="{alternate_link}" aria-label="{title}"></a>
