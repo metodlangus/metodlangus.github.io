@@ -29,74 +29,53 @@ function runIfDefined(obj, fn) {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Memory Map — auth only on non-Relive pages
+    // Memory Map
     runIfDefined(window.MyMemoryMapModule, () => {
-        if (isRelive) {
-            // Relive pages: init directly without auth
+        auth.onAuthStateChanged(user => {
+        
+            const overlay = document.getElementById("authOverlay");
+            if (!overlay) return;
+            if (user) {
+              console.log("User signed in:", user.displayName || user.email);
+              overlay.style.display = "none";
+            } else {
+              console.log("User not signed in");
+              overlay.style.display = "flex";
+            }
+
+            // Destroy previous map safely
+            if (MyMemoryMapModule.getMap()) {
+                MyMemoryMapModule.destroy();
+            }
+
+            // Re-initialize the module with current signin status
             MyMemoryMapModule.init({
                 mapId: 'map',
                 baseUrl: WindowBaseUrl,
                 initPhotosValue: initMapPhotos,
                 isRelive: isRelive,
-                isSignedIn: false
+                isSignedIn: !!user
             });
-        } else {
-            auth.onAuthStateChanged(user => {
-
-                const overlay = document.getElementById("authOverlay");
-                if (!overlay) return;
-                if (user) {
-                    console.log("User signed in:", user.displayName || user.email);
-                    overlay.style.display = "none";
-                } else {
-                    console.log("User not signed in");
-                    overlay.style.display = "flex";
-                }
-
-                // Destroy previous map safely
-                if (MyMemoryMapModule.getMap()) {
-                    MyMemoryMapModule.destroy();
-                }
-
-                // Re-initialize the module with current signin status
-                MyMemoryMapModule.init({
-                    mapId: 'map',
-                    baseUrl: WindowBaseUrl,
-                    initPhotosValue: initMapPhotos,
-                    isRelive: isRelive,
-                    isSignedIn: !!user
-                });
-            });
-        }
+        });
 
         document.getElementById('applyFilters')?.click();
     });
 
-    // Map — auth only on non-Relive pages
+    // Map
     runIfDefined(window.MyMapModule, () => {
-        if (isRelive) {
-            // Relive pages: init directly without auth
-            MyMapModule.init({
-                usePostTitle: false,
-                trackColour: 'orange',
-                isSignedIn: false
-            });
-            console.log("MyMapModule initialized (Relive, no auth).");
-        } else {
-            let mapInitialized = false;
+        let mapInitialized = false;
 
-            auth.onAuthStateChanged(user => {
-                if (!mapInitialized) {
-                    mapInitialized = true;
-                    MyMapModule.init({
-                        usePostTitle: false,
-                        trackColour: 'orange',
-                        isSignedIn: !!user
-                    });
-                    console.log("MyMapModule initialized. User signed in:", !!user);
-                }
-            });
-        }
+        auth.onAuthStateChanged(user => {
+            if (!mapInitialized) {
+                mapInitialized = true;
+                MyMapModule.init({
+                    usePostTitle: false,
+                    trackColour: 'orange',
+                    isSignedIn: !!user
+                });
+                console.log("MyMapModule initialized. User signed in:", !!user);
+            }
+        });
     });
 
     // Peak List
