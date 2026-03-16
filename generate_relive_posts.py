@@ -371,7 +371,9 @@ def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
                 </div>
                 <div class="my-thumbnail" id="post-snippet-{post_id}">
                   <div class="my-snippet-thumbnail">
-                    {'<img src="' + thumbnail.replace('/s72-c', '/s600-rw') + '" alt="' + alt_text + '">' if thumbnail else ""}
+                    {'<img src="' + thumbnail.replace('/s72-c', '/s600-rw') + '" alt="' + alt_text + '" loading="lazy">' if thumbnail else ""}
+                    if page_number == 1 else
+                    {'<img data-src="' + thumbnail.replace('/s72-c', '/s600-rw') + '" src="data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\'/%3E" alt="' + alt_text + '" loading="lazy">' if thumbnail else ""}
                   </div>
                 </div>
                 <a href="{alternate_link}" aria-label="{title}"></a>
@@ -697,30 +699,30 @@ def render_sidebar_settings(picture_settings=True, map_settings=True, current_pa
             <!-- Slider Section -->
             <div style='display: flex; flex-direction: column; margin-left: 5px; margin-top: 5px; margin-bottom: 10px;'>
                 <label for='photosMapSliderElement'>Obseg prikazanih slik: <span id='photosMapValueElement'/></label>
-                <input id='photosMapSliderElement' max='1' min='0' step='1' style='width: 160px;' type='range' value='initMapPhotos'/>
+                <input id='photosMapSliderElement' max='3' min='-2' step='1' style='width: 160px;' type='range' value='initMapPhotos'/>
             </div>
 
             <!-- Date and Time Filters -->
             <div class='form-group'>
-                <label for='dayFilterStart'>Od dne:</label>
+                <label for='dayFilterStart'>Slike od dne:</label>
                 <input class='input-field' id='dayFilterStart' type='date'/>
             </div>
-            <div class='form-group'>
+            <div class='form-group'style="display:none;">
                 <label for='timeFilterStart'>od ure:</label>
                 <input class='input-field' id='timeFilterStart' type='time'/>
             </div>
             <div class='form-group'>
-                <label for='dayFilterEnd'>Do dne:</label>
+                <label for='dayFilterEnd'>do dne:</label>
                 <input class='input-field' id='dayFilterEnd' type='date'/>
             </div>
-            <div class='form-group'>
+            <div class='form-group'style="display:none;">
                 <label for='timeFilterEnd'>do ure:</label>
                 <input class='input-field' id='timeFilterEnd' type='time'/>
             </div>
 
             <!-- Daily Time Filters -->
             <div class='form-group'>
-                <label for='dailyTimeFilterStart'>Med:</label>
+                <label for='dailyTimeFilterStart'>med:</label>
                 <input class='input-field' id='dailyTimeFilterStart' type='time' value='00:00'/>
             </div>
             <div class='form-group'>
@@ -728,6 +730,24 @@ def render_sidebar_settings(picture_settings=True, map_settings=True, current_pa
                 <input class='input-field' id='dailyTimeFilterEnd' type='time' value='23:59'/>
             </div>
 
+            <div style="height:12px;"></div>
+            <!-- Track Filters -->
+            <div class='form-group'>
+                <label for='trackDayFilterStart'>Sledi od dne:</label>
+                <input class='input-field' id='trackDayFilterStart' type='date'/>
+            </div>
+            <div class='form-group'>
+                <label for='trackDayFilterEnd'>do dne:</label>
+                <input class='input-field' id='trackDayFilterEnd' type='date'/>
+            </div>
+            <div style="margin-top: 6px;">
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                    <input type="checkbox" id="usePhotoFilterForTracks">
+                    Uporabi filter slik
+                </label>
+            </div>
+
+            <div style="height:12px;"></div>
             <!-- Apply Filters Button -->
             <div class='form-group' style='display: flex; justify-content: center;'>
                 <button class='pill-button' id='applyFilters'>Uporabi filtre</button>
@@ -1556,6 +1576,8 @@ def fetch_and_save_all_posts(entries):
   <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
   <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyMapScriptModule.js" defer></script>
@@ -2559,7 +2581,16 @@ def generate_big_map_page():
       <div class="content-wrapper">
         {searchbox_html}
         <h1>Zemljevid spominov</h1>
-        <div id="map"></div>
+        <div id="map">
+          <div id="authOverlay" style="display:none;">
+            <div class="auth-box">
+              <h2>Za ogled vsebine je potrebna prijava</h2>
+              <p>Za ogled zemljevida s fotografijami ter sledmi poti je potrebna prijava z eno od spodnjih možnosti:</p>
+              <button id="googleLoginBtn">Prijava z Google</button>
+              <button id="githubLoginBtn">Prijava z Github</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -2579,6 +2610,8 @@ def generate_big_map_page():
   <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
   <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyMemoryMapScriptModule.js" defer></script>
@@ -2901,14 +2934,14 @@ def generate_useful_links_page():
   <meta property="og:description" content="Seznam uporabnih povezav do drugih blogov in vsebin." />
   <meta property="og:image" content="{DEFAULT_OG_IMAGE}" />
   <meta property="og:image:alt" content="Uporabne povezave" />
-  <meta property="og:url" content="{BASE_BLOG_URL}/uporabne-povezave.html" />
+  <meta property="og:url" content="{BASE_BLOG_URL}/uporabne-povezave/" />
   <meta property="og:type" content="website" />
 
   <title>Uporabne povezave | {BLOG_TITLE}</title>
 
   <!-- Canonical & hreflang -->
-  <link rel="canonical" href="{BASE_BLOG_URL}/uporabne-povezave.html" />
-  <link rel="alternate" href="{BASE_BLOG_URL}/uporabne-povezave.html" hreflang="sl" />
+  <link rel="canonical" href="{BASE_BLOG_URL}/uporabne-povezave/" />
+  <link rel="alternate" href="{BASE_BLOG_URL}/uporabne-povezave/" hreflang="sl" />
   <link rel="alternate" href="{BASE_SITE_URL}" hreflang="x-default" />
 
   {schema_jsonld}

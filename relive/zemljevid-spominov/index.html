@@ -138,30 +138,30 @@
             <!-- Slider Section -->
             <div style='display: flex; flex-direction: column; margin-left: 5px; margin-top: 5px; margin-bottom: 10px;'>
                 <label for='photosMapSliderElement'>Obseg prikazanih slik: <span id='photosMapValueElement'/></label>
-                <input id='photosMapSliderElement' max='1' min='0' step='1' style='width: 160px;' type='range' value='initMapPhotos'/>
+                <input id='photosMapSliderElement' max='3' min='-2' step='1' style='width: 160px;' type='range' value='initMapPhotos'/>
             </div>
 
             <!-- Date and Time Filters -->
             <div class='form-group'>
-                <label for='dayFilterStart'>Od dne:</label>
+                <label for='dayFilterStart'>Slike od dne:</label>
                 <input class='input-field' id='dayFilterStart' type='date'/>
             </div>
-            <div class='form-group'>
+            <div class='form-group'style="display:none;">
                 <label for='timeFilterStart'>od ure:</label>
                 <input class='input-field' id='timeFilterStart' type='time'/>
             </div>
             <div class='form-group'>
-                <label for='dayFilterEnd'>Do dne:</label>
+                <label for='dayFilterEnd'>do dne:</label>
                 <input class='input-field' id='dayFilterEnd' type='date'/>
             </div>
-            <div class='form-group'>
+            <div class='form-group'style="display:none;">
                 <label for='timeFilterEnd'>do ure:</label>
                 <input class='input-field' id='timeFilterEnd' type='time'/>
             </div>
 
             <!-- Daily Time Filters -->
             <div class='form-group'>
-                <label for='dailyTimeFilterStart'>Med:</label>
+                <label for='dailyTimeFilterStart'>med:</label>
                 <input class='input-field' id='dailyTimeFilterStart' type='time' value='00:00'/>
             </div>
             <div class='form-group'>
@@ -169,6 +169,24 @@
                 <input class='input-field' id='dailyTimeFilterEnd' type='time' value='23:59'/>
             </div>
 
+            <div style="height:12px;"></div>
+            <!-- Track Filters -->
+            <div class='form-group'>
+                <label for='trackDayFilterStart'>Sledi od dne:</label>
+                <input class='input-field' id='trackDayFilterStart' type='date'/>
+            </div>
+            <div class='form-group'>
+                <label for='trackDayFilterEnd'>do dne:</label>
+                <input class='input-field' id='trackDayFilterEnd' type='date'/>
+            </div>
+            <div style="margin-top: 6px;">
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                    <input type="checkbox" id="usePhotoFilterForTracks">
+                    Uporabi filter slik
+                </label>
+            </div>
+
+            <div style="height:12px;"></div>
             <!-- Apply Filters Button -->
             <div class='form-group' style='display: flex; justify-content: center;'>
                 <button class='pill-button' id='applyFilters'>Uporabi filtre</button>
@@ -184,7 +202,16 @@
         
     <div id="searchResults"></div>
         <h1>Zemljevid spominov</h1>
-        <div id="map"></div>
+        <div id="map">
+          <div id="authOverlay" style="display:none;">
+            <div class="auth-box">
+              <h2>Za ogled vsebine je potrebna prijava</h2>
+              <p>Za ogled zemljevida s fotografijami ter sledmi poti je potrebna prijava z eno od spodnjih možnosti:</p>
+              <button id="googleLoginBtn">Prijava z Google</button>
+              <button id="githubLoginBtn">Prijava z Github</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -228,6 +255,8 @@
   <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
   <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
   <script src="https://metodlangus.github.io/assets/SiteConfig.js" defer></script>
   <script src="https://metodlangus.github.io/assets/Main.js" defer></script>
   <script src="https://metodlangus.github.io/assets/MyMemoryMapScriptModule.js" defer></script>
