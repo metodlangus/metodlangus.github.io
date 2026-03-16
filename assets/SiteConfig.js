@@ -71,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 MyMapModule.init({
                     usePostTitle: false,
                     trackColour: 'orange',
+                    isRelive: isRelive,
                     isSignedIn: !!user
                 });
                 console.log("MyMapModule initialized. User signed in:", !!user);

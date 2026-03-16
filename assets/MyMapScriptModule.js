@@ -20,12 +20,14 @@
     let usePostTitle = false;  // Set to true to use post title, false to use extracted GPX name
     let trackColour = 'orange';
     let isBlogger = true;
+    let isRelive = false;
 
     function init(userConfig = {}) {
         usePostTitle = userConfig.usePostTitle ?? false;
         trackColour = userConfig.trackColour ?? 'orange';
         baseUrl = userConfig.baseUrl || baseUrl;
         isBlogger = userConfig.isBlogger;
+        isRelive = userConfig.isRelive ?? false;
         isSignedIn = userConfig.isSignedIn ?? false;
 
         let mapIndex = 0;
@@ -119,6 +121,8 @@
                 const trackFilename = gpxURL.split("/").pop();
                 if (isBlogger) {
                     window.location.href = baseUrl + "/p/zemljevid-spominov.html?track=" + encodeURIComponent(trackFilename);
+                } else if (isRelive) {
+                    window.location.href = baseUrl + "/relive/zemljevid-spominov/?track=" + encodeURIComponent(trackFilename);
                 } else {
                     window.location.href = baseUrl + "/zemljevid-spominov/?track=" + encodeURIComponent(trackFilename);
                 }
