@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/avstrija/'>Avstrija</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/hrvaska/'>Hrvaška</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/italija/'>Italija</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/korzika/'>Korzika</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/madzarska/'>Madžarska</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/maroko/'>Maroko</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/sardinija/'>Sardinija</a></li>
@@ -37,6 +38,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/kamnisko-savinjske-alpe/'>Kamniško-Savinjske Alpe</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/karavanke/'>Karavanke</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/karnijske-alpe/'>Karnijske Alpe</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/korzisko-gorovje/'>Korziško gorovje</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/kriske-alpe/'>Kriške Alpe</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/labotniske-alpe/'>Labotniške Alpe</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/matra/'>Mátra</a></li>

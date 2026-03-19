@@ -312,7 +312,7 @@ document.addEventListener("DOMContentLoaded", function() {
     </details>
   </details>
   <details open>
-    <summary><a href="https://metodlangus.github.io/posts/2023/">2023</a>&nbsp;<span class="post-count" dir="ltr">(32)</span></summary>
+    <summary><a href="https://metodlangus.github.io/posts/2023/">2023</a>&nbsp;<span class="post-count" dir="ltr">(63)</span></summary>
     <details class="month-group">
       <summary><a href="https://metodlangus.github.io/posts/2023/12/">december 2023</a>&nbsp;<span class="post-count" dir="ltr">(2)</span></summary>
       <ul>
@@ -329,11 +329,42 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/posts/2023/09/">september 2023</a>&nbsp;<span class="post-count" dir="ltr">(3)</span></summary>
+      <summary><a href="https://metodlangus.github.io/posts/2023/09/">september 2023</a>&nbsp;<span class="post-count" dir="ltr">(34)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2023/09/sentiero-alpinistico-claudio-costanzi/">Sentiero Alpinistico Claudio Costanzi</a></li>
         <li><a href="https://metodlangus.github.io/posts/2023/09/giro-del-brenta/">Giro del Brenta</a></li>
         <li><a href="https://metodlangus.github.io/posts/2023/09/crete-di-gleris-monte-chiavals-2098-m/">Crete di Gleris, Monte Chiavals (2098 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/korzika-2-18-9-2023/">Korzika (2. – 18. 9. 2023)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/monte-ceva-255-m/">Monte Ceva (255 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/bastia-livorno/">Bastia – Livorno</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/mesto-bastia/">Mesto Bastia</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/cascade-de-l-ucelluline/">Cascade de L&#x27;Ucelluline</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/monte-oppido-497-m/">Monte Oppido (497 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/cascades-de-purcaraccia/">Cascades de Purcaraccia</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/cascades-de-polischellu/">Cascades de Polischellu</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/punta-di-a-vacca-1611-m/">Punta di a Vacca (1611 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/punta-velaco-1483-m-calanca-murata-1408-m/">Punta Velaco (1483 m), Calanca Murata (1408 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/rt-capo-pertusato/">Rt Capo Pertusato</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/mesto-bonifacio/">Mesto Bonifacio</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/prelaz-bocca-di-roccapina/">Prelaz Bocca di Roccapina</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/monte-san-petru-1400-m/">Monte San Petru (1400 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/monte-renoso-2352-m/">Monte Renoso (2352 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/monte-d-oro-2389-m/">Monte d&#x27;Oro (2389 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/via-ferrata-de-tolla/">Via Ferrata de Tolla</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/mesto-ajaccio/">Mesto Ajaccio</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/rt-capo-rosso/">Rt Capo Rosso</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/naselje-evisa/">Naselje Évisa</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/paglia-orba-2525-m/">Paglia Orba (2525 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/punta-alle-porta-2313-m-pointe-de-sept-lacs-2266-m-lombarduccio-2268-m/">Punta alle Porta (2313 m), Pointe de Sept Lacs (2266 m), Lombarduccio (2268 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/monte-cinto-2706-m/">Monte Cinto (2706 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/plage-de-saleccia/">Plage de Saleccia</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/naselje-saint-florent/">Naselje Saint-Florent</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/monte-rottu-650-m-monte-grofiglieta-836-m/">Monte Rottu (650 m), Monte Grofiglieta (836 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/prelaz-col-de-la-serra/">Prelaz Col de la Serra</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/monte-stello-1307-m/">Monte Stello (1307 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/livorno-bastia/">Livorno – Bastia</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/mesto-livorno/">Mesto Livorno</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2023/09/mesto-ravenna/">Mesto Ravenna</a></li>
       </ul>
     </details>
     <details class="month-group">
