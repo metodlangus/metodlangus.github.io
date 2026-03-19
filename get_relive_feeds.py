@@ -32,6 +32,7 @@ GITHUB_REPO_NAME = "metodlangus.github.io/relive"    # GitHub Pages
 
 # Config
 EXCLUDE_PRIVATE = True  # set to True to skip private activities
+EXCLUDE_ALREADY_IN_BLOG = True  # set to True to skip activities marked as "Already_in_blog"
 
 BLOG_AUTHOR = "Metod Langus"
 
@@ -294,6 +295,11 @@ with open(source_file, 'r', encoding='utf-8') as f:
         privacy = info.get('privacy', {})
         if EXCLUDE_PRIVATE and privacy.get('value') == 'private':
             print(f"Skipping private activity: {info.get('name', activity.get('id'))}")
+            continue
+
+        # Skip already created activities
+        if EXCLUDE_ALREADY_IN_BLOG and privacy.get('value') == 'Already_in_blog':
+            print(f"Skipping already created activity: {info.get('name', activity.get('id'))}")
             continue
 
         activity_name = info.get('name', f"activity-{i+1}")

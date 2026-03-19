@@ -4,39 +4,23 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("archive-placeholder").innerHTML = `<aside class="sidebar-archive">
   <h2>Arhiv</h2>
   <details open>
-    <summary><a href="https://metodlangus.github.io/relive/posts/2024/">2024</a>&nbsp;<span class="post-count" dir="ltr">(62)</span></summary>
+    <summary><a href="https://metodlangus.github.io/relive/posts/2024/">2024</a>&nbsp;<span class="post-count" dir="ltr">(44)</span></summary>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/relive/posts/2024/07/">julij 2024</a>&nbsp;<span class="post-count" dir="ltr">(3)</span></summary>
+      <summary><a href="https://metodlangus.github.io/relive/posts/2024/06/">junij 2024</a>&nbsp;<span class="post-count" dir="ltr">(7)</span></summary>
       <ul>
-        <li><a href="https://metodlangus.github.io/relive/posts/2024/07/mojstrovke-travnik-site/">Mojstrovke, Travnik, Šite</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2024/07/kroficka/">Krofička</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2024/07/matkova-kopa-krnicka-gora/">Matkova kopa, Krnička gora</a></li>
-      </ul>
-    </details>
-    <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/relive/posts/2024/06/">junij 2024</a>&nbsp;<span class="post-count" dir="ltr">(14)</span></summary>
-      <ul>
-        <li><a href="https://metodlangus.github.io/relive/posts/2024/06/baba-grande/">Baba grande</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2024/06/monte-sart/">Monte Sart</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2024/06/geo-steig-silberreith/">Geo-Steig Silberreith</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2024/06/hochtor/">Hochtor</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2024/06/johansbach/">Johansbach</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2024/06/gesause/">Gësause</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2024/06/hexenturm/">Hexenturm</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2024/06/benediktinerstift-admont/">Benediktinerstift Admont</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2024/06/kumlehi/">Kumlehi</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2024/06/mokrica/">Mokrica</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2024/06/dobrca-begunjscica-vrtaca/">Dobrča - Begunjščica - Vrtača</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2024/06/mezakla/">Mežakla</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2024/06/begunje/">Begunje</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2024/06/kriska-gora-tolsti-vrh/">Kriška gora, Tolsti vrh</a></li>
       </ul>
     </details>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/relive/posts/2024/05/">maj 2024</a>&nbsp;<span class="post-count" dir="ltr">(12)</span></summary>
+      <summary><a href="https://metodlangus.github.io/relive/posts/2024/05/">maj 2024</a>&nbsp;<span class="post-count" dir="ltr">(11)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/relive/posts/2024/05/sentanski-vrh/">Šentanski vrh</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2024/05/akle-starec/">Akle, Starec</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2024/05/bistriska-planina/">Bistriška planina</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2024/05/rote-wand/">Rote Wand</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2024/05/bruck-an-der-mur/">Bruck an der Mur</a></li>
@@ -50,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/relive/posts/2024/04/">april 2024</a>&nbsp;<span class="post-count" dir="ltr">(16)</span></summary>
+      <summary><a href="https://metodlangus.github.io/relive/posts/2024/04/">april 2024</a>&nbsp;<span class="post-count" dir="ltr">(11)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/relive/posts/2024/04/gebirgsvereinssteig-wildenauersteig/">Gebirgsvereinssteig,  Wildenauersteig</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2024/04/grosse-kanzel/">Große Kanzel</a></li>
@@ -60,22 +44,15 @@ document.addEventListener("DOMContentLoaded", function() {
         <li><a href="https://metodlangus.github.io/relive/posts/2024/04/riegersburg/">Riegersburg</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2024/04/osterreichischer-skulpturenpark/">Österreichischer Skulpturenpark</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2024/04/7-summits-klettersteig/">7 Summits klettersteig</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2024/04/vrh-ljubeljscice/">Vrh Ljubeljščice</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2024/04/vrh-ljubeljscice-2/">Vrh Ljubeljščice</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2024/04/sentanski-vrh/">Šentanski vrh</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2024/04/monte-plananizza/">Monte Plananizza</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2024/04/monte-acuto/">Monte Acuto</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2024/04/reznik/">Reznik</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2024/04/skala/">Skala</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2024/04/boc/">Boč</a></li>
       </ul>
     </details>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/relive/posts/2024/03/">marec 2024</a>&nbsp;<span class="post-count" dir="ltr">(4)</span></summary>
+      <summary><a href="https://metodlangus.github.io/relive/posts/2024/03/">marec 2024</a>&nbsp;<span class="post-count" dir="ltr">(2)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/relive/posts/2024/03/jamnik/">Jamnik</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2024/03/staza-sedam-slapova/">Staza sedam slapova</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2024/03/mrezce-okroglez/">Mrežce, Okroglež</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2024/03/seenock-konigstuhl/">Seenock, Königstuhl</a></li>
       </ul>
     </details>
@@ -104,16 +81,14 @@ document.addEventListener("DOMContentLoaded", function() {
     </details>
   </details>
   <details open>
-    <summary><a href="https://metodlangus.github.io/relive/posts/2023/">2023</a>&nbsp;<span class="post-count" dir="ltr">(116)</span></summary>
+    <summary><a href="https://metodlangus.github.io/relive/posts/2023/">2023</a>&nbsp;<span class="post-count" dir="ltr">(57)</span></summary>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/relive/posts/2023/12/">december 2023</a>&nbsp;<span class="post-count" dir="ltr">(8)</span></summary>
+      <summary><a href="https://metodlangus.github.io/relive/posts/2023/12/">december 2023</a>&nbsp;<span class="post-count" dir="ltr">(6)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/12/ledinski-vrh/">Ledinski vrh</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/12/golz/">Golz</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/12/senturska-gora/">Šenturška gora</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/12/smokuski-vrh/">Smokuški vrh</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/12/sella-nevea-prevala/">Sella Nevea - Prevala</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/12/sentanski-vrh/">Šentanski vrh</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/12/polna-pec/">Polna peč</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/12/velika-mizica/">Velika Mizica</a></li>
       </ul>
@@ -129,74 +104,31 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/relive/posts/2023/10/">oktober 2023</a>&nbsp;<span class="post-count" dir="ltr">(4)</span></summary>
+      <summary><a href="https://metodlangus.github.io/relive/posts/2023/10/">oktober 2023</a>&nbsp;<span class="post-count" dir="ltr">(2)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/10/monte-coglians-hohe-warte-rauchkofel/">Monte Cogliàns/Hohe Warte, Rauchkofel</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/10/glodis/">Glödis</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/10/piz-boe/">Piz Boè</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/10/cima-presanella/">Cima Presanella</a></li>
       </ul>
     </details>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/relive/posts/2023/09/">september 2023</a>&nbsp;<span class="post-count" dir="ltr">(34)</span></summary>
+      <summary><a href="https://metodlangus.github.io/relive/posts/2023/09/">september 2023</a>&nbsp;<span class="post-count" dir="ltr">(1)</span></summary>
       <ul>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/sentiero-costanzi/">Sentiero Costanzi</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/giro-del-brenta/">Giro del Brenta</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/09/lubnik/">Lubnik</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/monte-chiavals/">Monte Chiavals</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/monte-ceva/">Monte Ceva</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/bastia-livorno/">Bastia - Livorno</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/bastia/">Bastia</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/monte-oppido/">Monte Oppido</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/cascades-de-purcaraccia/">Cascades de Purcaraccia</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/cascades-de-polischellu/">Cascades de Polischellu</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/punta-di-a-vacca/">Punta di a Vacca</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/punta-velaco/">Punta Velaco</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/capo-pertusato/">Capo Pertusato</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/bonifacio/">Bonifacio</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/roccapina/">Roccapina</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/monte-san-petru/">Monte San Petru</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/col-de-vaccia/">Col de Vaccia</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/monte-renoso/">Monte Renoso</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/monte-d-oro/">Monte d&#x27;Oro</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/via-ferrata-de-tolla/">Via Ferrata de Tolla</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/ajaccio/">Ajaccio</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/capo-rosso/">Capo Rosso</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/evisa/">Évisa</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/paglia-orba/">Paglia Orba</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/lombarduccio/">Lombarduccio</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/monte-cinto/">Monte Cinto</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/plage-de-saleccia/">Plage de Saleccia 🥾&amp;🚤</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/saint-florent/">Saint-Florent</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/monte-grofiglieta/">Monte Grofiglieta</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/col-de-la-serra/">Col de la Serra</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/monte-stello/">Monte Stello</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/livorno/">Livorno</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/passo-del-muraglione/">Passo del Muraglione</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/09/ravenna/">Ravenna</a></li>
       </ul>
     </details>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/relive/posts/2023/08/">avgust 2023</a>&nbsp;<span class="post-count" dir="ltr">(9)</span></summary>
+      <summary><a href="https://metodlangus.github.io/relive/posts/2023/08/">avgust 2023</a>&nbsp;<span class="post-count" dir="ltr">(2)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/08/prisojnik/">Prisojnik</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/08/antelao/">Antelao</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/08/monte-civetta/">Monte Civetta</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/08/monte-pelmo/">Monte Pelmo</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/08/veliki-oltar/">Veliki Oltar</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/08/kepa/">Kepa</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/08/planika-triglav-savica/">Planika-Triglav-Savica</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/08/savica-spicje-kanjavceve-police-planika/">Savica-Špičje-Kanjavčeve police-Planika</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/08/zirovnica/">Žirovnica</a></li>
       </ul>
     </details>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/relive/posts/2023/07/">julij 2023</a>&nbsp;<span class="post-count" dir="ltr">(8)</span></summary>
+      <summary><a href="https://metodlangus.github.io/relive/posts/2023/07/">julij 2023</a>&nbsp;<span class="post-count" dir="ltr">(7)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/07/kalska-gora-grintovec/">Kalška gora, Grintovec</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/07/jalovec/">Jalovec</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/07/spik/">Špik</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/07/ogrin-omersa-ojstrica/">Ogrin-Omersa (Ojstrica)</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/07/do-klopce/">Do klopce</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/07/krn/">Krn</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/07/crnelski-spici-prestreljenik/">Črnelski špici, Prestreljenik</a></li>
@@ -214,7 +146,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/relive/posts/2023/05/">maj 2023</a>&nbsp;<span class="post-count" dir="ltr">(11)</span></summary>
+      <summary><a href="https://metodlangus.github.io/relive/posts/2023/05/">maj 2023</a>&nbsp;<span class="post-count" dir="ltr">(8)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/05/monte-amariana/">Monte Amariana</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/05/portis/">Portis</a></li>
@@ -224,22 +156,11 @@ document.addEventListener("DOMContentLoaded", function() {
         <li><a href="https://metodlangus.github.io/relive/posts/2023/05/cjampon-siroche-dolegne-cuel-di-lanis/">Cjampon, Siroche Dolegne, Cuel di Lanis</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/05/matajur/">Matajur</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/05/vodiska-planina/">Vodiška planina</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/05/terranoa-olbia/">Terranoa/Olbia</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/05/ferrata-di-giorre/">Ferrata di Giorré</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/05/ferrata-della-regina/">Ferrata della Regina</a></li>
       </ul>
     </details>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/relive/posts/2023/04/">april 2023</a>&nbsp;<span class="post-count" dir="ltr">(13)</span></summary>
+      <summary><a href="https://metodlangus.github.io/relive/posts/2023/04/">april 2023</a>&nbsp;<span class="post-count" dir="ltr">(5)</span></summary>
       <ul>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/04/sella-del-diavolo/">Sella del Diavolo</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/04/casteddu-cagliari/">Casteddu/Cagliari</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/04/gola-su-gorropu/">Gola su Gorropu</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/04/ferrata-di-badde-pentumas/">Ferrata di Badde Pentumas</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/04/ferrata-degli-angeli/">Ferrata degli Angeli</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/04/porto-san-paolo-tavolara/">Porto San Paolo - Tavolara</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/04/pisa/">Pisa</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/04/rocca-di-badolo/">Rocca di Badolo</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/04/jof-di-muec/">Jof di Muec</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/04/monte-cuzzer/">Monte Cuzzer</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/04/dobrava-nad-savo/">Dobrava nad Savo</a></li>
@@ -248,16 +169,13 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/relive/posts/2023/03/">marec 2023</a>&nbsp;<span class="post-count" dir="ltr">(9)</span></summary>
+      <summary><a href="https://metodlangus.github.io/relive/posts/2023/03/">marec 2023</a>&nbsp;<span class="post-count" dir="ltr">(6)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/03/bistriska-planina/">Bistriška planina</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/03/kosutica/">Košutica</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/03/izvir-soce/">Izvir Soče</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/03/zadnjiski-ozebnik/">Zadnjiški Ozebnik</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/03/vrtaski-vrh-vrtasko-sleme/">Vrtaški vrh, Vrtaško Sleme</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/03/kriska-gora/">Kriška gora</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/03/blejska-koca-na-lipanci/">Blejska koča na Lipanci</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2023/03/smucisce-visevnik/">Smučišče Viševnik</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2023/03/tivolski-vrh-sisenski-hrib-roznik/">Tivolski vrh, Šišenski hrib, ..., Rožnik</a></li>
       </ul>
     </details>
@@ -283,7 +201,7 @@ document.addEventListener("DOMContentLoaded", function() {
     </details>
   </details>
   <details open>
-    <summary><a href="https://metodlangus.github.io/relive/posts/2022/">2022</a>&nbsp;<span class="post-count" dir="ltr">(101)</span></summary>
+    <summary><a href="https://metodlangus.github.io/relive/posts/2022/">2022</a>&nbsp;<span class="post-count" dir="ltr">(96)</span></summary>
     <details class="month-group">
       <summary><a href="https://metodlangus.github.io/relive/posts/2022/12/">december 2022</a>&nbsp;<span class="post-count" dir="ltr">(14)</span></summary>
       <ul>
@@ -389,13 +307,8 @@ document.addEventListener("DOMContentLoaded", function() {
       </ul>
     </details>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/relive/posts/2022/06/">junij 2022</a>&nbsp;<span class="post-count" dir="ltr">(6)</span></summary>
+      <summary><a href="https://metodlangus.github.io/relive/posts/2022/06/">junij 2022</a>&nbsp;<span class="post-count" dir="ltr">(1)</span></summary>
       <ul>
-        <li><a href="https://metodlangus.github.io/relive/posts/2022/06/mischabelhutte-saas-fee/">Mischabelhütte - Saas-Fee</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2022/06/nadelhorn/">Nadelhorn</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2022/06/saas-fee-mischabelhutte/">Saas-Fee - Mischabelhütte</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2022/06/sass-fee/">Sass-Fee</a></li>
-        <li><a href="https://metodlangus.github.io/relive/posts/2022/06/allalinhorn/">Allalinhorn 🚠&amp;🥾</a></li>
         <li><a href="https://metodlangus.github.io/relive/posts/2022/06/letalnica-bratov-gorisek/">Letalnica bratov Gorišek</a></li>
       </ul>
     </details>
