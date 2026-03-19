@@ -71,23 +71,32 @@ def extract_start_coordinates(gpx_file):
 
 def generate_tracks_list():
     posts = extract_gpx_and_cover()
+    skipped = 0
+    written = 0
+
     with OUTPUT_FILE.open("w", encoding="utf-8") as out:
         for gpx_file in GPX_FOLDER.glob("*.gpx"):
             filename = gpx_file.name
+
+            # Skip if no matching post or no cover image
+            if filename not in posts or not posts[filename]["coverPhoto"]:
+                print(f"Skipping (no post or no cover image): {filename}")
+                skipped += 1
+                continue
+
             lat, lng = extract_start_coordinates(gpx_file)
             lat = lat or 0.0
             lng = lng or 0.0
 
-            if filename in posts:
-                entry = posts[filename]
-                cover = entry["coverPhoto"]
-                post_link = entry["postUrl"]
-            else:
-                cover = ""
-                post_link = ""
+            entry = posts[filename]
+            cover = entry["coverPhoto"]
+            post_link = entry["postUrl"]
 
             # Write single-line format: latitude;longitude;filename;coverPhoto;postLink
             out.write(f"{lat};{lng};{filename};{cover};{post_link}\n")
+            written += 1
+
+    print(f"Done. {written} tracks written, {skipped} skipped.")
 
 
 if __name__ == "__main__":
