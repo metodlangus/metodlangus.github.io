@@ -71,7 +71,7 @@ const PopularPostsModule = (() => {
     if (!path.startsWith('/')) path = '/' + path;
     if (!path.endsWith('/')) path += '/';
 
-    console.log('[DEBUG] Current page normalized path:', path);
+    // console.log('[DEBUG] Current page normalized path:', path);
     return path;
   }
 
@@ -172,13 +172,13 @@ const PopularPostsModule = (() => {
         if (renderedCount >= maxPosts) break;
 
         const popPath = stripIndexHtml(popPost.path);
-        console.log('[DEBUG] Popular post path:', popPath);
+        // console.log('[DEBUG] Popular post path:', popPath);
 
         const isCurrent = popPath.replace(/\/$/, '') === currentPath.replace(/\/$/, '');
-        console.log('[DEBUG] Compare current vs popular:', { currentPath, popPath, isCurrent });
+        // console.log('[DEBUG] Compare current vs popular:', { currentPath, popPath, isCurrent });
 
         if (isCurrent) {
-          console.log('[DEBUG] Skipping current post:', popPath);
+          // console.log('[DEBUG] Skipping current post:', popPath);
           continue;
         }
 
@@ -187,12 +187,12 @@ const PopularPostsModule = (() => {
           if (!alt) return false;
           const entryPath = stripIndexHtml(alt.href);
           const match = entryPath === popPath;
-          console.log('[DEBUG] Entry check:', { entryPath, popPath, match });
+          // console.log('[DEBUG] Entry check:', { entryPath, popPath, match });
           return match;
         });
 
         if (!entry) {
-          console.log('[DEBUG] No matching entry found for:', popPath);
+          // console.log('[DEBUG] No matching entry found for:', popPath);
           continue;
         }
 
