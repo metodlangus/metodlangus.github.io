@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 baseUrl: WindowBaseUrl,
                 initPhotosValue: initMapPhotos,
                 isRelive: isRelive,
+                enableRelive: true,
                 isSignedIn: !!user
             });
         });
