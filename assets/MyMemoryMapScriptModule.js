@@ -27,8 +27,8 @@ let reliveMarkers;
 const masterLayerGroup = L.layerGroup();
 const clusteredMarkers = L.markerClusterGroup();
 const nonClusteredMarkers = L.layerGroup();
-const tracks = {};
-const hiddenTracks = {};
+const tracks = {};          // filename → {polyline, arrowLayer, color, clusterMarker}
+const hiddenTracks = {};    // NOT USED anymore — kept empty for safety
 let currentlySelectedTrack = null;
 let wasZoomedFromTopo = false;
 
@@ -41,6 +41,14 @@ let currentlySelectedReliveTrack = null;
 
 let trackMarkersAbortController = null;
 let reliveTrackMarkersAbortController = null;
+
+const trackGeojsonCache       = {};   // filename → [[lon,lat], ...]
+const reliveTrackGeojsonCache = {};
+
+// Separate layer groups for polylines only — so we can add/remove them
+// independently of the marker cluster groups.
+const polylinesLayerGroup       = L.layerGroup();
+const relivePolylinesLayerGroup = L.layerGroup();
 
 const trackColors = ['orange', 'blue', 'green', 'red', 'purple', 'brown', 'yellow', 'pink',
     'cyan', 'magenta', 'lime', 'teal', 'indigo', 'violet', 'coral', 'navy', 'olive', 'maroon',
@@ -241,26 +249,16 @@ function createMap() {
 
     const startMarkerIcon = L.icon({
         iconUrl: 'https://metodlangus.github.io/photos/marker-icon-green.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowUrl: null
+        iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowUrl: null
     });
 
     const photoMarkerIcon = L.icon({
         iconUrl: 'https://metodlangus.github.io/photos/marker-photo-icon-blue.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowUrl: null
+        iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowUrl: null
     });
 
-    let trackMarkersLoading = false;
-
     // -----------------
-    // ADD MARKERS
-    // Only populates the cluster group — never touches map visibility.
-    // Layer on/off is controlled solely by the layer control + persistence block.
+    // ADD MARKERS — only populates cluster groups, never touches map visibility
     // -----------------
     function addMarkers(data, targetMarkers, isReliveSource) {
         targetMarkers  = targetMarkers  || markers;
@@ -288,80 +286,44 @@ function createMap() {
 
             let PhotosMapRange = getPhotosMapSliderValue();
 
-            if (dataSkip === "NA" || dataSkip === null || dataSkip === undefined) {
-                dataSkip = "3";
-            }
-
-            dataSkip = dataSkip.replace(/best/g,  "0");
-            dataSkip = dataSkip.replace(/cover/g, "-1");
-            dataSkip = dataSkip.replace(/peak/g,  "-2");
+            if (dataSkip === "NA" || dataSkip === null || dataSkip === undefined) dataSkip = "3";
+            dataSkip = dataSkip.replace(/best/g, "0").replace(/cover/g, "-1").replace(/peak/g, "-2");
 
             const dataSkipValues = dataSkip.split(";");
-
             const isWithinRange = dataSkipValues.some(value => {
                 const numericValue = parseFloat(value);
                 if (!isNaN(numericValue)) {
-                    if ([0, -1, -2].includes(PhotosMapRange)) {
-                        return numericValue === PhotosMapRange;
-                    }
+                    if ([0, -1, -2].includes(PhotosMapRange)) return numericValue === PhotosMapRange;
                     return numericValue <= PhotosMapRange;
                 }
                 return false;
             });
-
             if (!isWithinRange) return;
 
             var captureDate;
             try {
-                // Supported filename formats:
-                // 20241104_130716.jpg  |  IMG20241029132928.jpg  |  IMG-20220627_162856.JPG
-                // 20250615_043107056.JPG (with milliseconds)
                 const imageTimeRegex = /^(\d{8})_(\d{6})(\d{3})?\.jpg$|^IMG(\d{8})(\d{6})\.jpg$|^IMG-(\d{8})_(\d{6})\.JPG$/i;
                 const imageTimeMatch = imageName.match(imageTimeRegex);
-
-                if (!imageTimeMatch) {
-                    console.error('Image name does not contain a valid timestamp:', imageName);
-                    return;
-                }
+                if (!imageTimeMatch) { console.error('Invalid timestamp:', imageName); return; }
 
                 const datePart   = imageTimeMatch[1] || imageTimeMatch[4] || imageTimeMatch[6];
                 const timePart   = imageTimeMatch[2] || imageTimeMatch[5] || imageTimeMatch[7];
                 const millisPart = imageTimeMatch[3] || '';
-
                 let captureDateString = `${datePart.slice(0,4)}-${datePart.slice(4,6)}-${datePart.slice(6,8)}T${timePart.slice(0,2)}:${timePart.slice(2,4)}:${timePart.slice(4,6)}`;
                 if (millisPart) captureDateString += `.${millisPart}`;
-
                 captureDate = new Date(captureDateString);
+                if (isNaN(captureDate.getTime())) { console.error('Invalid date:', captureDateString); return; }
+            } catch (error) { console.error('Date parse error:', error); return; }
 
-                if (isNaN(captureDate.getTime())) {
-                    console.error('Invalid capture date parsed from image name:', captureDateString);
-                    return;
-                }
-            } catch (error) {
-                console.error('Error parsing capture date:', error);
-                return;
-            }
-
-            // Enable/disable filter UI based on sign-in status
             const filterElements = [
-                document.getElementById('photosMapSliderElement'),
-                document.getElementById('photosMapValueElement'),
-                document.getElementById('dayFilterStart'),
-                document.getElementById('dayFilterEnd'),
-                document.getElementById('timeFilterStart'),
-                document.getElementById('timeFilterEnd'),
-                document.getElementById('dailyTimeFilterStart'),
-                document.getElementById('dailyTimeFilterEnd'),
-                document.getElementById('applyFilters'),
-                document.getElementById('usePhotoFilterForTracks')
+                document.getElementById('photosMapSliderElement'), document.getElementById('photosMapValueElement'),
+                document.getElementById('dayFilterStart'), document.getElementById('dayFilterEnd'),
+                document.getElementById('timeFilterStart'), document.getElementById('timeFilterEnd'),
+                document.getElementById('dailyTimeFilterStart'), document.getElementById('dailyTimeFilterEnd'),
+                document.getElementById('applyFilters'), document.getElementById('usePhotoFilterForTracks')
             ];
-
             filterElements.forEach(el => {
-                if (el) {
-                    el.disabled    = !config.isSignedIn;
-                    el.style.cursor  = config.isSignedIn ? 'pointer'     : 'not-allowed';
-                    el.style.opacity = config.isSignedIn ? '1'           : '0.7';
-                }
+                if (el) { el.disabled = !config.isSignedIn; el.style.cursor = config.isSignedIn ? 'pointer' : 'not-allowed'; el.style.opacity = config.isSignedIn ? '1' : '0.7'; }
             });
 
             const timeFilterStart      = localStorage.getItem('timeFilterStart')      || "00:00";
@@ -373,60 +335,45 @@ function createMap() {
 
             const filterStartDate = new Date(`${dayFilterStart}T${timeFilterStart}`);
             const filterEndDate   = new Date(`${dayFilterEnd}T${timeFilterEnd}`);
-
             if (!isNaN(filterStartDate.getTime()) && !isNaN(filterEndDate.getTime())) {
                 if (filterStartDate > filterEndDate) return;
                 if (captureDate < filterStartDate || captureDate > filterEndDate) return;
             }
-
             const captureHHMM = captureDate.toTimeString().slice(0, 5);
             if (dailyTimeFilterStart > dailyTimeFilterEnd) return;
             if (captureHHMM < dailyTimeFilterStart || captureHHMM > dailyTimeFilterEnd) return;
 
             var popupContent = `
                 <div class="popup-container">
-                    <a href="${postLink}">
-                        <img src="${imageLink}" alt="${postTitle}" class="popup-image">
-                    </a>
+                    <a href="${postLink}"><img src="${imageLink}" alt="${postTitle}" class="popup-image"></a>
                     <div class="popup-caption">${postTitle}</div>
                 </div>`;
 
             const photoMarker = L.marker([latitude, longitude], { icon: photoMarkerIcon });
-
             if (config.isSignedIn) {
                 photoMarker.bindPopup(popupContent, { className: 'photo-popup' });
             } else {
-                photoMarker.on('click', (e) => {
-                    e.originalEvent.stopPropagation();
-                    e.originalEvent.preventDefault();
-                });
+                photoMarker.on('click', (e) => { e.originalEvent.stopPropagation(); e.originalEvent.preventDefault(); });
             }
-
             targetMarkers.addLayer(photoMarker);
         });
-        // No map.addLayer() here — visibility is controlled solely by layer control + persistence block.
     }
 
-    // Load main photos
     fetch(photoListUrl)
-        .then(response => response.text())
-        .then(data => addMarkers(data, markers, false))
-        .catch(error => console.error('Error fetching photos metadata:', error));
+        .then(r => r.text()).then(data => addMarkers(data, markers, false))
+        .catch(err => console.error('Error fetching photos:', err));
 
-    // Load Relive photos if enabled
     if (config.enableRelive) {
         fetch(relivePhotoListUrl)
-            .then(response => response.text())
-            .then(data => addMarkers(data, reliveMarkers, true))
-            .catch(error => console.error('Error fetching Relive photos metadata:', error));
+            .then(r => r.text()).then(data => addMarkers(data, reliveMarkers, true))
+            .catch(err => console.error('Error fetching Relive photos:', err));
     }
 
-    // Apply filters button
     const applyBtn = document.getElementById('applyFilters');
     if (applyBtn) {
-        applyBtn.disabled    = !config.isSignedIn;
-        applyBtn.style.cursor  = config.isSignedIn ? 'pointer'   : 'not-allowed';
-        applyBtn.style.opacity = config.isSignedIn ? '1'         : '0.7';
+        applyBtn.disabled = !config.isSignedIn;
+        applyBtn.style.cursor  = config.isSignedIn ? 'pointer' : 'not-allowed';
+        applyBtn.style.opacity = config.isSignedIn ? '1'       : '0.7';
 
         applyBtn.addEventListener('click', function () {
             const dayFilterStart       = document.getElementById('dayFilterStart').value       || "1970-01-01";
@@ -435,64 +382,45 @@ function createMap() {
             const timeFilterEnd        = document.getElementById('timeFilterEnd').value        || "23:59";
             const dailyTimeFilterStart = document.getElementById('dailyTimeFilterStart').value || "00:00";
             const dailyTimeFilterEnd   = document.getElementById('dailyTimeFilterEnd').value   || "23:59";
+            const checkbox             = document.getElementById('usePhotoFilterForTracks');
+            const usePhotoFilter       = checkbox && checkbox.checked;
+            const trackDayFilterStart  = usePhotoFilter ? dayFilterStart : (document.getElementById('trackDayFilterStart').value || "1970-01-01");
+            const trackDayFilterEnd    = usePhotoFilter ? dayFilterEnd   : (document.getElementById('trackDayFilterEnd').value   || "9999-12-31");
 
-            const checkbox       = document.getElementById('usePhotoFilterForTracks');
-            const usePhotoFilter = checkbox && checkbox.checked;
-
-            const trackDayFilterStart = usePhotoFilter ? dayFilterStart
-                : (document.getElementById('trackDayFilterStart').value || "1970-01-01");
-            const trackDayFilterEnd = usePhotoFilter ? dayFilterEnd
-                : (document.getElementById('trackDayFilterEnd').value   || "9999-12-31");
-
-            localStorage.setItem('dayFilterStart',          dayFilterStart);
-            localStorage.setItem('dayFilterEnd',            dayFilterEnd);
-            localStorage.setItem('timeFilterStart',         timeFilterStart);
-            localStorage.setItem('timeFilterEnd',           timeFilterEnd);
-            localStorage.setItem('dailyTimeFilterStart',    dailyTimeFilterStart);
-            localStorage.setItem('dailyTimeFilterEnd',      dailyTimeFilterEnd);
+            localStorage.setItem('dayFilterStart', dayFilterStart); localStorage.setItem('dayFilterEnd', dayFilterEnd);
+            localStorage.setItem('timeFilterStart', timeFilterStart); localStorage.setItem('timeFilterEnd', timeFilterEnd);
+            localStorage.setItem('dailyTimeFilterStart', dailyTimeFilterStart); localStorage.setItem('dailyTimeFilterEnd', dailyTimeFilterEnd);
             localStorage.setItem('usePhotoFilterForTracks', String(usePhotoFilter));
-            localStorage.setItem('trackDayFilterStart',     trackDayFilterStart);
-            localStorage.setItem('trackDayFilterEnd',       trackDayFilterEnd);
+            localStorage.setItem('trackDayFilterStart', trackDayFilterStart); localStorage.setItem('trackDayFilterEnd', trackDayFilterEnd);
 
-            // Reload main photos — restore visibility state after clear
-            fetch(photoListUrl)
-                .then(response => response.text())
-                .then(data => {
-                    const wasVisible = map.hasLayer(markers);
-                    markers.clearLayers();
-                    addMarkers(data, markers, false);
-                    if (wasVisible) map.addLayer(markers);
-                    applyPhotoFilterToTracks(usePhotoFilter);
-                })
-                .catch(error => console.error('Error fetching photos metadata:', error));
+            fetch(photoListUrl).then(r => r.text()).then(data => {
+                const wasVisible = map.hasLayer(markers);
+                markers.clearLayers();
+                addMarkers(data, markers, false);
+                if (wasVisible) map.addLayer(markers);
+                applyPhotoFilterToTracks(usePhotoFilter);
+            }).catch(err => console.error('Error fetching photos:', err));
 
-            // Reload Relive photos if enabled — restore visibility state after clear
             if (config.enableRelive) {
-                fetch(relivePhotoListUrl)
-                    .then(response => response.text())
-                    .then(data => {
-                        const wasReliveVisible = map.hasLayer(reliveMarkers);
-                        reliveMarkers.clearLayers();
-                        addMarkers(data, reliveMarkers, true);
-                        if (wasReliveVisible) map.addLayer(reliveMarkers);
-                    })
-                    .catch(error => console.error('Error fetching Relive photos metadata:', error));
+                fetch(relivePhotoListUrl).then(r => r.text()).then(data => {
+                    const wasVisible = map.hasLayer(reliveMarkers);
+                    reliveMarkers.clearLayers();
+                    addMarkers(data, reliveMarkers, true);
+                    if (wasVisible) map.addLayer(reliveMarkers);
+                }).catch(err => console.error('Error fetching Relive photos:', err));
             }
 
-            // Reload track markers
-            clearTracks();
+            // Clear polylines only, then reload markers
+            clearPolylines(false);
+            clearPolylines(true);
             loadTrackMarkers();
-
-            if (config.enableRelive) {
-                clearReliveTracks();
-                loadReliveTrackMarkers();
-            }
+            if (config.enableRelive) loadReliveTrackMarkers();
         });
     }
 
     function getPhotosMapSliderValue() {
-        let photosMapSliderValue = localStorage.getItem('photosMapSliderValue');
-        return photosMapSliderValue ? Number(photosMapSliderValue) : config.initPhotosValue;
+        const v = localStorage.getItem('photosMapSliderValue');
+        return v ? Number(v) : config.initPhotosValue;
     }
 
     // -----------------
@@ -507,70 +435,79 @@ function createMap() {
         return { trackName: name, trackDate: date };
     }
 
-    async function loadGPXTrack(gpxURL, trackColor, marker, fitBounds = false, isReliveSource = false) {
-        try {
-            const response = await fetch(gpxURL);
-            const gpx = await response.text();
-            const geojson = toGeoJSON.gpx(new DOMParser().parseFromString(gpx, 'text/xml'));
+    // Draw a polyline for one marker.
+    // The marker is always moved out of the cluster into nonClusteredMarkers
+    // so it renders as a standalone pin at the track start, never clustered.
+    async function loadGPXTrack(gpxURL, trackColor, clusterMarker, fitBounds, isReliveSource) {
+        const filename = clusterMarker.options && clusterMarker.options.title;
+        if (!filename) { console.warn('loadGPXTrack: marker has no title, skipping'); return; }
 
-            const polyline = L.geoJson(geojson, { style: { color: trackColor, weight: 2 } }).getLayers()[0];
-            if (!polyline) {
-                console.error('Polyline creation failed for', gpxURL);
-                return;
-            }
+        // Skip if polyline already drawn for this track
+        const trackStore = isReliveSource ? reliveTracks : tracks;
+        if (trackStore[filename]) return;
 
-            if (fitBounds) {
-                map.fitBounds(polyline.getBounds());
-            }
+        const cache = isReliveSource ? reliveTrackGeojsonCache : trackGeojsonCache;
+        let coords = cache[filename];
 
-            const arrowLayer = L.polylineDecorator(polyline, {
-                patterns: [{
-                    offset: 0, repeat: 7,
-                    symbol: L.Symbol.arrowHead({ pixelSize: 6, pathOptions: { color: trackColor, fillOpacity: 1, weight: 2 } })
-                }]
-            });
-
-            const startMarker = L.marker(polyline.getLatLngs()[0], { icon: startMarkerIcon })
-                .bindPopup(marker.getPopup().getContent(), { className: 'track-popup' });
-
-            if (isReliveSource) {
-                reliveNonClusteredMarkers.addLayer(startMarker);
-                reliveClusteredMarkers.removeLayer(marker);
-            } else {
-                nonClusteredMarkers.addLayer(startMarker);
-                clusteredMarkers.removeLayer(marker);
-            }
-
-            const GPXtrack = L.layerGroup([polyline, arrowLayer, startMarker]).addTo(map);
-            masterLayerGroup.addLayer(GPXtrack);
-
-            const trackStore = isReliveSource ? reliveTracks : tracks;
-            trackStore[marker.options.title] = { polyline, arrowLayer, color: trackColor, marker: startMarker };
-
-            startMarker.on('click', () => highlightTrack(trackStore[marker.options.title], isReliveSource));
-            polyline.on('click',    () => highlightTrack(trackStore[marker.options.title], isReliveSource));
-        } catch (error) {
-            console.error('Error fetching or parsing GPX data:', error);
+        if (!coords) {
+            console.warn(`Cache miss for ${filename}, falling back to live GPX fetch.`);
+            try {
+                const response = await fetch(gpxURL);
+                const gpxText  = await response.text();
+                const geojson  = toGeoJSON.gpx(new DOMParser().parseFromString(gpxText, "text/xml"));
+                const layer    = L.geoJson(geojson).getLayers()[0];
+                if (!layer) { console.error("Polyline creation failed for", gpxURL); return; }
+                coords = layer.getLatLngs().map(ll => [ll.lng, ll.lat]);
+                cache[filename] = coords;
+            } catch (err) { console.error("Error fetching GPX:", err); return; }
         }
+
+        const latlngs = coords.map(([lon, lat]) => L.latLng(lat, lon));
+        if (latlngs.length === 0) { console.error("Empty coords for", filename); return; }
+
+        const polyline = L.polyline(latlngs, { color: trackColor, weight: 2 });
+        if (fitBounds) map.fitBounds(polyline.getBounds());
+
+        const arrowLayer = L.polylineDecorator(polyline, {
+            patterns: [{ offset: 0, repeat: 7,
+                symbol: L.Symbol.arrowHead({ pixelSize: 6, pathOptions: { color: trackColor, fillOpacity: 1, weight: 2 } })
+            }]
+        });
+
+        // Always move marker out of cluster → nonClusteredMarkers (standalone pin)
+        if (isReliveSource) {
+            reliveClusteredMarkers.removeLayer(clusterMarker);
+            reliveNonClusteredMarkers.addLayer(clusterMarker);
+        } else {
+            clusteredMarkers.removeLayer(clusterMarker);
+            nonClusteredMarkers.addLayer(clusterMarker);
+        }
+
+        // Add polylines to the dedicated layer group
+        const polylineGroup = isReliveSource ? relivePolylinesLayerGroup : polylinesLayerGroup;
+        polylineGroup.addLayer(polyline);
+        polylineGroup.addLayer(arrowLayer);
+
+        trackStore[filename] = { polyline, arrowLayer, color: trackColor, clusterMarker };
+
+        polyline.on("click",       () => highlightTrack(trackStore[filename], isReliveSource));
+        clusterMarker.on("click",  () => { if (trackStore[filename]) highlightTrack(trackStore[filename], isReliveSource); });
     }
 
     function highlightTrack(trackData, isReliveSource) {
         isReliveSource = isReliveSource || false;
-        let currentRef = isReliveSource ? currentlySelectedReliveTrack : currentlySelectedTrack;
+        const currentRef = isReliveSource ? currentlySelectedReliveTrack : currentlySelectedTrack;
 
         if (currentRef && currentRef !== trackData) {
             resetTrackStyle(currentRef);
-            currentRef.marker.closePopup();
+            currentRef.clusterMarker.closePopup();
         }
 
         setTrackStyle(trackData, 'black');
-        trackData.marker.openPopup();
+        trackData.clusterMarker.openPopup();
 
-        if (isReliveSource) {
-            currentlySelectedReliveTrack = trackData;
-        } else {
-            currentlySelectedTrack = trackData;
-        }
+        if (isReliveSource) currentlySelectedReliveTrack = trackData;
+        else                currentlySelectedTrack = trackData;
     }
 
     function resetTrackStyle(trackData) {
@@ -583,180 +520,143 @@ function createMap() {
         if (trackData.arrowLayer) trackData.arrowLayer.setStyle({ color });
     }
 
-    // Handle track click event near track line
+    // Click on map near a polyline — highlight nearest track
     function handleTrackClick(e) {
         const clickLocation = e.latlng;
-        const maxDistance   = 0.01;
+        const maxDist       = 0.01 * 111000; // ~1 km in metres
 
-        const allTrackSets = [
+        const allSets = [
             { store: tracks,       isRelive: false },
             { store: reliveTracks, isRelive: true  },
         ];
 
         let nearestTrack    = null;
-        let nearestDistance = Infinity;
+        let nearestDist     = Infinity;
         let nearestIsRelive = false;
 
-        allTrackSets.forEach(({ store, isRelive: rel }) => {
-            Object.values(store).forEach(trackData => {
-                const distance = trackData.polyline.getLatLngs().reduce((closest, latlng) => {
-                    return Math.min(closest, clickLocation.distanceTo(latlng));
-                }, Infinity);
-
-                if (distance < nearestDistance && distance <= maxDistance * 111000) {
-                    nearestTrack    = trackData;
-                    nearestDistance = distance;
-                    nearestIsRelive = rel;
+        allSets.forEach(({ store, isRelive: rel }) => {
+            Object.values(store).forEach(td => {
+                const dist = td.polyline.getLatLngs().reduce(
+                    (closest, ll) => Math.min(closest, clickLocation.distanceTo(ll)), Infinity);
+                if (dist < nearestDist && dist <= maxDist) {
+                    nearestTrack = td; nearestDist = dist; nearestIsRelive = rel;
                 }
             });
         });
 
-        if (nearestTrack) {
-            if (currentlySelectedTrack && currentlySelectedTrack !== nearestTrack) {
-                currentlySelectedTrack.polyline.setStyle({ color: currentlySelectedTrack.color });
-                if (currentlySelectedTrack.arrowLayer) currentlySelectedTrack.arrowLayer.setStyle({ color: currentlySelectedTrack.color });
-                currentlySelectedTrack.marker.closePopup();
-            }
-            if (currentlySelectedReliveTrack && currentlySelectedReliveTrack !== nearestTrack) {
-                currentlySelectedReliveTrack.polyline.setStyle({ color: currentlySelectedReliveTrack.color });
-                if (currentlySelectedReliveTrack.arrowLayer) currentlySelectedReliveTrack.arrowLayer.setStyle({ color: currentlySelectedReliveTrack.color });
-                currentlySelectedReliveTrack.marker.closePopup();
-            }
+        if (!nearestTrack) return;
 
-            nearestTrack.polyline.setStyle({ color: 'black' });
-            if (nearestTrack.arrowLayer) nearestTrack.arrowLayer.setStyle({ color: 'black' });
-            nearestTrack.marker.openPopup();
+        [{ ref: currentlySelectedTrack, isR: false }, { ref: currentlySelectedReliveTrack, isR: true }]
+            .forEach(({ ref, isR }) => {
+                if (ref && ref !== nearestTrack) {
+                    resetTrackStyle(ref);
+                    ref.clusterMarker.closePopup();
+                    if (isR) currentlySelectedReliveTrack = null;
+                    else     currentlySelectedTrack       = null;
+                }
+            });
 
-            if (nearestIsRelive) {
-                currentlySelectedReliveTrack = nearestTrack;
-            } else {
-                currentlySelectedTrack = nearestTrack;
-            }
-        }
+        nearestTrack.polyline.setStyle({ color: 'black' });
+        if (nearestTrack.arrowLayer) nearestTrack.arrowLayer.setStyle({ color: 'black' });
+        nearestTrack.clusterMarker.openPopup();
+
+        if (nearestIsRelive) currentlySelectedReliveTrack = nearestTrack;
+        else                 currentlySelectedTrack       = nearestTrack;
     }
 
-    // Clear all main tracks from map
-    function clearTracks() {
-        Object.entries(tracks).forEach(([key, trackData]) => {
-            map.removeLayer(trackData.polyline);
-            if (trackData.arrowLayer) map.removeLayer(trackData.arrowLayer);
-            nonClusteredMarkers.removeLayer(trackData.marker);
-            clusteredMarkers.addLayer(trackData.marker);
-            hiddenTracks[key] = trackData;
-            delete tracks[key];
+    // Remove all polylines and return their markers back to the cluster group.
+    function clearPolylines(isReliveSource) {
+        const trackStore      = isReliveSource ? reliveTracks              : tracks;
+        const polylineGrp     = isReliveSource ? relivePolylinesLayerGroup  : polylinesLayerGroup;
+        const clusterGrp      = isReliveSource ? reliveClusteredMarkers     : clusteredMarkers;
+        const nonClusterGrp   = isReliveSource ? reliveNonClusteredMarkers  : nonClusteredMarkers;
+
+        if (isReliveSource) currentlySelectedReliveTrack = null;
+        else                currentlySelectedTrack       = null;
+
+        // Return each marker from nonClustered back into the cluster
+        Object.values(trackStore).forEach(td => {
+            if (td.clusterMarker) {
+                nonClusterGrp.removeLayer(td.clusterMarker);
+                clusterGrp.addLayer(td.clusterMarker);
+            }
         });
-        currentlySelectedTrack = null;
+
+        polylineGrp.clearLayers();
+        Object.keys(trackStore).forEach(k => delete trackStore[k]);
     }
 
-    // Clear all Relive tracks from map
-    function clearReliveTracks() {
-        Object.entries(reliveTracks).forEach(([key, trackData]) => {
-            map.removeLayer(trackData.polyline);
-            if (trackData.arrowLayer) map.removeLayer(trackData.arrowLayer);
-            reliveNonClusteredMarkers.removeLayer(trackData.marker);
-            reliveClusteredMarkers.addLayer(trackData.marker);
-            reliveHiddenTracks[key] = trackData;
-            delete reliveTracks[key];
-        });
-        currentlySelectedReliveTrack = null;
-    }
-
-    // Show tracks within current map viewport
+    // Show tracks in current viewport — draw polylines for visible markers.
+    // If the GPX marker overlay is currently off, individual markers in the viewport
+    // are added directly to the map without changing the layer toggle state.
     function showTracksInCurrentMapArea() {
         const bounds = map.getBounds();
 
-        clusteredMarkers.eachLayer(marker => {
-            if (bounds.contains(marker.getLatLng()) && !tracks[marker.options.title]) {
-                const { trackDate } = extractTrackName(marker.options.title);
-                if (isTrackWithinFilters(trackDate)) {
-                    const trackColor = trackColors[Math.floor(Math.random() * trackColors.length)];
-                    loadGPXTrack(`${gpxFolder}${marker.options.title}`, trackColor, marker, false, false);
-                }
-            }
-        });
+        // Snapshot into array first to avoid mutating while iterating
+        const mainSnapshot = [];
+        clusteredMarkers.eachLayer(m => mainSnapshot.push(m));
 
-        Object.entries(hiddenTracks).forEach(([key, trackData]) => {
-            if (bounds.contains(trackData.marker.getLatLng())) {
-                const { trackDate } = extractTrackName(key);
-                if (isTrackWithinFilters(trackDate)) {
-                    map.addLayer(trackData.polyline);
-                    if (trackData.arrowLayer) map.addLayer(trackData.arrowLayer);
-                    clusteredMarkers.removeLayer(trackData.marker);
-                    nonClusteredMarkers.addLayer(trackData.marker);
-                    tracks[key] = trackData;
-                    delete hiddenTracks[key];
-                }
-            }
+        mainSnapshot.forEach(marker => {
+            const filename = marker.options && marker.options.title;
+            if (!filename)          return;
+            if (tracks[filename])   return;
+            if (!bounds.contains(marker.getLatLng())) return;
+            const { trackDate } = extractTrackName(filename);
+            if (!isTrackWithinFilters(trackDate)) return;
+            const color = trackColors[Math.floor(Math.random() * trackColors.length)];
+            loadGPXTrack(`${gpxFolder}${filename}`, color, marker, false, false);
         });
 
         if (config.enableRelive) {
-            reliveClusteredMarkers.eachLayer(marker => {
-                if (bounds.contains(marker.getLatLng()) && !reliveTracks[marker.options.title]) {
-                    const { trackDate } = extractTrackName(marker.options.title);
-                    if (isTrackWithinFilters(trackDate)) {
-                        const trackColor = trackColors[Math.floor(Math.random() * trackColors.length)];
-                        loadGPXTrack(`${reliveGpxFolder}${marker.options.title}`, trackColor, marker, false, true);
-                    }
-                }
-            });
+            const reliveSnapshot = [];
+            reliveClusteredMarkers.eachLayer(m => reliveSnapshot.push(m));
 
-            Object.entries(reliveHiddenTracks).forEach(([key, trackData]) => {
-                if (bounds.contains(trackData.marker.getLatLng())) {
-                    const { trackDate } = extractTrackName(key);
-                    if (isTrackWithinFilters(trackDate)) {
-                        map.addLayer(trackData.polyline);
-                        if (trackData.arrowLayer) map.addLayer(trackData.arrowLayer);
-                        reliveClusteredMarkers.removeLayer(trackData.marker);
-                        reliveNonClusteredMarkers.addLayer(trackData.marker);
-                        reliveTracks[key] = trackData;
-                        delete reliveHiddenTracks[key];
-                    }
-                }
+            reliveSnapshot.forEach(marker => {
+                const filename = marker.options && marker.options.title;
+                if (!filename)              return;
+                if (reliveTracks[filename]) return;
+                if (!bounds.contains(marker.getLatLng())) return;
+                const { trackDate } = extractTrackName(filename);
+                if (!isTrackWithinFilters(trackDate)) return;
+                const color = trackColors[Math.floor(Math.random() * trackColors.length)];
+                loadGPXTrack(`${reliveGpxFolder}${filename}`, color, marker, false, true);
             });
         }
     }
 
-    // Custom control: show tracks in current area
+    // Custom control: show tracks in current viewport
     const ShowTracksControl = L.Control.extend({
         options: { position: 'topleft' },
         onAdd: function (map) {
             const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
             const button    = L.DomUtil.create('a', 'leaflet-control-show-tracks', container);
-            button.href      = '#';
-            button.title     = 'Show Tracks';
-            button.innerHTML = '<span>&#x2713;</span>';
-
+            button.href = '#'; button.title = 'Show Tracks'; button.innerHTML = '<span>&#x2713;</span>';
             if (!config.isSignedIn) {
-                button.style.opacity       = 0.7;
-                button.style.pointerEvents = 'none';
+                button.style.opacity = 0.7; button.style.pointerEvents = 'none';
             } else {
                 L.DomEvent.on(button, 'click', L.DomEvent.stopPropagation)
                     .on(button, 'click', L.DomEvent.preventDefault)
-                    .on(button, 'click', function () { showTracksInCurrentMapArea(); });
+                    .on(button, 'click', () => showTracksInCurrentMapArea());
             }
             return container;
         }
     });
 
-    // Custom control: clear all tracks
+    // Custom control: clear all polylines (markers untouched)
     const ClearTracksControl = L.Control.extend({
         options: { position: 'topleft' },
         onAdd: function (map) {
             const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
             const button    = L.DomUtil.create('a', 'leaflet-control-clear-tracks', container);
-            button.href      = '#';
-            button.title     = 'Clear All Tracks';
-            button.innerHTML = '<span>&#x2715;</span>';
-
+            button.href = '#'; button.title = 'Clear All Tracks'; button.innerHTML = '<span>&#x2715;</span>';
             if (!config.isSignedIn) {
-                button.style.opacity       = 0.7;
-                button.style.pointerEvents = 'none';
+                button.style.opacity = 0.7; button.style.pointerEvents = 'none';
             } else {
                 L.DomEvent.on(button, 'click', L.DomEvent.stopPropagation)
                     .on(button, 'click', L.DomEvent.preventDefault)
-                    .on(button, 'click', function () {
-                        clearTracks();
-                        if (config.enableRelive) clearReliveTracks();
+                    .on(button, 'click', () => {
+                        clearPolylines(false);
+                        if (config.enableRelive) clearPolylines(true);
                     });
             }
             return container;
@@ -771,37 +671,42 @@ function createMap() {
         trackMarkersAbortController = new AbortController();
         const signal = trackMarkersAbortController.signal;
 
+        // Clear existing markers and all polylines before reload
+        clearPolylines(false);
         clusteredMarkers.clearLayers();
         nonClusteredMarkers.clearLayers();
-        Object.keys(hiddenTracks).forEach(k => delete hiddenTracks[k]);
 
-        fetch(trackListUrl, { signal })
-            .then(response => response.text())
-            .then(data => {
+        const geojsonURL = `${config.baseUrl}/all_tracks.geojson`;
+
+        fetch(geojsonURL, { signal })
+            .then(r => r.json())
+            .then(geojson => {
                 if (signal.aborted) return;
-                const trackList = data.split('\n').map(line => line.split(';')).filter(parts => parts.length >= 3);
+                (geojson.features || []).forEach(f => {
+                    const fn = f.properties && f.properties.filename;
+                    const ln = f.geometry && f.geometry.coordinates;
+                    if (fn && ln) trackGeojsonCache[fn] = ln;
+                });
+                return fetch(trackListUrl, { signal });
+            })
+            .then(r => r && r.text())
+            .then(data => {
+                if (!data || signal.aborted) return;
+                const trackList = data.split("\n").map(l => l.split(";")).filter(p => p.length >= 3);
 
                 trackList.forEach(([lat, lng, filename, coverPhoto, postLink]) => {
+                    if (!filename || !filename.trim()) return;
                     const { trackName, trackDate } = extractTrackName(filename);
+                    if (!isTrackWithinFilters(trackDate)) return;
+
                     const gpxURL      = `${gpxFolder}${filename}`;
                     const randomColor = trackColors[Math.floor(Math.random() * trackColors.length)];
 
-                    if (!isTrackWithinFilters(trackDate)) return;
-
                     let popupContent;
-                    if (coverPhoto && coverPhoto.trim() !== '' && postLink && postLink.trim() !== '') {
-                        popupContent = `
-                            <div class="popup-container">
-                                <a href="${postLink}" target="_blank">
-                                    <img src="${coverPhoto}" alt="${trackName}" class="popup-image">
-                                </a>
-                                <div class="popup-caption">${trackName}<br>${trackDate}</div>
-                            </div>`;
+                    if (coverPhoto && coverPhoto.trim() && postLink && postLink.trim()) {
+                        popupContent = `<div class="popup-container"><a href="${postLink}" target="_blank"><img src="${coverPhoto}" alt="${trackName}" class="popup-image"></a><div class="popup-caption">${trackName}<br>${trackDate}</div></div>`;
                     } else {
-                        popupContent = `
-                            <div class="popup-container">
-                                <div class="popup-caption">${trackName}<br>${trackDate}</div>
-                            </div>`;
+                        popupContent = `<div class="popup-container"><div class="popup-caption">${trackName}<br>${trackDate}</div></div>`;
                     }
 
                     const marker = L.marker([parseFloat(lat), parseFloat(lng)], {
@@ -809,28 +714,21 @@ function createMap() {
                     });
 
                     if (config.isSignedIn) {
-                        marker.bindPopup(popupContent, { className: 'track-popup' });
-                        marker.on('click', () => loadGPXTrack(gpxURL, randomColor, marker, false, false));
+                        marker.bindPopup(popupContent, { className: "track-popup" });
+                        // Click opens popup AND draws polyline if not already drawn
+                        marker.on("click", () => loadGPXTrack(gpxURL, randomColor, marker, false, false));
                     } else {
-                        marker.on('click', (e) => {
-                            e.originalEvent.stopPropagation();
-                            e.originalEvent.preventDefault();
-                        });
+                        marker.on("click", e => { e.originalEvent.stopPropagation(); e.originalEvent.preventDefault(); });
                     }
 
                     clusteredMarkers.addLayer(marker);
 
                     if (pendingTrackToLoad && filename === pendingTrackToLoad && config.isSignedIn) {
-                        setTimeout(() => {
-                            loadGPXTrack(gpxURL, randomColor, marker, true, false);
-                            pendingTrackToLoad = null;
-                        }, 500);
+                        setTimeout(() => { loadGPXTrack(gpxURL, randomColor, marker, true, false); pendingTrackToLoad = null; }, 500);
                     }
                 });
             })
-            .catch(error => {
-                if (error.name !== 'AbortError') console.error('Error loading track markers:', error);
-            });
+            .catch(err => { if (err.name !== "AbortError") console.error("Error loading track markers:", err); });
     }
 
     // -----------------
@@ -841,37 +739,41 @@ function createMap() {
         reliveTrackMarkersAbortController = new AbortController();
         const signal = reliveTrackMarkersAbortController.signal;
 
+        clearPolylines(true);
         reliveClusteredMarkers.clearLayers();
         reliveNonClusteredMarkers.clearLayers();
-        Object.keys(reliveHiddenTracks).forEach(k => delete reliveHiddenTracks[k]);
 
-        fetch(reliveTrackListUrl, { signal })
-            .then(response => response.text())
-            .then(data => {
+        const geojsonURL = `${config.baseUrl}/all_relive_tracks.geojson`;
+
+        fetch(geojsonURL, { signal })
+            .then(r => r.json())
+            .then(geojson => {
                 if (signal.aborted) return;
-                const trackList = data.split('\n').map(line => line.split(';')).filter(parts => parts.length >= 3);
+                (geojson.features || []).forEach(f => {
+                    const fn = f.properties && f.properties.filename;
+                    const ln = f.geometry && f.geometry.coordinates;
+                    if (fn && ln) reliveTrackGeojsonCache[fn] = ln;
+                });
+                return fetch(reliveTrackListUrl, { signal });
+            })
+            .then(r => r && r.text())
+            .then(data => {
+                if (!data || signal.aborted) return;
+                const trackList = data.split("\n").map(l => l.split(";")).filter(p => p.length >= 3);
 
                 trackList.forEach(([lat, lng, filename, coverPhoto, postLink]) => {
+                    if (!filename || !filename.trim()) return;
                     const { trackName, trackDate } = extractTrackName(filename);
+                    if (!isTrackWithinFilters(trackDate)) return;
+
                     const gpxURL      = `${reliveGpxFolder}${filename}`;
                     const randomColor = trackColors[Math.floor(Math.random() * trackColors.length)];
 
-                    if (!isTrackWithinFilters(trackDate)) return;
-
                     let popupContent;
-                    if (coverPhoto && coverPhoto.trim() !== '' && postLink && postLink.trim() !== '') {
-                        popupContent = `
-                            <div class="popup-container">
-                                <a href="${postLink}" target="_blank">
-                                    <img src="${coverPhoto}" alt="${trackName}" class="popup-image">
-                                </a>
-                                <div class="popup-caption">${trackName}<br>${trackDate}</div>
-                            </div>`;
+                    if (coverPhoto && coverPhoto.trim() && postLink && postLink.trim()) {
+                        popupContent = `<div class="popup-container"><a href="${postLink}" target="_blank"><img src="${coverPhoto}" alt="${trackName}" class="popup-image"></a><div class="popup-caption">${trackName}<br>${trackDate}</div></div>`;
                     } else {
-                        popupContent = `
-                            <div class="popup-container">
-                                <div class="popup-caption">${trackName}<br>${trackDate}</div>
-                            </div>`;
+                        popupContent = `<div class="popup-container"><div class="popup-caption">${trackName}<br>${trackDate}</div></div>`;
                     }
 
                     const marker = L.marker([parseFloat(lat), parseFloat(lng)], {
@@ -879,68 +781,40 @@ function createMap() {
                     });
 
                     if (config.isSignedIn) {
-                        marker.bindPopup(popupContent, { className: 'track-popup' });
-                        marker.on('click', () => loadGPXTrack(gpxURL, randomColor, marker, false, true));
+                        marker.bindPopup(popupContent, { className: "track-popup" });
+                        marker.on("click", () => loadGPXTrack(gpxURL, randomColor, marker, false, true));
                     } else {
-                        marker.on('click', (e) => {
-                            e.originalEvent.stopPropagation();
-                            e.originalEvent.preventDefault();
-                        });
+                        marker.on("click", e => { e.originalEvent.stopPropagation(); e.originalEvent.preventDefault(); });
                     }
 
                     reliveClusteredMarkers.addLayer(marker);
                 });
             })
-            .catch(error => {
-                if (error.name !== 'AbortError') console.error('Error loading Relive track markers:', error);
-            });
+            .catch(err => { if (err.name !== "AbortError") console.error("Error loading Relive track markers:", err); });
     }
 
-    // Check if a track date falls within the active date filter
     function isTrackWithinFilters(trackDate) {
-        const trackDateParts = trackDate.split('.');
-        if (trackDateParts.length !== 4) return true;
-
-        const day   = parseInt(trackDateParts[0], 10);
-        const month = parseInt(trackDateParts[1], 10) - 1;
-        const year  = parseInt(trackDateParts[2], 10);
-
-        const trackDateTime = new Date(Date.UTC(year, month, day));
+        const parts = trackDate.split('.');
+        if (parts.length !== 4) return true;
+        const trackDateTime = new Date(Date.UTC(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0])));
         if (isNaN(trackDateTime.getTime())) return true;
-
-        const filterStartStr = localStorage.getItem('trackDayFilterStart') || "1970-01-01";
-        const filterEndStr   = localStorage.getItem('trackDayFilterEnd')   || "9999-12-31";
-
-        const filterStart = new Date(filterStartStr + 'T00:00:00Z');
-        const filterEnd   = new Date(filterEndStr   + 'T23:59:59Z');
-
+        const filterStart = new Date((localStorage.getItem('trackDayFilterStart') || "1970-01-01") + 'T00:00:00Z');
+        const filterEnd   = new Date((localStorage.getItem('trackDayFilterEnd')   || "9999-12-31") + 'T23:59:59Z');
         if (isNaN(filterStart.getTime()) || isNaN(filterEnd.getTime())) return true;
         if (filterStart > filterEnd) return false;
-        if (trackDateTime < filterStart || trackDateTime > filterEnd) return false;
-
-        return true;
+        return trackDateTime >= filterStart && trackDateTime <= filterEnd;
     }
 
-    // Auto-switch base layer at zoom threshold
     function handleZoomChange() {
-        const zoomLevel = map.getZoom();
-
+        const z = map.getZoom();
         if (map.hasLayer(opentopoMap)) {
-            if (zoomLevel > 15.50) {
-                if (!map.hasLayer(openstreetMap)) {
-                    map.removeLayer(opentopoMap);
-                    map.addLayer(openstreetMap);
-                    wasZoomedFromTopo = true;
-                    localStorage.setItem('mapBaseLayer', 'OpenStreetMap');
-                }
+            if (z > 15.50 && !map.hasLayer(openstreetMap)) {
+                map.removeLayer(opentopoMap); map.addLayer(openstreetMap);
+                wasZoomedFromTopo = true; localStorage.setItem('mapBaseLayer', 'OpenStreetMap');
             }
-        } else if (map.hasLayer(openstreetMap)) {
-            if (zoomLevel <= 15.50 && wasZoomedFromTopo) {
-                map.removeLayer(openstreetMap);
-                map.addLayer(opentopoMap);
-                wasZoomedFromTopo = false;
-                localStorage.setItem('mapBaseLayer', 'OpenTopoMap');
-            }
+        } else if (map.hasLayer(openstreetMap) && z <= 15.50 && wasZoomedFromTopo) {
+            map.removeLayer(openstreetMap); map.addLayer(opentopoMap);
+            wasZoomedFromTopo = false; localStorage.setItem('mapBaseLayer', 'OpenTopoMap');
         }
     }
 
@@ -951,30 +825,16 @@ function createMap() {
     markers       = L.markerClusterGroup({ maxClusterRadius: 20 });
     reliveMarkers = L.markerClusterGroup({ maxClusterRadius: 20 });
 
-    // Build layer structure before touching the map
-    masterLayerGroup.addLayer(clusteredMarkers);
-    masterLayerGroup.addLayer(nonClusteredMarkers);
+    // Each source has its own layer group containing both its cluster and nonClustered markers.
+    // This way toggling "GPX sledi" and "GPX sledi (Relive)" work fully independently.
+    const mainLayerGroup  = L.layerGroup([clusteredMarkers,       nonClusteredMarkers]);
+    const reliveLayerGroup = L.layerGroup([reliveClusteredMarkers, reliveNonClusteredMarkers]);
 
+    const overlayLayers = { "GPX sledi": mainLayerGroup, "Slike": markers };
     if (config.enableRelive) {
-        masterLayerGroup.addLayer(reliveClusteredMarkers);
-        masterLayerGroup.addLayer(reliveNonClusteredMarkers);
+        overlayLayers["GPX sledi (Relive)"] = reliveLayerGroup;
+        overlayLayers["Slike (Relive)"]     = reliveMarkers;
     }
-
-    const overlayLayers = {
-        "GPX sledi": masterLayerGroup,
-        "Slike":     markers,
-    };
-
-    if (config.enableRelive) {
-        overlayLayers["GPX sledi (Relive)"] = reliveClusteredMarkers;
-        overlayLayers["Slike (Relive)"] = reliveMarkers;
-    }
-
-    // -----------------
-    // LAYER STATE PERSISTENCE
-    // Defaults: GPX sledi ON, Slike ON, GPX sledi (Relive) OFF, Slike (Relive) OFF
-    // Keys in overlayDefaults must exactly match keys in overlayLayers above.
-    // -----------------
 
     const baseLayers = {
         "OpenTopoMap":    opentopoMap,
@@ -983,49 +843,66 @@ function createMap() {
     };
 
     const overlayDefaults = {
-        "GPX sledi":    "true",
-        "Slike":        "true",
+        "GPX sledi":          "true",
+        "Slike":              "true",
         "GPX sledi (Relive)": "false",
-        "Slike (Relive)": "false"
+        "Slike (Relive)":     "false"
     };
 
-    // Step 1: Restore base tile layer first — cluster groups need zoom range to initialise
+    // Step 1: base tile layer first
     const savedBaseLayer = localStorage.getItem('mapBaseLayer') || 'OpenTopoMap';
-    const baseLayerToAdd = baseLayers[savedBaseLayer] || opentopoMap;
-    baseLayerToAdd.addTo(map);
+    (baseLayers[savedBaseLayer] || opentopoMap).addTo(map);
 
-    // Step 2: Add masterLayerGroup, then restore each overlay per saved/default state
-    masterLayerGroup.addTo(map);
+    // Step 2: add layer groups to map per saved/default state
+    mainLayerGroup.addTo(map);
+    if (config.enableRelive) reliveLayerGroup.addTo(map);
 
+    // Step 3: polyline groups always on map — independent of layer control
+    polylinesLayerGroup.addTo(map);
+    if (config.enableRelive) relivePolylinesLayerGroup.addTo(map);
+
+    // Step 4: restore overlay visibility
     Object.entries(overlayLayers).forEach(([name, layer]) => {
         const saved = localStorage.getItem('mapOverlay_' + name);
         const isOn  = saved !== null ? saved === "true" : overlayDefaults[name] === "true";
-        if (isOn) {
-            map.addLayer(layer);
-        } else {
-            map.removeLayer(layer);
-        }
+        if (isOn) map.addLayer(layer); else map.removeLayer(layer);
     });
 
     const layerControl = L.control.layers(baseLayers, overlayLayers, { position: 'topright' }).addTo(map);
 
-    // Persist layer changes
-    map.on('baselayerchange', function (e) {
-        localStorage.setItem('mapBaseLayer', e.name);
-    });
-    map.on('overlayadd', function (e) {
-        localStorage.setItem('mapOverlay_' + e.name, "true");
-    });
-    map.on('overlayremove', function (e) {
-        localStorage.setItem('mapOverlay_' + e.name, "false");
-    });
-
-    if (L.Control.geocoder) {
-        L.Control.geocoder({ defaultMarkGeocode: false, position: 'topright' })
-            .on('markgeocode', e => map.setView(e.geocode.center, 12))
-            .addTo(map);
+    // Helper: move all markers with active polylines between cluster ↔ nonClustered
+    function syncNonClustered(isReliveSource, toNonClustered) {
+        const store      = isReliveSource ? reliveTracks             : tracks;
+        const cluster    = isReliveSource ? reliveClusteredMarkers   : clusteredMarkers;
+        const nonCluster = isReliveSource ? reliveNonClusteredMarkers : nonClusteredMarkers;
+        Object.values(store).forEach(td => {
+            if (!td || !td.clusterMarker) return;
+            if (toNonClustered) {
+                cluster.removeLayer(td.clusterMarker);
+                nonCluster.addLayer(td.clusterMarker);
+            } else {
+                nonCluster.removeLayer(td.clusterMarker);
+                cluster.addLayer(td.clusterMarker);
+            }
+        });
     }
 
+    // Persist layer changes + sync nonClustered markers on toggle
+    map.on('baselayerchange', e => localStorage.setItem('mapBaseLayer', e.name));
+    map.on('overlayadd', e => {
+        localStorage.setItem('mapOverlay_' + e.name, "true");
+        if (e.name === "GPX sledi")          syncNonClustered(false, true);
+        if (e.name === "GPX sledi (Relive)") syncNonClustered(true,  true);
+    });
+    map.on('overlayremove', e => {
+        localStorage.setItem('mapOverlay_' + e.name, "false");
+        if (e.name === "GPX sledi")          syncNonClustered(false, false);
+        if (e.name === "GPX sledi (Relive)") syncNonClustered(true,  false);
+    });
+    if (L.Control.geocoder) {
+        L.Control.geocoder({ defaultMarkGeocode: false, position: 'topright' })
+            .on('markgeocode', e => map.setView(e.geocode.center, 12)).addTo(map);
+    }
     if (L.Control.Fullscreen) {
         map.addControl(new L.Control.Fullscreen({ position: 'topleft', title: 'Show fullscreen', titleCancel: 'Exit fullscreen' }));
     }
@@ -1039,10 +916,7 @@ function createMap() {
     }
 
     loadTrackMarkers();
-
-    if (config.enableRelive) {
-        loadReliveTrackMarkers();
-    }
+    if (config.enableRelive) loadReliveTrackMarkers();
 }
 
 // -----------------
@@ -1053,20 +927,16 @@ window.MyMemoryMapModule = {
     getMap: () => map,
     destroy: () => {
         if (map) {
-            map.remove();
-            map = null;
-
+            map.remove(); map = null;
             masterLayerGroup.clearLayers();
-            clusteredMarkers.clearLayers();
-            nonClusteredMarkers.clearLayers();
-            reliveClusteredMarkers.clearLayers();
-            reliveNonClusteredMarkers.clearLayers();
+            clusteredMarkers.clearLayers(); nonClusteredMarkers.clearLayers();
+            reliveClusteredMarkers.clearLayers(); reliveNonClusteredMarkers.clearLayers();
+            polylinesLayerGroup.clearLayers(); relivePolylinesLayerGroup.clearLayers();
             Object.keys(tracks).forEach(k => delete tracks[k]);
             Object.keys(hiddenTracks).forEach(k => delete hiddenTracks[k]);
             Object.keys(reliveTracks).forEach(k => delete reliveTracks[k]);
             Object.keys(reliveHiddenTracks).forEach(k => delete reliveHiddenTracks[k]);
-            currentlySelectedTrack = null;
-            currentlySelectedReliveTrack = null;
+            currentlySelectedTrack = null; currentlySelectedReliveTrack = null;
         }
     }
 };

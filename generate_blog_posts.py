@@ -3301,9 +3301,12 @@ if __name__ == "__main__":
             index=True),
         pattern_iter=pattern_iter)
 
-    # 18. Update list_of_tracks.txt
-    run_section(19, "Update list_of_tracks.txt",
-        lambda: subprocess.run(["python", "generate_track_list.py"], check=True),
+    # 18. Update list_of_tracks.txt + preprocess GPX tracks to GeoJSON bundles
+    def _step_19():
+        subprocess.run(["python", "generate_track_list.py"], check=True)
+        subprocess.run(["python", "preprocess_gpx.py"], check=True)
+    run_section(19, "Update list_of_tracks.txt + preprocess GPX to GeoJSON",
+        _step_19,
         pattern_iter=pattern_iter)
 
     # 19. Update photos content
