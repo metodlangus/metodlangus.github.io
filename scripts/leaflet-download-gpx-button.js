@@ -46,8 +46,14 @@ L.Control.DownloadGPX = L.Control.extend({
         L.DomEvent.stopPropagation(e);
         L.DomEvent.preventDefault(e);
 
-        // Check live auth state instead of stale option
-        const currentUser = window.auth?.currentUser;
+        // If auth is not configured at all, allow download freely
+        if (!window.auth) {
+            this.downloadGPX();
+            return;
+        }
+
+        // Auth is present — check if user is signed in
+        const currentUser = window.auth.currentUser;
         if (!currentUser) {
             const overlay = document.getElementById("authOverlay");
             if (overlay) overlay.style.display = "flex";
