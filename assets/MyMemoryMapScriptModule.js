@@ -93,12 +93,16 @@ function populateFilterInputs() {
     const checkbox = document.getElementById('usePhotoFilterForTracks');
     if (checkbox) {
         checkbox.checked = localStorage.getItem('usePhotoFilterForTracks') === 'true';
+        // Apply initial state: respects both sign-in status and checkbox
         applyPhotoFilterToTracks(checkbox.checked);
 
         checkbox.addEventListener('change', function () {
             localStorage.setItem('usePhotoFilterForTracks', this.checked);
             applyPhotoFilterToTracks(this.checked);
         });
+    } else {
+        // No checkbox present — still apply sign-in lock
+        setTrackFilterFieldsDisabled(false);
     }
 }
 
@@ -107,12 +111,14 @@ function applyPhotoFilterToTracks(checked) {
 }
 
 function setTrackFilterFieldsDisabled(disabled) {
+    // Fields are disabled if: user not signed in OR usePhotoFilter is checked
+    const forceDisabled = !config.isSignedIn || disabled;
     ['trackDayFilterStart', 'trackDayFilterEnd'].forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
-        el.disabled = disabled;
-        el.style.cursor = disabled ? 'not-allowed' : '';
-        el.style.opacity = disabled ? '0.7' : '';
+        el.disabled = forceDisabled;
+        el.style.cursor  = forceDisabled ? 'not-allowed' : '';
+        el.style.opacity = forceDisabled ? '0.7'         : '';
     });
 }
 
