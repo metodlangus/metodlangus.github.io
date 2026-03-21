@@ -213,14 +213,30 @@ if (window.location.hostname === "metodlangus.github.io") {
     // Init GA after library is available
     gaScript.onload = function () {
         window.dataLayer = window.dataLayer || [];
-
         function gtag() { dataLayer.push(arguments); }
-        window.gtag = gtag; // expose globally for custom events
+        window.gtag = gtag;
 
         gtag('js', new Date());
-        gtag('config', 'G-NMX36M4NT6', {
-        anonymize_ip: true   // privacy-friendly
-        });
+
+        // Auth-aware GA4 init
+        if (typeof firebase !== 'undefined') {
+            firebase.auth().onAuthStateChanged(user => {
+                gtag('config', 'G-NMX36M4NT6', {
+                    anonymize_ip: true,
+                    user_id: user ? user.uid : null  // Firebase UID, never email
+                });
+
+                // Optional: also set as a user property for easier segmentation
+                if (user) {
+                    gtag('set', 'user_properties', {
+                        signed_in: 'true'
+                    });
+                }
+            });
+        } else {
+            // Fallback if Firebase not on this page
+            gtag('config', 'G-NMX36M4NT6', { anonymize_ip: true });
+        }
     };
 }
 
@@ -339,24 +355,55 @@ if (typeof firebase !== 'undefined') {
         const result = await auth.signInWithPopup(provider);
         console.log(`${name} login success:`, result.user);
         return result.user;
+
       } catch (err) {
+        console.warn(`${name} login failed:`, err.code, err.message);
+
+        const messages = {
+          "auth/user-disabled":
+            "Vaš račun je bil onemogočen s strani administratorja. Prosim, kontaktirajte za več informacij.",
+          "auth/account-exists-with-different-credential":
+            null, // handled separately below
+          "auth/popup-closed-by-user":
+            "Prijavno okno je bilo zaprto. Poskusite znova.",
+          "auth/popup-blocked":
+            "Brskalnik je blokiral prijavno okno. Prosimo, dovolite pojavna okna za to stran.",
+          "auth/cancelled-popup-request":
+            null, // silent — user just opened another popup
+          "auth/network-request-failed":
+            "Napaka omrežja. Preverite internetno povezavo in poskusite znova.",
+          "auth/too-many-requests":
+            "Preveč poskusov prijave. Počakajte nekaj minut in poskusite znova.",
+          "auth/user-not-found":
+            "Račun s temi podatki ne obstaja.",
+          "auth/invalid-credential":
+            "Neveljavni podatki za prijavo. Prosimo, poskusite znova.",
+        };
+
         if (err.code === "auth/account-exists-with-different-credential") {
           const email = err.customData?.email;
-          const pendingCred = err.credential;
           try {
             const methods = await auth.fetchSignInMethodsForEmail(email);
             const providerMap = {
               "google.com": "Google",
               "github.com": "GitHub",
-              "password": "Email"
+              "password": "e-pošto"
             };
             const providerName = providerMap[methods?.[0]] || "drugim ponudnikom";
             alert(`Račun z emailom ${email} že obstaja. Prosimo, prijavite se z ${providerName}.`);
           } catch (e) {
             console.error("Provider detection failed:", e);
+            alert("Ta e-poštni naslov je že povezan z drugim računom. Poskusite se prijaviti drugače.");
           }
+          return;
+        }
+
+        const userMessage = messages[err.code];
+        if (userMessage) {
+          alert(userMessage);
         } else {
-          console.error(`${name} login failed:`, err);
+          // Fallback for any unhandled Firebase error
+          alert(`Prijava ni uspela (${err.code}). Prosimo, poskusite znova ali kontaktirajte podporo.`);
         }
       }
     }
