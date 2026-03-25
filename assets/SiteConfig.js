@@ -103,7 +103,19 @@ document.addEventListener('DOMContentLoaded', () => {
             defaultImgSrc: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiU8RYSJ0I45O63GlKYXw5-U_r7GwP48_st9F1LG7_Z3STuILVQxMO4qLgzP_wxg0v_77s-YwidwwZQIDS1K6SUmY-W3QMwcIyEvt28cLalvCVQu4qWTQIm-B_FvgEmCCe6ydGld4fQgMMd2xNdqMMFtuHgeVXB4gRPco3XP90OOKHpf6HyZ6AeEZqNJQo/s1600/IMG20241101141924.jpg",
             doubleClickThreshold: 300,
             WindowBaseUrl: WindowBaseUrl,
-            isRelive: isRelive
+            isRelive: isRelive,
+            isSignedIn: false, // initial (will update later)
+            trackPhotoListUrl: 'https://metodlangus.github.io/extracted_photos_with_gps_data.txt',
+            trackDuration: 90,      // seconds for full track at speed 1×
+            trackGroupDist: 250,    // metres — max track-distance to keep photos in one group
+        });
+
+        // React to auth changes
+        auth.onAuthStateChanged(user => {
+            const isSignedIn = !!user;
+            window.isSignedIn = isSignedIn;
+
+            window.updateTrackButtonsAuth?.(isSignedIn);
         });
     });
 

@@ -362,6 +362,17 @@
   padding: 10px;
 }
 
+.track-overlay {
+  position: absolute;
+  top: 20%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.25);
+}
+
 /* Text Styling - Consistent Proportion Relative to Parent */
 .my-title {
   font-size: 3em; /* Font-size as percentage of parent height */

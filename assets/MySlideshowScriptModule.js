@@ -16,11 +16,16 @@
         doubleClickThreshold: 300,
         WindowBaseUrl: "",
         isRelive: false,
-        isBlogger: false
+        isBlogger: false,
+        // ── Track player config (used when gpxURL0 is defined in the post) ──
+        photoListUrl: 'https://metodlangus.github.io/extracted_photos_with_gps_data.txt',
+        trackPlayDuration: 90,   // seconds for full track at 1×
     };
 
     // Module-level variables that will be set by init
-    let initSpeed, maxSpeed, minSpeed, stepSpeed, initQuality, SLIDESHOW_HIDDEN, SLIDESHOW_VISIBLE, randomizeImages, defaultImgSrc_png, defaultImgSrc, doubleClickThreshold, WindowBaseUrl, isRelive, isBlogger;
+    let initSpeed, maxSpeed, minSpeed, stepSpeed, initQuality, SLIDESHOW_HIDDEN, SLIDESHOW_VISIBLE,
+        randomizeImages, defaultImgSrc_png, defaultImgSrc, doubleClickThreshold, WindowBaseUrl,
+        isRelive, isBlogger, photoListUrl, trackPlayDuration;
 
     // SVG path end image with Triglav silhouette
     const endImage = {
@@ -107,16 +112,14 @@
     };
 
     // Module variables (previously global)
-    // let randomizeImages = true; // default ON
     let slideshowIndex = 0;
     var slideshowTitles = [];
     var numberOfSlideshows = [];
     var toggleButton;
     const imageLoadStatus = new Map();
-    let activeFullscreenIndex = null; // Track the index of the fullscreen slideshow
-    let currentSlideshowIndex = 0; // Index of current most visible slideshow
+    let activeFullscreenIndex = null;
+    let currentSlideshowIndex = 0;
 
-    
     // Array to hold all slideshows data
     let slideshows = [];
 
@@ -144,228 +147,1355 @@
     const speedSliderElement = [];
     const speedValueElement = [];
     const navigationControl = [];
-    const navigationControlButtons = []; // Navigation control buttons array
-    const descriptionControlStyle = []; // Controll style of image description
-    const sliderContainer = []; // New sliderContainer array
-    const autoQualityCheckbox = []; // Quality checkbox selection
+    const navigationControlButtons = [];
+    const descriptionControlStyle = [];
+    const sliderContainer = [];
+    const autoQualityCheckbox = [];
     const preloadAllButton = [];
-    var controllButton = []; // Navigation control controllButton
-    var descriptionStyle = []; // Controll style of image description in all containers
+    var controllButton = [];
+    var descriptionStyle = [];
+
+    /* ═══════════════════════════════════════════════════════════════
+       TRACK ENGINE — embedded directly so no second module is needed.
+       One engine per slideshow index. Activated by "Z zemljevidom" button.
+       The engine runs the dot; when it hits a photo group the slideshow
+       calls enqueueManualSlide to advance to the matching image.
+    ═══════════════════════════════════════════════════════════════ */
+
+    // Per-slideshow track state (null when track mode is off)
+    const trackStates = [];
+
+    // Shared helpers used by both the engine and the main slideshow
+    function tkSec(tk) {
+        return parseInt(tk.slice(0,2))*3600 + parseInt(tk.slice(2,4))*60 + parseInt(tk.slice(4,6));
+    }
+
+    function haversine(a, b) {
+        const R = 6371000, r = Math.PI / 180;
+        const dLat = (b.lat - a.lat) * r, dLon = (b.lon - a.lon) * r;
+        const x = Math.sin(dLat/2)**2 + Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dLon/2)**2;
+        return R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1-x));
+    }
 
     /**
-     * @brief   A Least Recently Used (LRU) cache implementation with size-based eviction.
-     *
-     * @details This class manages a cache that automatically evicts the least recently used 
-     *          items when the total size exceeds the defined `maxSize`. Items are stored 
-     *          with their respective sizes, allowing the cache to efficiently manage memory 
-     *          usage. Common operations include adding, retrieving, and deleting items while 
-     *          maintaining a strict size limit.
-     *
-     * @class   LRUCacheBySize
-     *
-     * @param   {number} maxSize The maximum allowed size of the cache in bytes.
-     *
-     * @methods 
-     * - `set(key, value, size)` Adds a key-value pair to the cache. Evicts the least recently 
-     *   used items if the cache exceeds the maximum size.
-     * - `get(key)` Retrieves a value by its key. Marks the accessed item as recently used.
-     * - `has(key)` Checks if a key exists in the cache.
-     * - `delete(key)` Removes a key-value pair from the cache and adjusts the size.
-     * - `clear()` Clears all items from the cache and resets the size.
-     *
-     * @example
-     * const cache = new LRUCacheBySize(1024 * 1024); // 1MB max size
-     * cache.set('image1', img1, 400000); // Add an image with a size of 400KB
-     * const image = cache.get('image1'); // Retrieve the cached image
-     *
-     * @note    The size of each item must be explicitly provided during insertion. The cache 
-     *          uses a `Map` to store items and their metadata, ensuring O(1) access and update times.
+     * @brief   Fetch photos from extracted_photos_with_gps_data.txt for a given post date.
+     *          Same source and regex as MyMemoryMapModule.
      */
-    class LRUCacheBySize {
-        constructor(maxSize) {
-            this.cache = new Map(); // Store cached items
-            this.maxSize = maxSize; // Max size in bytes
-            this.currentSize = 0;   // Current total size in bytes
+    async function fetchTrackPhotos(postDate, photosRange) {
+        if (!photoListUrl || !postDate) return [];
+        if (photosRange == null) photosRange = 3;
+
+        const resp = await fetch(photoListUrl);
+        if (!resp.ok) throw new Error('PhotoList HTTP ' + resp.status);
+        const text = await resp.text();
+
+        const lineRe = /(.+?),\s*Link:\s*(https?:\/\/[^\s]+),\s*data-skip=([^\s,]+),\s*"([^"]+)",\s*([^,]+),\s*Latitude:\s*([+-]?\d+\.\d+),\s*Longitude:\s*([+-]?\d+\.\d+)/;
+        const photos = [], seen = new Set();
+
+        for (const line of text.split('\n')) {
+            const m = line.match(lineRe);
+            if (!m) continue;
+            const filename  = m[1].trim();
+            const imageLink = m[2].trim();
+            const dataSkip  = m[3].trim();
+            const caption   = m[4].trim();
+
+            const dateM = filename.match(new RegExp('^' + postDate + '_(\\d{6})\\d*\\.JPG$', 'i'));
+            if (!dateM) continue;
+            const timeKey = dateM[1];
+            if (seen.has(timeKey)) continue;
+            seen.add(timeKey);
+
+            // data-skip filtering — identical to slideshow processEntry()
+            let ds = dataSkip.toLowerCase()
+                .replace(/best/g, '0').replace(/cover/g, '-1').replace(/peak/g, '-2');
+            const passes = ds.split(';').some(v => {
+                if (isNaN(v)) return false;
+                const n = parseFloat(v);
+                return n !== -2 && n <= photosRange;
+            });
+            if (!passes) continue;
+
+            // Use current quality slider value (same formula as updateImageQuality)
+            const _qv = qualitySliderElement[0] ? qualitySliderElement[0].value : null;
+            const _qs = _qv ? ((_qv === '11') ? '/s0-rw/' : `/s${_qv * 400}-rw/`) : '/s1000-rw/';
+            const src = imageLink.replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//i, _qs);
+            const lat = parseFloat(m[6]);
+            const lon = parseFloat(m[7]);
+            photos.push({ timeKey, src, caption, lat, lon });
         }
 
-        // Set a key-value pair in the cache
-        set(key, value, size) {
-        if (typeof size !== "number" || isNaN(size)) {
-            console.warn(`Skipping cache entry for ${key} — invalid size.`);
-            return; // Don't add items with undefined or invalid size
-        }
-
-        if (this.cache.has(key)) {
-            this.currentSize -= this.cache.get(key).size;
-            this.cache.delete(key);
-        }
-
-        while (this.currentSize + size > this.maxSize) {
-            const oldestKey = this.cache.keys().next().value;
-            const oldestItem = this.cache.get(oldestKey);
-            this.currentSize -= oldestItem.size;
-            this.cache.delete(oldestKey);
-        }
-
-        this.cache.set(key, { value, size });
-        this.currentSize += size;
+        photos.sort((a, b) => a.timeKey.localeCompare(b.timeKey));
+        console.log('[Track] parsed', photos.length, 'photos for date', postDate);
+        return photos;
     }
 
-        // Get a value by its key
-        get(key) {
-            if (!this.cache.has(key)) return undefined;
-            const item = this.cache.get(key);
-            // Move to end (most recently used)
-            this.cache.delete(key);
-            this.cache.set(key, item);
-            return item.value;
-        }
-
-        // Check if key exists
-        has(key) {
-            return this.cache.has(key);
-        }
-
-        // Delete a key-value pair
-        delete(key) {
-            if (this.cache.has(key)) {
-                this.currentSize -= this.cache.get(key).size;
-                this.cache.delete(key);
-                return true;
+    /**
+     * @brief   Build photo groups by actual TRACK distance (not air/haversine).
+     *          Each photo has .progress = trackDist/totalDist set by initTrackEngine.
+     *          A group spans from its first to its last photo; the total track
+     *          distance spanned must be <= maxDist metres.
+     *          totalDist is the full track length in metres.
+     */
+    function buildTrackGroups(photos, maxDist, totalDist) {
+        if (!totalDist || totalDist === 0) totalDist = 1;
+        const maxProgress = maxDist / totalDist;   // max progress span per group
+        const groups = [];
+        let i = 0;
+        while (i < photos.length) {
+            const g = [photos[i]]; let j = i + 1;
+            const firstProgress = photos[i].progress;
+            while (j < photos.length) {
+                // Track distance = progress difference × totalDist
+                const span = photos[j].progress - firstProgress;
+                if (span <= maxProgress) g.push(photos[j++]);
+                else break;
             }
-            return false;
+            groups.push({ photos: g, progress: g[0].progress });
+            i = j;
         }
+        groups.sort((a, b) => a.progress - b.progress);
+        return groups;
+    }
 
-        // Clear all items
-        clear() {
-            this.cache.clear();
-            this.currentSize = 0;
+    /**
+     * @brief   Initialise the track engine for one slideshow index.
+     *          Fetches GPX + photos, builds the Leaflet map in the map panel,
+     *          draws the track, assigns photo progress values, and starts the
+     *          animation loop when the slideshow starts playing.
+     *
+     * @param   ssIdx  The slideshow index (same as the outer numberOfSlideshows index).
+     * @param   gpxUrl The URL of the GPX file for this post.
+     */
+    async function initTrackEngine(ssIdx, gpxUrl) {
+        // Guard: only initialise once
+        if (trackStates[ssIdx] && trackStates[ssIdx].ready) return;
+
+        // Map div is inside the slideshowContainer — find it directly
+        const mapEl = document.getElementById(`tp-map-ss-${ssIdx}`);
+        if (!mapEl) { console.warn('[Track] map element not found'); return; }
+
+        // ── Create Leaflet map ──
+        if (typeof L === 'undefined') { console.warn('[Track] Leaflet not loaded'); return; }
+
+        const tmap = L.map(mapEl, { zoomControl: true }).setView([46.6, 13.4], 10);
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '© Esri', maxZoom: 19
+        }).addTo(tmap);
+
+        // State object
+        const ts = {
+            map: tmap,
+            trackPoints: [], totalDist: 0,
+            PHOTOS: [], GROUPS: [], triggers: [],
+            dotMarker: null, pinMarkers: [],
+            progress: 0, speed: 1,
+            rafId: null, lastTs: null,
+            _photoTimer: null,        // setTimeout for photo display
+            _userPanning: false,      // true while user drags map (suppresses auto-pan)
+            _atEnd: false,            // true after track finishes (triggers reset on next play)
+            _endTimer: null,          // setTimeout for 5s fit-bounds delay
+            _endTimer2: null,         // setTimeout for endImage display
+            waitingForSlide: false,   // dot paused while group photos show
+            timeDist: 200,            // metres — photo group gap
+            ready: false,
+        };
+        trackStates[ssIdx] = ts;
+
+        try {
+            const loadingLabel = mapEl.querySelector('.tp-map-loading');
+            if (loadingLabel) loadingLabel.textContent = 'Nalaganje GPX…';
+
+            // ── Fetch and parse GPX ──
+            const gpxText = await fetch(gpxUrl).then(r => { if (!r.ok) throw new Error('GPX '+r.status); return r.text(); });
+            const doc = new DOMParser().parseFromString(gpxText, 'application/xml');
+            const trkPts = Array.from(doc.querySelectorAll('trkpt'));
+            if (!trkPts.length) throw new Error('No trackpoints in GPX');
+
+            let cum = 0;
+            trkPts.forEach((el, i) => {
+                const lat = parseFloat(el.getAttribute('lat'));
+                const lon = parseFloat(el.getAttribute('lon'));
+                const ele = parseFloat(el.querySelector('ele')?.textContent || 0);
+                const tStr = el.querySelector('time')?.textContent || '';
+                const timeMs = tStr ? new Date(tStr).getTime() : null;
+                if (i > 0) cum += haversine(ts.trackPoints[i-1], {lat, lon});
+                ts.trackPoints.push({lat, lon, ele, dist: cum, timeMs});
+            });
+            ts.totalDist = cum;
+
+            const trackStartMs = ts.trackPoints[0].timeMs;
+            const trackEndMs   = ts.trackPoints[ts.trackPoints.length-1].timeMs;
+
+            // ── Draw track ──
+            const lls = ts.trackPoints.map(p => [p.lat, p.lon]);
+            const poly = L.polyline(lls, {color:'#c8602a', weight:3, opacity:.9, lineCap:'round'}).addTo(tmap);
+            const mkI = col => L.divIcon({className:'', iconSize:[10,10], iconAnchor:[5,5],
+                html:`<div style="width:10px;height:10px;background:${col};border:2px solid #fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>`});
+            L.marker(lls[0], {icon:mkI('#4a7c59')}).addTo(tmap).bindTooltip('Izhodišče');
+            L.marker(lls[lls.length-1], {icon:mkI('#c8602a')}).addTo(tmap).bindTooltip('Cilj');
+            tmap.fitBounds(poly.getBounds(), {padding:[30,30]});
+
+            // ── Dot marker ──
+            const dotIcon = L.divIcon({className:'', iconSize:[18,18], iconAnchor:[9,9],
+                html:'<div style="width:18px;height:18px;background:#c8602a;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(200,96,42,.7)"></div>'});
+            ts.dotMarker = L.marker(lls[0], {icon:dotIcon, zIndexOffset:1000}).addTo(tmap);
+
+            // ── Fetch photos ──
+            const postDate = gpxUrl.match(/(\d{8})_/)?.[1] || '';
+            const photosRange = parseInt(localStorage.getItem('photosSliderValue') ?? '3', 10);
+            if (postDate) {
+                if (loadingLabel) loadingLabel.textContent = 'Nalaganje fotografij…';
+                ts.PHOTOS = await fetchTrackPhotos(postDate, photosRange);
+            }
+
+            // ── Assign progress to photos by matching photo time → GPX time ──
+            if (ts.PHOTOS.length && trackStartMs && trackEndMs) {
+                const gpxDate = new Date(trackStartMs).toISOString().slice(0, 10);
+
+                function photoToUtcMs(timeKey, offsetH) {
+                    const hh=parseInt(timeKey.slice(0,2)), mm=parseInt(timeKey.slice(2,4)), ss=parseInt(timeKey.slice(4,6));
+                    return new Date(gpxDate+'T'+String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0')+'Z').getTime()
+                        - offsetH*3600*1000;
+                }
+                function nearestByTime(pMs) {
+                    let best=0, bestDiff=Infinity;
+                    for (let j=0; j<ts.trackPoints.length; j++) {
+                        const tp=ts.trackPoints[j]; if (!tp.timeMs) continue;
+                        const d=Math.abs(tp.timeMs-pMs); if (d<bestDiff){bestDiff=d;best=j;}
+                    }
+                    return {idx:best, diff:bestDiff};
+                }
+
+                // Auto-detect camera UTC offset using all photos
+                let utcOffset=0, bestScore=-Infinity;
+                for (let offsetH=-12; offsetH<=14; offsetH++) {
+                    let inside=0, totalDiff=0;
+                    for (const p of ts.PHOTOS) {
+                        const pMs=photoToUtcMs(p.timeKey, offsetH);
+                        if (pMs>=trackStartMs && pMs<=trackEndMs) { inside++; totalDiff+=nearestByTime(pMs).diff; }
+                    }
+                    if (inside===0) continue;
+                    const score=inside*1e9 - totalDiff/inside;
+                    if (score>bestScore) { bestScore=score; utcOffset=offsetH; }
+                }
+                console.log('[Track] utcOffset:', utcOffset);
+
+                ts.PHOTOS.forEach(p => {
+                    const pMs=photoToUtcMs(p.timeKey, utcOffset);
+                    const {idx}=nearestByTime(pMs);
+                    p.progress=Math.max(0.001, Math.min(0.999, ts.trackPoints[idx].dist/ts.totalDist));
+                });
+                for (let i=1; i<ts.PHOTOS.length; i++) {
+                    if (ts.PHOTOS[i].progress<=ts.PHOTOS[i-1].progress)
+                        ts.PHOTOS[i].progress=Math.min(0.9999, ts.PHOTOS[i-1].progress+0.00001);
+                }
+
+                ts.GROUPS = buildTrackGroups(ts.PHOTOS, ts.timeDist, ts.totalDist);
+                ts.GROUPS.forEach(g => { g.progress=g.photos[0].progress; });
+
+                // ── Photo group pins on map ──
+                ts.GROUPS.forEach((g, gi) => {
+                    const pt = getTrackPoint(ts, g.progress);
+                    const pinIcon = L.divIcon({className:'', iconSize:[11,11], iconAnchor:[5.5,5.5],
+                        html:`<div style="width:11px;height:11px;background:#4a7c59;border:2px solid #fff;border-radius:50%;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>`});
+                    const mk = L.marker([pt.lat, pt.lon], {icon:pinIcon}).addTo(tmap);
+                    mk.on('click', () => jumpToGroup(ssIdx, gi));
+                    ts.pinMarkers.push(mk);
+                });
+
+                // ── Triggers ──
+                ts.triggers = ts.GROUPS.map((g, gi) => ({progress:g.progress, index:gi, fired:false}));
+            }
+
+            // Hide loading label
+            if (loadingLabel) loadingLabel.style.display = 'none';
+
+            // When ready: if slideshow is already running, start the dot
+            ts.ready = true;
+            console.log('[Track] engine ready. Groups:', ts.GROUPS.length);
+
+            // ── Hook progress bar for track seeking ──
+            const progTrack = document.getElementById(`overlayProgressContainer-${ssIdx}`);
+            if (progTrack) {
+                function seekTrack(clientX) {
+                    const rect = progTrack.getBoundingClientRect();
+                    const p = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+                    ts.progress = p;
+                    ts.lastTs = null;
+                    // Re-fire triggers that were missed by seeking backward
+                    ts.triggers.forEach(t => { t.fired = t.progress <= p; });
+                    updateTrackDot(ssIdx);
+                }
+                progTrack.addEventListener('click', e => {
+                    const mapDiv = document.getElementById(`tp-map-ss-${ssIdx}`);
+                    if (!mapDiv || mapDiv.style.display === 'none') return;
+                    e.stopPropagation();
+                    seekTrack(e.clientX);
+                });
+                progTrack.addEventListener('touchstart', e => {
+                    const mapDiv = document.getElementById(`tp-map-ss-${ssIdx}`);
+                    if (!mapDiv || mapDiv.style.display === 'none') return;
+                    e.preventDefault();
+                    seekTrack(e.touches[0].clientX);
+                }, {passive: false});
+                progTrack.addEventListener('touchmove', e => {
+                    const mapDiv = document.getElementById(`tp-map-ss-${ssIdx}`);
+                    if (!mapDiv || mapDiv.style.display === 'none') return;
+                    e.preventDefault();
+                    seekTrack(e.touches[0].clientX);
+                }, {passive: false});
+            }
+
+            // ── Hook map drag to detect user panning (suppresses auto-pan while dragging) ──
+            ts.map.on('dragstart', () => { ts._userPanning = true; });
+            ts.map.on('dragend',   () => { setTimeout(() => { ts._userPanning = false; }, 2000); });
+
+            // Map single-click = play/pause, double-click = fullscreen
+            // (mirrors handleClick but reads ts.playing as source of truth)
+            let _mapClickTimer = null;
+            ts.map.on('click', () => {
+                const now = Date.now();
+                if (now - (ts._lastMapClick || 0) < 300) {
+                    clearTimeout(_mapClickTimer); _mapClickTimer = null;
+                    toggleFullscreen(ssIdx);
+                } else {
+                    _mapClickTimer = setTimeout(() => {
+                        _mapClickTimer = null;
+                        ts.playing
+                            ? pauseSlideshow(ssIdx, SLIDESHOW_VISIBLE)
+                            : resumeSlideshow(ssIdx, SLIDESHOW_VISIBLE);
+                    }, 300);
+                }
+                ts._lastMapClick = now;
+            });
+
+            if (slideshows[ssIdx] && slideshows[ssIdx].isSlideshowRunning) {
+                setTrackPlaying(ssIdx, true);
+            } else {
+                setTimeout(() => { if (trackStates[ssIdx] && trackStates[ssIdx].map) trackStates[ssIdx].map.invalidateSize(); }, 50);
+            }
+
+        } catch (err) {
+            console.error('[Track] init error:', err);
+            const loadingLabel2 = mapEl.querySelector('.tp-map-loading');
+            if (loadingLabel2) loadingLabel2.textContent = 'Napaka: ' + err.message;
         }
     }
 
-    const imageCache = new LRUCacheBySize(50 * 1024 * 1024); // Cache size limit: 50MB
+    /**
+     * @brief   Interpolate lat/lon/ele on the track at a given progress (0-1).
+     */
+    function getTrackPoint(ts, p) {
+        if (!ts.trackPoints.length) return {lat:0, lon:0, ele:0, dist:0};
+        const target = p * ts.totalDist;
+        for (let i=1; i<ts.trackPoints.length; i++) {
+            if (ts.trackPoints[i].dist >= target) {
+                const a=ts.trackPoints[i-1], b=ts.trackPoints[i];
+                const seg=b.dist-a.dist, t=seg>0?(target-a.dist)/seg:0;
+                return {lat:a.lat+t*(b.lat-a.lat), lon:a.lon+t*(b.lon-a.lon), ele:a.ele+t*(b.ele-a.ele), dist:target};
+            }
+        }
+        return ts.trackPoints[ts.trackPoints.length-1];
+    }
 
+    // ═══════════════════════════════════════════════════════════════
+    //  TRACK ENGINE — core animation + photo-group coordination
+    //
+    //  Single source of truth for playback:
+    //   • The slideshow's internal auto-advance timer (slideshowTimeout)
+    //     is ALWAYS cleared in track mode. The track drives every slide change.
+    //   • State machine:
+    //       RUNNING  → dot advances, map visible
+    //       AT_GROUP → dot paused, photos displayed one by one, map hidden
+    //       PAUSED   → everything stopped (user pressed pause)
+    // ═══════════════════════════════════════════════════════════════
+
+    /** Move dot marker and update progress bar. Pan map every frame for smooth movement. */
+    function updateTrackDot(ssIdx) {
+        const ts = trackStates[ssIdx];
+        if (!ts || !ts.dotMarker || !ts.map) return;
+        const pt = getTrackPoint(ts, ts.progress);
+        ts.dotMarker.setLatLng([pt.lat, pt.lon]);
+
+        // Pan every frame — Leaflet's internal easing makes this smooth
+        // Use panTo with very short duration so the map glides continuously
+        if (!ts._userPanning) {
+            ts.map.panTo([pt.lat, pt.lon], {animate: true, duration: 0.3, easeLinearity: 1.0, noMoveStart: true});
+        }
+
+        // Update progress bar to show track position
+        updateTrackProgressBar(ssIdx);
+    }
+
+    /** Sync the slideshow's progress bar with the track's current position. */
+    function updateTrackProgressBar(ssIdx) {
+        const ts = trackStates[ssIdx];
+        if (!ts) return;
+        const bar = document.getElementById(`progressBar-${ssIdx}`);
+        if (bar) bar.style.width = (ts.progress * 100) + '%';
+    }
+
+    /**
+     * rAF loop — advances the dot. Fully STOPS (rafId=null) when a photo group
+     * is reached. resumeTrackDot() restarts it after photos are done.
+     * This means zero rAF activity during photo display — no flicker.
+     */
+    function animateTrack(ssIdx, ts) {
+        return function step(timestamp) {
+            if (!ts.playing) { ts.rafId = null; ts.lastTs = null; return; }
+
+            if (!ts.lastTs) ts.lastTs = timestamp;
+            const delta = (timestamp - ts.lastTs) / 1000;
+            ts.lastTs = timestamp;
+
+            ts.progress = Math.min(1, ts.progress + delta * ts.speed / trackPlayDuration);
+
+            // IMPROVEMENT: Preload upcoming group photos while track is running
+            const upcomingThreshold = 0.02; // Start preloading when within 2% of trigger
+            ts.triggers.forEach(t => {
+                if (!t.fired && !t.preloading && ts.progress >= (t.progress - upcomingThreshold)) {
+                    t.preloading = true;
+                    const group = ts.GROUPS[t.index];
+                    if (group && group.photos) {
+                        // Preload all photos in the upcoming group
+                        group.photos.forEach(photo => {
+                            const _qv = qualitySliderElement[ssIdx] ? qualitySliderElement[ssIdx].value : null;
+                            const _qs = _qv ? ((_qv === '11') ? '/s0-rw/' : `/s${_qv * 400}-rw/`) : '/s1000-rw/';
+                            const resolvedSrc = photo.src.replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//i, _qs);
+                            preloadImage(resolvedSrc).catch(() => {});
+                        });
+                    }
+                }
+            });
+
+            // Check triggers in order — fire the first unhandled one
+            for (const t of ts.triggers) {
+                if (!t.fired && ts.progress >= t.progress) {
+                    t.fired = true;
+                    ts.progress = t.progress;
+                    updateTrackDot(ssIdx);
+                    // ── STOP the rAF loop completely ──
+                    ts.rafId = null;
+                    ts.lastTs = null;
+                    ts.waitingForSlide = true;
+                    // Show photos — resumeTrackDot() will restart the loop when done
+                    showTrackGroup(ssIdx, t.index);
+                    return; // do NOT schedule next frame — loop is dead until resumed
+                }
+            }
+
+            updateTrackDot(ssIdx);
+
+            if (ts.progress >= 1) {
+                ts.playing = false; ts.rafId = null;
+                slideshows[ssIdx].isSlideshowRunning = false;
+                updateToggleButton(ssIdx, false);
+                // Show full track for 5 s, then fade in endImage
+                showTrackEnding(ssIdx);
+                return;
+            }
+
+            ts.rafId = requestAnimationFrame(step);
+        };
+    }
+
+    /**
+     * End-of-track sequence:
+     *   1. Fit full track into view (5 seconds on map)
+     *   2. Fade in black backdrop over the map (nice transition)
+     *   3. Fade in endImage on the slide — everything stops there
+     *   Clicking play again resets progress to 0 and replays from start.
+     */
+    function showTrackEnding(ssIdx) {
+        const ts = trackStates[ssIdx];
+        if (!ts) return;
+
+        ts._atEnd = true; // flag so play button knows to reset
+
+        // Step 1 — fit full track while map is still visible — slow, cinematic zoom-out
+        if (ts.trackPoints.length) {
+            const lls = ts.trackPoints.map(p => [p.lat, p.lon]);
+            // flyToBounds gives a smooth animated zoom-out over 3 seconds
+            ts.map.flyToBounds(L.latLngBounds(lls), {
+                padding:  [40, 40],
+                duration: 3,          // 3-second animated zoom-out
+                easeLinearity: 0.1    // ease-in-out feel
+            });
+        }
+        updateTrackProgressBar(ssIdx); // keep bar at 100%
+
+        // Step 2 — after 5s, fade in black backdrop
+        ts._endTimer = setTimeout(() => {
+            const backdrop = document.getElementById(`tp-backdrop-ss-${ssIdx}`);
+            if (backdrop) {
+                backdrop.style.transition = 'opacity 1.2s ease';
+                backdrop.style.opacity   = '0';
+                backdrop.style.display   = 'block';
+                void backdrop.offsetWidth; // force reflow so transition fires
+                backdrop.style.opacity   = '1';
+            }
+
+            // Step 3 — after backdrop fades in, show endImage on slide
+            ts._endTimer2 = setTimeout(() => {
+                showSlideshowSlides(ssIdx);
+
+                const sc = slideContainers[ssIdx] && slideContainers[ssIdx][1];
+                if (!sc) return;
+
+                sc.classList.remove('fade-in');
+                sc.classList.add('fade-out');
+
+                setTimeout(async () => {
+                    try { await preloadImage(endImage.src); } catch(e) {}
+                    const img = sc.querySelector('img');
+                    const txt = sc.querySelector('.text');
+                    const upr = sc.querySelector('.uppertext');
+                    const dat = sc.querySelector('.date');
+
+                    if (img) {
+                        img.src = endImage.src;
+                        img.style.background = '#ccc'; // prevents transparent gaps
+                    }
+
+                    if (txt) txt.textContent = '';
+                    if (upr) upr.textContent = '';
+                    if (dat) dat.textContent = '';
+                    sc.classList.remove('fade-out');
+                    sc.classList.add('fade-in');
+                }, 150);
+
+            }, 1300); // just after backdrop fade completes
+
+        }, 5000); // 5 seconds on full-track view
+    }
+
+    /**
+     * Show all photos of a group one by one, then resume the dot.
+     * Kills the slideshow's internal timer before starting so nothing
+     * interferes with the photo display sequence.
+     */
+    function showTrackGroup(ssIdx, groupIdx) {
+        const ts = trackStates[ssIdx];
+        const group = ts.GROUPS[groupIdx];
+        if (!group) { ts.waitingForSlide = false; resumeTrackDot(ssIdx); return; }
+
+        // ── Kill ALL competing timers ──
+        clearTimeout(slideshows[ssIdx].slideshowTimeout);
+        slideshows[ssIdx].slideshowTimeout = null;
+        slideshows[ssIdx].isSlideshowRunning = false; // prevent changeSlide from rescheduling
+        clearTimeout(ts._photoTimer);
+        ts._photoTimer = null;
+
+        // Do NOT show slides yet — showTrackPhoto calls showSlideshowSlides
+        // only after the image is loaded and placed in the slot.
+        showTrackPhoto(ssIdx, groupIdx, 0);
+    }
+
+    function showTrackPhoto(ssIdx, groupIdx, photoIdx) {
+        const ts    = trackStates[ssIdx];
+        const group = ts && ts.GROUPS[groupIdx];
+        if (!group) { resumeTrackDot(ssIdx); return; }
+
+        const photo = group.photos[photoIdx];
+        if (!photo) { resumeTrackDot(ssIdx); return; }
+
+        clearTimeout(slideshows[ssIdx].slideshowTimeout);
+        slideshows[ssIdx].slideshowTimeout = null;
+        ts._pausedGroupIdx = groupIdx;
+        ts._pausedPhotoIdx = photoIdx;
+
+        const ss = slideshows[ssIdx];
+
+        // ── Quality-aware URL ─────────────────────────────────────────
+        function _qSrc(rawSrc) {
+            let q;
+            if (autoQualityCheckbox[ssIdx] && autoQualityCheckbox[ssIdx].checked) {
+                const cw = slideshowContainer[ssIdx] ? slideshowContainer[ssIdx].offsetWidth  : 800;
+                const ch = slideshowContainer[ssIdx] ? slideshowContainer[ssIdx].offsetHeight : 600;
+                q = `/s${Math.max(cw, ch)}-rw/`;
+            } else {
+                const v = qualitySliderElement[ssIdx] ? String(qualitySliderElement[ssIdx].value) : '3';
+                q = (v === '11') ? '/s0-rw/' : `/s${Number(v) * 400}-rw/`;
+            }
+            return rawSrc.replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//i, q);
+        }
+
+        const resolvedSrc = _qSrc(photo.src);
+
+        // Caption
+        const timeCode = photo.src.match(/\d{8}_\d{6}/)?.[0] || '';
+        const matchImg = timeCode
+            ? ss.shuffledImages.find(img => img && img.src && img.src.includes(timeCode))
+            : null;
+        const caption = matchImg ? (matchImg.caption || '') : (photo.caption || '');
+
+        // Dedicated overlay (z-index:20 — above map and slides)
+        const _tov = document.getElementById(`tp-overlay-ss-${ssIdx}`);
+        if (_tov) {
+            _tov.style.display = 'none';
+            const sp = _tov.querySelector('.connection-error');
+            if (sp) sp.style.color = 'white';
+        }
+
+        // ── ARCHITECTURE ──────────────────────────────────────────────
+        // Slides stay BEHIND the map (z-index:-1) the whole time we are waiting.
+        // We write the new image into the INCOMING slot while it is invisible.
+        // Only after the image is confirmed in-cache do we:
+        //   a) write src + text into the incoming slot (still hidden)
+        //   b) call showSlideshowSlides → map fades out, slides come front
+        //   c) fade-out outgoing slot, fade-in incoming slot
+        // This way the user never sees stale content.
+
+        // Slot ring (computed once, used after load)
+        const outgoing = ss.activeSlide;
+        const incoming = (ss.activeSlide + 1) % 3;
+        const scOut    = slideContainers[ssIdx][outgoing];
+        const scIn     = slideContainers[ssIdx][incoming];
+        if (!scIn) { resumeTrackDot(ssIdx); return; }
+
+        // Pre-populate incoming slot CONTENT while it is hidden behind map
+        // (img.src is set here so the browser can start decoding; slot is z-index:-1)
+        const imgEl = scIn.querySelector('img');
+        const txtEl = scIn.querySelector('.text');
+        const uprEl = scIn.querySelector('.uppertext');
+        const datEl = scIn.querySelector('.date');
+        if (imgEl) imgEl.src = resolvedSrc;
+        if (txtEl) txtEl.textContent = caption;
+        if (uprEl) uprEl.textContent = '';
+        if (datEl) datEl.textContent = '';
+
+        // Begin preload
+        let loaded = false;
+        preloadImage(resolvedSrc)
+            .then(() => { loaded = true; })
+            .catch(() => { loaded = true; });
+
+        let waitCount = 0;
+
+        function _wait() {
+            if (!ts.waitingForSlide) return;   // aborted
+
+            if (!loaded) {
+                waitCount++;
+                // Show overlay (above map) after 200ms of waiting
+                if (waitCount > 2 && _tov) {
+                    _tov.style.display = 'flex';
+                    const sp = _tov.querySelector('.connection-error');
+                    if (sp) sp.style.color = waitCount > 15 ? 'red' : waitCount > 5 ? 'yellow' : 'white';
+                }
+                ts._photoTimer = setTimeout(_wait, 100);
+                return;
+            }
+
+            // ── Image in cache — hide overlay ─────────────────────────
+            if (_tov) _tov.style.display = 'none';
+
+            // NOW bring slides to front (map fades out).
+            // Incoming slot already has the correct image — no stale flash.
+            showSlideshowSlides(ssIdx);
+
+            // Fade out outgoing, fade in incoming
+            if (scOut) { scOut.classList.remove('fade-in'); scOut.classList.add('fade-out'); }
+            scIn.classList.remove('fade-out', 'fade-in');
+
+            setTimeout(() => {
+                scIn.classList.add('fade-in');
+                ss.activeSlide = incoming;
+
+                // Pre-start loading next photo in background
+                const nextPhoto = group.photos[photoIdx + 1];
+                if (nextPhoto) preloadImage(_qSrc(nextPhoto.src)).catch(() => {});
+
+                const duration = ss.slideshowSpeed || 3000;
+                ts._photoTimer = setTimeout(() => {
+                    showTrackPhoto(ssIdx, groupIdx, photoIdx + 1);
+                }, duration);
+            }, 150);
+        }
+
+        ts._photoTimer = setTimeout(_wait, 50);
+    }
+
+    /** Resume dot animation after a photo group has finished. */
+    function resumeTrackDot(ssIdx) {
+        const ts = trackStates[ssIdx];
+        if (!ts) return;
+        clearTimeout(ts._photoTimer);
+        ts._photoTimer = null;
+        ts.waitingForSlide = false;
+        ts._pausedGroupIdx = null;
+        ts._pausedPhotoIdx = null;
+
+        // Push slides behind map, hide backdrop
+        hideSlideshowSlides(ssIdx);
+
+        if (ts.playing) {
+            // Restore running state (was cleared in showTrackGroup)
+            slideshows[ssIdx].isSlideshowRunning = true;
+            // Fresh start — reset lastTs so delta=0 on first frame (no time-jump)
+            ts.lastTs = null;
+            ts.rafId  = requestAnimationFrame(animateTrack(ssIdx, ts));
+        }
+    }
+
+    /** Jump dot to a specific group (pin click on map). */
+    function jumpToGroup(ssIdx, groupIdx) {
+        const ts = trackStates[ssIdx];
+        if (!ts) return;
+        clearTimeout(ts._photoTimer);
+        ts.waitingForSlide = false;
+        ts.progress = ts.GROUPS[groupIdx].progress;
+        ts.triggers.forEach(t => { t.fired = t.progress <= ts.progress; });
+        updateTrackDot(ssIdx);
+        ts.waitingForSlide = true;
+        showTrackGroup(ssIdx, groupIdx);
+    }
+
+    /**
+     * Seek the track forward or backward by `seconds` seconds.
+     * Called by prev/next buttons in track mode (±10s).
+     */
+    function seekTrackBy(ssIdx, seconds) {
+        const ts = trackStates[ssIdx];
+        if (!ts || !ts.ready) return;
+
+        // Convert seconds to progress delta using track duration
+        const delta = seconds / trackPlayDuration;
+        ts.progress = Math.max(0, Math.min(1, ts.progress + delta));
+        ts.lastTs = null;
+        ts.triggers.forEach(t => { t.fired = t.progress <= ts.progress; });
+
+        // If a photo group was showing, cancel it and resume dot
+        if (ts.waitingForSlide) {
+            clearTimeout(ts._photoTimer);
+            ts._photoTimer = null;
+            ts.waitingForSlide = false;
+            hideSlideshowSlides(ssIdx);
+        }
+
+        updateTrackDot(ssIdx);
+
+        // If playing, restart rAF (lastTs was reset)
+        if (ts.playing && !ts.rafId) {
+            ts.rafId = requestAnimationFrame(animateTrack(ssIdx, ts));
+        }
+    }
+
+    /**
+     * Start or stop the track dot.
+     * In track mode the slideshow's own timer is NEVER used — track drives everything.
+     * isSlideshowRunning is kept FALSE so changeSlide never reschedules attemptChangeSlide.
+     * We only flip the play/pause button icon independently via updateToggleButton.
+     */
+    function setTrackPlaying(ssIdx, playing) {
+        const ts     = trackStates[ssIdx];
+        const mapDiv = document.getElementById(`tp-map-ss-${ssIdx}`);
+        const trackOn = mapDiv && mapDiv.style.display !== 'none';
+
+        if (!ts || !ts.ready || !trackOn) return;
+
+        ts.playing = playing;
+
+        if (playing) {
+            // ── If at end of track: reset for replay ──
+            if (ts._atEnd) {
+                ts._atEnd = false;
+                clearTimeout(ts._endTimer);
+                clearTimeout(ts._endTimer2);
+                ts._endTimer = null; ts._endTimer2 = null;
+
+                // Reset backdrop (remove fade transition so it snaps off)
+                const backdrop = document.getElementById(`tp-backdrop-ss-${ssIdx}`);
+                if (backdrop) {
+                    backdrop.style.transition = '';
+                    backdrop.style.opacity    = '';
+                    backdrop.style.display    = 'none';
+                }
+
+                // Reset slides to behind the map
+                hideSlideshowSlides(ssIdx);
+
+                // Reset track position and triggers
+                ts.progress  = 0;
+                ts.lastTs    = null;
+                ts.triggers.forEach(t => { t.fired = false; });
+
+                // Snap dot back to start
+                if (ts.trackPoints.length && ts.dotMarker) {
+                    ts.dotMarker.setLatLng([ts.trackPoints[0].lat, ts.trackPoints[0].lon]);
+                    ts.map.setView([ts.trackPoints[0].lat, ts.trackPoints[0].lon],
+                        ts.map.getZoom(), {animate: false});
+                }
+                updateTrackProgressBar(ssIdx);
+            }
+            // Kill slideshow's internal timer entirely
+            clearTimeout(slideshows[ssIdx].slideshowTimeout);
+            slideshows[ssIdx].slideshowTimeout = null;
+            // Keep isSlideshowRunning = FALSE — track owns timing, slideshow timer must never fire
+            slideshows[ssIdx].isSlideshowRunning = false;
+            // Update button icon to show "pause"
+            updateToggleButton(ssIdx, true);
+            hideSlideshowSlides(ssIdx);
+            ts.lastTs = null;
+            if (!ts.rafId) ts.rafId = requestAnimationFrame(animateTrack(ssIdx, ts));
+        } else {
+            if (ts.rafId) { cancelAnimationFrame(ts.rafId); ts.rafId = null; }
+            clearTimeout(ts._photoTimer);
+            ts._photoTimer = null;
+            clearTimeout(ts._endTimer);
+            clearTimeout(ts._endTimer2);
+            ts.waitingForSlide = false;
+            clearTimeout(slideshows[ssIdx].slideshowTimeout);
+            slideshows[ssIdx].slideshowTimeout = null;
+            slideshows[ssIdx].isSlideshowRunning = false;
+            // Don't touch slide z-indexes here — pauseSlideshow and toggleTrackMode
+            // handle visibility correctly for their own contexts
+            updateToggleButton(ssIdx, false);
+        }
+    }
+
+    /**
+     * Toggle track mode on/off.
+     *
+     * → Switching ON:  saves slideshow state, stops slideshow timer,
+     *                  shows map, resets track to progress 0.
+     * → Switching OFF: stops track, restores saved slideshow state so
+     *                  the slideshow resumes exactly where it was left.
+     */
+    // ─────────────────────────────────────────────────────────────────
+    //  Slot push / pop  (assembler-style register save/restore)
+    //
+    //  _pushSlots  captures EVERYTHING about the three mySlides containers
+    //              and the coverPhotoContainer, stores it in ss._slotStack.
+    //  _popSlots   restores every attribute exactly, then clears the stack.
+    // ─────────────────────────────────────────────────────────────────
+
+    function _pushSlots(ssIdx) {
+        const ss  = slideshows[ssIdx];
+        const scs = slideContainers[ssIdx];
+
+        const slotSnaps = scs.map(sc => {
+            const img = sc.querySelector('img');
+            return {
+                style:     sc.getAttribute('style') || '',
+                classList: Array.from(sc.classList),
+                imgSrc:    img ? img.src  : '',
+                imgAlt:    img ? img.alt  : '',
+                imgStyle:  img ? (img.getAttribute('style') || '') : '',
+                uppertext: (sc.querySelector('.uppertext') || {}).textContent || '',
+                date:      (sc.querySelector('.date')      || {}).textContent || '',
+                caption:   (sc.querySelector('.text')      || {}).textContent || '',
+            };
+        });
+
+        const coverEl  = document.getElementById(`coverPhotoContainer-${ssIdx}`);
+        const coverImg = coverEl ? coverEl.querySelector('img') : null;
+
+        ss._slotStack = {
+            slots:             slotSnaps,
+            coverStyle:        coverEl  ? (coverEl.getAttribute('style')  || '') : '',
+            coverImgSrc:       coverImg ? coverImg.src : '',
+            coverImgAlt:       coverImg ? coverImg.alt : '',
+            coverImgStyle:     coverImg ? (coverImg.getAttribute('style') || '') : '',
+            activeSlide:       ss.activeSlide,
+            currentBatchIndex: ss.currentBatchIndex,
+            coverPhotoHidden:  ss.coverPhotoHidden,
+            wasRunning:        ss.isSlideshowRunning || ss.wasSlideshowRunning,
+        };
+    }
+
+    function _popSlots(ssIdx) {
+        const ss   = slideshows[ssIdx];
+        const scs  = slideContainers[ssIdx];
+        const snap = ss._slotStack;
+        if (!snap) return;
+
+        // Restore each slot completely
+        snap.slots.forEach((s, i) => {
+            const sc  = scs[i];
+            if (!sc) return;
+            const img = sc.querySelector('img');
+
+            if (s.style) sc.setAttribute('style', s.style);
+            else         sc.removeAttribute('style');
+
+            sc.className = s.classList.join(' ');
+
+            if (img) {
+                // IMPROVEMENT: Don't restore endImage - check if it's the SVG data URL
+                const isEndImage = s.imgSrc && s.imgSrc.startsWith('data:image/svg+xml');
+                
+                if (!isEndImage) {
+                    img.src = s.imgSrc;
+                    img.alt = s.imgAlt;
+                    if (s.imgStyle) img.setAttribute('style', s.imgStyle);
+                    else            img.removeAttribute('style');
+                } else {
+                    // If it was endImage, clear it (will be behind cover photo anyway)
+                    img.src = '';
+                    img.alt = '';
+                    if (s.imgStyle) img.setAttribute('style', s.imgStyle);
+                    else            img.removeAttribute('style');
+                }
+            }
+
+            const upper = sc.querySelector('.uppertext');
+            const date  = sc.querySelector('.date');
+            const text  = sc.querySelector('.text');
+            if (upper) upper.textContent = s.uppertext;
+            if (date)  date.textContent  = s.date;
+            if (text)  text.textContent  = s.caption;
+        });
+
+        // IMPROVEMENT: Restore cover-photo container properly
+        const coverEl  = document.getElementById(`coverPhotoContainer-${ssIdx}`);
+        const coverImg = coverEl ? coverEl.querySelector('img') : null;
+        
+        if (coverEl) {
+            if (snap.coverStyle) coverEl.setAttribute('style', snap.coverStyle);
+            else                 coverEl.removeAttribute('style');
+            
+            // If cover photo was not hidden when we pushed, ensure it's visible now
+            if (!snap.coverPhotoHidden) {
+                coverEl.style.display = '';
+                // CRITICAL: Ensure cover photo is on top (z-index higher than slides)
+                coverEl.style.position = 'relative';
+                coverEl.style.zIndex = '2';
+            }
+        }
+        
+        if (coverImg) {
+            coverImg.src = snap.coverImgSrc;
+            coverImg.alt = snap.coverImgAlt;
+            if (snap.coverImgStyle) coverImg.setAttribute('style', snap.coverImgStyle);
+            else                    coverImg.removeAttribute('style');
+        }
+        
+        // Restore photo overlay if cover was visible
+        const photoOv = document.getElementById(`photoOverlay-${ssIdx}`);
+        if (photoOv && !snap.coverPhotoHidden) {
+            photoOv.style.display = 'block';
+            photoOv.style.zIndex = '3'; // Above cover photo
+        }
+
+        // Restore data registers
+        ss.activeSlide       = snap.activeSlide;
+        ss.currentBatchIndex = snap.currentBatchIndex;
+        ss.coverPhotoHidden  = snap.coverPhotoHidden;
+        ss._slotStack        = null;
+    }
+
+    /**
+     * Toggle track mode on/off.
+     * PUSH all slot registers on entry to track mode.
+     * POP  all slot registers on return to slideshow.
+     */
+    function toggleTrackMode(ssIdx) {
+        const mapDiv = document.getElementById(`tp-map-ss-${ssIdx}`);
+        if (!mapDiv) return;
+
+        const isOn = mapDiv.style.display !== 'none';
+        const btn  = document.getElementById(`tp-toggle-btn-ss-${ssIdx}`);
+        const ts   = trackStates[ssIdx];
+        const ss   = slideshows[ssIdx];
+
+        // ── Hard-stop ALL timers ─────────────────────────────────────────
+        clearTimeout(ss.slideshowTimeout);
+        ss.slideshowTimeout  = null;
+        ss.isProcessingQueue = false;
+        ss.callQueue         = [];
+
+        if (ts) {
+            ts.playing = false;
+            if (ts.rafId) { cancelAnimationFrame(ts.rafId); ts.rafId = null; }
+            clearTimeout(ts._photoTimer);
+            clearTimeout(ts._endTimer);
+            clearTimeout(ts._endTimer2);
+            ts._photoTimer = ts._endTimer = ts._endTimer2 = null;
+            ts.waitingForSlide = false;
+            ts._pausedGroupIdx = null;
+            ts._pausedPhotoIdx = null;
+        }
+
+        updateToggleButton(ssIdx, false);
+
+        if (isOn) {
+            // ══ POP — restore slideshow ═══════════════════════════════════
+
+            mapDiv.style.transition    = '';
+            mapDiv.style.opacity       = '1';
+            mapDiv.style.pointerEvents = '';
+            mapDiv.style.display       = 'none';
+
+            const backdrop = document.getElementById(`tp-backdrop-ss-${ssIdx}`);
+            if (backdrop) {
+                backdrop.style.transition = '';
+                backdrop.style.opacity    = '';
+                backdrop.style.display    = 'none';
+            }
+
+            const wasRunning = ss._slotStack ? ss._slotStack.wasRunning : false;
+            ss._blockSlideUpdate = false;
+            _popSlots(ssIdx);
+
+            slideContainers[ssIdx].forEach((sc, i) => {
+                sc.classList.remove('fade-out');
+                if (i === ss.activeSlide) sc.classList.add('fade-in');
+            });
+
+            if (btn) btn.classList.remove('tp-sb');
+            const overlayCont = document.getElementById(`overlayContainer-${ssIdx}`);
+            if (overlayCont) overlayCont.style.pointerEvents = '';
+            const tSettings = document.getElementById(`tp-settings-ss-${ssIdx}`);
+            if (tSettings) tSettings.style.display = 'none';
+            const barCont = document.getElementById(`progressBarContainer-${ssIdx}`);
+            if (barCont) barCont.style.height = '';
+            const barEl = document.getElementById(`progressBar-${ssIdx}`);
+            if (barEl) barEl.style.minHeight = '';
+
+            if (wasRunning) {
+                ss.isSlideshowRunning = true;
+                updateToggleButton(ssIdx, true);
+                setTimeout(() => {
+                    if (ss.isSlideshowRunning) {
+                        ss.slideshowTimeout = setTimeout(
+                            () => attemptChangeSlide(ssIdx),
+                            ss.slideshowSpeed
+                        );
+                    }
+                }, 60);
+            }
+
+        } else {
+            // ══ PUSH — save slideshow, show track ═════════════════════════
+
+            _pushSlots(ssIdx);
+            ss._blockSlideUpdate = true;
+            ss.isSlideshowRunning = false;
+
+            const backdrop = document.getElementById(`tp-backdrop-ss-${ssIdx}`);
+            if (backdrop) {
+                backdrop.style.transition = '';
+                backdrop.style.opacity    = '';
+                backdrop.style.display    = 'none';
+            }
+
+            mapDiv.style.transition    = '';
+            mapDiv.style.opacity       = '1';
+            mapDiv.style.pointerEvents = '';
+            mapDiv.style.display       = 'block';
+
+            hideSlideshowSlides(ssIdx);
+            if (btn) btn.classList.add('tp-sb');
+            const tSettings = document.getElementById(`tp-settings-ss-${ssIdx}`);
+            if (tSettings) tSettings.style.display = 'flex';
+
+            // IMPROVEMENT: Ensure progress bar is visible by default in track mode
+            const barCont = document.getElementById(`progressBarContainer-${ssIdx}`);
+            const barEl = document.getElementById(`progressBar-${ssIdx}`);
+            if (barCont) barCont.style.height = '5px';
+            if (barEl) barEl.style.minHeight = '3px';
+            slideshows[ssIdx].progressBarHeightKey = '5px';
+
+            // Reset track to beginning
+            if (ts) {
+                ts._atEnd   = false;
+                ts.progress = 0;
+                ts.lastTs   = null;
+                if (ts.triggers) ts.triggers.forEach(t => { t.fired = false; t.preloading = false; });
+                if (ts.dotMarker && ts.trackPoints.length)
+                    ts.dotMarker.setLatLng([ts.trackPoints[0].lat, ts.trackPoints[0].lon]);
+                updateTrackProgressBar(ssIdx);
+            }
+
+            const gpxUrl = window[`gpxURL${ssIdx}`] || '';
+            if (gpxUrl && (!ts || !ts.ready)) {
+                initTrackEngine(ssIdx, gpxUrl);
+            } else if (ts && ts.map) {
+                // IMPROVEMENT: Properly fit map when entering track mode
+                setTimeout(() => {
+                    ts.map.invalidateSize();
+                    if (ts.trackPoints.length) {
+                        ts.map.setView([ts.trackPoints[0].lat, ts.trackPoints[0].lon],
+                            ts.map.getZoom(), {animate: false});
+                    }
+                }, 50);
+            }
+        }
+    }
+
+    /** Push slides behind the map. Fade map back in. */
+    function hideSlideshowSlides(ssIdx) {
+        // Push slides behind map
+        ['slide1','slide2','slide3'].forEach(cls => {
+            const el = document.querySelector(`#slideshowContainer-${ssIdx} .${cls}`);
+            if (el) el.style.zIndex = '-1';
+        });
+        const cover = document.getElementById(`coverPhotoContainer-${ssIdx}`);
+        if (cover) cover.style.display = 'none';
+
+        // Fade map back in smoothly
+        const mapDiv = document.getElementById(`tp-map-ss-${ssIdx}`);
+        if (mapDiv && mapDiv.style.display !== 'none') {
+            mapDiv.style.pointerEvents = '';       // re-enable pointer events
+            mapDiv.style.transition    = 'opacity 0.5s ease';
+            mapDiv.style.opacity       = '1';
+        }
+
+        const nav = document.getElementById(`navigationControl-${ssIdx}`);
+        if (nav) nav.style.zIndex = '3';
+        const prog = document.getElementById(`overlayProgressContainer-${ssIdx}`);
+        if (prog) { prog.style.zIndex = '3'; prog.style.pointerEvents = 'auto'; }
+        const bar = document.getElementById(`progressBar-${ssIdx}`);
+        if (bar) bar.style.minHeight = '3px';
+        const barCont = document.getElementById(`progressBarContainer-${ssIdx}`);
+        if (barCont) barCont.style.height = '3px';
+        const overlay = document.getElementById(`overlayContainer-${ssIdx}`);
+        if (overlay) overlay.style.pointerEvents = 'none';
+    }
+
+    /**
+     * Raise slides above the map for photo display.
+     * Fades the map OUT while the slide fades IN — smooth crossfade, no black pop.
+     * The backdrop is NOT used here (it's only for the endImage sequence).
+     */
+    function showSlideshowSlides(ssIdx) {
+        // Fade map out smoothly (CSS transition on opacity)
+        const mapDiv = document.getElementById(`tp-map-ss-${ssIdx}`);
+        if (mapDiv && mapDiv.style.display !== 'none') {
+            mapDiv.style.transition = 'opacity 0.6s ease';
+            mapDiv.style.opacity    = '0';
+            // After fade completes, hide map so it doesn't intercept pointer events
+            setTimeout(() => {
+                if (mapDiv.style.opacity === '0') mapDiv.style.pointerEvents = 'none';
+            }, 620);
+        }
+
+        // Raise slides above map (z-index:3 > map z-index:0)
+        ['slide1','slide2','slide3'].forEach(cls => {
+            const el = document.querySelector(`#slideshowContainer-${ssIdx} .${cls}`);
+            if (el) { el.style.zIndex = '3'; el.style.position = 'absolute'; }
+        });
+        const nav = document.getElementById(`navigationControl-${ssIdx}`);
+        if (nav) nav.style.zIndex = '4';
+        const prog = document.getElementById(`overlayProgressContainer-${ssIdx}`);
+        if (prog) prog.style.zIndex = '4';
+        const overlay = document.getElementById(`overlayContainer-${ssIdx}`);
+        if (overlay) overlay.style.pointerEvents = '';
+    }
+
+        /**
+     * @brief   Inject the map div INSIDE the slideshowContainer, as a full-cover overlay.
+     *          The map sits behind the slides (z-index 0), invisible until track mode is on.
+     *          When track mode is on: map is shown, slides are hidden. At photo groups:
+     *          slides come to front, map goes back.
+     */
+    function injectMapIntoSlideshow(index) {
+        const sc = document.getElementById(`slideshowContainer-${index}`);
+        if (!sc) return;
+
+        // Map layer — sits inside slideshowContainer, full cover, hidden by default
+        const mapDiv = document.createElement('div');
+        mapDiv.id = `tp-map-ss-${index}`;
+        mapDiv.style.cssText = [
+            'position:absolute', 'inset:0', 'width:100%', 'height:100%',
+            'display:none',       // hidden until track mode is toggled on
+            'z-index:0',
+            'opacity:1',
+        ].join(';');
+
+        // Loading label centred over map
+        const loadLabel = document.createElement('div');
+        loadLabel.className = 'tp-map-loading';
+        loadLabel.textContent = 'Nalaganje…';
+        loadLabel.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#c8602a;font-size:13px;pointer-events:none;z-index:1;';
+        mapDiv.appendChild(loadLabel);
+
+        // Black backdrop — shown behind photos during group display so map is invisible
+        const backdropDiv = document.createElement('div');
+        backdropDiv.id = `tp-backdrop-ss-${index}`;
+        backdropDiv.style.cssText = 'position:absolute;inset:0;background:#000;display:none;z-index:1;';
+        sc.insertBefore(backdropDiv, sc.firstChild);
+
+        // Insert map as first child so slides (z-index higher) stay on top
+        sc.insertBefore(mapDiv, sc.firstChild);
+
+        // Dedicated loading overlay — sits above map AND slides (z-index:20)
+        // Used to show "waiting for image" message without relying on coverPhotoContainer
+        const trackOverlay = document.createElement('div');
+        trackOverlay.className = `track-overlay`;
+        trackOverlay.id = `tp-overlay-ss-${index}`;
+        trackOverlay.style.cssText = [
+            // 'position:absolute', 'inset:0', 'z-index:20',
+            'display:none','color:white'
+            //  'align-items:center', 'justify-content:center',
+            // 'pointer-events:none',
+        ].join(';');
+        trackOverlay.innerHTML = '<span class="connection-error">Ojoj, internetna povezava ne omogoča take hitrosti pri nastavljeni kvaliteti slik</span>';
+        sc.appendChild(trackOverlay);
+
+        // Leaflet zoom controls need a high z-index and pointer-events
+        // We inject a style rule scoped to this map's ID
+        const zStyle = document.createElement('style');
+        zStyle.textContent = `
+            #tp-map-ss-${index} .leaflet-control-container { z-index: 10 !important; pointer-events: auto !important; }
+            #tp-map-ss-${index} .leaflet-control { pointer-events: auto !important; }
+            #tp-map-ss-${index} { pointer-events: auto !important; }
+        `;
+        document.head.appendChild(zStyle);
+    }
+
+    /**
+     * @brief   Inject CSS for the "Z zemljevidom" button and map panel once.
+     */
+    function injectTrackStyles() {
+        if (document.getElementById('tp-ss-styles')) return;
+        const s = document.createElement('style');
+        s.id = 'tp-ss-styles';
+        s.textContent = `
+            /* Track mode toggle button */
+            .tp-ss-btn {
+                margin-top: 10px; width: 100%;
+                background-color: transparent; color: gray; font-size: 12px;
+                border: 3px solid gray; border-radius: 5px; line-height: 1;
+                cursor: pointer; transition: color .2s, border-color .2s, background-color .2s;
+            }
+            .tp-ss-btn.tp-sb {
+                color: #c8602a; border-color: #c8602a;
+            }
+            .tp-ss-btn:hover { color: #c8602a; border-color: #c8602a; }
+
+            /* Map layer sits behind slides (z-index 0).
+               Slides use z-index 1 when track mode is on so they cover the map
+               when a photo group is being shown. */
+            #tp-map-ss-0, #tp-map-ss-1, #tp-map-ss-2, #tp-map-ss-3 {
+                position: absolute; inset: 0;
+            }
+            /* Slides raised above map during photo groups */
+            .mySlides.over-map { z-index: 2 !important; }
+        `;
+        document.head.appendChild(s);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       LRU CACHE (unchanged from original)
+    ═══════════════════════════════════════════════════════════════ */
+    class LRUCacheBySize {
+        constructor(maxSize) { this.cache=new Map(); this.maxSize=maxSize; this.currentSize=0; }
+        set(key, value, size) {
+            if (typeof size!=='number'||isNaN(size)) { console.warn(`Skipping cache entry for ${key} — invalid size.`); return; }
+            if (this.cache.has(key)) { this.currentSize-=this.cache.get(key).size; this.cache.delete(key); }
+            while (this.currentSize+size>this.maxSize) { const ok=this.cache.keys().next().value; this.currentSize-=this.cache.get(ok).size; this.cache.delete(ok); }
+            this.cache.set(key, {value, size}); this.currentSize+=size;
+        }
+        get(key) { if (!this.cache.has(key)) return undefined; const item=this.cache.get(key); this.cache.delete(key); this.cache.set(key, item); return item.value; }
+        has(key) { return this.cache.has(key); }
+        delete(key) { if (this.cache.has(key)) { this.currentSize-=this.cache.get(key).size; this.cache.delete(key); return true; } return false; }
+        clear() { this.cache.clear(); this.currentSize=0; }
+    }
+    const imageCache = new LRUCacheBySize(50*1024*1024);
+
+    /* ═══════════════════════════════════════════════════════════════
+       SLIDESHOW CONTAINER GENERATION  (original, + track panel + button)
+    ═══════════════════════════════════════════════════════════════ */
 
     /**
      * @brief   Generates slideshow containers dynamically based on available titles and cover photos.
-     *
-     * @details This function iterates through the available slideshow titles, retrieves the corresponding cover photo
-     *          for each slideshow, and inserts the slideshow container into the DOM. If no valid cover photo is found,
-     *          a default image source is used. The function also minimizes image source sizes and logs all slideshow titles.
-     *
-     * @param   defaultImgSrc    The default image source to be used if no valid cover photo is found.
-     *
-     * @return  None.
      */
     function generateSlideshowContainers(defaultImgSrc) {
-        // Generate slideshow containers by iterating through available titles and assigning cover photos, using a default if necessary.
         while (typeof window[`slideshowTitle${slideshowIndex}`] !== 'undefined') {
-            // Access the variable
             const SlideshowTitle = window[`slideshowTitle${slideshowIndex}`];
             let coverPhoto = window[`CoverPhoto${slideshowIndex}`];
-            
-            // Check if the cover photo is valid, if not set it to a default source
-            if (!coverPhoto || coverPhoto.trim() === "") {
-                coverPhoto = defaultImgSrc;  // Set the image source to the predefined URL
-            }
+            if (!coverPhoto || coverPhoto.trim() === "") coverPhoto = defaultImgSrc;
 
-            // At least one Slideshow found - Minimize post image source sizes
             updateImageSources(1);
-
-            // Collect titles
             slideshowTitles.push(SlideshowTitle);
-
-            // Insert the slideshow container
-            insertSlideshowContainer(SlideshowTitle, coverPhoto, slideshowIndex); 
-            
-            // Move to the next slideshow index
+            insertSlideshowContainer(SlideshowTitle, coverPhoto, slideshowIndex);
             slideshowIndex++;
         }
-
-        // Log the titles of the slideshows that will be created
         console.log('All slideshows:', slideshowTitles);
-
-        // Call the function to initialize slideshows
         initializeSlideshows(numberOfSlideshows, defaultImgSrc);
-    }
 
+        // APPLY AUTH STATE AFTER DOM EXISTS
+        window.updateTrackButtonsAuth?.(window.isSignedIn);
+    }
 
     /**
      * @brief   Updates the source URL of all images based on the specified size.
-     *
-     * @details This function finds all images within elements having the class 'tr-caption-container' and updates their
-     *          `src` attributes to reflect a new size. The size is specified as a parameter, and the function uses a regular
-     *          expression to modify the source URL, replacing the previous size with the given size.
-     *
-     * @param   size  The new size value to be applied to the image sources.
-     *
-     * @return  None.
      */
     function updateImageSources(size) {
-        // Select all images inside elements with the class 'tr-caption-container'
         const images = document.querySelectorAll('.tr-caption-container img[src]');
-        
-        for (let i = 0; i < images.length; i++) {
-            let imgSrc = images[i].getAttribute('src');
-
-            // Replace /sXXX/ or /sXXX-rw/ with /s<size>-rw/ to use WebP format (-rw suffix enables WebP)
-            const newSrc = imgSrc.replace(/\/s\d+(-rw)?\//, `/s${size}-rw/`);
-
-            // Update the src attribute with the new WebP-enabled image URL
-            images[i].setAttribute('src', newSrc);
+        for (let i=0; i<images.length; i++) {
+            let imgSrc=images[i].getAttribute('src');
+            images[i].setAttribute('src', imgSrc.replace(/\/s\d+(-rw)?\//, `/s${size}-rw/`));
         }
     }
 
-
     /**
      * @brief   Dynamically inserts a slideshow container into the DOM.
-     *
-     * @details This function creates and inserts a complete slideshow container structure, which includes the slideshow
-     *          image display, navigation controls, progress bar, and settings for quality and speed adjustments.
-     *          The slideshow is inserted after the corresponding script tag in the DOM. It uses the provided slideshow
-     *          title and cover photo for initialization, and dynamically generates a unique set of HTML elements for each
-     *          slideshow instance, identified by an index.
-     *
-     * @param   slideshowTitle  The title for the slideshow that is displayed on the cover photo.
-     * @param   coverPhoto      The URL of the image displayed as the cover photo for the slideshow.
-     * @param   index           The unique index to identify each slideshow instance and dynamically generate its elements.
-     *
-     * @return  None.
+     *          CHANGE vs original: adds "Z zemljevidom" button to settings panel
+     *          and inserts the map panel below the wrapper (only when gpxURL exists).
      */
     function insertSlideshowContainer(slideshowTitle, coverPhoto, index) {
         console.log(`Inserting slideshow container for index ${index}: Title=${slideshowTitle}, Cover Photo=${coverPhoto}`);
-        
-        // Create a new div element as a holder (wrapper) for the slideshow container
-        var wrapperDiv = document.createElement('div');
-        wrapperDiv.id = `slideShow-${index}`; // Set a unique ID for each slideshow div
-        wrapperDiv.className = 'my-slideshow-wrapper'; // Add a class for the slideshow wrapper (holder)
 
-        // Add the full slideshow structure, dynamically generating the slides
+        // Does this post have a GPX track?
+        const hasTrack = typeof window[`gpxURL${index}`] !== 'undefined' && window[`gpxURL${index}`];
+
+        var wrapperDiv = document.createElement('div');
+        wrapperDiv.id = `slideShow-${index}`;
+        wrapperDiv.className = 'my-slideshow-wrapper';
+
+        // ── "Z zemljevidom" toggle button ──
+        const trackButtonRow = hasTrack ? `
+            <div style="display:flex;flex-direction:column;">
+                <button id="tp-toggle-btn-ss-${index}" class="tp-ss-btn"
+                    style="margin-top: 10px; width: 100%; background-color: transparent; color: gray; font-size: 12px; border: 3px solid gray; border-radius: 5px; line-height: 1;">
+                    Z zemljevidom
+                </button>
+            </div>` : '';
+
+        // ── Track-specific settings (speed + group time) ──
+        const trackSettingsRow = hasTrack ? `
+            <div id="tp-settings-ss-${index}" style="display:none;border-top:1px solid #444;margin-top:6px;padding-top:8px;flex-direction:column;gap:8px;">
+                <div style="display:flex;flex-direction:column;">
+                    <label style="font-size:11px;color:#aaa;">Hitrost poti:
+                        <span id="tp-speed-val-${index}">1×</span>
+                    </label>
+                    <input id="tp-speed-sl-${index}" type="range" min="0.25" max="4" step="0.25" value="1"
+                        style="width:100%;"
+                        oninput="window._ssTrackSpeed && window._ssTrackSpeed(${index}, this.value)"/>
+                </div>
+                <div style="display:flex;flex-direction:column;">
+                    <label style="font-size:11px;color:#aaa;">Razdalja skupin:
+                        <span id="tp-group-val-${index}">200 m</span>
+                    </label>
+                    <input id="tp-group-sl-${index}" type="range" min="10" max="2000" step="10" value="200"
+                        style="width:100%;"
+                        oninput="window._ssTrackGroup && window._ssTrackGroup(${index}, this.value)"/>
+                </div>
+            </div>` : '';
+
         wrapperDiv.innerHTML = `
             <div class='my-slideshow-container' id="mySlideshowContainer-${index}" style="display: block;">
                 <div class='slideshow-outer-container' id="slideshowOuterContainer-${index}">
                     <div class='slideshow-container' id="slideshowContainer-${index}">
-                    
-                        <!-- Progress Bar Container (Red Timeline) -->
-                        <div class="overlay-progress-container" id="overlayProgressContainer-${index}" 
-                                onmouseenter="toggleProgressBarVisibility(${index}, '5px', 'hover')" 
+
+                        <div class="overlay-progress-container" id="overlayProgressContainer-${index}"
+                                onmouseenter="toggleProgressBarVisibility(${index}, '5px', 'hover')"
                                 onmouseleave="toggleProgressBarVisibility(${index}, '0px', 'hover')">
                             <div class="progress-container" id="progressBarContainer-${index}">
                                 <div class="progress-bar" id="progressBar-${index}"></div>
                             </div>
                         </div>
 
-                        <!-- Invisible Overlay for Click Events -->
                         <div class="overlay-container" id="overlayContainer-${index}" style="position: absolute; top: 0; left: 0; width: 100%; height: 0; display: flex; z-index: 1;">
-                            <!-- Left Section for Previous Slide -->
                             <div class="overlay-left" style="flex: 1;" onclick="enqueueManualSlide(${index}, -1)"></div>
-                            <!-- Middle Section for Play/Pause Slideshow and Fullscreen Toggle on Double-click -->
                             <div class="overlay-middle" style="flex: 1;" onclick="handleClick(${index})"></div>
-                            <!-- Right Section for Next Slide -->
                             <div class="overlay-right" style="flex: 1;" onclick="enqueueManualSlide(${index}, 1)"></div>
                         </div>
 
-                        <!-- Cover Photo (Displayed initially) -->
                         <div class="cover-photo-container" id="coverPhotoContainer-${index}">
                             <img alt="Cover Photo" src="${coverPhoto}" id="coverPhotoElement-${index}" />
                             <div class="photo-overlay" id="photoOverlay-${index}">
@@ -373,22 +1503,18 @@
                             </div>
                         </div>
 
-
-                        <!-- First image (Previous) -->
                         <div class='mySlides slide1' id="slide1-${index}">
                             <div class='uppertext'></div>
                             <div class='date'></div>
                             <img alt='' src=''/>
                             <div class='text' id="descriptionControllStyle0-${index}"></div>
                         </div>
-                        <!-- Second image (Current) -->
                         <div class='mySlides slide2' id="slide2-${index}">
                             <div class='uppertext'></div>
                             <div class='date'></div>
                             <img alt='' src=''/>
                             <div class='text' id="descriptionControllStyle1-${index}"></div>
                         </div>
-                        <!-- Third image (Next) -->
                         <div class='mySlides slide3' id="slide3-${index}">
                             <div class='uppertext'></div>
                             <div class='date'></div>
@@ -397,23 +1523,17 @@
                         </div>
                     </div>
 
-                    <!-- Navigation control (previous/next buttons) -->
                     <div class='navigation-controll' id="navigationControl-${index}" style="z-index: 2;">
-
-                        <!-- Toggle Navigation Button -->
                         <span data-is-tooltip-wrapper="true">
-                            <button aria-label="Toggle Navigation" id="toggleNavigationButton-${index}"style="display: none;">
+                            <button aria-label="Toggle Navigation" id="toggleNavigationButton-${index}" style="display: none;">
                                 <svg id="toggleIcon-${index}" height="24px" viewBox="0 0 24 24" width="24px" style="display: block;">
                                     <path d="M3 12h18M3 6h18M3 18h18" stroke="#000" stroke-width="2" stroke-linecap="round" />
                                 </svg>
                                 <div class="tooltip">Meni</div>
                             </button>
                         </span>
-
-                        <!-- Settings button (appears on hover) -->
-                        <span data-is-tooltip-wrapper="true" class="toggle-target" id="navigationControlButton0-${index}"style="display: none;">
+                        <span data-is-tooltip-wrapper="true" class="toggle-target" id="navigationControlButton0-${index}" style="display: none;">
                             <button aria-label="Settings" id="settingsButton-${index}">
-                                <!-- Settings Icon -->
                                 <svg id="settingsIcon-${index}" height="24px" viewBox="0 0 24 24" width="24px" style="display: block;">
                                     <path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 21h-4l-.551-2.48a6.991 6.991 0 0 1-1.819-1.05l-2.424.763-2-3.464 1.872-1.718a7.055 7.055 0 0 1 0-2.1L3.206 9.232l2-3.464 2.424.763A6.992 6.992 0 0 1 9.45 5.48L10 3h4l.551 2.48a6.992 6.992 0 0 1 1.819 1.05l2.424-.763 2 3.464-1.872 1.718a7.05 7.05 0 0 1 0 2.1l1.872 1.718-2 3.464-2.424-.763a6.99 6.99 0 0 1-1.819 1.052L14 21z"/>
                                     <circle cx="12" cy="12" r="3" stroke="#000000" stroke-width="2"/>
@@ -421,19 +1541,13 @@
                                 <div class="tooltip">Nastavitve</div>
                             </button>
                         </span>
-
-                        <span data-is-tooltip-wrapper='true' class="toggle-target" id="navigationControlButton1-${index}"style="display: none;">
+                        <span data-is-tooltip-wrapper='true' class="toggle-target" id="navigationControlButton1-${index}" style="display: none;">
                             <button aria-label='Prejšnja' id='previousPhoto-${index}'>
-                                <span aria-hidden='true'>
-                                    <svg height='24px' viewBox='0 0 24 24' width='24px'>
-                                        <path d='M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z'/>
-                                    </svg>
-                                </span>
+                                <span aria-hidden='true'><svg height='24px' viewBox='0 0 24 24' width='24px'><path d='M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z'/></svg></span>
                                 <div class='tooltip' style='display: none; opacity: 0;'>Prejšnja</div>
                             </button>
                         </span>
-
-                        <span data-is-tooltip-wrapper='true' class="toggle-target" id="navigationControlButton2-${index}"style="display: none;">
+                        <span data-is-tooltip-wrapper='true' class="toggle-target" id="navigationControlButton2-${index}" style="display: none;">
                             <button aria-label='Predvajaj' id='toggleSlideshowButton-${index}'>
                                 <span aria-hidden='true' id='toggleIcon-${index}'>
                                     <svg height='24px' viewBox='0 0 24 24' width='24px'>
@@ -444,138 +1558,81 @@
                                 <div class='tooltip' id='toggleTooltip-${index}' style='display: none; opacity: 0;'>Predvajaj</div>
                             </button>
                         </span>
-
-                        <span data-is-tooltip-wrapper='true' class="toggle-target" id="navigationControlButton3-${index}"style="display: none;">
+                        <span data-is-tooltip-wrapper='true' class="toggle-target" id="navigationControlButton3-${index}" style="display: none;">
                             <button aria-label='Naprej' id='nextPhoto-${index}'>
-                                <span aria-hidden='true'>
-                                    <svg height='24px' viewBox='0 0 24 24' width='24px'>
-                                        <path d='M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z'/>
-                                    </svg>
-                                </span>
+                                <span aria-hidden='true'><svg height='24px' viewBox='0 0 24 24' width='24px'><path d='M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z'/></svg></span>
                                 <div class='tooltip' style='display: none; opacity: 0;'>Naprej</div>
                             </button>
                         </span>
-
-                        <span data-is-tooltip-wrapper="true" class="toggle-target" id="navigationControlButton4-${index}"style="display: none;">
+                        <span data-is-tooltip-wrapper="true" class="toggle-target" id="navigationControlButton4-${index}" style="display: none;">
                             <button aria-label="Fullscreen" id="fullscreenButton-${index}">
-                                <!-- Enter Fullscreen Icon -->
-                                <svg id="enterFullscreenIcon-${index}" height="24px" viewBox="0 0 24 24" width="24px" style="display: block;">
-                                    <path d="M4 4h5V2H2v7h2V4zm16 0v5h2V2h-7v2h5zM9 18H4v-5H2v7h7v-2zm11-5v5h-5v2h7v-7h-2z"></path>
-                                </svg>
-                                <!-- Exit Fullscreen Icon -->
-                                <svg id="exitFullscreenIcon-${index}" height="24px" viewBox="0 0 24 24" width="24px" style="display: none;">
-                                    <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"></path>
-                                </svg>
+                                <svg id="enterFullscreenIcon-${index}" height="24px" viewBox="0 0 24 24" width="24px" style="display: block;"><path d="M4 4h5V2H2v7h2V4zm16 0v5h2V2h-7v2h5zM9 18H4v-5H2v7h7v-2zm11-5v5h-5v2h7v-7h-2z"></path></svg>
+                                <svg id="exitFullscreenIcon-${index}" height="24px" viewBox="0 0 24 24" width="24px" style="display: none;"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"></path></svg>
                                 <div class="tooltip">Celozaslonsko</div>
                             </button>
                         </span>
                     </div>
 
-                    <!-- Slider Container inside the slideshow, positioned at bottom-right --> 
                     <div class='slider-container' id='sliderContainer-${index}' style="display: none; flex-direction: column; gap: 10px;">
-
-                        <!-- Row for Quality Title and Auto Checkbox Title, aligned symmetrically above slider and checkbox -->
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <!-- Quality Title centered above the slider -->
                             <label for='qualitySliderElement' style="text-align: center; flex-basis: 70%;">Kvaliteta: <span id='qualityValueElement-${index}'>${initQuality}</span></label>
-                            
-                            <!-- Auto Checkbox Title centered above the checkbox -->
                             <label for='autoQualityCheckbox-${index}' style="text-align: center; flex-basis: 30%;">Auto</label>
                         </div>
-                        
-                        <!-- Row for Quality Slider and Auto Checkbox -->
                         <div style="display: flex; align-items: center;">
-                            <!-- Quality Slider with 70% width -->
                             <input id='qualitySliderElement-${index}' max='11' min='1' step='1' type='range' value='${initQuality}' style="flex-basis: 70%;"/>
-                            
-                            <!-- Auto Checkbox with 30% width -->
                             <input type='checkbox' id='autoQualityCheckbox-${index}' checked style="flex-basis: 30%;"/>
                         </div>
-                        
-                        <!-- Row for Speed Slider -->
                         <div style="display: flex; flex-direction: column;">
                             <label for='speedSliderElement'>Hitrost: <span id='speedValueElement-${index}'>${initSpeed}</span>s</label>
                             <input id="speedSliderElement-${index}" max="${maxSpeed}" min="${minSpeed}" step="${stepSpeed}" type="range" value="${initSpeed}" />
-                            </div>
-
+                        </div>
                         <div style="display: flex; flex-direction: column;">
-                            <!-- Button to Preload All Images as the last element -->
                             <button id="preloadAllButton-${index}" style="margin-top: 10px; width: 100%; background-color: transparent; color: gray; font-size: 12px; border: 3px solid gray; border-radius: 5px; line-height: 1;">Predpriprava slik</button>
                         </div>
-
+                        ${trackButtonRow}
+                        ${trackSettingsRow}
                     </div>
                 </div>
             </div>
         `;
 
-        // Insert the wrapper div into the DOM after the corresponding script tag
         var scriptTags = document.getElementsByTagName('script');
         var targetScriptTag;
-
-        // Find the target script tag that contains the specific index
-        for (var i = 0; i < scriptTags.length; i++) {
-            if (scriptTags[i].innerText.includes('var slideshowTitle' + index)) {
-                targetScriptTag = scriptTags[i];
-                numberOfSlideshows.push(index);   // Number of slideshows
-                break;
+        for (var i=0; i<scriptTags.length; i++) {
+            if (scriptTags[i].innerText.includes('var slideshowTitle'+index)) {
+                targetScriptTag=scriptTags[i]; numberOfSlideshows.push(index); break;
             }
         }
-
-        // If the target script tag is found, insert the container
         if (targetScriptTag) {
             targetScriptTag.parentNode.insertBefore(wrapperDiv, targetScriptTag.nextSibling);
         }
-    }
 
+        // Inject map div inside the slideshow container (only when GPX is defined)
+        if (hasTrack) injectMapIntoSlideshow(index);
+    }
 
     /**
      * @brief   Initializes the slideshow data and DOM elements for all slideshows.
-     *
-     * @details This function initializes the slideshow data, populates the slideshow arrays with default values,
-     *          and collects DOM elements related to the slideshow. The function is called for each slideshow
-     *          in the `numberOfSlideshows` array.
-     *
-     * @param   numberOfSlideshows  Array that contains the indices of the slideshows to be initialized.
-     * @param   defaultImgSrc       The default image source to be used for missing cover photos.
-     *
-     * @return  None.
      */
     function initializeSlideshows(numberOfSlideshows, defaultImgSrc) {
-        // Create the slideshows with default values for elements in the array
         numberOfSlideshows.forEach(index => {
             slideshows[index] = {
-                startIndex: 1,
-                maxResults: 25,
-                imageBuffer: [],
-                shuffledImages: [],
-                currentBatchIndex: 0,
-                activeSlide: 0,
-                hideTimeout: null,
-                slideshowTimeout: null,
-                clickCount: -1, // Flag for menu layout
-                slideshowSpeed: 3000, // Default speed (3 seconds)
-                qualityValue: 7,      // Quality value
-                isSlideshowRunning: false, // Flag for slideshow running state
-                wasSlideshowRunning: false, // Flag for slideshow running state
-                pauseSlideshowFlag: false,
-                previousBackgroundColor: null,  // Variable to store the original background color of navigation button
-                isSlideshowReady: false,  // Flag to track if all slideshows are initialized
-                currentTime: 0,  // Store current time in milliseconds
-                lastClickTime: 0,  // To store the time of the last click
-                clickTimer: 0, // Timer for single-click detection
-                progressBarHeightKey: '0px', // Progress bar status
-                coverPhotoHidden: false,  // Track, that cover photo in hidden just once
-                connectionErrorTimeout: null,  // Define a variable to store the timeout reference
-                imageIsReady: true,  // Track when image is prepared (Initialize as true to ensure smooth start with manual slide functionality)
-                attempts: 0, // Track internet quality
-                manualAttempts: 0, // Track internet quality for manual sliding
-                isProcessingQueue: false,  // Track it actions from manual sliding are proccesing
-                errorFlag: true,  // Error flag (show or hide connection status message)
-                textClickCount: 0, // Flag for image description container style
+                startIndex: 1, maxResults: 25,
+                imageBuffer: [], shuffledImages: [],
+                currentBatchIndex: 0, activeSlide: 0,
+                hideTimeout: null, slideshowTimeout: null,
+                clickCount: -1, slideshowSpeed: 3000, qualityValue: 7,
+                isSlideshowRunning: false, wasSlideshowRunning: false, pauseSlideshowFlag: false,
+                previousBackgroundColor: null, isSlideshowReady: false,
+                currentTime: 0, lastClickTime: 0, clickTimer: 0,
+                progressBarHeightKey: '0px', coverPhotoHidden: false,
+                connectionErrorTimeout: null, imageIsReady: true,
+                attempts: 0, manualAttempts: 0, isProcessingQueue: false,
+                errorFlag: true, textClickCount: 0,
+                // (track engine uses trackStates[], not slideshows[])
             };
         });
 
-        // Populate the DOM element arrays
         numberOfSlideshows.forEach(index => {
             mySlideshowContainer.push(document.getElementById(`mySlideshowContainer-${index}`));
             slideshowOuterContainer.push(document.getElementById(`slideshowOuterContainer-${index}`));
@@ -583,14 +1640,11 @@
             progressBarContainer.push(document.getElementById(`progressBarContainer-${index}`));
             coverPhotoContainer.push(document.getElementById(`coverPhotoContainer-${index}`));
             photoOverlay.push(document.getElementById(`photoOverlay-${index}`));
-
-            // Slide containers for each slideshow (contains three slides per slideshow)
             slideContainers.push([
                 document.getElementById(`slide1-${index}`),
                 document.getElementById(`slide2-${index}`),
                 document.getElementById(`slide3-${index}`)
             ]);
-
             toggleNavigationButton.push(document.getElementById(`toggleNavigationButton-${index}`));
             settingsButton.push(document.getElementById(`settingsButton-${index}`));
             previousPhoto.push(document.getElementById(`previousPhoto-${index}`));
@@ -611,15 +1665,11 @@
             autoQualityCheckbox.push(document.getElementById(`autoQualityCheckbox-${index}`));
             preloadAllButton.push(document.getElementById(`preloadAllButton-${index}`));
 
-            
             controllButton = [
-                `navigationControlButton0-${index}`,
-                `navigationControlButton1-${index}`,
-                `navigationControlButton2-${index}`,
-                `navigationControlButton3-${index}`,
+                `navigationControlButton0-${index}`, `navigationControlButton1-${index}`,
+                `navigationControlButton2-${index}`, `navigationControlButton3-${index}`,
                 `navigationControlButton4-${index}`
             ].map(id => document.getElementById(id));
-
             navigationControlButtons.push(controllButton);
 
             descriptionStyle = [
@@ -627,826 +1677,271 @@
                 `descriptionControllStyle1-${index}`,
                 `descriptionControllStyle2-${index}`
             ].map(id => document.getElementById(id));
-
             descriptionControlStyle.push(descriptionStyle);
         });
     }
 
+    /* ═══════════════════════════════════════════════════════════════
+       ONRESIZE FUNCTIONS  (unchanged from original)
+    ═══════════════════════════════════════════════════════════════ */
 
-    /*######### Onresize functions  #########*/
-
-    /**
-     * @brief   Adjusts the quality of the slideshow based on container size when autoQualityCheckbox is selected.
-     *
-     * @details This function checks if the auto-quality checkbox is selected, and if so, it dynamically adjusts the font size, 
-     *          padding, and image size based on the current dimensions of the slideshow container. It also updates the 
-     *          quality slider based on the container's width and applies the appropriate color to the slider.
-     *
-     * @param   index  The index of the active slideshow to adjust the quality settings for.
-     *
-     * @return  None.
-     */
     function autoSetQuality(index) {
         if (autoQualityCheckbox[index].checked) {
-            // Get the width of the slideshow container in pixels
-            let containerWidth = slideshowContainer[index].offsetWidth; // Detects the width in pixels
-            let containerHeight = slideshowContainer[index].offsetHeight; // Detects the height in pixels
-
-            // Dynamically adjust font size based on container width
-            const fontSize = Math.max(containerWidth / 40, 12); // Font size is containerWidth/10 but caps at 6em
-
-            // Dynamically adjust padding with a lower limit
-            const padding = Math.max(containerWidth / 60, 8); // Padding based on container width, but minimum 8px
-
-            // Apply font size to text elements
-            const textElements = slideshowContainer[index].querySelectorAll('.text, .uppertext, .date');
+            let containerWidth=slideshowContainer[index].offsetWidth;
+            let containerHeight=slideshowContainer[index].offsetHeight;
+            const fontSize=Math.max(containerWidth/40, 12);
+            const padding=Math.max(containerWidth/60, 8);
+            const textElements=slideshowContainer[index].querySelectorAll('.text, .uppertext, .date');
             textElements.forEach(textElement => {
                 if (textElement.classList.contains('date')) {
-                    // Keep date smaller in ratio
-                    const dateFont = Math.round(fontSize * 0.7777); // e.g., 14px if base 18px
-                    textElement.style.fontSize = `${dateFont}px`;
-                    textElement.style.padding = `${Math.round(padding * 0.7777)}px`;
-
-                    // Set bottom negative equal to font size
-                    textElement.style.bottom = `-${dateFont}px`;
+                    const dateFont=Math.round(fontSize*0.7777);
+                    textElement.style.fontSize=`${dateFont}px`;
+                    textElement.style.padding=`${Math.round(padding*0.7777)}px`;
+                    textElement.style.bottom=`-${dateFont}px`;
                 } else {
-                    // Normal text/uppertext
-                    textElement.style.fontSize = `${fontSize}px`; // Set font-size to the calculated value
-                    textElement.style.padding = `${padding}px`; // Set padding to the calculated value
+                    textElement.style.fontSize=`${fontSize}px`;
+                    textElement.style.padding=`${padding}px`;
                 }
             });
-
-            // Assign the bigger value to a third variable
-            const containerSize = Math.max(containerWidth, containerHeight); // Determine the larger value
-
-            // Update size of images according to container size using WebP (-rw)
+            const containerSize=Math.max(containerWidth, containerHeight);
+            const newQuality=`/s${containerSize}-rw/`;
             slideshows[index].shuffledImages.forEach(img => {
-                img.src = img.src.replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//, `/s${containerSize}-rw/`);
+                img.src=img.src.replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//, newQuality);
             });
-
-            // Update the quality slider value based on the container width
-            qualitySliderElement[index].value = Math.ceil(containerWidth / 400);
-            qualityValueElement[index].textContent = Math.ceil(containerWidth / 400);
+            // Also update track photo URLs
+            const ts = trackStates[index];
+            if (ts && ts.PHOTOS) {
+                ts.PHOTOS.forEach(p => { p.src=p.src.replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//,newQuality); });
+            }
+            qualitySliderElement[index].value=Math.ceil(containerWidth/400);
+            qualityValueElement[index].textContent=Math.ceil(containerWidth/400);
         }
         updateSliderColor(index);
     }
 
-
-    /**
-     * @brief   Updates the color and state of the quality slider based on the container size and auto-quality setting.
-     *
-     * @details This function checks whether the auto-quality checkbox is selected. If it is, the quality slider is disabled 
-     *          and its color is set to gray. If not, the slider is enabled, and its color is updated based on a comparison 
-     *          of the container's size and the slideshow's quality value. If the quality value is less than the container size, 
-     *          the slider color is set to green; if greater, it is set to red; otherwise, it is reset to the default color.
-     *
-     * @param   index  The index of the slideshow to update.
-     */
-        function updateSliderColor(index) {
+    function updateSliderColor(index) {
         if (autoQualityCheckbox[index].checked) {
-            qualitySliderElement[index].disabled = true;  // Disable the slider
-            qualitySliderElement[index].style.accentColor = 'gray';
-        }
-        else {
-            qualitySliderElement[index].disabled = false;  // Enable the slider when unchecked
-
-            // Get the width of the slideshow container in pixels
-            let containerWidth = slideshowContainer[index].offsetWidth; // Detects the width in pixels
-            let containerHeight = slideshowContainer[index].offsetHeight; // Detects the height in pixels
-
-            // Assign the bigger value to a third variable
-            const containerSize = Math.max(containerWidth, containerHeight); // Determine the larger value
-
-            const comparisonValue = slideshows[index].qualityValue * 400;
-
-            if (comparisonValue < containerSize) {
-                qualitySliderElement[index].style.accentColor = 'green';  // Set to blue if comparisonValue < containerSize
-            } else if (comparisonValue > containerSize) {
-                qualitySliderElement[index].style.accentColor = 'red';   // Set to red if comparisonValue > containerSize
-            } else {
-                qualitySliderElement[index].style.accentColor = '';      // Reset to default if none of the conditions match
-            }    
+            qualitySliderElement[index].disabled=true; qualitySliderElement[index].style.accentColor='gray';
+        } else {
+            qualitySliderElement[index].disabled=false;
+            let containerWidth=slideshowContainer[index].offsetWidth;
+            let containerHeight=slideshowContainer[index].offsetHeight;
+            const containerSize=Math.max(containerWidth, containerHeight);
+            const comparisonValue=slideshows[index].qualityValue*400;
+            if (comparisonValue<containerSize) qualitySliderElement[index].style.accentColor='green';
+            else if (comparisonValue>containerSize) qualitySliderElement[index].style.accentColor='red';
+            else qualitySliderElement[index].style.accentColor='';
         }
     }
 
+    /* ═══════════════════════════════════════════════════════════════
+       ONLOAD FUNCTIONS  (unchanged from original, except changeSlide
+       which has a small track hook added — see comment there)
+    ═══════════════════════════════════════════════════════════════ */
 
-    /*######### Onload functions  #########*/
-
-    /**
-     * @brief   Fetches and processes data for a slideshow.
-     *
-     * @details Constructs a blog feed URL based on the slideshow title or post ID 
-     *          and retrieves image data using a fetch request. The function handles 
-     *          special cases like "All pictures" (recursive loading) and processes 
-     *          entries to populate the slideshow's image buffer. Updates the UI with 
-     *          built slides or logs errors in case of failures.
-     *
-     * @param   index Index of the slideshow to fetch data for.
-     */
     function fetchData(index) {
         var feedUrl;
-        // const postId = getPostIdFromAnchor();
-
-        // Determine the feed URL based on the slideshow title
         if (isBlogger) {
-            if (slideshowTitles[index] === "All pictures") {
-                feedUrl = `${WindowBaseUrl}feeds/posts/default?start-index=${slideshows[index].startIndex}&max-results=${slideshows[index].maxResults}&alt=json`;
-            } else if (slideshowTitles[index] === "Make post slideshow" || slideshowTitles[index] === "Make trip slideshow") {
-                feedUrl = `${WindowBaseUrl}/feeds/posts/default/${postId}?alt=json`; // Get by postID
-            } else {
-                feedUrl = `${WindowBaseUrl}/feeds/posts/default?q=${encodeURIComponent(slideshowTitles[index])}&alt=json`;
-            }
+            if (slideshowTitles[index]==="All pictures") feedUrl=`${WindowBaseUrl}feeds/posts/default?start-index=${slideshows[index].startIndex}&max-results=${slideshows[index].maxResults}&alt=json`;
+            else if (slideshowTitles[index]==="Make post slideshow"||slideshowTitles[index]==="Make trip slideshow") feedUrl=`${WindowBaseUrl}/feeds/posts/default/${postId}?alt=json`;
+            else feedUrl=`${WindowBaseUrl}/feeds/posts/default?q=${encodeURIComponent(slideshowTitles[index])}&alt=json`;
         } else {
-            if (slideshowTitles[index] === "All pictures") {
-                feedUrl = isRelive
-                  ? `${WindowBaseUrl}/data/all-relive-posts.json`
-                  : `${WindowBaseUrl}/data/all-posts.json`;
-            } else if (slideshowTitles[index] === "Make post slideshow" || slideshowTitles[index] === "Make trip slideshow") {
-                feedUrl = `${WindowBaseUrl}/data/posts/${postId}.json`; // Get by postID
-            } else {
-                feedUrl = `${WindowBaseUrl}/data/posts/${encodeURIComponent(slideshowTitles[index])}.json`;
-            }
+            if (slideshowTitles[index]==="All pictures") feedUrl=isRelive?`${WindowBaseUrl}/data/all-relive-posts.json`:`${WindowBaseUrl}/data/all-posts.json`;
+            else if (slideshowTitles[index]==="Make post slideshow"||slideshowTitles[index]==="Make trip slideshow") feedUrl=`${WindowBaseUrl}/data/posts/${postId}.json`;
+            else feedUrl=`${WindowBaseUrl}/data/posts/${encodeURIComponent(slideshowTitles[index])}.json`;
         }
-
-        // Fetch the data from the constructed feed URL
-        fetch(feedUrl)
-            .then(response => response.json())
-            .then(async (data) => {
-                // The entries are in data.entry, if retrieving data by postId
-                let entries = data.entry;
-
-                if (slideshowTitles[index] !== "Make post slideshow" && slideshowTitles[index] !== "Make trip slideshow") {
-                    entries = data.feed.entry;
-                }
-
-                // If there's just one entry, wrap it into an array to handle it uniformly
-                if (entries && !Array.isArray(entries)) {
-                    entries = [entries]; // Convert single entry into an array
-                }
-
-                // Process "All pictures" scenario
-                if (slideshowTitles[index] === "All pictures") {
-                    setSlideshowQuality(index);
-
-                    if (!entries || entries.length === 0) {
-                        console.log('Fetched all', slideshows[index].imageBuffer.length, 'images from blog');
-                        finalizeAllPicturesSlideshow(index);
-                        return;
-                    }
-
-                    // Date and label filtering
-                    const startDate = localStorage.getItem('startDateRange');
-                    const endDate = localStorage.getItem('endDateRange');
-                    const selectedLabels = JSON.parse(localStorage.getItem('selectedLabels') || '{}');
-
-                    if (entries && (startDate || endDate || Object.keys(selectedLabels).length > 0)) {
-                        entries = entries.filter(entry => {
-                            const entryDate = new Date(entry.published?.$t || entry.published);
-
-                            // Date filter
-                            if (startDate && entryDate < new Date(startDate)) return false;
-                            if (endDate && entryDate > new Date(endDate)) return false;
-
-                            // Label filter (group-based AND logic)
-                            if (Object.keys(selectedLabels).length > 0) {
-                                const entryLabels = (entry.category || [])
-                                .map(cat => cat.term.replace(/^\d+\.\s*/, ''));
-
-                                for (const group in selectedLabels) {
-                                    const groupLabels = selectedLabels[group];
-                                    if (!groupLabels.some(label => entryLabels.includes(label))) {
-                                        return false;
-                                    }
-                                }
-                            }
-
-                            return true;
-                        });
-                    }
-                }
-
-                // Set the slideshow quality for the current index
+        fetch(feedUrl).then(response=>response.json()).then(async (data)=>{
+            let entries=data.entry;
+            if (slideshowTitles[index]!=="Make post slideshow"&&slideshowTitles[index]!=="Make trip slideshow") entries=data.feed.entry;
+            if (entries&&!Array.isArray(entries)) entries=[entries];
+            if (slideshowTitles[index]==="All pictures") {
                 setSlideshowQuality(index);
-
-                // Loop over filtered entries
-                for (const entry of entries) {
-                    if (slideshowTitles[index] !== "Make trip slideshow") {
-                        // Process the main entry if it's not "Make trip slideshow"
-                        processEntry(index, entry);
-                    } else if (slideshowTitles[index] === "Make trip slideshow") {
-                        if (entry.content && entry.content.$t) {
-                            const content = entry.content.$t; // HTML content of the entry
-                            const parser = new DOMParser();
-                            const htmlDoc = parser.parseFromString(content, 'text/html');
-                            const postTitle = entry.title?.$t || "Untitled Post"; // Ensure a valid post title
-                            const postDateRaw = entry.published?.$t || '';
-                            const postDate = postDateRaw
-                                ? new Date(postDateRaw).toLocaleDateString('sl-SI')
-                                : '';
-                            const captions = getCaptions(htmlDoc);
-
-                            // Parse <img> elements
-                            const images = [...htmlDoc.querySelectorAll('img')]
-                              .slice(1) // Exclude the first <img> element
-                              .map((img, idx) => ({
-                                  type: 'img',
-                                  src: img.getAttribute('src'),
-                                  caption: captions[idx + 1] || '', // Shift index to match remaining images
-                                  position: htmlDoc.body.innerHTML.indexOf(img.outerHTML), // Get the position of the <img> in the content
-                                  dataSkip: img.getAttribute('data-skip') || "3" // Default value if missing
-                              }));
-
-                            // Get saved slider value
-                            const PhotosRange = localStorage.getItem('photosSliderValue') || initPhotos; // Default value if not set
-
-                            // Filter images based on `data-skip`, but keep SVGs
-                            const filteredImages = images.filter(image => {
-                                const src = image.src || "";
-                                
-                                // Always keep SVG-created images
-                                if (src.startsWith("data:image/svg+xml")) {
-                                    return true;
-                                }
-
-                                let dataSkip = image.dataSkip.toLowerCase();
-
-                                // Replace text-based `data-skip` values with numeric equivalents
-                                dataSkip = dataSkip.replace(/best/g, "0").replace(/cover/g, "-1").replace(/peak/g, "-2");
-
-                                // Split into array
-                                const dataSkipValues = dataSkip.split(";");
-
-                                return dataSkipValues.some(value => {
-                                    if (!isNaN(value)) {
-                                        const numericValue = parseFloat(value);
-
-                                        // Exclude if the only tag is `-2` (peak)
-                                        if (numericValue === -2) {
-                                            return false;
-                                        }
-
-                                        return numericValue <= PhotosRange;
-                                    }
-                                    return false;
-                                });
-                            });
-
-                            // Parse <script> elements containing post IDs
-                            const scriptMatches = content.match(/<script>[\s\S]*?var\s+postID\d+\s*=\s*'([^']+)';[\s\S]*?<\/script>/g);
-                            const scripts = scriptMatches
-                                ? scriptMatches.map(script => {
-                                      const match = script.match(/var\s+postID\d+\s*=\s*'([^']+)'/);
-                                      return match
-                                          ? {
-                                                type: 'script',
-                                                postId: match[1],
-                                                scriptContent: script,
-                                                position: htmlDoc.body.innerHTML.indexOf(script) // Get the position of the <script> in the content
-                                            }
-                                          : null;
-                                  }).filter(Boolean)
-                                : [];
-
-                            // Combine filtered images and scripts into a single array
-                            const mixElements = [...filteredImages, ...scripts];
-
-                            // Ensure the combined array is sorted by their position in the original content
-                            mixElements.sort((a, b) => a.position - b.position);
-
-                            // Log the sorted array, just for debug
-                            // console.log(`Mixed elements:`, mixElements);
-
-                            // Process each element based on its type
-                            for (const element of mixElements) {
-                                if (element.type === 'img') {
-                                    slideshows[index].imageBuffer.push({
-                                        src: element.src,
-                                        caption: element.caption,
-                                        title: postTitle, // Ensure the correct title is passed
-                                        date: postDate,
-                                    });
-                                } else if (element.type === 'script') {
-                                    const additionalPostId = element.postId;
-                                    var additionalPostUrl;
-                                    if(isBlogger) {
-                                        additionalPostUrl = `${WindowBaseUrl}/feeds/posts/default/${additionalPostId}?alt=json`;
-                                    } else {
-                                        additionalPostUrl = `${WindowBaseUrl}/data/posts/${additionalPostId}.json`;
-                                    }
-
-                                    try {
-                                        const additionalPostResponse = await fetch(additionalPostUrl);
-
-                                        if (!additionalPostResponse.ok) {
-                                            console.error(`Failed to fetch additional post with ID ${additionalPostId}: HTTP ${additionalPostResponse.status}`);
-                                            continue;
-                                        }
-
-                                        const additionalPostData = await additionalPostResponse.json();
-                                        let additionalEntries = additionalPostData.entry;
-
-                                        if (additionalEntries && !Array.isArray(additionalEntries)) {
-                                            additionalEntries = [additionalEntries];
-                                        }
-
-                                        // Ensure correct title extraction from additional post
-                                        const additionalPostTitle = additionalPostData.entry?.title?.$t || `Post ID: ${additionalPostId}`;
-
-                                        // Process each additional entry
-                                        additionalEntries.forEach(additionalEntry => {
-                                            processEntry(index, additionalEntry);
-                                            // console.log(`Adding images from additional entry with post ID: ${additionalPostId}`);
-                                            console.log(`Adding images from additional entry with title: ${additionalPostTitle}`);
-                                        });
-                                    } catch (err) {
-                                        console.error(`Error fetching additional post with ID ${additionalPostId}:`, err);
-                                    }
-                                }
+                if (!entries||entries.length===0) { console.log('Fetched all',slideshows[index].imageBuffer.length,'images from blog'); finalizeAllPicturesSlideshow(index); return; }
+                const startDate=localStorage.getItem('startDateRange'); const endDate=localStorage.getItem('endDateRange');
+                const selectedLabels=JSON.parse(localStorage.getItem('selectedLabels')||'{}');
+                if (entries&&(startDate||endDate||Object.keys(selectedLabels).length>0)) {
+                    entries=entries.filter(entry=>{
+                        const entryDate=new Date(entry.published?.$t||entry.published);
+                        if (startDate&&entryDate<new Date(startDate)) return false;
+                        if (endDate&&entryDate>new Date(endDate)) return false;
+                        if (Object.keys(selectedLabels).length>0) {
+                            const entryLabels=(entry.category||[]).map(cat=>cat.term.replace(/^\d+\.\s*/,''));
+                            for (const group in selectedLabels) { const groupLabels=selectedLabels[group]; if (!groupLabels.some(label=>entryLabels.includes(label))) return false; }
+                        }
+                        return true;
+                    });
+                }
+            }
+            setSlideshowQuality(index);
+            for (const entry of entries) {
+                if (slideshowTitles[index]!=="Make trip slideshow") { processEntry(index, entry); }
+                else if (slideshowTitles[index]==="Make trip slideshow") {
+                    if (entry.content&&entry.content.$t) {
+                        const content=entry.content.$t; const parser=new DOMParser(); const htmlDoc=parser.parseFromString(content,'text/html');
+                        const postTitle=entry.title?.$t||"Untitled Post"; const postDateRaw=entry.published?.$t||'';
+                        const postDate=postDateRaw?new Date(postDateRaw).toLocaleDateString('sl-SI'):'';
+                        const captions=getCaptions(htmlDoc);
+                        const images=[...htmlDoc.querySelectorAll('img')].slice(1).map((img,idx)=>({type:'img',src:img.getAttribute('src'),caption:captions[idx+1]||'',position:htmlDoc.body.innerHTML.indexOf(img.outerHTML),dataSkip:img.getAttribute('data-skip')||"3"}));
+                        const PhotosRange=localStorage.getItem('photosSliderValue')||initPhotos;
+                        const filteredImages=images.filter(image=>{
+                            const src=image.src||""; if (src.startsWith("data:image/svg+xml")) return true;
+                            let dataSkip=image.dataSkip.toLowerCase().replace(/best/g,"0").replace(/cover/g,"-1").replace(/peak/g,"-2");
+                            return dataSkip.split(";").some(value=>{ if (!isNaN(value)) { const n=parseFloat(value); if (n===-2) return false; return n<=PhotosRange; } return false; });
+                        });
+                        const scriptMatches=content.match(/<script>[\s\S]*?var\s+postID\d+\s*=\s*'([^']+)';[\s\S]*?<\/script>/g);
+                        const scripts=scriptMatches?scriptMatches.map(script=>{ const match=script.match(/var\s+postID\d+\s*=\s*'([^']+)'/); return match?{type:'script',postId:match[1],scriptContent:script,position:htmlDoc.body.innerHTML.indexOf(script)}:null; }).filter(Boolean):[];
+                        const mixElements=[...filteredImages,...scripts]; mixElements.sort((a,b)=>a.position-b.position);
+                        for (const element of mixElements) {
+                            if (element.type==='img') { slideshows[index].imageBuffer.push({src:element.src,caption:element.caption,title:postTitle,date:postDate}); }
+                            else if (element.type==='script') {
+                                const additionalPostId=element.postId; var additionalPostUrl;
+                                if(isBlogger) additionalPostUrl=`${WindowBaseUrl}/feeds/posts/default/${additionalPostId}?alt=json`;
+                                else additionalPostUrl=`${WindowBaseUrl}/data/posts/${additionalPostId}.json`;
+                                try {
+                                    const additionalPostResponse=await fetch(additionalPostUrl);
+                                    if (!additionalPostResponse.ok) { console.error(`Failed to fetch additional post with ID ${additionalPostId}: HTTP ${additionalPostResponse.status}`); continue; }
+                                    const additionalPostData=await additionalPostResponse.json(); let additionalEntries=additionalPostData.entry;
+                                    if (additionalEntries&&!Array.isArray(additionalEntries)) additionalEntries=[additionalEntries];
+                                    const additionalPostTitle=additionalPostData.entry?.title?.$t||`Post ID: ${additionalPostId}`;
+                                    additionalEntries.forEach(additionalEntry=>{ processEntry(index,additionalEntry); console.log(`Adding images from additional entry with title: ${additionalPostTitle}`); });
+                                } catch(err) { console.error(`Error fetching additional post with ID ${additionalPostId}:`,err); }
                             }
-                        } else {
-                            console.warn(`Entry content is missing or undefined for index: ${index}`);
                         }
-                    }
+                    } else console.warn(`Entry content is missing or undefined for index: ${index}`);
                 }
-
-                // Handle non-"All pictures" cases
-                if (slideshowTitles[index] !== "All pictures") {
-                    const imagesLoadedCountEl = document.getElementById('imagesLoadedCount');
-                    if (slideshowTitles[index] === "Make post slideshow" || slideshowTitles[index] === "Make trip slideshow") {
-                        console.log('Fetched', slideshows[index].imageBuffer.length, 'images for title:', postId);
-                        if (imagesLoadedCountEl) {
-                            imagesLoadedCountEl.textContent = slideshows[index].imageBuffer.length;
-                        }
-                    } else {
-                        console.log('Fetched', slideshows[index].imageBuffer.length, 'images for title:', slideshowTitles[index]);
-                        if (imagesLoadedCountEl) {
-                            imagesLoadedCountEl.textContent = slideshows[index].imageBuffer.length;
-                        }
-                    }
-
-                    finalizeAllPicturesSlideshow(index);
-                }
-
-                if (slideshowTitles[index] === "All pictures") {
-                    // Recursively fetch more data for "All pictures"
-                    if (isBlogger) {
-                        slideshows[index].startIndex += slideshows[index].maxResults;
-                        fetchData(index); // Fetch the next batch of pictures
-                    } else {
-                        finalizeAllPicturesSlideshow(index);
-                    }
-                }  
-
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-                console.error('Error: Possible typo in the post title. Please check for any mistakes.');
-
-                // In case of an error, hide the current slideshow container
-                const wrapperDiv = document.getElementById(`slideShow-${index}`);
-                if (wrapperDiv) {
-                    wrapperDiv.style.display = 'none'; // Hide the slideshow div
-                }
-            });
+            }
+            if (slideshowTitles[index]!=="All pictures") {
+                const imagesLoadedCountEl=document.getElementById('imagesLoadedCount');
+                if (slideshowTitles[index]==="Make post slideshow"||slideshowTitles[index]==="Make trip slideshow") { console.log('Fetched',slideshows[index].imageBuffer.length,'images for title:',postId); if(imagesLoadedCountEl) imagesLoadedCountEl.textContent=slideshows[index].imageBuffer.length; }
+                else { console.log('Fetched',slideshows[index].imageBuffer.length,'images for title:',slideshowTitles[index]); if(imagesLoadedCountEl) imagesLoadedCountEl.textContent=slideshows[index].imageBuffer.length; }
+                finalizeAllPicturesSlideshow(index);
+            }
+            if (slideshowTitles[index]==="All pictures") {
+                if (isBlogger) { slideshows[index].startIndex+=slideshows[index].maxResults; fetchData(index); }
+                else finalizeAllPicturesSlideshow(index);
+            }
+        }).catch(error=>{ console.error('Error fetching data:',error); console.error('Error: Possible typo in the post title. Please check for any mistakes.'); const wrapperDiv=document.getElementById(`slideShow-${index}`); if(wrapperDiv) wrapperDiv.style.display='none'; });
     }
 
-
     function finalizeAllPicturesSlideshow(index) {
-        const imgCount = slideshows[index].imageBuffer.length;
-
-        if (imgCount === 0) {
-            // No images after filters → show message
-            const container = document.getElementById(`slideShow-${index}`);
-            if (container) {
-                container.innerHTML = `
-                    <p style="text-align:center; font-size:18px; padding:20px;">
-                        Ni slik za izbrane filtre
-                    </p>`;
-            }
-
-            console.warn("No images to display for selected filters");
-            return false;
+        const imgCount=slideshows[index].imageBuffer.length;
+        if (imgCount===0) {
+            const container=document.getElementById(`slideShow-${index}`);
+            if (container) container.innerHTML=`<p style="text-align:center; font-size:18px; padding:20px;">Ni slik za izbrane filtre</p>`;
+            console.warn("No images to display for selected filters"); return false;
         }
-
-        // Images exist → build slideshow
-        console.log("Fetched", imgCount, "images for All pictures");
-        const counter = document.getElementById("imagesLoadedCount");
-        if (counter) counter.textContent = imgCount;
-
-        slideshows[index].shuffledImages = shuffleArray(
-            slideshows[index].imageBuffer.slice(),
-            index
-        );
-
+        console.log("Fetched",imgCount,"images for All pictures");
+        const counter=document.getElementById("imagesLoadedCount"); if(counter) counter.textContent=imgCount;
+        slideshows[index].shuffledImages=shuffleArray(slideshows[index].imageBuffer.slice(), index);
         buildSlides(index);
     }
 
+    function getPostIdFromAnchor() { const anchor=document.querySelector('a[name]'); if(anchor) return anchor.getAttribute('name'); return null; }
 
-    /**
-    * @brief   Extracts the post ID from the anchor tag.
-    *
-    * @details This function searches for an anchor (`<a>`) element with a `name` attribute in the document and 
-    *          retrieves the value of the `name` attribute, which is assumed to be the post ID. If the anchor 
-    *          tag is found, the post ID is returned; otherwise, `null` is returned.
-    *
-    * @return  The post ID extracted from the `name` attribute of the anchor tag, or `null` if no anchor is found.
-    */
-    function getPostIdFromAnchor() {
-        const anchor = document.querySelector('a[name]');
-        if (anchor) {
-            return anchor.getAttribute('name'); // Get the 'name' attribute value (the post ID)
-        }
-        return null;
-    }
-
-
-
-    /**
-    * @brief   Shuffles an array of images or modifies the array based on slideshow type.
-    *
-    * @details This function shuffles an array of images using the Fisher-Yates algorithm if the slideshow is of type "All pictures". 
-    *          For other slideshow types, it sets the first element of the array to a predefined image (`endImage`) and removes the 
-    *          cover photo from the first index.
-    *
-    * @param   array  The array to be shuffled or modified.
-    * @param   index  The index of the slideshow, used to determine the slideshow type.
-    *
-    * @return  Returns the shuffled or modified array.
-    */
     function shuffleArray(array, index) {
-        // default ON unless user explicitly turned it off
-        const randomizeImages = localStorage.getItem('randomizeImages') !== null
-            ? localStorage.getItem('randomizeImages') === 'true'
-            : true;
-
-        if (slideshowTitles[index] === "All pictures") {
-            if (randomizeImages) {
-                // Fisher–Yates shuffle
-                for (let i = array.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [array[i], array[j]] = [array[j], array[i]];
-                }
-            } else {
-                // Reverse so oldest comes first
-                // array.reverse();
-            }
-        } else {
-            // Set endImage as first element
-            array.unshift(endImage);
-        }
+        const randomizeImages=localStorage.getItem('randomizeImages')!==null?localStorage.getItem('randomizeImages')==='true':true;
+        if (slideshowTitles[index]==="All pictures") {
+            if (randomizeImages) { for(let i=array.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[array[i],array[j]]=[array[j],array[i]];} }
+        } else { array.unshift(endImage); }
         return array;
     }
 
-
-    /**
-    * @brief   Builds and displays slides for a slideshow.
-    *
-    * @details Initializes the slideshow by setting up slides, enabling navigation 
-    *          buttons, and making the overlay clickable for slideshow control. 
-    *          Marks the slideshow as ready for interaction.
-    *
-    * @param   index Index of the slideshow to build and display.
-    */
     function buildSlides(index) {
-
-        // Initialize all slides
         initializeSlides(index);
-
-        // Unhide buttons after initialization of slideshow
-        toggleNavigationButton[index].style.display = 'block'; // Show navigation bar
+        toggleNavigationButton[index].style.display='block';
         toggleNavigation(index);
-
-        // Now keylisteners can be initialized
-        slideshows[index].isSlideshowReady = true;
-
-        // Enable clickable overlay for slideshow controll
-        const overlay = document.getElementById(`overlayContainer-${index}`);
-        if (overlay) {
-            overlay.style.height = '100%'; // Make overlay clickable
-        }
-        
-        //showSlides(index); // Start the slideshow initially
+        slideshows[index].isSlideshowReady=true;
+        const overlay=document.getElementById(`overlayContainer-${index}`);
+        if (overlay) overlay.style.height='100%';
     }
 
-
-    /**
-    * @brief   Initializes slides by preloading images and setting their content.
-    *
-    * @details Iterates through the slide containers of the specified slideshow index, 
-    *          preloads images, and updates image sources, captions, and related content 
-    *          based on the shuffled image data.
-    *
-    * @param   index Index of the slideshow whose slides are to be initialized.
-    */
     function initializeSlides(index) {
-        for (let i = 0; i < slideContainers[index].length; i++) {
-            const imageObj = slideshows[index].shuffledImages[i];
-
-            // Check if the image exists and has a valid src before using it
-            if (imageObj && imageObj.src) {
-                // Preload next/prev images
+        for (let i=0; i<slideContainers[index].length; i++) {
+            const imageObj=slideshows[index].shuffledImages[i];
+            if (imageObj&&imageObj.src) {
                 preloadImage(imageObj.src);
-
-                const imgElement = slideContainers[index][i].querySelector('img');
-                imgElement.src = imageObj.src;
-
-                // Set captions
-                slideContainers[index][i].querySelector('.text').textContent = imageObj.caption || '';
-                slideContainers[index][i].querySelector('.uppertext').textContent = imageObj.title || '';
-                slideContainers[index][i].querySelector('.date').textContent = imageObj.date || '';
+                const imgElement=slideContainers[index][i].querySelector('img');
+                imgElement.src=imageObj.src;
+                slideContainers[index][i].querySelector('.text').textContent=imageObj.caption||'';
+                slideContainers[index][i].querySelector('.uppertext').textContent=imageObj.title||'';
+                slideContainers[index][i].querySelector('.date').textContent=imageObj.date||'';
             }
         }
     }
 
-
-
-    // /**
-    //  * @brief   Preloads an image asynchronously.
-    //  *
-    //  * @details Creates a new `Image` object, sets its source to the provided URL, and 
-    //  *          resolves the promise when the image is successfully loaded. Rejects the 
-    //  *          promise if there is an error during loading.
-    //  *
-    //  * @param   src URL of the image to be preloaded.
-    //  *
-    //  * @return  A Promise that resolves with the loaded `Image` object or rejects if loading fails.
-    //  */
-    // function preloadImage(src) {
-    //     return new Promise((resolve, reject) => {
-    //         const img = new Image();
-    //         img.src = src;
-    //         img.onload = resolve;
-    //         img.onerror = reject;
-    //     });
-    // }
-
-
-    /**
-    * @brief   Preloads an image and caches it, ensuring efficient memory usage.
-    *
-    * @details This function attempts to load an image asynchronously and stores it in a cache
-    *          if successfully loaded. The cache uses an approximate size-based limit to manage
-    *          memory usage. If the image is already in the cache, it returns the cached version
-    *          directly. The function calculates the image size based on its dimensions and 
-    *          stores it along with the image in the cache.
-    *
-    * @param   src The URL of the image to be preloaded.
-    *
-    * @return  A Promise that resolves with the loaded `Image` object, or rejects if loading fails.
-    *
-    * @note    The cache calculates the size as width × height × 4 bytes (RGBA), providing a rough
-    *          estimate of memory usage. This ensures the cache remains within acceptable limits
-    *          for performance and memory efficiency.
-    */
     async function preloadImage(src) {
-        if (imageCache.has(src)) return imageCache.get(src); // Return cached image if available
-
-        const loadPromise = new Promise((resolve, reject) => {
-            const img = new Image();
-
-            const onLoad = () => {
-            const width = img.naturalWidth;
-            const height = img.naturalHeight;
-
-            if (!width || !height || isNaN(width) || isNaN(height)) {
-                console.warn(`Skipping cache for ${src}: invalid image dimensions.`);
-                resolve(img);
-                cleanup();
-                return;
-            }
-
-            const size = width * height * 4; // Estimate: 4 bytes per pixel
-            imageCache.set(src, img, size);
-            resolve(img);
-            cleanup();
-        };
-
-            const onError = () => {
-                reject(new Error(`Failed to load: ${src}`));
-                cleanup();
-            };
-
-            const cleanup = () => {
-                img.removeEventListener('load', onLoad);
-                img.removeEventListener('error', onError);
-            };
-
-            img.addEventListener('load', onLoad);
-            img.addEventListener('error', onError);
-            img.src = src;
+        if (imageCache.has(src)) return imageCache.get(src);
+        const loadPromise=new Promise((resolve,reject)=>{
+            const img=new Image();
+            const onLoad=()=>{ const w=img.naturalWidth,h=img.naturalHeight; if(!w||!h||isNaN(w)||isNaN(h)){console.warn(`Skipping cache for ${src}: invalid image dimensions.`);resolve(img);cleanup();return;} const size=w*h*4; imageCache.set(src,img,size); resolve(img); cleanup(); };
+            const onError=()=>{ reject(new Error(`Failed to load: ${src}`)); cleanup(); };
+            const cleanup=()=>{ img.removeEventListener('load',onLoad); img.removeEventListener('error',onError); };
+            img.addEventListener('load',onLoad); img.addEventListener('error',onError); img.src=src;
         });
-
         return loadPromise;
     }
 
-
-    /**
-    * @brief   Toggles the navigation layout and visibility in a slideshow.
-    *
-    * @details Changes the navigation control layout or visibility based on the click count:
-    *          - First click: Switches the layout to vertical.
-    *          - Second click: Hides all navigation buttons except the toggle button and changes background color.
-    *          - Third click: Resets to the original horizontal layout, restores button visibility, and resets the click count.
-    *
-    * @param   index Index of the slideshow to toggle navigation for.
-    */
     function toggleNavigation(index) {
-        if (slideshows[index].clickCount === 0) {
-            // First click: Change layout from horizontal to vertical
-            navigationControl[index].classList.add('vertical');
-        } else if (slideshows[index].clickCount === 1) {
-            // Second click: Hide all buttons except toggle button
-            slideshows[index].previousBackgroundColor = navigationControl[index].style.backgroundColor;
-            navigationControl[index].style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
-            navigationControlButtons[index].forEach(button => button && (button.style.display = 'none'));
+        if (slideshows[index].clickCount===0) navigationControl[index].classList.add('vertical');
+        else if (slideshows[index].clickCount===1) {
+            slideshows[index].previousBackgroundColor=navigationControl[index].style.backgroundColor;
+            navigationControl[index].style.backgroundColor='rgba(255, 255, 255, 0.15)';
+            navigationControlButtons[index].forEach(button=>button&&(button.style.display='none'));
         } else {
-            // Third click: Reset everything (show all buttons and set layout to horizontal)
-            navigationControl[index].style.backgroundColor = slideshows[index].previousBackgroundColor;
+            navigationControl[index].style.backgroundColor=slideshows[index].previousBackgroundColor;
             navigationControl[index].classList.remove('vertical');
-            navigationControlButtons[index].forEach(button => button && (button.style.display = 'inline-block'));
-            slideshows[index].clickCount = -1;  // Reset counter
+            navigationControlButtons[index].forEach(button=>button&&(button.style.display='inline-block'));
+            slideshows[index].clickCount=-1;
         }
         slideshows[index].clickCount++;
     }
 
-
-    /**
-    * @brief   Toggles the visibility and appearance of image descriptions in a slideshow.
-    *
-    * @details Cycles through three interactive states based on the number of times the toggle button is clicked:
-    *          1. **First click:** Adds a semi-transparent dark background to all image descriptions to improve readability.
-    *          2. **Second click:** Removes the background color, making it fully transparent.
-    *          3. **Third click:** Hides all image descriptions and resets the click count to restart the cycle.
-    *
-    *          This function selects the description group corresponding to the provided slideshow index 
-    *          and dynamically updates the styles of descriptions according to the current state.
-    *
-    * @param   index Index of the slideshow for which to toggle the descriptions.
-    */
     function toggleDescription(index) {
-        // Retrieve the specific description group for the current slideshow index
-        const descriptions = descriptionControlStyle[index];
-
-        if (slideshows[index].descriptionClickCount === 0) {
-            // First click: Set semi-transparent dark background for all descriptions
-            descriptions.forEach(description => {
-                description.style.backgroundColor = 'rgba(0, 0, 0, 0.55)';
-                description.style.display = ''; // Ensure the description is visible
-            });
-        } else if (slideshows[index].descriptionClickCount === 1) {
-            // Second click: Make the background of all descriptions fully transparent
-            descriptions.forEach(description => {
-                description.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-            });
-        } else {
-            // Third click: Hide all descriptions and reset the click count
-            descriptions.forEach(description => {
-                description.style.display = 'none'; // Hide the description
-            });
-            slideshows[index].descriptionClickCount = -1; // Reset the click counter
-        }
-        // Increment the click count
+        const descriptions=descriptionControlStyle[index];
+        if (slideshows[index].descriptionClickCount===0) descriptions.forEach(d=>{d.style.backgroundColor='rgba(0,0,0,0.55)';d.style.display='';});
+        else if (slideshows[index].descriptionClickCount===1) descriptions.forEach(d=>{d.style.backgroundColor='rgba(0,0,0,0)';});
+        else { descriptions.forEach(d=>{d.style.display='none';}); slideshows[index].descriptionClickCount=-1; }
         slideshows[index].descriptionClickCount++;
     }
 
-
-    /**
-    * @brief   Sets the quality of the slideshow based on the container width.
-    *
-    * @details This function calculates the quality value of the slideshow based on the width of the outer container. 
-    *          It sets the value of the quality slider and updates the displayed quality value accordingly. 
-    *          Additionally, it calls a function to update the color of the slider based on the new value.
-    *
-    * @param   index  The index of the slideshow, used to identify the corresponding elements.
-    */
-    function setSlideshowQuality(index) {                 
-        // Ensure the element exists
-        if (!slideshowContainer[index]) return; 
-
-        // Get the current width of the outer container
-        const containerWidth = slideshowContainer[index].offsetWidth;
-
-        // Update the quality slider value based on the container width
-        qualitySliderElement[index].value = Math.ceil(containerWidth / 400);
-        qualityValueElement[index].textContent = Math.ceil(containerWidth / 400);
-
-        // Call the function to update the slider color
+    function setSlideshowQuality(index) {
+        if (!slideshowContainer[index]) return;
+        const containerWidth=slideshowContainer[index].offsetWidth;
+        qualitySliderElement[index].value=Math.ceil(containerWidth/400);
+        qualityValueElement[index].textContent=Math.ceil(containerWidth/400);
         updateSliderColor(index);
     }
 
-
-    /**
-    * @brief   Processes a blog entry and extracts images and captions for the slideshow.
-    *
-    * @details This function parses the content of a blog entry, extracts image sources and captions, and stores them 
-    *          in the `imageBuffer`. It also adjusts the image sizes based on the dimensions of the slideshow container.
-    *          Images with a `data-skip` attribute greater than the current photo slider value are skipped. The images are 
-    *          resized according to the larger dimension of the container (width or height) and added to the slideshow buffer 
-    *          along with the associated caption and post title.
-    *
-    * @param   index   The index of the slideshow to process.
-    * @param   entry   The blog entry object containing content and metadata.
-    */
     function processEntry(index, entry) {
-        const content = entry.content.$t;
-        const parser = new DOMParser();
-        const htmlDoc = parser.parseFromString(content, 'text/html');
-        const images = htmlDoc.getElementsByTagName('img');
-        const postTitle = entry.title.$t;
-        const postDateRaw = entry.published?.$t || '';
-        const postDate = postDateRaw
-            ? new Date(postDateRaw).toLocaleDateString('sl-SI')
-            : '';
-        const captions = getCaptions(htmlDoc);
-
-        // Get the width and height of the slideshow container in pixels
-        const containerWidth = slideshowContainer[index].offsetWidth; // Detects the width in pixels
-        const containerHeight = slideshowContainer[index].offsetHeight; // Detects the height in pixels
-
-        // Assign the bigger value to determine size
-        const containerSize = Math.max(containerWidth, containerHeight); // Determine the larger value
-
-        // Loop through the images and process their `data-skip` attribute
-        for (let i = 1; i < images.length; i++) { // Start with 1 - do not include cover photo
-            // Check if the image has a data-skip attribute with a value greater than value saved in initPhotos
-            const PhotosRange = localStorage.getItem('photosSliderValue') || initPhotos; // Default value if not set
-            // Extract the `data-skip` attribute content
-            let dataSkip = images[i].getAttribute('data-skip');
-
-            // Assign a default value to `data-skip` if undefined or "NA"
-            if (dataSkip === "NA" || dataSkip === null || dataSkip === undefined) {
-                dataSkip = "3"; // Assign a default value
-            }
-
-            // Replace "best" with "0" in the `data-skip` values
-            dataSkip = dataSkip.replace(/best/g, "0");
-
-            // Replace "cover" with "-1" in the `data-skip` values
-            dataSkip = dataSkip.replace(/cover/g, "-1");
-
-            // Replace "peak" with "-2" in the `data-skip` values
-            dataSkip = dataSkip.replace(/peak/g, "-2");
-
-            // Split `data-skip` values by semicolon
-            const dataSkipValues = dataSkip.split(";");
-
-            // Check if any value in `data-skip` matches or is within the PhotosRange
-            const isWithinRange = dataSkipValues.some(value => {
-                if (!isNaN(value)) {
-                    const numericValue = parseFloat(value); // Parse each value to a number
-
-                    // Exclude -2 (peaks) only if it is the ONLY value in dataSkipValues
-                    if (numericValue === -2) {
-                        return false;
-                    }
-
-                    // For other ranges, check if the value is within the range
-                    return numericValue <= PhotosRange;
-                }
-                return false; // Non-numeric values are ignored
-            });
-
-            // Perform the desired action based on the range check
+        const content=entry.content.$t; const parser=new DOMParser(); const htmlDoc=parser.parseFromString(content,'text/html');
+        const images=htmlDoc.getElementsByTagName('img'); const postTitle=entry.title.$t;
+        const postDateRaw=entry.published?.$t||''; const postDate=postDateRaw?new Date(postDateRaw).toLocaleDateString('sl-SI'):'';
+        const captions=getCaptions(htmlDoc);
+        const containerWidth=slideshowContainer[index].offsetWidth; const containerHeight=slideshowContainer[index].offsetHeight;
+        const containerSize=Math.max(containerWidth,containerHeight);
+        for (let i=1; i<images.length; i++) {
+            const PhotosRange=localStorage.getItem('photosSliderValue')||initPhotos;
+            let dataSkip=images[i].getAttribute('data-skip');
+            if (dataSkip==="NA"||dataSkip===null||dataSkip===undefined) dataSkip="3";
+            dataSkip=dataSkip.replace(/best/g,"0").replace(/cover/g,"-1").replace(/peak/g,"-2");
+            const dataSkipValues=dataSkip.split(";");
+            const isWithinRange=dataSkipValues.some(value=>{ if(!isNaN(value)){const n=parseFloat(value);if(n===-2)return false;return n<=PhotosRange;}return false;});
             if (isWithinRange) {
-                // Replace image size with WebP-enabled format using -rw
-                let imgSrc = images[i].getAttribute('src')
-                    .replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//, `/s${containerSize}-rw/`);
-                
-                const caption = captions[i] || '';
-                slideshows[index].imageBuffer.push({ src: imgSrc, caption, title: postTitle, date: postDate });
+                let imgSrc=images[i].getAttribute('src').replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//,`/s${containerSize}-rw/`);
+                const caption=captions[i]||'';
+                slideshows[index].imageBuffer.push({src:imgSrc,caption,title:postTitle,date:postDate});
             }
-        }        
+        }
     }
 
-
-    /**
-        * @brief   Extracts captions for images from the HTML document.
-        *
-        * @details This function processes an HTML document, finds all images, and attempts to associate captions with 
-        *          each image. Captions are stored in elements with the class `tr-caption`, and the function matches each
-        *          caption to the corresponding image based on their order in the document. If no caption is found for an 
-        *          image, an empty string is assigned. The function returns an array of captions corresponding to the images.
-        *
-        * @param   htmlDoc   The HTML document object to extract captions from.
-        *
-        * @return  An array of captions, where each element corresponds to a caption for an image.
-        */
     function getCaptions(htmlDoc) {
-        const images = htmlDoc.getElementsByTagName('img');
-        const captionElements = htmlDoc.getElementsByClassName('tr-caption');
-        const captions = [];
-        let captionIndex = 0;
-
-        for (let i = 0; i < images.length; i++) {
-            let caption = '';
-            while (captionIndex < captionElements.length) {
-                const currentCaptionElement = captionElements[captionIndex];
-                const nextImageElement = images[i + 1];
-                if (!nextImageElement || currentCaptionElement.compareDocumentPosition(nextImageElement) & Node.DOCUMENT_POSITION_FOLLOWING) {
-                    caption = currentCaptionElement.textContent.trim();
-                    captionIndex++;
-                    break;
-                }
+        const images=htmlDoc.getElementsByTagName('img'); const captionElements=htmlDoc.getElementsByClassName('tr-caption');
+        const captions=[]; let captionIndex=0;
+        for (let i=0; i<images.length; i++) {
+            let caption='';
+            while (captionIndex<captionElements.length) {
+                const currentCaptionElement=captionElements[captionIndex]; const nextImageElement=images[i+1];
+                if (!nextImageElement||currentCaptionElement.compareDocumentPosition(nextImageElement)&Node.DOCUMENT_POSITION_FOLLOWING) { caption=currentCaptionElement.textContent.trim(); captionIndex++; break; }
                 break;
             }
             captions.push(caption);
@@ -1454,1242 +1949,559 @@
         return captions;
     }
 
-
-    /**
-        * @brief   Adjusts the slideshow speed based on slider input.
-        *
-        * @details This function retrieves the value from a speed slider input element, converts it from seconds to milliseconds, 
-        *          and updates the slideshow speed accordingly. The speed value is also displayed to the user.
-        *
-        * @param   index  The index of the slideshow for which the speed needs to be adjusted.
-        *
-        * @return  None.
-        */
     function updateSlideshowSpeed(index) {
-        const speedInSeconds = speedSliderElement[index].value;
-        slideshows[index].slideshowSpeed = speedInSeconds * 1000; // Convert to milliseconds
-        speedValueElement[index].textContent = speedInSeconds; // Update the speed value display
+        const speedInSeconds=speedSliderElement[index].value;
+        slideshows[index].slideshowSpeed=speedInSeconds*1000;
+        speedValueElement[index].textContent=speedInSeconds;
     }
 
-
-    /**
-        * @brief   Retries initializing functions after DOMContentLoaded and slideshow setup.
-        *
-        * @details This function checks if the slideshow is ready. If so, it initializes the necessary event listeners 
-        *          and starts observing the wrappers. If the slideshow is not yet initialized, it retries the process after a short delay.
-        *
-        * @param   index  The index of the slideshow to check and initialize.
-        *
-        * @return  None.
-        */
     function checkAndInitialize(index) {
-        if (slideshows[index].isSlideshowReady) { // Check if the slideshow is ready and DOM is loaded
-            initializeKeyboardListeners(index); // Set up keyboard listeners
-            observeVisibleWrappers(); // Start observing wrappers
-        } else {
-            // Retry after a short delay if the slideshow is not yet ready
-            console.log("Slideshow not fully initialized yet. Retrying...");
-            setTimeout(() => checkAndInitialize(index), 500); // Retry after 500ms
-        }
+        if (slideshows[index].isSlideshowReady) { initializeKeyboardListeners(index); observeVisibleWrappers(); }
+        else { console.log("Slideshow not fully initialized yet. Retrying..."); setTimeout(()=>checkAndInitialize(index),500); }
     }
 
-
-    /**
-        * @brief   Initializes keyboard listeners for slideshow control.
-        *
-        * @details This function sets up event listeners for keydown events to control various aspects of the slideshow.
-        *          Each key press triggers specific actions, such as navigating through slides, toggling slideshow play/pause, 
-        *          toggling fullscreen, changing quality settings, and more.
-        *
-        * @param   index  The index of the active slideshow to control with keyboard inputs.
-        *
-        * @return  None.
-        */
     function initializeKeyboardListeners(index) {
-        document.addEventListener('keydown', ({ key, ctrlKey, metaKey, altKey }) => {
-            // Allow browser shortcuts like Ctrl+F / Cmd+F
-            if (ctrlKey || metaKey || altKey) return;
-
-            // Determine which slideshow to control
-            const index = activeFullscreenIndex !== null ? activeFullscreenIndex : currentSlideshowIndex;
-
-            const actions = {
-                ArrowRight: () => enqueueManualSlide(index, 1), // Next photo
-                ArrowLeft: () => enqueueManualSlide(index, -1), // Previous photo
-                s: () => (slideshows[index].isSlideshowRunning
-                    ? pauseSlideshow
-                    : resumeSlideshow)(index, SLIDESHOW_VISIBLE), // Toggle slideshow (start/pause)
-                n: () => toggleNavigation(index), // Toggle navigation
-                u: () => toggleDescription(index), // Toggle image description style
-                f: () => toggleFullscreen(index), // Toggle fullscreen
-                q: () => {
-                    autoQualityCheckbox[index].checked = !autoQualityCheckbox[index].checked;
-                    autoSetQuality(index);
-                }, // Enable/disable auto quality
-                p: () => preloadAllImages(index), // Preload all images
-                t: () => toggleSlideshowOrImageVisibility(index), // Toggle slideshow or image visibility
-                b: () => toggleProgressBarVisibility(index, 0, 'key'), // Toggle progressBar visibility
-                e: () => {slideshows[index].errorFlag = !slideshows[index].errorFlag; console.log(`Error flag is now ${slideshows[index].errorFlag ? 'ON' : 'OFF'}`); }, // Toggle error flag
-                '+': () => { speedSliderElement[index].value = Math.min(Number(speedSliderElement[index].value) + stepSpeed, maxSpeed); updateSlideshowSpeed(index); },
-                '-': () => { speedSliderElement[index].value = Math.max(Number(speedSliderElement[index].value) - stepSpeed, minSpeed); updateSlideshowSpeed(index); },
-
-                // Number controls
-                '5': () => (slideshows[index].isSlideshowRunning
-                    ? pauseSlideshow
-                    : resumeSlideshow)(index, SLIDESHOW_VISIBLE), // Toggle slideshow (start/pause)
-                '2': () => toggleNavigation(index), // Toggle navigation
-                '7': () => toggleDescription(index), // Toggle image description style
-                '1': () => toggleFullscreen(index), // Toggle fullscreen
-                '9': () => {
-                    autoQualityCheckbox[index].checked = !autoQualityCheckbox[index].checked;
-                    autoSetQuality(index);
-                }, // Enable/disable auto quality
-                '0': () => preloadAllImages(index), // Preload all images
-                '3': () => toggleProgressBarVisibility(index, 0, 'key'), // Toggle progressBar visibility
-                '8': () => {slideshows[index].errorFlag = !slideshows[index].errorFlag; console.log(`Error flag is now ${slideshows[index].errorFlag ? 'ON' : 'OFF'}`); }, // Toggle error flag
-                '4': () => { speedSliderElement[index].value = Math.min(Number(speedSliderElement[index].value) + stepSpeed, maxSpeed); updateSlideshowSpeed(index); },
-                '6': () => { speedSliderElement[index].value = Math.max(Number(speedSliderElement[index].value) - stepSpeed, minSpeed); updateSlideshowSpeed(index); }
+        document.addEventListener('keydown',({key,ctrlKey,metaKey,altKey})=>{
+            if (ctrlKey||metaKey||altKey) return;
+            const index=activeFullscreenIndex!==null?activeFullscreenIndex:currentSlideshowIndex;
+            const actions={
+                ArrowRight:()=>enqueueManualSlide(index,1), ArrowLeft:()=>enqueueManualSlide(index,-1),
+                s:()=>{ const _md=document.getElementById(`tp-map-ss-${index}`); const _ts=trackStates[index]; if(_md&&_md.style.display!=='none'&&_ts&&_ts.ready){_ts.playing?pauseSlideshow(index,SLIDESHOW_VISIBLE):resumeSlideshow(index,SLIDESHOW_VISIBLE);}else{slideshows[index].isSlideshowRunning?pauseSlideshow(index,SLIDESHOW_VISIBLE):resumeSlideshow(index,SLIDESHOW_VISIBLE);} },
+                n:()=>toggleNavigation(index), u:()=>toggleDescription(index), f:()=>toggleFullscreen(index),
+                q:()=>{autoQualityCheckbox[index].checked=!autoQualityCheckbox[index].checked;autoSetQuality(index);},
+                p:()=>preloadAllImages(index), t:()=>toggleSlideshowOrImageVisibility(index), b:()=>toggleProgressBarVisibility(index,0,'key'),
+                e:()=>{slideshows[index].errorFlag=!slideshows[index].errorFlag;},
+                '+':()=>{speedSliderElement[index].value=Math.min(Number(speedSliderElement[index].value)+stepSpeed,maxSpeed);updateSlideshowSpeed(index);},
+                '-':()=>{speedSliderElement[index].value=Math.max(Number(speedSliderElement[index].value)-stepSpeed,minSpeed);updateSlideshowSpeed(index);},
+                '5':()=>{ const _md=document.getElementById(`tp-map-ss-${index}`); const _ts=trackStates[index]; if(_md&&_md.style.display!=='none'&&_ts&&_ts.ready){_ts.playing?pauseSlideshow(index,SLIDESHOW_VISIBLE):resumeSlideshow(index,SLIDESHOW_VISIBLE);}else{slideshows[index].isSlideshowRunning?pauseSlideshow(index,SLIDESHOW_VISIBLE):resumeSlideshow(index,SLIDESHOW_VISIBLE);} },
+                '2':()=>toggleNavigation(index), '7':()=>toggleDescription(index), '1':()=>toggleFullscreen(index),
+                '9':()=>{autoQualityCheckbox[index].checked=!autoQualityCheckbox[index].checked;autoSetQuality(index);},
+                '0':()=>preloadAllImages(index), '3':()=>toggleProgressBarVisibility(index,0,'key'),
+                '8':()=>{slideshows[index].errorFlag=!slideshows[index].errorFlag;},
+                '4':()=>{speedSliderElement[index].value=Math.min(Number(speedSliderElement[index].value)+stepSpeed,maxSpeed);updateSlideshowSpeed(index);},
+                '6':()=>{speedSliderElement[index].value=Math.max(Number(speedSliderElement[index].value)-stepSpeed,minSpeed);updateSlideshowSpeed(index);}
             };
-
-            actions[key]?.(); // Execute action if the key is in the actions map
+            actions[key]?.();
         });
     }
 
-
-    /**
-    * @brief   Toggles the visibility and height of the progress bar for a slideshow.
-    *
-    * @details This function adjusts the height of the progress bar based on the specified mode. 
-    *          In 'hover' mode, it sets the progress bar to a specified height if it is initially hidden. 
-    *          In 'key' mode, it toggles the height of the progress bar between '0px' (hidden) and '5px' (visible). 
-    *          The function ensures the progress bar element exists before making any changes and logs an error if not found.
-    *
-    * @param   index  The index of the slideshow whose progress bar visibility needs to be toggled.
-    * @param   height The height to set the progress bar to when it is shown (e.g., '5px').
-    * @param   mode   The mode of operation, either 'hover' or 'key'. In 'hover', the height is set when hovered. 
-    *                 In 'key', it toggles the height between '0px' and '5px'.
-    *
-    * @return  None.
-    */
     function toggleProgressBarVisibility(index, height, mode) {
         const progressBar = document.getElementById(`progressBar-${index}`);
-        if (!progressBar) {
-            console.error(`Progress container for slideshow ${index} not found.`);
-            return;
+        const progressBarContainer = document.getElementById(`progressBarContainer-${index}`);
+        if (!progressBar || !progressBarContainer) { 
+            console.error(`Progress container for slideshow ${index} not found.`); 
+            return; 
         }
-        // Manage height and state of progress bar
-        if ((mode == 'hover') && (slideshows[index].progressBarHeightKey == '0px')) {
-            progressBar.style.height = height;
-        } else if (mode == 'key') {
-            progressBar.style.height = progressBar.style.height === '0px' ? 
-                (slideshows[index].progressBarHeightKey = '5px') : 
-                (slideshows[index].progressBarHeightKey = '0px');
+        
+        // Check if in track mode
+        const mapDiv = document.getElementById(`tp-map-ss-${index}`);
+        const trackOn = mapDiv && mapDiv.style.display !== 'none';
+        
+        if (trackOn) {
+            // Track mode: toggle between visible (5px) and hidden (0px)
+            if (mode === 'key') {
+                if (progressBarContainer.style.height === '0px') {
+                    progressBarContainer.style.height = '5px';
+                    progressBar.style.minHeight = '3px';
+                    slideshows[index].progressBarHeightKey = '5px';
+                } else {
+                    progressBarContainer.style.height = '0px';
+                    progressBar.style.minHeight = '0px';
+                    slideshows[index].progressBarHeightKey = '0px';
+                }
+            } else if (mode === 'hover') {
+                // No hover behavior in track mode - always respect key toggle state
+                return;
+            }
+        } else {
+            // Original slideshow behavior
+            if ((mode === 'hover') && (slideshows[index].progressBarHeightKey === '0px')) {
+                progressBar.style.height = height;
+            } else if (mode === 'key') {
+                progressBar.style.height = progressBar.style.height === '0px' 
+                    ? (slideshows[index].progressBarHeightKey = '5px') 
+                    : (slideshows[index].progressBarHeightKey = '0px');
+            }
         }
     }
 
-
-    /**
-    * @brief   Toggles the visibility of slideshows and images.
-    *
-    * @details This function checks the current visibility of slideshows and switches between showing slideshows
-    *          or images based on the current visibility state. It also updates the button's SVG and text to indicate
-    *          the current mode (either "Presentation" mode with slideshows or "Image" mode with images). The function
-    *          will also pause the slideshow and hide all slideshows when switching to image view, and resume the slideshow
-    *          when switching back to presentation mode. The function utilizes a set of DOM elements (e.g., myPostContainers, separators, tables)
-    *          to toggle their visibility accordingly.
-    *
-    * @param   index  The index of the current slideshow to manage (used for pausing the slideshow).
-    *
-    * @return  None.
-    */
     function toggleSlideshowOrImageVisibility(index) {
-        const separators = document.querySelectorAll('.separator');
-        const myPostContainers = document.querySelectorAll('.my-post-container');
-        const tables = document.querySelectorAll('table.tr-caption-container');
-
-        // Update image sources to normal size
+        const separators=document.querySelectorAll('.separator'); const myPostContainers=document.querySelectorAll('.my-post-container'); const tables=document.querySelectorAll('table.tr-caption-container');
         updateImageSources(1200);
-
-        // Flag to track if any slideshow is visible
-        let isSlideshowVisible = false;
-
-        // Iterate over all slideshows to check visibility
-        mySlideshowContainer.forEach(function(slideshowDiv) {
-            if (slideshowDiv.style.display === "block") {
-                isSlideshowVisible = true; // Set to true if any slideshow is visible
-            }
-        });
-
-        // Toggle based on whether slideshows are currently visible or not
+        let isSlideshowVisible=false;
+        mySlideshowContainer.forEach(function(slideshowDiv){if(slideshowDiv.style.display==="block")isSlideshowVisible=true;});
         if (isSlideshowVisible) {
-            // Pause slideshow if switch on images
-            pauseSlideshow(index, SLIDESHOW_VISIBLE);
-
-            // Hide all slideshows and show images
-            mySlideshowContainer.forEach(function(slideshowDiv) {
-                slideshowDiv.style.display = "none"; // Hide all slideshows
-            });
-            myPostContainers.forEach(function(myPostContainer) {
-                myPostContainer.style.display = 'block'; // Show post containers
-            });
-            separators.forEach(function(separator) {
-                separator.style.display = 'block'; // Show separators
-            });
-            tables.forEach(function(table) {
-                table.style.display = 'table'; // Show tables
-            });
-
-            // Change SVG and button text for "Presentation" mode
-            if (toggleButton) {
-                toggleButton.innerHTML = `
-                    <svg version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" xml:space="preserve" width="80px" height="60px" fill="#000000">
-                        <g id="SVGRepo_iconCarrier"> 
-                            <style type="text/css"> .st0{fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;} </style> 
-                            <polyline class="st0" points="25,11 27,13 25,15 "></polyline> 
-                            <polyline class="st0" points="7,11 5,13 7,15 "></polyline> 
-                            <path class="st0" d="M29,23H3c-1.1,0-2-0.9-2-2V5c0-1.1,0.9-2,2-2h26c1.1,0,2,0.9,2,2v16C31,22.1,30.1,23,29,23z"></path> 
-                            <circle class="st0" cx="16" cy="28" r="1"></circle> 
-                            <circle class="st0" cx="10" cy="28" r="1"></circle> 
-                            <circle class="st0" cx="22" cy="28" r="1"></circle> 
-                        </g>
-                    </svg>
-                `;
-            }
+            pauseSlideshow(index,SLIDESHOW_VISIBLE);
+            mySlideshowContainer.forEach(function(s){s.style.display="none";}); myPostContainers.forEach(function(s){s.style.display='block';}); separators.forEach(function(s){s.style.display='block';}); tables.forEach(function(t){t.style.display='table';});
+            if(toggleButton) toggleButton.innerHTML=`<svg version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" xml:space="preserve" width="80px" height="60px" fill="#000000"><g id="SVGRepo_iconCarrier"><style type="text/css">.st0{fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}</style><polyline class="st0" points="25,11 27,13 25,15 "></polyline><polyline class="st0" points="7,11 5,13 7,15 "></polyline><path class="st0" d="M29,23H3c-1.1,0-2-0.9-2-2V5c0-1.1,0.9-2,2-2h26c1.1,0,2,0.9,2,2v16C31,22.1,30.1,23,29,23z"></path><circle class="st0" cx="16" cy="28" r="1"></circle><circle class="st0" cx="10" cy="28" r="1"></circle><circle class="st0" cx="22" cy="28" r="1"></circle></g></svg>`;
         } else {
-            // Show all slideshows and hide images
-            mySlideshowContainer.forEach(function(slideshowDiv) {
-                slideshowDiv.style.display = "block"; // Show all slideshows
-            });
-            myPostContainers.forEach(function(myPostContainer) {
-                myPostContainer.style.display = 'none'; // Hide post containers
-            });
-            separators.forEach(function(separator) {
-                separator.style.display = 'none'; // Hide separators
-            });
-            tables.forEach(function(table) {
-                table.style.display = 'none'; // Hide tables
-            });
-
-            // Change SVG and button text for "Image" mode
-            if (toggleButton) {
-                toggleButton.innerHTML = `
-                    <svg fill="#000000" width="120px" height="120px" viewBox="0 0 36 36" version="1.1" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                        <g id="SVGRepo_iconCarrier"> 
-                            <path fill="#000000" d="M32.12,10H3.88A1.88,1.88,0,0,0,2,11.88V30.12A1.88,1.88,0,0,0,3.88,32H32.12A1.88,1.88,0,0,0,34,30.12V11.88A1.88,1.88,0,0,0,32.12,10ZM32,30H4V12H32Z" class="clr-i-outline clr-i-outline-path-1"></path>
-                            <path fill="#000000" d="M8.56,19.45a3,3,0,1,0-3-3A3,3,0,0,0,8.56,19.45Zm0-4.6A1.6,1.6,0,1,1,7,16.45,1.6,1.6,0,0,1,8.56,14.85Z" class="clr-i-outline clr-i-outline-path-2"></path>
-                            <path fill="#000000" d="M7.9,28l6-6,3.18,3.18L14.26,28h2l7.46-7.46L30,26.77v-2L24.2,19a.71.71,0,0,0-1,0l-5.16,5.16L14.37,20.5a.71.71,0,0,0-1,0L5.92,28Z" class="clr-i-outline clr-i-outline-path-3"></path>
-                            <path fill="#000000" d="M30.14,3h0a1,1,0,0,0-1-1h-22a1,1,0,0,0-1,1h0V4h24Z" class="clr-i-outline clr-i-outline-path-4"></path>
-                            <path fill="#000000" d="M32.12,7V7a1,1,0,0,0-1-1h-26a1,1,0,0,0-1,1h0V8h28Z" class="clr-i-outline clr-i-outline-path-5"></path> 
-                            <rect x="0" y="0" width="36" height="36" fill-opacity="0"></rect> 
-                        </g>
-                    </svg>
-                `;
-            }
+            mySlideshowContainer.forEach(function(s){s.style.display="block";}); myPostContainers.forEach(function(s){s.style.display='none';}); separators.forEach(function(s){s.style.display='none';}); tables.forEach(function(t){t.style.display='none';});
+            if(toggleButton) toggleButton.innerHTML=`<svg fill="#000000" width="120px" height="120px" viewBox="0 0 36 36" version="1.1" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="SVGRepo_iconCarrier"><path fill="#000000" d="M32.12,10H3.88A1.88,1.88,0,0,0,2,11.88V30.12A1.88,1.88,0,0,0,3.88,32H32.12A1.88,1.88,0,0,0,34,30.12V11.88A1.88,1.88,0,0,0,32.12,10ZM32,30H4V12H32Z" class="clr-i-outline clr-i-outline-path-1"></path><path fill="#000000" d="M8.56,19.45a3,3,0,1,0-3-3A3,3,0,0,0,8.56,19.45Zm0-4.6A1.6,1.6,0,1,1,7,16.45,1.6,1.6,0,0,1,8.56,14.85Z" class="clr-i-outline clr-i-outline-path-2"></path><path fill="#000000" d="M7.9,28l6-6,3.18,3.18L14.26,28h2l7.46-7.46L30,26.77v-2L24.2,19a.71.71,0,0,0-1,0l-5.16,5.16L14.37,20.5a.71.71,0,0,0-1,0L5.92,28Z" class="clr-i-outline clr-i-outline-path-3"></path><path fill="#000000" d="M30.14,3h0a1,1,0,0,0-1-1h-22a1,1,0,0,0-1,1h0V4h24Z" class="clr-i-outline clr-i-outline-path-4"></path><path fill="#000000" d="M32.12,7V7a1,1,0,0,0-1-1h-26a1,1,0,0,0-1,1h0V8h28Z" class="clr-i-outline clr-i-outline-path-5"></path><rect x="0" y="0" width="36" height="36" fill-opacity="0"></rect></g></svg>`;
         }
     }
 
-
-    /**
-    * @brief   Preloads all images for a specified slideshow.
-    *
-    * @details This function iterates over all shuffled images in a slideshow and preloads each image by calling 
-    *          a helper function `preloadImage`. Once all images are successfully preloaded, a message is logged to 
-    *          the console. If any error occurs during the preloading process, an error message is logged.
-    *
-    * @param   index  The index of the slideshow whose images need to be preloaded.
-    *
-    * @return  A Promise that resolves when all images have been preloaded or rejects if an error occurs.
-    */
     function preloadAllImages(index) {
-        return Promise.all(slideshows[index].shuffledImages.map(img => preloadImage(img.src)))
-            .then(() => {
-                console.log("All images preloaded");
-                if (coverPhotoContainer[index]) {
-                    // Show the overlay with the "Slike so pripravljene" message
-                    photoOverlay[index].style.display = 'block';
-                    photoOverlay[index].innerHTML = '<span class="connection-error">Slike so pripravljene</span>';
-                    photoOverlay[index].style.color = 'white';
-                    photoOverlay[index].style.zIndex = '2'; // Set the z-index to 2
-                    
-                    // Hide the overlay and change the message after 1 second
-                    setTimeout(() => {
-                        photoOverlay[index].style.display = 'none'; // Hide the overlay
-                        photoOverlay[index].innerHTML = '<span class="connection-error">Ojoj, internetna povezava ne omogoča take hitrosti pri nastavljeni kvaliteti slik</span>';
-                    }, 2000); // 2 second timeout
-                }
-            })
-            .catch(error => console.error("Error preloading images:", error));
+        return Promise.all(slideshows[index].shuffledImages.map(img=>preloadImage(img.src))).then(()=>{
+            console.log("All images preloaded");
+            if (coverPhotoContainer[index]) {
+                photoOverlay[index].style.display='block'; photoOverlay[index].innerHTML='<span class="connection-error">Slike so pripravljene</span>'; photoOverlay[index].style.color='white'; photoOverlay[index].style.zIndex='2';
+                setTimeout(()=>{ photoOverlay[index].style.display='none'; photoOverlay[index].innerHTML='<span class="connection-error">Ojoj, internetna povezava ne omogoča take hitrosti pri nastavljeni kvaliteti slik</span>'; },2000);
+            }
+        }).catch(error=>console.error("Error preloading images:",error));
     }
 
-
-    /**
-    * @brief   Toggles fullscreen mode for a specific slideshow.
-    *
-    * @details This function checks if the document is currently in fullscreen mode. If it is, it exits fullscreen and
-    *          removes the fullscreen class from all relevant slideshow containers. If it is not in fullscreen, it requests
-    *          fullscreen for the specified slideshow, adds the fullscreen class, and forces landscape orientation on mobile.
-    *          Additionally, the function toggles the light theme for the slideshow and calls `autoSetQuality` with a slight delay.
-    *
-    * @param   index  The index of the slideshow that should enter or exit fullscreen mode.
-    *
-    * @return  None.
-    */
     function toggleFullscreen(index) {
-        const wrapper = document.querySelector(`#slideshowOuterContainer-${index}`);
+    const wrapper = document.querySelector(`#slideshowOuterContainer-${index}`);
         if (!wrapper) return;
-
+        
+        const mapDiv = document.getElementById(`tp-map-ss-${index}`);
+        const ts = trackStates[index];
+        const trackOn = mapDiv && mapDiv.style.display !== 'none';
+        
         if (document.fullscreenElement) {
-            // Exit fullscreen
-            document.exitFullscreen().then(() => {
-                activeFullscreenIndex = null; // Reset fullscreen index
-
-                // Unlock orientation on mobile
-                if (screen.orientation && screen.orientation.unlock) {
-                    screen.orientation.unlock();
+            document.exitFullscreen().then(() => { 
+                activeFullscreenIndex = null; 
+                if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
+                
+                // IMPROVEMENT: Refit map after fullscreen exit
+                if (trackOn && ts && ts.map) {
+                    setTimeout(() => {
+                        ts.map.invalidateSize();
+                        // Pan to current position to ensure it's visible
+                        if (ts.trackPoints.length && ts.dotMarker) {
+                            const pt = getTrackPoint(ts, ts.progress);
+                            ts.map.setView([pt.lat, pt.lon], ts.map.getZoom(), {animate: false});
+                        }
+                    }, 100);
                 }
             });
-
-            [progressBarContainer[index], slideshowContainer[index], slideshowOuterContainer[index], mySlideshowContainer[index]]
-                .forEach(el => el.classList.remove('fullscreen')); // Remove fullscreen class
+            [progressBarContainer[index], slideshowContainer[index], slideshowOuterContainer[index], mySlideshowContainer[index]].forEach(el => el.classList.remove('fullscreen'));
         } else {
-            // Enter fullscreen
-            wrapper.requestFullscreen().then(() => {
-                activeFullscreenIndex = index; // Set the active fullscreen slideshow
-
-                // Force landscape orientation on mobile
-                if (screen.orientation && screen.orientation.lock) {
-                    screen.orientation.lock('landscape').catch(() => {
-                        console.warn('Orientation lock not supported on this device/browser.');
-                    });
+            wrapper.requestFullscreen().then(() => { 
+                activeFullscreenIndex = index; 
+                if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(() => console.warn('Orientation lock not supported.'));
+                
+                // IMPROVEMENT: Refit map after fullscreen enter
+                if (trackOn && ts && ts.map) {
+                    setTimeout(() => {
+                        ts.map.invalidateSize();
+                        // Pan to current position to ensure it's visible
+                        if (ts.trackPoints.length && ts.dotMarker) {
+                            const pt = getTrackPoint(ts, ts.progress);
+                            ts.map.setView([pt.lat, pt.lon], ts.map.getZoom(), {animate: false});
+                        }
+                    }, 100);
                 }
             });
-
-            [progressBarContainer[index], slideshowContainer[index], slideshowOuterContainer[index], mySlideshowContainer[index]]
-                .forEach(el => el.classList.add('fullscreen')); // Add fullscreen class
+            [progressBarContainer[index], slideshowContainer[index], slideshowOuterContainer[index], mySlideshowContainer[index]].forEach(el => el.classList.add('fullscreen'));
         }
-
-        // Toggle light theme
-        if (document.fullscreenElement) {
-            slideshowContainer[index].classList.remove('light-theme'); // Remove light theme if in fullscreen
-        } else {
-            slideshowContainer[index].classList.add('light-theme'); // Add light theme if not in fullscreen
-        }
-
-        // Delay execution of autoSetQuality
+        
+        if (document.fullscreenElement) slideshowContainer[index].classList.remove('light-theme');
+        else slideshowContainer[index].classList.add('light-theme');
+        
         setTimeout(() => autoSetQuality(index), 250);
     }
 
+    function pauseSlideshow(index,isSlideshowHidden) {
+        const mapDiv=document.getElementById(`tp-map-ss-${index}`);
+        const trackOn=mapDiv && mapDiv.style.display!=='none';
 
-    /**
-    * @brief   Pauses the slideshow by clearing the timeout.
-    *
-    * @details This function stops the slideshow by clearing the timeout that controls the slide transitions. It also tracks 
-    *          the state of the slideshow (whether it was running or not) before pausing. The slideshow state is updated, 
-    *          and the toggle button is updated to reflect the paused state of the slideshow.
-    *
-    * @param   index              The index of the slideshow to be paused.
-    * @param   isSlideshowHidden  A flag indicating whether the slideshow is hidden or not.
-    *
-    * @return  None.
-    */
-        function pauseSlideshow(index, isSlideshowHidden) {
-        if(!isSlideshowHidden){
-            // Track state
-            slideshows[index].wasSlideshowRunning = slideshows[index].isSlideshowRunning;
+        if (trackOn) {
+            const ts=trackStates[index];
+            if (!ts || !ts.ready) return;
+            // Stop dot and photo timer — keep map visible, don't touch slides
+            ts.playing=false;
+            if (ts.rafId) { cancelAnimationFrame(ts.rafId); ts.rafId=null; }
+            clearTimeout(ts._photoTimer); ts._photoTimer=null;
+            clearTimeout(ts._endTimer); clearTimeout(ts._endTimer2);
+            clearTimeout(slideshows[index].slideshowTimeout);
+            slideshows[index].slideshowTimeout=null;
+            slideshows[index].isSlideshowRunning=false;
+            updateToggleButton(index,false);
+            return;
         }
+
+        // Normal slideshow mode (unchanged)
+        if(!isSlideshowHidden) slideshows[index].wasSlideshowRunning=slideshows[index].isSlideshowRunning;
         clearTimeout(slideshows[index].slideshowTimeout);
-        slideshows[index].isSlideshowRunning = false;
-        updateToggleButton(index, slideshows[index].isSlideshowRunning); // Update button on pause
+        slideshows[index].slideshowTimeout=null;
+        slideshows[index].isSlideshowRunning=false;
+        updateToggleButton(index,false);
     }
 
+    function updateToggleButton(index,isPlaying) {
+        if (isPlaying) { playIcon[index].style.display="none"; pauseIcon[index].style.display="block"; toggleTooltip[index].textContent="Ustavi"; }
+        else { playIcon[index].style.display="block"; pauseIcon[index].style.display="none"; toggleTooltip[index].textContent="Predvajaj"; }
+    }
 
-    /**
-    * @brief   Updates the toggle button icon and tooltip based on the slideshow state.
-    *
-    * @details This function changes the icon and tooltip of the toggle button based on whether the slideshow is playing or paused.
-    *          If the slideshow is playing, it will display the pause icon and update the tooltip to "Ustavi" (Stop).
-    *          If the slideshow is paused, it will display the play icon and update the tooltip to "Predvajaj" (Play).
-    *
-    * @param   index      The index of the slideshow whose toggle button needs to be updated.
-    * @param   isPlaying  A boolean indicating whether the slideshow is currently playing or paused.
-    *
-    * @return  None.
-    */
-    function updateToggleButton(index, isPlaying) {
-        if (isPlaying) {
-            playIcon[index].style.display = "none";
-            pauseIcon[index].style.display = "block";
-            toggleTooltip[index].textContent = "Ustavi";
-        } else {
-            playIcon[index].style.display = "block";
-            pauseIcon[index].style.display = "none";
-            toggleTooltip[index].textContent = "Predvajaj";
+    function resumeSlideshow(index,isSlideshowHidden) {
+        const mapDiv=document.getElementById(`tp-map-ss-${index}`);
+        const trackOn=mapDiv && mapDiv.style.display!=='none';
+        if (trackOn) {
+            const ts=trackStates[index];
+            if (!ts || !ts.ready) return;
+
+            // Handle replay from end
+            if (ts._atEnd) { setTrackPlaying(index, true); return; }
+
+            ts.playing=true;
+            clearTimeout(slideshows[index].slideshowTimeout);
+            slideshows[index].slideshowTimeout=null;
+            slideshows[index].isSlideshowRunning=false;
+            updateToggleButton(index,true);
+
+            if (ts.waitingForSlide) {
+                // Paused mid-photo-group — resume showing photos from where we stopped
+                // _pausedGroupIdx and _pausedPhotoIdx are saved by pauseSlideshow
+                const gIdx = ts._pausedGroupIdx != null ? ts._pausedGroupIdx : 0;
+                const pIdx = ts._pausedPhotoIdx != null ? ts._pausedPhotoIdx : 0;
+                showTrackPhoto(index, gIdx, pIdx);
+            } else {
+                // Paused on track (map visible) — restart dot
+                hideSlideshowSlides(index);
+                ts.lastTs=null;
+                if (!ts.rafId) ts.rafId=requestAnimationFrame(animateTrack(index,ts));
+            }
+            return;
+        }
+        // Normal slideshow mode
+        if(!(isSlideshowHidden&&(slideshows[index].wasSlideshowRunning==false))) {
+            slideshows[index].isSlideshowRunning=true;
+            updateToggleButton(index,slideshows[index].isSlideshowRunning);
+            showSlides(index);
         }
     }
 
+    async function showSlides(index) { changeSlide(index,1,false); }
 
     /**
-    * @brief   Resumes the slideshow by restarting the timeout and updating the state.
-    *
-    * @details This function resumes the slideshow if it was previously paused. It updates the state to indicate that the slideshow
-    *          is running, changes the toggle button to reflect the play state, and restarts the slideshow by calling `showSlides`.
-    *          The slideshow will not resume if it was hidden and was not previously running.
-    *
-    * @param   index              The index of the slideshow to be resumed.
-    * @param   isSlideshowHidden  A boolean indicating whether the slideshow is hidden or not.
-    *
-    * @return  None.
-    */
-    function resumeSlideshow(index, isSlideshowHidden) {       
-        if(!(isSlideshowHidden && (slideshows[index].wasSlideshowRunning == false)) ) {
-            slideshows[index].isSlideshowRunning = true;
-            updateToggleButton(index, slideshows[index].isSlideshowRunning); // Update button on resume
-            showSlides(index); // Restart the slideshow
-        }
-    }
-
-
-    /**
-    * @brief   Starts the automatic slideshow by calling the unified slide function.
-    *
-    * @details This function initiates the automatic sliding of images by invoking the `changeSlide` function. The slide change 
-    *          is done with a direction of 1 (next slide) and without manually triggering the slide change.
-    *
-    * @param   index  The index of the slideshow for which the automatic slide change is triggered.
-    *
-    * @return  None.
-    */
-    async function showSlides(index) {
-        changeSlide(index, 1, false);
-    }
-
-
-    /**
-    * @brief   Changes the slide in the slideshow based on the given direction and mode.
-    *
-    * @details This function handles the logic for changing the slides in the slideshow. It supports both automatic 
-    *          and manual slide changes. The direction determines whether the next or previous slide is shown, 
-    *          and the `isManual` flag indicates whether the slide change was triggered by the user or automatically.
-    *
-    * @param   index      The index of the slideshow whose slide is to be changed.
-    * @param   direction  The direction to change the slide (1 for next, -1 for previous). Default is 1.
-    * @param   isManual   A flag indicating whether the slide change is triggered manually (true) or automatically (false). Default is false.
-    *
-    * @return  None.
-    */
-    async function changeSlide(index, direction = 1, isManual = false) {              
-        // Hide the cover photo - do it once
+     * @brief   Changes slide — original logic unchanged.
+     *          Track mode: dot drives photos directly. No hook needed here.
+     */
+    async function changeSlide(index,direction=1,isManual=false) {
         if (!slideshows[index].coverPhotoHidden) {
             if (coverPhotoContainer[index]) {
-                // Remove the photo if it exists
-                if (coverPhotoContainer[index].querySelector('img')) {
-                    coverPhotoContainer[index].removeChild(coverPhotoContainer[index].querySelector('img'));
-                }
-                slideshows[index].coverPhotoHidden = true;
-
-                // Prepare message for bad internet connection
-                photoOverlay[index].style.display = 'none'; // Hide the overlay
-                photoOverlay[index].innerHTML = '<span class="connection-error">Ojoj, internetna povezava ne omogoča take hitrosti pri nastavljeni kvaliteti slik</span>';
-                photoOverlay[index].style.color = 'white';
-                photoOverlay[index].style.zIndex = '2'; // Set the z-index to 2
-            } else {
-                console.error('Cover photo container not found.');
-            }
+                if (coverPhotoContainer[index].querySelector('img')) coverPhotoContainer[index].removeChild(coverPhotoContainer[index].querySelector('img'));
+                slideshows[index].coverPhotoHidden=true;
+                photoOverlay[index].style.display='none'; photoOverlay[index].innerHTML='<span class="connection-error">Ojoj, internetna povezava ne omogoča take hitrosti pri nastavljeni kvaliteti slik</span>'; photoOverlay[index].style.color='white'; photoOverlay[index].style.zIndex='2';
+            } else console.error('Cover photo container not found.');
         }
-
-        if (slideshows[index].isSlideshowRunning){                 
-            clearTimeout(slideshows[index].slideshowTimeout); // Clear the existing automatic timeout to reset it
-        }
-
-        // Immediately fade out the active slide
+        if (slideshows[index].isSlideshowRunning) clearTimeout(slideshows[index].slideshowTimeout);
         slideContainers[index][slideshows[index].activeSlide].classList.remove('fade-in');
-        slideContainers[index][slideshows[index].activeSlide].classList.add('fade-out'); // Quick fade-out
+        slideContainers[index][slideshows[index].activeSlide].classList.add('fade-out');
+        if (direction===1) slideshows[index].activeSlide=(slideshows[index].activeSlide+1)%3;
+        else slideshows[index].activeSlide=(slideshows[index].activeSlide+2)%3;
+        const prevSlide=(slideshows[index].activeSlide+2)%3;
+        const nextSlide=(slideshows[index].activeSlide+1)%3;
+        slideshows[index].currentBatchIndex=(slideshows[index].currentBatchIndex+direction+slideshows[index].shuffledImages.length)%slideshows[index].shuffledImages.length;
+        const prevIndex=(slideshows[index].currentBatchIndex-1+slideshows[index].shuffledImages.length)%slideshows[index].shuffledImages.length;
+        const nextIndex=(slideshows[index].currentBatchIndex+1)%slideshows[index].shuffledImages.length;
 
-        // Update slideshows[index].activeSlide for the next iteration before using it
-        if (direction === 1) {
-            slideshows[index].activeSlide = (slideshows[index].activeSlide + 1) % 3;  // Move forward
-        } else {
-            slideshows[index].activeSlide = (slideshows[index].activeSlide + 2) % 3;  // Move backward
-        }
-
-        // Calculate the previous and next slide container indices
-        const prevSlide = (slideshows[index].activeSlide + 2) % 3;  // Previous container (always 2 slides before active)
-        const nextSlide = (slideshows[index].activeSlide + 1) % 3;  // Next container (always 1 slide after active)
-
-        // Update the current batch index based on the direction (forward or backward)
-        slideshows[index].currentBatchIndex = (slideshows[index].currentBatchIndex + direction + slideshows[index].shuffledImages.length) % slideshows[index].shuffledImages.length;
-
-        // Calculate the previous and next image indices based on the current batch index
-        const prevIndex = (slideshows[index].currentBatchIndex - 1 + slideshows[index].shuffledImages.length) % slideshows[index].shuffledImages.length;
-        const nextIndex = (slideshows[index].currentBatchIndex + 1) % slideshows[index].shuffledImages.length;
-
-        // After a quick fade-out, proceed to the next steps
-        setTimeout(() => {
-            // Update only the current slide container with the new image
-            updateSlide(index, slideContainers[index][slideshows[index].activeSlide], slideshows[index].shuffledImages[slideshows[index].currentBatchIndex], 'current');
-
-            // Update either the next or previous slide based on the direction of navigation
-            if (direction === 1) {
-                // If moving forward, update the next slide
-                updateSlide(index, slideContainers[index][nextSlide], slideshows[index].shuffledImages[nextIndex], 'next');
-                // Start preloading the next image in the background
-                preloadThisImage(index, nextIndex);
-            } else {
-                // If moving backward, update the previous slide
-                updateSlide(index, slideContainers[index][prevSlide], slideshows[index].shuffledImages[prevIndex], 'prev');
-                // Start preloading the previous image in the background
-                preloadThisImage(index, prevIndex);
-            }
-
-            // Adjust the slideshow container's height based on the current active slide
-            //adjustSlideshowHeight(slideContainers[index][slideshows[index].activeSlide]);
-
-            // After resizing the window, fade in the next slide slowly
+        setTimeout(()=>{
+            // If track mode was activated during this 10ms gap, abort — track owns the DOM
+            if (slideshows[index]._blockSlideUpdate) { slideshows[index]._blockSlideUpdate=false; return; }
+            updateSlide(index,slideContainers[index][slideshows[index].activeSlide],slideshows[index].shuffledImages[slideshows[index].currentBatchIndex],'current');
+            if (direction===1) { updateSlide(index,slideContainers[index][nextSlide],slideshows[index].shuffledImages[nextIndex],'next'); preloadThisImage(index,nextIndex); }
+            else { updateSlide(index,slideContainers[index][prevSlide],slideshows[index].shuffledImages[prevIndex],'prev'); preloadThisImage(index,prevIndex); }
             slideContainers[index][slideshows[index].activeSlide].classList.remove('fade-out');
             slideContainers[index][slideshows[index].activeSlide].classList.add('fade-in');
+        },10);
 
-        }, 10); // Delay for fade-out (matches the quick fade-out time)
-        if (slideshows[index].isSlideshowRunning){ 
-            // Reset the slideshow timeout to continue auto-sliding after manual action
-            slideshows[index].slideshowTimeout = setTimeout(() => attemptChangeSlide(index), slideshows[index].slideshowSpeed);
+        // Only restart slideshow timer in normal mode; track mode owns its own timing
+        const _mapDiv=document.getElementById(`tp-map-ss-${index}`);
+        const _trackOn=_mapDiv && _mapDiv.style.display!=='none';
+        if (slideshows[index].isSlideshowRunning && !_trackOn) {
+            slideshows[index].slideshowTimeout=setTimeout(()=>attemptChangeSlide(index),slideshows[index].slideshowSpeed);
         }
-
-        updateProgressBar(index); // Update the progress bar after changing the slide
+        updateProgressBar(index);
     }
 
-
-    /**
-    * @brief   Updates the slide in a specific container with a new image and its details.
-    *
-    * @details This function asynchronously loads a new image and updates the slide content, 
-    *          including the image source, caption, and upper text. It also handles errors by retrying 
-    *          to load the next or previous image if the current one fails to load. 
-    *          If the slideshow reaches the end, the slideshow is paused.
-    *
-    * @param   index          The index of the slideshow being updated.
-    * @param   slideContainer The container element of the current slide where the image and text are displayed.
-    * @param   entry          The image entry containing the image source, caption, and title to be displayed.
-    * @param   direction      The direction ('next' or 'prev') to determine if the next or previous image should be loaded.
-    *
-    * @return  None.
-    */
-    async function updateSlide(index, slideContainer, entry, direction) {
-        const imgElement = slideContainer.querySelector('img');
-        const captionElement = slideContainer.querySelector('.text');
-        const upperTextElement = slideContainer.querySelector('.uppertext');
-        const dateElement = slideContainer.querySelector('.date');
-
-        // Stop slideshow if the flag is set
-        if (slideshows[index].pauseSlideshowFlag) {
-            pauseSlideshow(index, SLIDESHOW_VISIBLE);
-            slideshows[index].pauseSlideshowFlag = false;
-        }
-
+    async function updateSlide(index,slideContainer,entry,direction) {
+        const imgElement=slideContainer.querySelector('img'); const captionElement=slideContainer.querySelector('.text'); const upperTextElement=slideContainer.querySelector('.uppertext'); const dateElement=slideContainer.querySelector('.date');
+        if (slideshows[index].pauseSlideshowFlag) { pauseSlideshow(index,SLIDESHOW_VISIBLE); slideshows[index].pauseSlideshowFlag=false; }
         try {
-            // Preload the image asynchronously
             await preloadImage(entry.src);
-
-            // Update the slide once the image is loaded
-            imgElement.src = entry.src; // Set the valid image source
-            captionElement.textContent = entry.caption || ''; // Set caption
-
-            // Set upper text based on the entry title
-            if (slideshowTitles[index] === "All pictures") {
-                upperTextElement.textContent = entry.title || ''; // Set the title from the entry object
-                dateElement.textContent = entry.date || ''; // Set date if available
-            } else {
-                upperTextElement.textContent = ''; // Clear if not applicable
-                dateElement.textContent = '';
-            }
-
-            // Set flag to stop slideshow if it reaches the end
-            if ((imgElement.src === endImage.src) && slideshows[index].isSlideshowRunning) {
-                slideshows[index].pauseSlideshowFlag = true;
-            }
-        } catch (error) {
+            imgElement.src=entry.src; captionElement.textContent=entry.caption||'';
+            if (slideshowTitles[index]==="All pictures") { upperTextElement.textContent=entry.title||''; dateElement.textContent=entry.date||''; }
+            else { upperTextElement.textContent=''; dateElement.textContent=''; }
+            if ((imgElement.src===endImage.src)&&slideshows[index].isSlideshowRunning) slideshows[index].pauseSlideshowFlag=true;
+        } catch(error) {
             console.warn(`Failed to load image: ${entry.src}. Attempting next/previous.`);
-
-            // Handle image load failure and decide next step
-            const nextEntry = getNextOrPreviousEntry(index, entry, direction);
-
-            if (nextEntry) {
-                // Recursively attempt to load the next/previous image
-                await updateSlide(index, slideContainer, nextEntry, direction);
-            } else {
-                // Use placeholder if no valid entry is found
-                setPlaceholderImage(imgElement, captionElement, upperTextElement, dateElement);
-            }
+            const nextEntry=getNextOrPreviousEntry(index,entry,direction);
+            if (nextEntry) await updateSlide(index,slideContainer,nextEntry,direction);
+            else setPlaceholderImage(imgElement,captionElement,upperTextElement,dateElement);
         }
-
-
     }
 
-
-    /**
-    * @brief   Retrieves the next or previous entry in the slideshow based on the specified direction.
-    *
-    * @details This function calculates the next or previous entry in the slideshow based on the provided direction 
-    *          ('next' or 'prev'). It ensures that when the end or beginning of the slideshow is reached, it loops back 
-    *          to the first or last entry, respectively, providing a continuous slideshow experience.
-    *
-    * @param   index        The index of the slideshow to which the current entry belongs.
-    * @param   currentEntry The current entry (image) in the slideshow whose next or previous counterpart is needed.
-    * @param   direction    The direction of the desired entry ('next' or 'prev').
-    *
-    * @return  The next or previous entry in the slideshow, or null if the direction is invalid.
-    */
-    function getNextOrPreviousEntry(index, currentEntry, direction) {
-        const images = slideshows[index].shuffledImages;
-        const currentIndex = images.indexOf(currentEntry);
-
-        if (direction === 'next') {
-            return images[(currentIndex + 1) % images.length];
-        } else if (direction === 'prev') {
-            return images[(currentIndex - 1 + images.length) % images.length];
-        }
+    function getNextOrPreviousEntry(index,currentEntry,direction) {
+        const images=slideshows[index].shuffledImages; const currentIndex=images.indexOf(currentEntry);
+        if (direction==='next') return images[(currentIndex+1)%images.length];
+        else if (direction==='prev') return images[(currentIndex-1+images.length)%images.length];
         return null;
     }
 
-
-    /**
-    * @brief   Sets a placeholder image and related text for an image element.
-    *
-    * @details This function updates the `src` of the provided image element to a default placeholder image. 
-    *          It also sets default text for the caption and upper text elements, ensuring that these elements 
-    *          display placeholder content when no valid image or caption is available.
-    *
-    * @param   imgElement      The image element where the placeholder image will be set.
-    * @param   captionElement  The caption element where the placeholder caption will be displayed.
-    * @param   upperTextElement The upper text element where placeholder text will be shown.
-    * @param   dateElement     The date element where placeholder date text will be shown.
-    *
-    * @return  None.
-    */
-    function setPlaceholderImage(imgElement, captionElement, upperTextElement, dateElement) {
-        imgElement.src = defaultImgSrc; // Default placeholder
-        captionElement.textContent = "FOTO: Matej"; // Placeholder caption
-        upperTextElement.textContent = "Cima dell'Uomo (3010 m)"; // Placeholder upper text
-        dateElement.textContent = ""; // Placeholder date
+    function setPlaceholderImage(imgElement,captionElement,upperTextElement,dateElement) {
+        imgElement.src=defaultImgSrc; captionElement.textContent="FOTO: Matej"; upperTextElement.textContent="Cima dell'Uomo (3010 m)"; dateElement.textContent="";
     }
 
+    async function preloadThisImage(index,photoIndex) {
+        try { await Promise.all([preloadImage(slideshows[index].shuffledImages[photoIndex].src)]); slideshows[index].imageIsReady=true; }
+        catch(err) { console.error("Error loading images:",err); }
+    }
 
-    /**
-    * @brief   Preloads a specific image for a slideshow.
-    *
-    * @details This function preloads a specific image in the slideshow based on the provided indices.
-    *          It utilizes the `preloadImage` function to asynchronously load the image. 
-    *          Once the image is successfully loaded, the `imageIsReady` flag for the slideshow is set to true, 
-    *          indicating that the image is ready to be displayed.
-    *
-    * @param   index      The index of the slideshow containing the image to be preloaded.
-    * @param   photoIndex The index of the image within the slideshow to preload.
-    *
-    * @return  None.
-    */
-    async function preloadThisImage(index, photoIndex) {
-        try {
-            // Preload the specified image
-            await Promise.all([
-                preloadImage(slideshows[index].shuffledImages[photoIndex].src),
-            ]);
-            // Mark the image as ready once it is loaded
-            slideshows[index].imageIsReady = true;
-        } catch (err) {
-            console.error("Error loading images:", err);
+    function updateProgressBar(index) {
+        const progressBar=document.getElementById(`progressBar-${index}`);
+        const adjustedIndex=(slideshows[index].currentBatchIndex-1+slideshows[index].shuffledImages.length)%slideshows[index].shuffledImages.length;
+        const progressPercentage=((adjustedIndex+1)/slideshows[index].shuffledImages.length)*100;
+        progressBar.style.width=`${progressPercentage}%`;
+    }
+
+    function attemptChangeSlide(index) {
+        if (slideshows[index].imageIsReady) {
+            if (slideshows[index].isProcessingQueue) return;
+            slideshows[index].imageIsReady=false;
+            changeSlide(index,1,false); slideshows[index].attempts=0;
+        } else {
+            slideshows[index].attempts++; showConnectionError(index); console.log("Retry");
+            setTimeout(()=>attemptChangeSlide(index),100);
         }
     }
 
-
-    /**
-    * @brief   Updates the progress bar based on the current image index in the slideshow.
-    *
-    * @details This function calculates the progress percentage based on the current image index, adjusting for the batch and ensuring 
-    *          that the progress bar corresponds to 100% when the first image is reached. The width of the progress bar is updated 
-    *          accordingly, providing a visual indication of the slideshow's progress.
-    *
-    * @param   index  The index of the slideshow for which the progress bar needs to be updated.
-    *
-    * @return  None.
-    */
-    function updateProgressBar(index) {
-        const progressBar = document.getElementById(`progressBar-${index}`);
-        // Shift so 0 corresponds to 100%, without an extra offset
-        const adjustedIndex = (slideshows[index].currentBatchIndex - 1 + slideshows[index].shuffledImages.length) % slideshows[index].shuffledImages.length;
-        const progressPercentage = ((adjustedIndex + 1) / slideshows[index].shuffledImages.length) * 100;
-        progressBar.style.width = `${progressPercentage}%`; // Update progress bar width        
-    }
-
-
-    /**
-    * @brief   Attempts to change the slide if the image is ready for display.
-    *
-    * @details This function checks if the image for the current slide is ready. If the image is ready, it proceeds to change the slide 
-    *          by calling the `changeSlide` function. If the image is not ready, it increases the attempt count and retries after 50 ms, 
-    *          showing an error overlay in the meantime. This prevents the slideshow from advancing until the image has been fully loaded.
-    *
-    * @param   index  The index of the slideshow where the slide change should occur.
-    *
-    * @return  None.
-    */
-        function attemptChangeSlide(index) {  
-        if (slideshows[index].imageIsReady) {
-            if (slideshows[index].isProcessingQueue) {
-                // Stop auto sliding if actions from manual sliding are proccesing
-                return;
-            }  
-            slideshows[index].imageIsReady = false; // Reset the flag to avoid immediate re-calls
-            changeSlide(index, 1, false); // Call the function only if the image is ready
-            slideshows[index].attempts = 0;
-        } else {
-            slideshows[index].attempts++;
-            showConnectionError(index); // Show the error overlay
-            console.log("Retry");
-            setTimeout(() => attemptChangeSlide(index), 100); // Retry after 50 ms
-        }        
-    }
-
-
-    /**
-    * @brief   Displays a connection error overlay with a color-coded message.
-    *
-    * @details This function manages an overlay message to indicate a connection error during slideshow operation. 
-    *          The message color dynamically changes based on the number of attempts to load the image:
-    *            - Red: For over 15 auto-attempts or 30 manual attempts.
-    *            - Yellow: For more than 5 auto-attempts or 15 manual attempts.
-    *            - White: For any attempts greater than 0 but within lower thresholds.
-    * 
-    *          The overlay is visible for 2 seconds, and any pre-existing timeout is cleared to ensure 
-    *          consistent behavior. The function respects the slideshow's `errorFlag`, only displaying the 
-    *          message when the flag is set.
-    *
-    * @param   index  The index of the slideshow instance showing the connection error.
-    *
-    * @return  None.
-    */
     function showConnectionError(index) {
         if(slideshows[index].errorFlag) {
-            // Show the overlay
-            photoOverlay[index].style.display = '';
-
-            // Set color
-            switch (true) {
-                case (slideshows[index].attempts > 15):
-                case (slideshows[index].manualAttempts > 30):
-                    photoOverlay[index].style.color = 'red';
-                    break;
-                case (slideshows[index].attempts > 5):
-                case (slideshows[index].manualAttempts > 15):
-                    photoOverlay[index].style.color = 'yellow';
-                    break;
-                case (slideshows[index].attempts > 0):
-                case (slideshows[index].manualAttempts > 5):
-                    photoOverlay[index].style.color = 'white';
-                    break;
-            }
-
-            // Clear any existing timeout
+            photoOverlay[index].style.display='';
+            switch(true) { case(slideshows[index].attempts>15): case(slideshows[index].manualAttempts>30): photoOverlay[index].style.color='red'; break; case(slideshows[index].attempts>5): case(slideshows[index].manualAttempts>15): photoOverlay[index].style.color='yellow'; break; case(slideshows[index].attempts>0): case(slideshows[index].manualAttempts>5): photoOverlay[index].style.color='white'; break; }
             clearTimeout(slideshows[index].connectionErrorTimeout);
-
-            // Set a new timeout to hide the overlay
-            slideshows[index].connectionErrorTimeout = setTimeout(() => {
-                photoOverlay[index].style.display = 'none'; // Hide the overlay
-                slideshows[index].connectionErrorTimeout = null; // Reset the timeout reference
-            }, 2000); // 2000ms = 2 seconds
+            slideshows[index].connectionErrorTimeout=setTimeout(()=>{ photoOverlay[index].style.display='none'; slideshows[index].connectionErrorTimeout=null; },2000);
         }
     }
 
-
-    /**
-    * @brief   Monitors the visibility of slideshow wrapper divs and updates the active slideshow index.
-    *
-    * @details This function uses the IntersectionObserver API to track when a slideshow wrapper is visible in the viewport.
-    *          It triggers an update to the `currentSlideshowIndex` if more than 50% of a wrapper is visible, ensuring 
-    *          the active slideshow is only updated when not in fullscreen mode. The highest intersection ratio is tracked 
-    *          to determine the most visible wrapper.
-    *
-    * @return  None.
-    */
     function observeVisibleWrappers() {
-        const observerOptions = {
-            root: null, // Viewport
-            rootMargin: '0px',
-            threshold: 0.5 // Trigger when 50% of the wrapper is visible
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            let mostVisibleIndex = -1;
-            let highestIntersectionRatio = 0;
-
-            entries.forEach((entry) => {
-                const wrapperId = entry.target.id; // E.g., "slideShow-0", "slideShow-1"
-                const index = Number(wrapperId.split('-')[1]); // Extract the index from the ID
-
-                if (entry.isIntersecting && entry.intersectionRatio > highestIntersectionRatio) {
-                    mostVisibleIndex = index;
-                    highestIntersectionRatio = entry.intersectionRatio;
-                }
-            });
-
-            // Update the currently visible slideshow index only if not in fullscreen mode
-            if (mostVisibleIndex !== -1 && activeFullscreenIndex === null) {
-                currentSlideshowIndex = mostVisibleIndex;
-            }
-        }, observerOptions);
-
-        // Observe all wrapper divs
-        const wrapperDivs = document.querySelectorAll('.my-slideshow-wrapper'); // Select all slideshow wrappers
-        wrapperDivs.forEach((wrapper) => observer.observe(wrapper));
+        const observerOptions={root:null,rootMargin:'0px',threshold:0.5};
+        const observer=new IntersectionObserver((entries)=>{
+            let mostVisibleIndex=-1,highestIntersectionRatio=0;
+            entries.forEach((entry)=>{ const wrapperId=entry.target.id; const index=Number(wrapperId.split('-')[1]); if(entry.isIntersecting&&entry.intersectionRatio>highestIntersectionRatio){mostVisibleIndex=index;highestIntersectionRatio=entry.intersectionRatio;} });
+            if (mostVisibleIndex!==-1&&activeFullscreenIndex===null) currentSlideshowIndex=mostVisibleIndex;
+        },observerOptions);
+        const wrapperDivs=document.querySelectorAll('.my-slideshow-wrapper');
+        wrapperDivs.forEach((wrapper)=>observer.observe(wrapper));
     }
 
-
-    /*######### Event listeners functions  #########*/
-
-    /**
-    * @brief   Creates and inserts a toggle button element into the DOM.
-    *
-    * @details This function checks if the `mySlideshowContainer` is not empty, 
-    *          and then creates a toggle button to switch between different display modes. 
-    *          The button is styled and includes an SVG icon. The button is inserted into the document 
-    *          body and placed just before a target div with the class `.peak-tag` if it exists.
-    *
-    * @return  None.
-    */
     function createToggleButton() {
-        // Check if mySlideshowContainer is not empty
-        if (mySlideshowContainer.length > 0) {
-            // Find the target div with class 'peak-tag'
-            var targetDiv = document.querySelector(".peak-tag");
-
-            // Exit early if target div is not found
-            if (!targetDiv) {
-                console.warn("Target div not found!");
-                return; // Prevent button from being created or displayed
-            }
-
-            // Create the container element
-            const container = document.createElement("div");
-            container.style.display = "flex";
-
-            // Create content element
-            const content = document.createElement("div");
-            content.style.flexGrow = "1"; // Allow content to grow and take space
-
-            // Init the button element
-            toggleButton = document.createElement("button");
-            toggleButton.style.backgroundColor = "#f3891d"; 
-            toggleButton.style.borderRadius = "5px"; 
-            toggleButton.style.cursor = "pointer"; 
-            toggleButton.style.padding = "12px"; 
-            toggleButton.style.display = "flex"; 
-            toggleButton.style.alignItems = "center"; 
-            toggleButton.style.justifyContent = "center"; 
-            toggleButton.style.width = "80px"; 
-            toggleButton.style.height = "60px"; 
-
-            // Create SVG element
-            toggleButton.innerHTML = `
-                <svg fill="#000000" width="80px" height="60px" viewBox="0 0 36 36" version="1.1" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                    <g id="SVGRepo_iconCarrier"> 
-                        <path d="M32.12,10H3.88A1.88,1.88,0,0,0,2,11.88V30.12A1.88,1.88,0,0,0,3.88,32H32.12A1.88,1.88,0,0,0,34,30.12V11.88A1.88,1.88,0,0,0,32.12,10ZM32,30H4V12H32Z" class="clr-i-outline clr-i-outline-path-1"></path>
-                        <path d="M8.56,19.45a3,3,0,1,0-3-3A3,3,0,0,0,8.56,19.45Zm0-4.6A1.6,1.6,0,1,1,7,16.45,1.6,1.6,0,0,1,8.56,14.85Z" class="clr-i-outline clr-i-outline-path-2"></path>
-                        <path d="M7.9,28l6-6,3.18,3.18L14.26,28h2l7.46-7.46L30,26.77v-2L24.2,19a.71.71,0,0,0-1,0l-5.16,5.16L14.37,20.5a.71.71,0,0,0-1,0L5.92,28Z" class="clr-i-outline clr-i-outline-path-3"></path>
-                        <path d="M30.14,3h0a1,1,0,0,0-1-1h-22a1,1,0,0,0-1,1h0V4h24Z" class="clr-i-outline clr-i-outline-path-4"></path>
-                        <path d="M32.12,7V7a1,1,0,0,0-1-1h-26a1,1,0,0,0-1,1h0V8h28Z" class="clr-i-outline clr-i-outline-path-5"></path> 
-                        <rect x="0" y="0" width="36" height="36" fill-opacity="0"></rect> 
-                    </g>
-                </svg>
-            `; // Added new SVG to the button's innerHTML
-
-            // Append content and button to the container
-            container.appendChild(content);
-            container.appendChild(toggleButton);
-
-            // Append the container to the body
-            document.body.appendChild(container);
-
-            // Insert the button after the target div
-            targetDiv.insertAdjacentElement("beforebegin", container);
+        if (mySlideshowContainer.length>0) {
+            var targetDiv=document.querySelector(".peak-tag"); if(!targetDiv){console.warn("Target div not found!");return;}
+            const container=document.createElement("div"); container.style.display="flex";
+            const content=document.createElement("div"); content.style.flexGrow="1";
+            toggleButton=document.createElement("button");
+            toggleButton.style.cssText="background-color:#f3891d;border-radius:5px;cursor:pointer;padding:12px;display:flex;align-items:center;justify-content:center;width:80px;height:60px;";
+            toggleButton.innerHTML=`<svg fill="#000000" width="80px" height="60px" viewBox="0 0 36 36" version="1.1" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="SVGRepo_iconCarrier"><path d="M32.12,10H3.88A1.88,1.88,0,0,0,2,11.88V30.12A1.88,1.88,0,0,0,3.88,32H32.12A1.88,1.88,0,0,0,34,30.12V11.88A1.88,1.88,0,0,0,32.12,10ZM32,30H4V12H32Z" class="clr-i-outline clr-i-outline-path-1"></path><path d="M8.56,19.45a3,3,0,1,0-3-3A3,3,0,0,0,8.56,19.45Zm0-4.6A1.6,1.6,0,1,1,7,16.45,1.6,1.6,0,0,1,8.56,14.85Z" class="clr-i-outline clr-i-outline-path-2"></path><path d="M7.9,28l6-6,3.18,3.18L14.26,28h2l7.46-7.46L30,26.77v-2L24.2,19a.71.71,0,0,0-1,0l-5.16,5.16L14.37,20.5a.71.71,0,0,0-1,0L5.92,28Z" class="clr-i-outline clr-i-outline-path-3"></path><path d="M30.14,3h0a1,1,0,0,0-1-1h-22a1,1,0,0,0-1,1h0V4h24Z" class="clr-i-outline clr-i-outline-path-4"></path><path d="M32.12,7V7a1,1,0,0,0-1-1h-26a1,1,0,0,0-1,1h0V8h28Z" class="clr-i-outline clr-i-outline-path-5"></path><rect x="0" y="0" width="36" height="36" fill-opacity="0"></rect></g></svg>`;
+            container.appendChild(content); container.appendChild(toggleButton);
+            document.body.appendChild(container); targetDiv.insertAdjacentElement("beforebegin",container);
         }
     }
 
-
-    /**
-    * @brief   Hides all images (both separators and tables) on the page.
-    *
-    * @details This function hides all images represented by elements with the 
-    *          `.separator` class and all tables with the class `.tr-caption-container`.
-    *          It checks if the `mySlideshowContainer` is not empty before proceeding.
-    *
-    * @return  None.
-    */
     function hideAllImages() {
-        // Check if mySlideshowContainer is not empty
-        if (mySlideshowContainer.length > 0) {
-            // Find all separators and tables
-            const myPostContainers = document.querySelectorAll('.my-post-container');
-            const separators = document.querySelectorAll('.separator');
-            const tables = document.querySelectorAll('table.tr-caption-container');
-
-            myPostContainers.forEach(function(myPostContainer) {
-                myPostContainer.style.display = 'none'; // Hide post containers
-            });
-
-            // Set display to 'none' for all separators (images in divs)
-            separators.forEach(function(separator) {
-                separator.style.display = 'none';
-            });
-
-            // Set display to 'none' for all tables (captioned images in tables)
-            tables.forEach(function(table) {
-                table.style.display = 'none';
-            });
+        if (mySlideshowContainer.length>0) {
+            const myPostContainers=document.querySelectorAll('.my-post-container'); const separators=document.querySelectorAll('.separator'); const tables=document.querySelectorAll('table.tr-caption-container');
+            myPostContainers.forEach(function(c){c.style.display='none';}); separators.forEach(function(s){s.style.display='none';}); tables.forEach(function(t){t.style.display='none';});
         }
     }
 
-
-    /**
-    * @brief   Updates the image quality based on the slider value.
-    *
-    * @details This function retrieves the quality value from the quality slider for a specific slideshow and updates 
-    *          the image quality for all images in the slideshow's buffer. If the quality value is 11, the quality is 
-    *          set to the maximum level (`/s0/`). For other values, the quality is adjusted by multiplying the value by 
-    *          400 and updating the image source accordingly.
-    *
-    * @param   index  The index of the slideshow whose image quality needs to be updated.
-    *
-    * @return  None.
-    */
     function updateImageQuality(index) {
-        slideshows[index].qualityValue = qualitySliderElement[index].value;
-        qualityValueElement[index].textContent = slideshows[index].qualityValue;
-
-        slideshows[index].imageBuffer.forEach(img => {
-            // If qualityValue === '11', set quality to max with WebP (-rw) suffix
-            const newQuality = (slideshows[index].qualityValue === '11') 
-                ? '/s0-rw/' 
-                : `/s${slideshows[index].qualityValue * 400}-rw/`;
-            
-            img.src = img.src.replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//, newQuality);
-        });
+        slideshows[index].qualityValue=qualitySliderElement[index].value; qualityValueElement[index].textContent=slideshows[index].qualityValue;
+        const newQuality=(slideshows[index].qualityValue==='11')?'/s0-rw/':`/s${slideshows[index].qualityValue*400}-rw/`;
+        slideshows[index].imageBuffer.forEach(img=>{ img.src=img.src.replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//,newQuality); });
+        // Also update track photo URLs so quality is consistent in track mode
+        const ts = trackStates[index];
+        if (ts && ts.PHOTOS) {
+            ts.PHOTOS.forEach(p => { p.src = p.src.replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//,newQuality); });
+        }
     }
 
-
-    /**
-    * @brief   Manages the queuing of manual slide navigation requests.
-    *
-    * @details This function ensures that manual slide navigation requests are processed sequentially. 
-    *          It maintains a queue of requests for each slideshow, enforcing a limit to prevent overload. 
-    *          New requests are added to the queue unless the queue is full, and the processing 
-    *          of requests starts if it is not already in progress.
-    *
-    * @param   index      The index of the slideshow for which the manual slide navigation is requested.
-    * @param   direction  The direction of the slide navigation (-1 for previous, 1 for next).
-    *
-    * @return  None.
-    */
-        function enqueueManualSlide(index, direction) {
-        // Initialize callQueue if it doesn't exist yet
-        const queue = slideshows[index].callQueue || (slideshows[index].callQueue = []);
-
-        // If the queue already has 5 calls, discard the new request
-        if (queue.length >= 5) {
-            console.log("Queue is full. Discarding additional requests.");
+    function enqueueManualSlide(index,direction) {
+        // In track mode: prev/next seek the track by 10 seconds instead of changing slide
+        const mapDiv = document.getElementById(`tp-map-ss-${index}`);
+        if (mapDiv && mapDiv.style.display !== 'none') {
+            seekTrackBy(index, direction * 10);
             return;
         }
-
-        // Add the direction to the queue
+        const queue=slideshows[index].callQueue||(slideshows[index].callQueue=[]);
+        if (queue.length>=5) { console.log("Queue is full. Discarding additional requests."); return; }
         queue.push(direction);
-
-        // Start processing the queue if not already processing
-        if (!slideshows[index].isProcessingQueue) {
-            processQueue(index);
-        }
+        if (!slideshows[index].isProcessingQueue) processQueue(index);
     }
 
-
-    /**
-    * @brief Processes the call queue for manual slide changes.
-    *
-    * @details This function checks if the queue for manual slide change requests is empty. 
-    *          If not, it sets the slideshow as processing and starts handling queued requests by calling the `checkAndExecute` function.
-    *
-    * @param index The index of the slideshow for which the queue is being processed.
-    *
-    * @return None.
-    */
     function processQueue(index) {
-        const queue = slideshows[index].callQueue;
-
-        // If the queue is empty, mark processing as complete
-        if (queue.length === 0) {
-            slideshows[index].isProcessingQueue = false;
-            return;
-        }
-
-        slideshows[index].isProcessingQueue = true;
-
-        // Start checking readiness and processing the queue
-        checkAndExecute(index);
+        const queue=slideshows[index].callQueue;
+        if (queue.length===0) { slideshows[index].isProcessingQueue=false; return; }
+        slideshows[index].isProcessingQueue=true; checkAndExecute(index);
     }
 
-
-    /**
-    * @brief Checks if the next queued call can be executed and processes it.
-    *
-    * @details This function ensures that the current image is ready before executing the next slide change request. 
-    *          If the image is not ready, it retries after a short delay. Once a request is processed, it continues to the next 
-    *          one in the queue until the queue is empty.
-    *
-    * @param index The index of the slideshow being processed.
-    *
-    * @return None.
-    */
     function checkAndExecute(index) {
-        const queue = slideshows[index].callQueue;
-
+        const queue=slideshows[index].callQueue;
         if (slideshows[index].imageIsReady) {
-            slideshows[index].imageIsReady = false;
-
-            // Get the next direction from the queue and execute the slide change
-            const direction = queue.shift();
-            changeSlide(index, direction, true); // Call the unified slide function with manual=true
-            slideshows[index].manualAttempts = 0;
-
-            // After processing the current call, continue with the next one if the queue is not empty
-            if (queue.length > 0) {
-                checkAndExecute(index);
-            } else {
-                slideshows[index].isProcessingQueue = false; // Mark processing as complete
-            }
+            slideshows[index].imageIsReady=false;
+            const direction=queue.shift(); changeSlide(index,direction,true); slideshows[index].manualAttempts=0;
+            if (queue.length>0) checkAndExecute(index); else slideshows[index].isProcessingQueue=false;
         } else {
-            // If image is not ready, retry after a short delay
-            slideshows[index].manualAttempts++;
-            if(slideshows[index].manualAttempts > 5){
-                showConnectionError(index); // Show error overlay indicating loading issue
-            }
-            console.log("M_Retry");
-            setTimeout(() => checkAndExecute(index), 100); // Retry every 100ms if the image is not ready
+            slideshows[index].manualAttempts++; if(slideshows[index].manualAttempts>5) showConnectionError(index);
+            console.log("M_Retry"); setTimeout(()=>checkAndExecute(index),100);
         }
     }
 
-
-    /**
-    * @brief Toggles the visibility of the slider settings and manages auto-hide functionality.
-    *
-    * @details This function checks the current visibility state of the slider settings container 
-    *          and toggles its display. If the settings are shown, it refreshes the auto-hide 
-    *          timer to ensure the settings auto-hide after a certain period. If the settings are 
-    *          hidden, it clears the auto-hide timer to prevent unnecessary hiding actions.
-    *
-    * @param index The index of the slideshow for which the slider settings visibility is being toggled.
-    *
-    * @return None.
-    */
     function openSettings(index) {
-        const isHidden = sliderContainer[index].style.display === 'none' || sliderContainer[index].style.display === '';
-        sliderContainer[index].style.display = isHidden ? 'block' : 'none';
-        isHidden ? refreshAutoHide(index) : clearTimeout(slideshows[index].hideTimeout);
+        const isHidden=sliderContainer[index].style.display==='none'||sliderContainer[index].style.display==='';
+        sliderContainer[index].style.display=isHidden?'block':'none';
+        isHidden?refreshAutoHide(index):clearTimeout(slideshows[index].hideTimeout);
     }
 
+    function refreshAutoHide(index) { clearTimeout(slideshows[index].hideTimeout); slideshows[index].hideTimeout=setTimeout(()=>sliderContainer[index].style.display='none',2500); }
 
-    /**
-    * @brief   Resets the auto-hide timer for the slider container.
-    *
-    * @details This function clears any existing auto-hide timeout for the slider container of a specific slideshow 
-    *          and sets a new timeout. The slider container will be hidden after 2.5 seconds of inactivity.
-    *
-    * @param   index  The index of the slideshow whose slider container should be auto-hidden.
-    *
-    * @return  None.
-    */
-    function refreshAutoHide(index) {
-        clearTimeout(slideshows[index].hideTimeout);
-        slideshows[index].hideTimeout = setTimeout(() => sliderContainer[index].style.display = 'none', 2500);
-    }
-
-
-    /**
-    * @brief   Updates the fullscreen icons based on the current fullscreen state.
-    *
-    * @details This function checks whether the document is in fullscreen mode and updates the display 
-    *          of the "enter fullscreen" and "exit fullscreen" icons accordingly. The correct icon is shown 
-    *          to reflect the fullscreen state of the slideshow.
-    *
-    * @param   index  The index of the slideshow whose fullscreen icons need to be updated.
-    *
-    * @return  None.
-    */
     function updateFullscreenIcons(index) {
-        if (document.fullscreenElement) {
-            // In fullscreen mode, show the "exit fullscreen" icon
-            enterFullscreenIcon[index].style.display = 'none';
-            exitFullscreenIcon[index].style.display = 'block';
-        } else {
-            // Not in fullscreen mode, show the "enter fullscreen" icon
-            enterFullscreenIcon[index].style.display = 'block';
-            exitFullscreenIcon[index].style.display = 'none';
-        }
+        if (document.fullscreenElement) { enterFullscreenIcon[index].style.display='none'; exitFullscreenIcon[index].style.display='block'; }
+        else { enterFullscreenIcon[index].style.display='block'; exitFullscreenIcon[index].style.display='none'; }
     }
 
+    function showTooltip(controllButton) { controllButton.tooltipTimeout=setTimeout(()=>{ const tooltip=controllButton.querySelector('.tooltip'); tooltip.style.display='block'; tooltip.style.opacity='1'; },300); }
 
-    /**
-    * @brief   Displays a tooltip for a control button after a short delay.
-    *
-    * @details This function triggers a delayed display of a tooltip associated with a specific control button. 
-    *          It sets a timeout to show the tooltip, ensuring a smooth user experience by only displaying 
-    *          the tooltip when the button is hovered over for a sufficient duration.
-    *
-    * @param   controllButton  The DOM element representing the control button whose tooltip is to be displayed.
-    *
-    * @return  None.
-    */
-    function showTooltip(controllButton) {
-        controllButton.tooltipTimeout = setTimeout(() => {
-            const tooltip = controllButton.querySelector('.tooltip');
-            tooltip.style.display = 'block'; // Make the tooltip visible
-            tooltip.style.opacity = '1';    // Apply fade-in effect
-        }, 300); // Delay in milliseconds before showing the tooltip
-    }
-
-
-    /**
-    * @brief   Hides the tooltip for a control button with a fade-out effect.
-    *
-    * @details This function cancels any pending tooltip display timeout and applies a fade-out animation 
-    *          to the tooltip. Once the fade-out animation is complete, the tooltip is hidden to ensure 
-    *          a seamless user interface interaction.
-    *
-    * @param   controllButton  The DOM element representing the control button whose tooltip is to be hidden.
-    *
-    * @return  None.
-    */
     function hideTooltip(controllButton) {
-        clearTimeout(controllButton.tooltipTimeout); // Cancel pending tooltip display
-        const tooltip = controllButton.querySelector('.tooltip');
-        tooltip.style.opacity = '0'; // Trigger fade-out effect
-        setTimeout(() => {
-            tooltip.style.display = 'none'; // Hide tooltip after fade-out completes
-        }, 300); // Duration of the fade-out effect in milliseconds
+        clearTimeout(controllButton.tooltipTimeout); const tooltip=controllButton.querySelector('.tooltip'); tooltip.style.opacity='0';
+        setTimeout(()=>{ tooltip.style.display='none'; },300);
     }
 
-
-    /**
-    * @brief   Handles both single and double-click actions on the slideshow.
-    *
-    * @details This function distinguishes between single and double-click events on the slideshow.
-    *          If a double-click is detected (within a defined time threshold), it triggers a double-click action, 
-    *          such as toggling the fullscreen mode. If a single-click is detected, it triggers the appropriate 
-    *          single-click action, such as clicking a specific button for the slideshow.
-    *
-    * @param   index  The index of the slideshow that the click action applies to.
-    *
-    * @return  None.
-    */
     function handleClick(index) {
-        slideshows[index].currentTime = Date.now(); // Get current time in milliseconds
-        // Check if the time between clicks is less than the threshold for double-click
-        if (slideshows[index].currentTime - slideshows[index].lastClickTime <= doubleClickThreshold) {
-            // Clear the single-click action timer, if any, as the double-click takes precedence
-            if (slideshows[index].clickTimer) {
-                clearTimeout(slideshows[index].clickTimer);
-                slideshows[index].clickTimer = null; // Reset the click timer
-            }
-            // Call your double-click function here (toggle fullscreen)
+        slideshows[index].currentTime=Date.now();
+        if (slideshows[index].currentTime-slideshows[index].lastClickTime<=doubleClickThreshold) {
+            if (slideshows[index].clickTimer) { clearTimeout(slideshows[index].clickTimer); slideshows[index].clickTimer=null; }
             toggleFullscreen(index);
         } else {
-            // Set a timer to perform the single-click action after the double-click threshold
-            slideshows[index].clickTimer = setTimeout(() => {
-                // Perform the single-click action, like clicking the button
-                document.getElementById(`toggleSlideshowButton-${index}`).click();
-            }, doubleClickThreshold);
+            slideshows[index].clickTimer=setTimeout(()=>{ document.getElementById(`toggleSlideshowButton-${index}`).click(); },doubleClickThreshold);
         }
-
-        // Update last click time for this slideshow
-        slideshows[index].lastClickTime = slideshows[index].currentTime;
+        slideshows[index].lastClickTime=slideshows[index].currentTime;
     }
 
-    /*######### Initialization #########*/
-    // At the end, instead of window.addEventListener, we have an init function.
+    /* ═══════════════════════════════════════════════════════════════
+       INITIALIZATION  (unchanged from original, + track config vars + CSS)
+    ═══════════════════════════════════════════════════════════════ */
+
+    // Update trackpad buttons based on auth state — called from global scope since button onclicks are defined in HTML
+    window.updateTrackButtonsAuth = function(isSignedIn) {
+        document.querySelectorAll('[id^="tp-toggle-btn-ss-"]').forEach(btn => {
+            if (isSignedIn) {
+                btn.disabled = false;
+                btn.style.color = 'gray';
+                btn.style.border = '3px solid gray';
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+
+                const idx = btn.id.split('-').pop();
+                btn.onclick = () => window._ssToggleTrack && window._ssToggleTrack(idx);
+
+            } else {
+                btn.disabled = true;
+                btn.style.color = '#aaa';
+                btn.style.border = '3px solid #aaa';
+                btn.style.opacity = '0.5';
+                btn.style.cursor = 'not-allowed';
+
+                btn.onclick = null;
+            }
+        });
+    };
+
     function init(userConfig = {}) {
-        // Merge user config with defaults
         const config = { ...defaultConfig, ...userConfig };
 
-        // Set the module-level constants from config
-        initSpeed = config.initSpeed;
-        maxSpeed = config.maxSpeed;
-        minSpeed = config.minSpeed;
-        stepSpeed = config.stepSpeed;
-        initQuality = config.initQuality;
-        SLIDESHOW_HIDDEN = config.SLIDESHOW_HIDDEN;
-        SLIDESHOW_VISIBLE = config.SLIDESHOW_VISIBLE;
-        randomizeImages = config.randomizeImages;
-        defaultImgSrc_png = config.defaultImgSrc_png;
-        defaultImgSrc = config.defaultImgSrc;
-        doubleClickThreshold = config.doubleClickThreshold;
-        WindowBaseUrl = config.WindowBaseUrl;
-        isRelive = config.isRelive;
-        isBlogger = config.isBlogger;
+        initSpeed=config.initSpeed; maxSpeed=config.maxSpeed; minSpeed=config.minSpeed; stepSpeed=config.stepSpeed;
+        initQuality=config.initQuality; SLIDESHOW_HIDDEN=config.SLIDESHOW_HIDDEN; SLIDESHOW_VISIBLE=config.SLIDESHOW_VISIBLE;
+        randomizeImages=config.randomizeImages; defaultImgSrc_png=config.defaultImgSrc_png; defaultImgSrc=config.defaultImgSrc;
+        doubleClickThreshold=config.doubleClickThreshold; WindowBaseUrl=config.WindowBaseUrl; isRelive=config.isRelive; isBlogger=config.isBlogger;
+        // ── Track config ──
+        photoListUrl     = config.photoListUrl;
+        trackPlayDuration= config.trackPlayDuration;
 
-        // Now call the initialization functions
-        // Call the function to generate the slideshow containers
+        injectTrackStyles();
         generateSlideshowContainers(defaultImgSrc);
-
-        // And set up event listeners
-        // Call functions for creating buttons and hiding images
         createToggleButton();
         hideAllImages();
 
         numberOfSlideshows.forEach(index => {
-            qualitySliderElement[index].addEventListener('input', () => { updateImageQuality(index); updateSliderColor(index); });
-            speedSliderElement[index].addEventListener('input', () => updateSlideshowSpeed(index));
-            toggleSlideshowButton[index].addEventListener('click', () => slideshows[index].isSlideshowRunning ? pauseSlideshow(index, SLIDESHOW_VISIBLE) : resumeSlideshow(index, SLIDESHOW_VISIBLE));
-            previousPhoto[index].addEventListener('click', () => enqueueManualSlide(index, -1));  // Attach event listeners with the enqueue function
-            nextPhoto[index].addEventListener('click', () => enqueueManualSlide(index, 1));       // Attach event listeners with the enqueue function
-            toggleNavigationButton[index].addEventListener('click', () => toggleNavigation(index));
-            settingsButton[index].addEventListener('click', () => openSettings(index));
-            fullscreenButton[index].addEventListener('click', () => toggleFullscreen(index));
-            sliderContainer[index].addEventListener('mouseenter', () => clearTimeout(slideshows[index].hideTimeout));
-            sliderContainer[index].addEventListener('mouseleave', () => refreshAutoHide(index));
-            autoQualityCheckbox[index].addEventListener('change', () => autoSetQuality(index));
-            preloadAllButton[index].addEventListener('click', () => preloadAllImages(index));
-            if (typeof toggleButton !== "undefined" && toggleButton) {
-                toggleButton.addEventListener('click', () => toggleSlideshowOrImageVisibility(index));
-            }
-        })
-
-        document.addEventListener('fullscreenchange', () => { for (let index = 0; index < slideshows.length; index++) { updateFullscreenIcons(index); } });
-        document.addEventListener('visibilitychange', () => { for (let index = 0; index < slideshows.length; index++) { document.visibilityState === 'hidden' ? pauseSlideshow(index, SLIDESHOW_HIDDEN) : resumeSlideshow(index, SLIDESHOW_HIDDEN); } });
-
-        // Add event listeners for mouse enter and leave on control buttons
-        controllButton.forEach(button => {
-            button.addEventListener('mouseenter', () => showTooltip(button));
-            button.addEventListener('mouseleave', () => hideTooltip(button));
-        });
-
-        // Onload event
-        window.addEventListener('load', function () {
-            numberOfSlideshows.forEach(index => {
-                fetchData(index);
-                updateSlideshowSpeed(index); // Initialize the speed on load for each slideshow
-
-                // Check slideshow readiness after the window is fully loaded
-                checkAndInitialize(index); // Start checking if the slideshow is ready and initialize once done
+            qualitySliderElement[index].addEventListener('input',()=>{updateImageQuality(index);updateSliderColor(index);});
+            speedSliderElement[index].addEventListener('input',()=>updateSlideshowSpeed(index));
+            toggleSlideshowButton[index].addEventListener('click',()=>{
+                const _md=document.getElementById(`tp-map-ss-${index}`);
+                const _trackOn=_md && _md.style.display!=='none';
+                const _ts=trackStates[index];
+                if (_trackOn && _ts && _ts.ready) {
+                    // Track mode: use ts.playing as the source of truth
+                    _ts.playing ? pauseSlideshow(index,SLIDESHOW_VISIBLE) : resumeSlideshow(index,SLIDESHOW_VISIBLE);
+                } else {
+                    slideshows[index].isSlideshowRunning ? pauseSlideshow(index,SLIDESHOW_VISIBLE) : resumeSlideshow(index,SLIDESHOW_VISIBLE);
+                }
             });
+            previousPhoto[index].addEventListener('click',()=>enqueueManualSlide(index,-1));
+            nextPhoto[index].addEventListener('click',()=>enqueueManualSlide(index,1));
+            toggleNavigationButton[index].addEventListener('click',()=>toggleNavigation(index));
+            settingsButton[index].addEventListener('click',()=>openSettings(index));
+            fullscreenButton[index].addEventListener('click',()=>toggleFullscreen(index));
+            sliderContainer[index].addEventListener('mouseenter',()=>clearTimeout(slideshows[index].hideTimeout));
+            sliderContainer[index].addEventListener('mouseleave',()=>refreshAutoHide(index));
+            autoQualityCheckbox[index].addEventListener('change',()=>autoSetQuality(index));
+            preloadAllButton[index].addEventListener('click',()=>preloadAllImages(index));
+            if (typeof toggleButton!=="undefined"&&toggleButton) toggleButton.addEventListener('click',()=>toggleSlideshowOrImageVisibility(index));
         });
 
-        // Onresize event
-        window.onresize = function () {
-            numberOfSlideshows.forEach(index => {
-                autoSetQuality(index);  // Call updateSliderColor for each slideshow or if auto selected also resize images
+        document.addEventListener('fullscreenchange',()=>{for(let index=0;index<slideshows.length;index++){updateFullscreenIcons(index);}});
+        document.addEventListener('visibilitychange',()=>{for(let index=0;index<slideshows.length;index++){document.visibilityState==='hidden'?pauseSlideshow(index,SLIDESHOW_HIDDEN):resumeSlideshow(index,SLIDESHOW_HIDDEN);}});
+        controllButton.forEach(button=>{ button.addEventListener('mouseenter',()=>showTooltip(button)); button.addEventListener('mouseleave',()=>hideTooltip(button)); });
+
+        // Expose track controls globally (called from oninput/onclick in HTML)
+        window._ssToggleTrack = toggleTrackMode;
+
+        // Track speed slider: sets dot speed multiplier
+        window._ssTrackSpeed = (ssIdx, val) => {
+            const ts = trackStates[ssIdx];
+            if (ts) ts.speed = parseFloat(val);
+            const lbl = document.getElementById(`tp-speed-val-${ssIdx}`);
+            if (lbl) lbl.textContent = parseFloat(val).toFixed(2).replace(/\.?0+$/, '') + '×';
+        };
+
+        // Track group slider: update timeDist (metres) and rebuild groups if loaded
+        window._ssTrackGroup = (ssIdx, val) => {
+            const secs = parseInt(val);
+            const lbl  = document.getElementById(`tp-group-val-${ssIdx}`);
+            if (lbl) lbl.textContent = secs >= 1000 ? (secs/1000).toFixed(1) + ' km' : secs + ' m';
+            const ts = trackStates[ssIdx];
+            if (!ts || !ts.PHOTOS.length) return;
+            ts.timeDist = secs;
+            ts.GROUPS   = buildTrackGroups(ts.PHOTOS, secs, ts.totalDist);
+            ts.GROUPS.forEach(g => { g.progress = g.photos[0].progress; });
+            ts.triggers = ts.GROUPS.map((g, gi) => ({progress:g.progress, index:gi, fired:false}));
+            // Rebuild pins on map
+            ts.pinMarkers.forEach(m => ts.map && ts.map.removeLayer(m));
+            ts.pinMarkers = [];
+            ts.GROUPS.forEach((g, gi) => {
+                if (!ts.map) return;
+                const pt = getTrackPoint(ts, g.progress);
+                const pinIcon = L.divIcon({className:'', iconSize:[11,11], iconAnchor:[5.5,5.5],
+                    html:'<div style="width:11px;height:11px;background:#4a7c59;border:2px solid #fff;border-radius:50%;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>'});
+                const mk = L.marker([pt.lat, pt.lon], {icon:pinIcon}).addTo(ts.map);
+                mk.on('click', () => jumpToGroup(ssIdx, gi));
+                ts.pinMarkers.push(mk);
             });
         };
+
+        window.addEventListener('load',function(){
+            numberOfSlideshows.forEach(index=>{
+                fetchData(index); updateSlideshowSpeed(index); checkAndInitialize(index);
+            });
+        });
+        window.onresize=function(){ numberOfSlideshows.forEach(index=>{autoSetQuality(index);}); };
     }
 
-    // Expose the init function
-    window.MySlideshowModule = { init };
-    // Expose functions trigered on user interaction (located in inner html)
-    window.enqueueManualSlide = enqueueManualSlide;
-    window.handleClick = handleClick;
-    window.toggleProgressBarVisibility = toggleProgressBarVisibility;
+    window.MySlideshowModule={init};
+    window.enqueueManualSlide=enqueueManualSlide;
+    window.handleClick=handleClick;
+    window.toggleProgressBarVisibility=toggleProgressBarVisibility;
 
 })(window);
