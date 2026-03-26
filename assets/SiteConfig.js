@@ -90,6 +90,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Slideshow
     runIfDefined(window.MySlideshowModule, () => {
+        // Decide trackPhotoListUrl based on isRelive
+        const trackPhotoListUrl = isRelive
+          ? "https://metodlangus.github.io/extracted_relive_photos_with_gps_data.txt"
+          : "https://metodlangus.github.io/extracted_photos_with_gps_data.txt";
+
         MySlideshowModule.init({
             initSpeed: 3,
             maxSpeed: 10,
@@ -106,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
             isRelive: isRelive,
             isSignedIn: false, // initial (will update later)
             trackPlayer: true, // enable track player features
-            trackPhotoListUrl: 'https://metodlangus.github.io/extracted_photos_with_gps_data.txt',
+            trackPhotoListUrl: trackPhotoListUrl,
             trackPlayDuration: 90,  // seconds for full track at speed 1×
             trackGroupDist: 250,    // metres — max track-distance to keep photos in one group
         });

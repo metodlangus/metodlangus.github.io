@@ -349,9 +349,33 @@
             const dataSkip  = m[3].trim();
             const caption   = m[4].trim();
 
-            const dateM = filename.match(new RegExp('^' + postDate + '_(\\d{6})\\d*\\.JPG$', 'i'));
-            if (!dateM) continue;
-            const timeKey = dateM[1];
+            // --- backward-compatible date parsing for multiple formats ---
+            let datePart = null;
+            let timePart = null;
+            let millisPart = '';
+
+            // 1️⃣ Old format: YYYYMMDD_HHMMSS[SSS].JPG
+            let oldFormat = filename.match(new RegExp('^' + postDate + '_(\\d{6})(\\d{3})?\\.JPG$', 'i'));
+            if (oldFormat) {
+                timePart = oldFormat[1];
+                millisPart = oldFormat[2] || '';
+            } else {
+                // 2️⃣ IMGYYYYMMDDHHMMSS.jpg
+                let imgFormat = filename.match(/^IMG(\d{8})(\d{6})\.jpg$/i);
+                if (imgFormat && imgFormat[1] === postDate.replace(/-/g,'')) {
+                    timePart = imgFormat[2];
+                } else {
+                    // 3️⃣ IMG-YYYYMMDD_HHMMSS.JPG
+                    let imgDashFormat = filename.match(/^IMG-(\d{8})_(\d{6})\.JPG$/i);
+                    if (imgDashFormat && imgDashFormat[1] === postDate.replace(/-/g,'')) {
+                        timePart = imgDashFormat[2];
+                    } else {
+                        continue; // filename doesn't match any format for this postDate
+                    }
+                }
+            }
+
+            const timeKey = timePart + (millisPart ? `.${millisPart}` : '');
             if (seen.has(timeKey)) continue;
             seen.add(timeKey);
 
