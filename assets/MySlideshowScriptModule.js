@@ -17,15 +17,17 @@
         WindowBaseUrl: "",
         isRelive: false,
         isBlogger: false,
-        // ── Track player config (used when gpxURL0 is defined in the post) ──
-        photoListUrl: 'https://metodlangus.github.io/extracted_photos_with_gps_data.txt',
-        trackPlayDuration: 90,   // seconds for full track at 1×
+        isSignedIn: false, // initial (will update later)
+        trackPlayer: false, // enable track player features
+        trackPhotoListUrl: '',
+        trackPlayDuration: 90,      // seconds for full track at speed 1×
+        trackGroupDist: 250,    // metres — max track-distance to keep photos in one group
     };
 
     // Module-level variables that will be set by init
     let initSpeed, maxSpeed, minSpeed, stepSpeed, initQuality, SLIDESHOW_HIDDEN, SLIDESHOW_VISIBLE,
         randomizeImages, defaultImgSrc_png, defaultImgSrc, doubleClickThreshold, WindowBaseUrl,
-        isRelive, isBlogger, photoListUrl, trackPlayDuration;
+        isRelive, isBlogger, isSignedIn, trackPlayer, trackPhotoListUrl, trackPlayDuration, trackGroupDist;
 
     // SVG path end image with Triglav silhouette
     const endImage = {
@@ -166,6 +168,153 @@
     const trackStates = [];
 
     // Shared helpers used by both the engine and the main slideshow
+    function ensureElevationUI(ssIdx) {
+        const overlay = document.getElementById(`slideshowContainer-${ssIdx}`);
+        if (!overlay) return;
+
+        // already exists → do nothing
+        if (overlay.querySelector('.tp-elevation-wrap')) return;
+
+        const elevWrap = document.createElement('div');
+        elevWrap.className = 'tp-elevation-wrap';
+        elevWrap.id = `tp-elevation-wrap-${ssIdx}`;
+        elevWrap.style.cssText = `
+            position:absolute;
+            bottom:10px;
+            right:10px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            pointer-events:none;
+            z-index:1; /* BELOW error text */
+            background:rgba(0,0,0,0.5);
+            padding:4px 6px;
+        `;
+
+        const canvas = document.createElement('canvas');
+        canvas.className = 'tp-elevation-canvas';
+        canvas.width = 220;
+        canvas.height = 60;
+
+        const label = document.createElement('div');
+        label.className = 'tp-elevation-label';
+        label.style.cssText = `
+            font-size:11px;
+            color:#ccc;
+            margin-top:4px;
+        `;
+
+        elevWrap.appendChild(canvas);
+        elevWrap.appendChild(label);
+
+        overlay.appendChild(elevWrap);
+    }
+
+    function drawElevationProfile(ssIdx) {
+        const ts = trackStates[ssIdx];
+        if (!ts || !ts.trackPoints?.length) return;
+
+        const canvas = document.querySelector(`#slideshowContainer-${ssIdx} .tp-elevation-canvas`);
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const pts = ts.trackPoints;
+
+        const elevations = pts.map(p => p.ele || 0);
+        const min = Math.min(...elevations);
+        const max = Math.max(...elevations);
+        const range = max - min || 1;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.beginPath();
+
+        pts.forEach((p, i) => {
+            const x = (i / (pts.length - 1)) * canvas.width;
+            const y = canvas.height - ((p.ele - min) / range) * canvas.height;
+
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        });
+
+        ctx.strokeStyle = '#ccc';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+    }
+
+    function updateElevationCursor(ssIdx, progress) {
+        const ts = trackStates[ssIdx];
+        if (!ts || !ts.trackPoints?.length) return;
+
+        const root = document.getElementById(`slideshowContainer-${ssIdx}`);
+        if (!root) return;
+
+        const canvas = root.querySelector('.tp-elevation-canvas');
+        const label  = root.querySelector('.tp-elevation-label');
+        if (!canvas || !label) return;
+
+        const ctx = canvas.getContext('2d');
+        const pts = ts.trackPoints;
+
+        const elevations = pts.map(p => p.ele || 0);
+        const min = Math.min(...elevations);
+        const max = Math.max(...elevations);
+        const range = max - min || 1;
+
+        const currentIdx = Math.floor(progress * (pts.length - 1));
+        const currentPoint = pts[currentIdx];
+        if (!currentPoint) return;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // ── 1. Draw FULL profile (background line) ─────────────
+        ctx.beginPath();
+        pts.forEach((p, i) => {
+            const x = (i / (pts.length - 1)) * canvas.width;
+            const y = canvas.height - ((p.ele - min) / range) * canvas.height;
+
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        });
+        ctx.strokeStyle = '#555'; // subtle background
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // ── 2. Draw FILLED progress ────────────────────────────
+        ctx.beginPath();
+
+        pts.slice(0, currentIdx + 1).forEach((p, i) => {
+            const x = (i / (pts.length - 1)) * canvas.width;
+            const y = canvas.height - ((p.ele - min) / range) * canvas.height;
+
+            if (i === 0) ctx.moveTo(x, canvas.height);
+            ctx.lineTo(x, y);
+        });
+
+        // close shape to bottom
+        const lastX = (currentIdx / (pts.length - 1)) * canvas.width;
+        ctx.lineTo(lastX, canvas.height);
+        ctx.closePath();
+
+        ctx.fillStyle = 'rgba(200,200,200,0.6)'; // progress color
+        ctx.fill();
+
+        // ── 3. Optional: top edge highlight ────────────────────
+        ctx.beginPath();
+        pts.slice(0, currentIdx + 1).forEach((p, i) => {
+            const x = (i / (pts.length - 1)) * canvas.width;
+            const y = canvas.height - ((p.ele - min) / range) * canvas.height;
+
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        });
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // ── 4. Label ───────────────────────────────────────────
+        label.textContent = `${Math.round(currentPoint.ele || 0)} m`;
+    }
+
     function tkSec(tk) {
         return parseInt(tk.slice(0,2))*3600 + parseInt(tk.slice(2,4))*60 + parseInt(tk.slice(4,6));
     }
@@ -182,10 +331,10 @@
      *          Same source and regex as MyMemoryMapModule.
      */
     async function fetchTrackPhotos(postDate, photosRange) {
-        if (!photoListUrl || !postDate) return [];
+        if (!trackPhotoListUrl || !postDate) return [];
         if (photosRange == null) photosRange = 3;
 
-        const resp = await fetch(photoListUrl);
+        const resp = await fetch(trackPhotoListUrl);
         if (!resp.ok) throw new Error('PhotoList HTTP ' + resp.status);
         const text = await resp.text();
 
@@ -297,7 +446,7 @@
             _endTimer: null,          // setTimeout for 5s fit-bounds delay
             _endTimer2: null,         // setTimeout for endImage display
             waitingForSlide: false,   // dot paused while group photos show
-            timeDist: 200,            // metres — photo group gap
+            timeDist: trackGroupDist,   // metres — photo group gap
             ready: false,
         };
         trackStates[ssIdx] = ts;
@@ -415,6 +564,10 @@
             ts.ready = true;
             console.log('[Track] engine ready. Groups:', ts.GROUPS.length);
 
+            // For elevation profile: redraw on window resize and when track is ready
+            ensureElevationUI(ssIdx);
+            drawElevationProfile(ssIdx);
+
             // ── Hook progress bar for track seeking ──
             const progTrack = document.getElementById(`overlayProgressContainer-${ssIdx}`);
             if (progTrack) {
@@ -526,6 +679,9 @@
 
         // Update progress bar to show track position
         updateTrackProgressBar(ssIdx);
+
+        //Update elevation profile
+        updateElevationCursor(ssIdx, ts.progress);
     }
 
     /** Sync the slideshow's progress bar with the track's current position. */
@@ -624,6 +780,9 @@
             });
         }
         updateTrackProgressBar(ssIdx); // keep bar at 100%
+
+        //Update elevation profile
+        updateElevationCursor(ssIdx, ts.progress);
 
         // Step 2 — after 5s, fade in black backdrop
         ts._endTimer = setTimeout(() => {
@@ -928,6 +1087,9 @@
                         ts.map.getZoom(), {animate: false});
                 }
                 updateTrackProgressBar(ssIdx);
+
+                //Update elevation profile
+                updateElevationCursor(ssIdx, ts.progress);
             }
             // Kill slideshow's internal timer entirely
             clearTimeout(slideshows[ssIdx].slideshowTimeout);
@@ -1207,6 +1369,9 @@
                 if (ts.dotMarker && ts.trackPoints.length)
                     ts.dotMarker.setLatLng([ts.trackPoints[0].lat, ts.trackPoints[0].lon]);
                 updateTrackProgressBar(ssIdx);
+
+                //Update elevation profile
+                updateElevationCursor(ssIdx, ts.progress);
             }
 
             const gpxUrl = window[`gpxURL${ssIdx}`] || '';
@@ -1243,6 +1408,10 @@
             mapDiv.style.opacity       = '1';
         }
 
+        // Show elevation profile
+        const elevWrap = document.getElementById(`tp-elevation-wrap-${ssIdx}`);
+        if (elevWrap) elevWrap.style.display = 'flex';
+
         const nav = document.getElementById(`navigationControl-${ssIdx}`);
         if (nav) nav.style.zIndex = '3';
         const prog = document.getElementById(`overlayProgressContainer-${ssIdx}`);
@@ -1266,6 +1435,11 @@
         if (mapDiv && mapDiv.style.display !== 'none') {
             mapDiv.style.transition = 'opacity 0.6s ease';
             mapDiv.style.opacity    = '0';
+
+            // Hide elevation profile
+            const elevWrap = document.getElementById(`tp-elevation-wrap-${ssIdx}`);
+            if (elevWrap) elevWrap.style.display = 'none';
+
             // After fade completes, hide map so it doesn't intercept pointer events
             setTimeout(() => {
                 if (mapDiv.style.opacity === '0') mapDiv.style.pointerEvents = 'none';
@@ -1418,7 +1592,7 @@
         initializeSlideshows(numberOfSlideshows, defaultImgSrc);
 
         // APPLY AUTH STATE AFTER DOM EXISTS
-        window.updateTrackButtonsAuth?.(window.isSignedIn);
+        window.updateTrackButtonsAuth?.(isSignedIn);
     }
 
     /**
@@ -1448,7 +1622,7 @@
         wrapperDiv.className = 'my-slideshow-wrapper';
 
         // ── "Z zemljevidom" toggle button ──
-        const trackButtonRow = hasTrack ? `
+        const trackButtonRow = hasTrack && trackPlayer ? `
             <div style="display:flex;flex-direction:column;">
                 <button id="tp-toggle-btn-ss-${index}" class="tp-ss-btn"
                     style="margin-top: 10px; width: 100%; background-color: transparent; color: gray; font-size: 12px; border: 3px solid gray; border-radius: 5px; line-height: 1;">
@@ -1457,7 +1631,7 @@
             </div>` : '';
 
         // ── Track-specific settings (speed + group time) ──
-        const trackSettingsRow = hasTrack ? `
+        const trackSettingsRow = hasTrack && trackPlayer ? `
             <div id="tp-settings-ss-${index}" style="display:none;border-top:1px solid #444;margin-top:6px;padding-top:8px;flex-direction:column;gap:8px;">
                 <div style="display:flex;flex-direction:column;">
                     <label style="font-size:11px;color:#aaa;">Hitrost poti:
@@ -1469,9 +1643,9 @@
                 </div>
                 <div style="display:flex;flex-direction:column;">
                     <label style="font-size:11px;color:#aaa;">Razdalja skupin:
-                        <span id="tp-group-val-${index}">200 m</span>
+                        <span id="tp-group-val-${index}">${trackGroupDist} m</span>
                     </label>
-                    <input id="tp-group-sl-${index}" type="range" min="10" max="2000" step="10" value="200"
+                    <input id="tp-group-sl-${index}" type="range" min="10" max="2000" step="10" value="${trackGroupDist}"
                         style="width:100%;"
                         oninput="window._ssTrackGroup && window._ssTrackGroup(${index}, this.value)"/>
                 </div>
@@ -2417,8 +2591,11 @@
         randomizeImages=config.randomizeImages; defaultImgSrc_png=config.defaultImgSrc_png; defaultImgSrc=config.defaultImgSrc;
         doubleClickThreshold=config.doubleClickThreshold; WindowBaseUrl=config.WindowBaseUrl; isRelive=config.isRelive; isBlogger=config.isBlogger;
         // ── Track config ──
-        photoListUrl     = config.photoListUrl;
-        trackPlayDuration= config.trackPlayDuration;
+        isSignedIn = config.isSignedIn; // Initial auth state for trackpad buttons
+        trackPlayer= config.trackPlayer;
+        trackPhotoListUrl = config.trackPhotoListUrl;
+        trackPlayDuration = config.trackPlayDuration;
+        trackGroupDist = config.trackGroupDist;
 
         injectTrackStyles();
         generateSlideshowContainers(defaultImgSrc);

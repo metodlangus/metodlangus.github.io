@@ -105,8 +105,9 @@ document.addEventListener('DOMContentLoaded', () => {
             WindowBaseUrl: WindowBaseUrl,
             isRelive: isRelive,
             isSignedIn: false, // initial (will update later)
+            trackPlayer: true, // enable track player features
             trackPhotoListUrl: 'https://metodlangus.github.io/extracted_photos_with_gps_data.txt',
-            trackDuration: 90,      // seconds for full track at speed 1×
+            trackPlayDuration: 90,  // seconds for full track at speed 1×
             trackGroupDist: 250,    // metres — max track-distance to keep photos in one group
         });
 
