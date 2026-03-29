@@ -46,6 +46,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/nizke-ture/'>Nizke Ture</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/peninske-alpe/'>Peninske Alpe</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/slovaski-raj/'>Slovaški raj</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/sneznisko-hribovje/'>Snežniško hribovje</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/tavolara/'>Tavolara</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/tribec/'>Tribeč</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/velebit/'>Velebit</a></li>
