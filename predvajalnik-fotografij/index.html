@@ -283,6 +283,13 @@
     </div>
     
         
+        <!-- Google Translate Widget -->
+        <div class="translate-section">
+          <h2>Prevedi</h2>
+          <div class="google-translate-container">
+            <div id="google_translate_element"></div>
+          </div>
+        </div>
       </div>
     </div>
     
@@ -326,6 +333,19 @@
     <p>© 2026 Metod Langus. Vse pravice pridržane.</p>
   </footer>
 
+  <script>
+    window.googleTranslateElementInit = function() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'sl',
+        includedLanguages: 'en,de,it,fr,es,hr,sr,pl,ru,zh,ja,ko',
+        layout: google.translate.TranslateElement.InlineLayout.VERTICAL,
+        autoDisplay: false,
+        gaTrack: true,
+        gaId: 'G-NMX36M4NT6'
+      }, 'google_translate_element');
+    };
+  </script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer></script>
   <script src="https://metodlangus.github.io/assets/SiteConfig.js" defer></script>
   <script src="https://metodlangus.github.io/assets/Main.js" defer></script>
   <script src="https://metodlangus.github.io/assets/MyFiltersScriptModule.js" defer></script>

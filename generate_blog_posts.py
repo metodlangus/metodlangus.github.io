@@ -57,22 +57,19 @@ BLOG_TITLE_SVG = """<svg class='logo-svg' height='67' version='1.0' viewBox='0 0
           </g>
         </svg>"""
 
-TRANSLATE_HEAD = """
-<script>
-  window.googleTranslateElementInit = function() {
-    new google.translate.TranslateElement({
-      pageLanguage: 'sl',
-      includedLanguages: 'en,de,it,fr,es,hr,sr,pl,ru,zh,ja,ko', // Add/remove as needed
-      layout: google.translate.TranslateElement.InlineLayout.VERTICAL,
-      autoDisplay: false,
-      gaTrack: true,
-      gaId: 'G-NMX36M4NT6' // Your GA4 measurement ID
-    }, 'google_translate_element');
-  };
-</script>
-
-<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer></script>
-"""
+TRANSLATE_HEAD = """<script>
+    window.googleTranslateElementInit = function() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'sl',
+        includedLanguages: 'en,de,it,fr,es,hr,sr,pl,ru,zh,ja,ko',
+        layout: google.translate.TranslateElement.InlineLayout.VERTICAL,
+        autoDisplay: false,
+        gaTrack: true,
+        gaId: 'G-NMX36M4NT6'
+      }, 'google_translate_element');
+    };
+  </script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer></script>"""
 
 OUTPUT_DIR = Path.cwd() # Current path
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
