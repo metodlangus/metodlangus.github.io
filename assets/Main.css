@@ -401,9 +401,9 @@ a {
 
 @media (max-width: 600px) {
   .skiptranslate iframe {
-    transform: scale(0.8);
+    transform: scale(0.75);
     transform-origin: top left;
-    width: 125% !important;
+    width: 133.33% !important;
     height: 50px !important;
   }
 }
@@ -504,10 +504,10 @@ a {
 
   .sidebar.visible {
     display: block;
-    position: fixed;     /* 👈 overlay it */
+    position: fixed;     /* overlay it */
     top: 60px;           /* below the button */
     left: 0;
-    height: calc(100% - 60px); /* adjust height if needed */
+    height: calc(100% - 60px - var(--translate-bar-height, 0px) - 16px); /* subtract BOTH heights */
     width: 310px;
     padding: 15px;
     z-index: 1000;

@@ -75,6 +75,7 @@ OUTPUT_DIR = Path.cwd() # Current path
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 SITEMAP_FILE = "sitemap.xml"
 LASTMOD_DB = Path(".build/lastmod.json")
+BUILD_CACHE_FILE = Path(".build/build_cache.json")
 BASE_FEED_PATH = f"{LOCAL_REPO_PATH }/data/all-posts.json"
 REMOTE_DB_URL = f"{BASE_SITE_URL}/.build/lastmod.json"
 
@@ -94,7 +95,40 @@ def load_lastmod_db():
 def save_lastmod_db(db):
     LASTMOD_DB.parent.mkdir(parents=True, exist_ok=True)
     with open(LASTMOD_DB, "w", encoding="utf-8") as f:
-        json.dump(db, f, indent=2, ensure_ascii=False)  
+        json.dump(db, f, indent=2, ensure_ascii=False)
+
+# ============ Build Cache for Incremental Generation ============
+
+def load_build_cache():
+    """Load the build cache from .build/build_cache.json."""
+    if BUILD_CACHE_FILE.exists():
+        with open(BUILD_CACHE_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+def save_build_cache(cache):
+    """Save the build cache to .build/build_cache.json."""
+    BUILD_CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    with open(BUILD_CACHE_FILE, "w", encoding="utf-8") as f:
+        json.dump(cache, f, indent=2, ensure_ascii=False)
+
+def compute_hash(data) -> str:
+    """Compute SHA256 hash of arbitrary data (serialized as JSON)."""
+    json_str = json.dumps(data, sort_keys=True, ensure_ascii=False, default=str)
+    return hashlib.sha256(json_str.encode("utf-8")).hexdigest()
+
+def should_rebuild(cache, key, new_hash):
+    """Check if a page should be rebuilt. Returns True if needed."""
+    # Always rebuild in debug mode because links/structures change
+    if DEBUG_NUM_ENTRIES is not None:
+        return True
+    old_hash = cache.get(key)
+    if old_hash != new_hash:
+        return True
+    print(f"  Skipping {key}: unchanged (hash match)")
+    return False
+
+# ================================================================
 
 def compute_md5(file_path: Path) -> str:
     h = hashlib.md5()
@@ -1287,6 +1321,7 @@ def submit_changed_files_to_indexnow(folder_path: Path,
     save_lastmod_db(new_lastmod_db)
 
 def fetch_and_save_all_posts(entries):
+    cache = load_build_cache()
     # HTML sections
     sidebar_html = generate_sidebar_html(picture_settings=True, map_settings=False, current_page="posts")
     header_html = generate_header_html()
@@ -1321,6 +1356,17 @@ def fetch_and_save_all_posts(entries):
         updated_raw = entry.get("updated", {}).get("$t", formatted_date)
         dt_modified = datetime.fromisoformat(updated_raw)
         mod_date = dt_modified.replace(microsecond=0).isoformat()
+
+        # Populate label_posts_raw for this entry (needed for label pages)
+        labels_html = generate_labels_html(entry, title, slug, year, month, formatted_date, post_id,
+                                           label_posts_raw, slugify, remove_first_prefix, remove_all_prefixes)
+
+        # Incremental build: check if entry has changed
+        entry_hash = compute_hash(entry)
+        key = f"posts/{year}/{month}/{slug}"
+        if not should_rebuild(cache, key, entry_hash):
+            # Skip generating this post HTML; label_posts_raw already updated
+            continue
 
         # Replace custom post containers
         content_html = replace_mypost_scripts_with_rendered_posts(
@@ -1361,9 +1407,6 @@ def fetch_and_save_all_posts(entries):
 
         # Navigation and labels
         nav_html = generate_post_navigation_html(entries, slugs, index, local_tz, year, month)
-        labels_html = generate_labels_html(entry, title, slug, year, month, formatted_date, post_id,
-                                           label_posts_raw, slugify, remove_first_prefix, remove_all_prefixes)
-
         # Open Graph and tags
         categories = [c.get("term", "") for c in entry.get("category", [])]
 
@@ -1586,11 +1629,14 @@ def fetch_and_save_all_posts(entries):
 </html>""")
 
         print(f"Saved: {filename}")
+        cache[key] = entry_hash
 
+    save_build_cache(cache)
     return label_posts_raw
 
 
 def generate_label_pages(entries, label_posts_raw):
+    cache = load_build_cache()
     labels_dir = OUTPUT_DIR / "search/labels"
     labels_dir.mkdir(parents=True, exist_ok=True)
 
@@ -1609,6 +1655,9 @@ def generate_label_pages(entries, label_posts_raw):
         if post_id:
             entry_lookup[post_id] = entry
 
+    # Precompute entry hashes for incremental builds (for label combined hash)
+    entry_hashes = {post_id: compute_hash(entry) for post_id, entry in entry_lookup.items()}
+
     for label, posts in label_posts_raw.items():
         label_slug = slugify(remove_first_prefix(label))
         label_clean = re.sub(r"^(?:\d+\.\s*)+", "", label)
@@ -1620,6 +1669,23 @@ def generate_label_pages(entries, label_posts_raw):
 
         # Sort posts by date descending
         posts_sorted = sorted(posts, key=lambda x: x['date'], reverse=True)
+
+        # Compute combined hash of entries for this label (sorted order)
+        entry_hashes_list = []
+        for post in posts_sorted:
+            post_id = str(post.get('postId', '')).strip()
+            if not post_id:
+                continue
+            entry = entry_lookup.get(post_id)
+            if not entry:
+                continue
+            eh = entry_hashes.get(post_id, compute_hash(entry))
+            entry_hashes_list.append(eh)
+        combined_hash = compute_hash(entry_hashes_list)
+        key = f"label/{label_slug}"
+        if not should_rebuild(cache, key, combined_hash):
+            print(f"Skipped label page: {label_slug}")
+            continue
 
         post_scripts_html = ""
         for i, post in enumerate(posts_sorted):
@@ -1727,9 +1793,13 @@ def generate_label_pages(entries, label_posts_raw):
             f.write(html_content)
 
         print(f"Generated label page: {filename}")
+        cache[key] = combined_hash
 
+
+    save_build_cache(cache)
 
 def generate_archive_pages(entries):
+    cache = load_build_cache()
     """
     Generates yearly and monthly archive pages with posts sorted by date.
     """
@@ -1881,6 +1951,17 @@ def generate_archive_pages(entries):
 </body>
 </html>"""
 
+        # Incremental build: check if year page changed
+        key = f"archive/year/{year}"
+        year_hash = compute_hash(html_year)
+        if not should_rebuild(cache, key, year_hash):
+            print(f"Skipped year archive page: {year_filename}")
+        else:
+            with open(year_filename, "w", encoding="utf-8") as f:
+                f.write(html_year)
+            print(f"Generated year archive page: {year_filename}")
+            cache[key] = year_hash
+
         with open(year_filename, "w", encoding="utf-8") as f:
             f.write(html_year)
         print(f"Generated year archive page: {year_filename}")
@@ -1985,12 +2066,22 @@ def generate_archive_pages(entries):
 </body>
 </html>"""
 
-            with open(month_filename, "w", encoding="utf-8") as f:
-                f.write(html_month)
-            print(f"Generated month archive page: {month_filename}")
+            # Incremental build: check if month page changed
+            key = f"archive/month/{year}/{month}"
+            month_hash = compute_hash(html_month)
+            if not should_rebuild(cache, key, month_hash):
+                print(f"Skipped month archive page: {month_filename}")
+            else:
+                with open(month_filename, "w", encoding="utf-8") as f:
+                    f.write(html_month)
+                print(f"Generated month archive page: {month_filename}")
+                cache[key] = month_hash
+
+    save_build_cache(cache)
 
 
 def generate_about_page(current_page):
+    cache = load_build_cache()
     output_dir = OUTPUT_DIR / "o-strani"
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / "index.html"
@@ -2113,13 +2204,22 @@ def generate_about_page(current_page):
 </body>
 </html>"""
 
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(html_content)
+    # Incremental build: check if page changed
+    key = "static/about"
+    new_hash = compute_hash(html_content)
+    if should_rebuild(cache, key, new_hash):
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(html_content)
+        print(f"Generated about page: {output_path}")
+        cache[key] = new_hash
+    else:
+        print(f"Skipped about page")
 
-    print(f"Generated about page: {output_path}")
 
+    save_build_cache(cache)
 
 def generate_predvajalnik_page(current_page):
+    cache = load_build_cache()
     output_dir = OUTPUT_DIR / "predvajalnik-fotografij"
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / "index.html"
@@ -2230,12 +2330,22 @@ def generate_predvajalnik_page(current_page):
 </body>
 </html>"""
 
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(html_content)
-    print(f"Generated random slideshow page: {output_path}")
+    # Incremental build: check if page changed
+    key = "static/slideshow"
+    new_hash = compute_hash(html_content)
+    if should_rebuild(cache, key, new_hash):
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(html_content)
+        print(f"Generated random slideshow page: {output_path}")
+        cache[key] = new_hash
+    else:
+        print(f"Skipped slideshow page")
 
+
+    save_build_cache(cache)
 
 def generate_gallery_page(current_page):
+    cache = load_build_cache()
     output_dir = OUTPUT_DIR / "galerija-fotografij"
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / "index.html"
@@ -2350,12 +2460,22 @@ def generate_gallery_page(current_page):
 </body>
 </html>"""
 
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(html_content)
-    print(f"Generated gallery page: {output_path}")
+    # Incremental build: check if page changed
+    key = "static/gallery"
+    new_hash = compute_hash(html_content)
+    if should_rebuild(cache, key, new_hash):
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(html_content)
+        print(f"Generated gallery page: {output_path}")
+        cache[key] = new_hash
+    else:
+        print(f"Skipped gallery page")
 
+
+    save_build_cache(cache)
 
 def generate_peak_list_page():
+    cache = load_build_cache()
     output_dir = OUTPUT_DIR / "seznam-vrhov"
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / "index.html"
@@ -2463,12 +2583,22 @@ def generate_peak_list_page():
 </body>
 </html>"""
 
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(html_content)
-    print(f"Generated peak list page: {output_path}")
+    # Incremental build: check if page changed
+    key = "static/peak_list"
+    new_hash = compute_hash(html_content)
+    if should_rebuild(cache, key, new_hash):
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(html_content)
+        print(f"Generated peak list page: {output_path}")
+        cache[key] = new_hash
+    else:
+        print(f"Skipped peak list page")
 
+
+    save_build_cache(cache)
 
 def generate_big_map_page():
+    cache = load_build_cache()
     output_dir = OUTPUT_DIR / "zemljevid-spominov"
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / "index.html"
@@ -2604,12 +2734,22 @@ def generate_big_map_page():
 </body>
 </html>"""
 
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(html_content)
-    print(f"Generated memory map page: {output_path}")
+    # Incremental build: check if page changed
+    key = "static/big_map"
+    new_hash = compute_hash(html_content)
+    if should_rebuild(cache, key, new_hash):
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(html_content)
+        print(f"Generated memory map page: {output_path}")
+        cache[key] = new_hash
+    else:
+        print(f"Skipped big map page")
 
+
+    save_build_cache(cache)
 
 def generate_home_en_page(homepage_html):
+    cache = load_build_cache()
     output_dir = OUTPUT_DIR / "en"
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / "index.html"
@@ -2709,11 +2849,21 @@ def generate_home_en_page(homepage_html):
 </body>
 </html>"""
 
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(html_content)
-    print(f"Generated home EN page: {output_path}")
+    # Incremental build: check if homepage changed
+    key = "home/en"
+    new_hash = compute_hash(html_content)
+    if should_rebuild(cache, key, new_hash):
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(html_content)
+        print(f"Generated home EN page: {output_path}")
+        cache[key] = new_hash
+    else:
+        print(f"Skipped home EN page")
+
+    save_build_cache(cache)
 
 def generate_home_si_page(homepage_html):
+    cache = load_build_cache()
     output_path = OUTPUT_DIR / "index.html"
 
     sidebar_html = generate_sidebar_html(picture_settings=False, map_settings=False, current_page="home")
@@ -2811,10 +2961,19 @@ def generate_home_si_page(homepage_html):
 </body>
 </html>"""
 
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(html_content)
-    print(f"Generated home SI page: {output_path}")
+    # Incremental build: check if homepage changed
+    key = "home/si"
+    new_hash = compute_hash(html_content)
+    if should_rebuild(cache, key, new_hash):
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(html_content)
+        print(f"Generated home SI page: {output_path}")
+        cache[key] = new_hash
+    else:
+        print(f"Skipped home SI page")
 
+
+    save_build_cache(cache)
 
 def generate_mattia_map_page():
     output_path = OUTPUT_DIR / "mattia-adventures-map.html"
@@ -2862,6 +3021,7 @@ def generate_mattia_map_page():
 
 
 def generate_useful_links_page():
+    cache = load_build_cache()
     output_dir = OUTPUT_DIR / "uporabne-povezave"
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / "index.html"
@@ -2975,13 +3135,22 @@ def generate_useful_links_page():
 </body>
 </html>"""
 
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(html_content)
+    # Incremental build: check if page changed
+    key = "static/useful_links"
+    new_hash = compute_hash(html_content)
+    if should_rebuild(cache, key, new_hash):
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(html_content)
+        print(f"Generated useful links page: {output_path}")
+        cache[key] = new_hash
+    else:
+        print(f"Skipped useful links page")
 
-    print(f"Generated useful links page: {output_path}")
+    save_build_cache(cache)
 
 
 def generate_404_page():
+    cache = load_build_cache()
     output_path = OUTPUT_DIR / "404.html"
 
     html_content = f"""<!DOCTYPE html>
@@ -3115,10 +3284,18 @@ def generate_404_page():
 </body>
 </html>"""
 
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(html_content)
+    # Incremental build: check if page changed
+    key = "static/404"
+    new_hash = compute_hash(html_content)
+    if should_rebuild(cache, key, new_hash):
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(html_content)
+        print(f"Generated 404 page: {output_path}")
+        cache[key] = new_hash
+    else:
+        print(f"Skipped 404 page")
 
-    print(f"Generated 404 page: {output_path}")
+    save_build_cache(cache)
 
 
 COMMIT_AFTER_SECTIONS = {
