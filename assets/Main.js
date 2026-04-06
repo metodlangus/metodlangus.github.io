@@ -134,7 +134,7 @@ let posts = [];
 
 Promise.all([
   fetch(`${WindowBaseUrl}/data/all-posts.json`).then(r => r.json()),
-  typeof isRelive !== 'undefined' && isRelive
+  typeof isRelive !== 'undefined'// && isRelive
     ? fetch(`${WindowBaseUrl}/data/all-relive-posts.json`).then(r => r.json())
     : Promise.resolve({ feed: { entry: [] } })
 ])
