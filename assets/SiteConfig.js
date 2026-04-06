@@ -440,3 +440,54 @@ if (typeof firebase !== 'undefined') {
     window.signInWithGithub = signInWithGithub;
     window.onAuthStateChanged = auth.onAuthStateChanged.bind(auth);
 }
+
+// Shifting for Google Translate banner (to prevent it from covering the header)
+(function() {
+  const SHIFT_CLASS = 'translate-shift';
+
+  const menuBtn = document.querySelector('.menu-toggle');
+  const sidebar = document.getElementById('sidebar');
+  const searchBtn = document.getElementById('searchToggle');
+  const searchBox = document.getElementById('searchContainer');
+
+  function getBannerHeight() {
+    const banner = document.querySelector('iframe.goog-te-banner-frame');
+    return banner ? (banner.offsetHeight || 50) : 50;
+  }
+
+  function isTranslated() {
+    return document.documentElement.classList.contains('translated-ltr')
+  }
+
+  function updateLayout() {
+    if (isTranslated()) {
+      const height = getBannerHeight();
+
+      document.body.style.setProperty('--translate-bar-height', `${height}px`);
+
+      menuBtn?.classList.add(SHIFT_CLASS);
+      sidebar?.classList.add(SHIFT_CLASS);
+      searchBtn?.classList.add(SHIFT_CLASS);
+      searchBox?.classList.add(SHIFT_CLASS);
+
+    } else {
+      document.body.style.removeProperty('--translate-bar-height');
+
+      menuBtn?.classList.remove(SHIFT_CLASS);
+      sidebar?.classList.remove(SHIFT_CLASS);
+      searchBtn?.classList.remove(SHIFT_CLASS);
+      searchBox?.classList.remove(SHIFT_CLASS);
+    }
+  }
+
+  // Watch for class changes on <html>
+  const observer = new MutationObserver(updateLayout);
+
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class']
+  });
+
+  // Run once on load (in case already translated)
+  window.addEventListener('load', updateLayout);
+})();

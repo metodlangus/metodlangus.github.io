@@ -57,6 +57,23 @@ BLOG_TITLE_SVG = """<svg class='logo-svg' height='67' version='1.0' viewBox='0 0
           </g>
         </svg>"""
 
+TRANSLATE_HEAD = """
+<script>
+  window.googleTranslateElementInit = function() {
+    new google.translate.TranslateElement({
+      pageLanguage: 'sl',
+      includedLanguages: 'en,de,it,fr,es,hr,sr,pl,ru,zh,ja,ko', // Add/remove as needed
+      layout: google.translate.TranslateElement.InlineLayout.VERTICAL,
+      autoDisplay: false,
+      gaTrack: true,
+      gaId: 'G-NMX36M4NT6' // Your GA4 measurement ID
+    }, 'google_translate_element');
+  };
+</script>
+
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer></script>
+"""
+
 OUTPUT_DIR = Path.cwd() # Current path
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 SITEMAP_FILE = "sitemap.xml"
@@ -879,6 +896,13 @@ def generate_sidebar_html(picture_settings, map_settings, current_page):
         </div>
         {settings_html}
         {posts_sections}
+        <!-- Google Translate Widget -->
+        <div class="translate-section">
+          <h2>Prevedi</h2>
+          <div class="google-translate-container">
+            <div id="google_translate_element"></div>
+          </div>
+        </div>
       </div>
     </div>
     """
@@ -1554,6 +1578,7 @@ def fetch_and_save_all_posts(entries):
   <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+  {TRANSLATE_HEAD}
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyMapScriptModule.js" defer></script>
@@ -1695,6 +1720,7 @@ def generate_label_pages(entries, label_posts_raw):
   {back_to_top_html}
   {footer_html}
 
+  {TRANSLATE_HEAD}
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
 </body>
@@ -1852,6 +1878,7 @@ def generate_archive_pages(entries):
   {back_to_top_html}
   {footer_html}
 
+  {TRANSLATE_HEAD}
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
 </body>
@@ -1955,6 +1982,7 @@ def generate_archive_pages(entries):
   {back_to_top_html}
   {footer_html}
 
+  {TRANSLATE_HEAD}
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
 </body>
@@ -2082,6 +2110,7 @@ def generate_about_page(current_page):
   {back_to_top_html}
   {footer_html}
 
+  {TRANSLATE_HEAD}
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
 </body>
@@ -2196,6 +2225,7 @@ def generate_predvajalnik_page(current_page):
   {back_to_top_html}
   {footer_html}
 
+  {TRANSLATE_HEAD}
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyFiltersScriptModule.js" defer></script>
@@ -2315,6 +2345,7 @@ def generate_gallery_page(current_page):
 
   <script src='https://metodlangus.github.io/plugins/lightbox2/2.11.1/js/lightbox-plus-jquery.min.js'></script>
   <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
+  {TRANSLATE_HEAD}
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyFiltersScriptModule.js" defer></script>
@@ -2428,6 +2459,7 @@ def generate_peak_list_page():
   {back_to_top_html}
   {footer_html}
 
+  {TRANSLATE_HEAD}
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyPeakListScriptModule.js" defer></script>
@@ -2568,6 +2600,7 @@ def generate_big_map_page():
   <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+  {TRANSLATE_HEAD}
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyMemoryMapScriptModule.js" defer></script>
@@ -2672,6 +2705,7 @@ def generate_home_en_page(homepage_html):
   {back_to_top_html}
   {footer_html}
 
+  {TRANSLATE_HEAD}
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyRandomPhotoModule.js" defer></script>
@@ -2773,6 +2807,7 @@ def generate_home_si_page(homepage_html):
   {back_to_top_html}
   {footer_html}
 
+  {TRANSLATE_HEAD}
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyRandomPhotoModule.js" defer></script>
@@ -2936,6 +2971,7 @@ def generate_useful_links_page():
   {back_to_top_html}
   {footer_html}
 
+  {TRANSLATE_HEAD}
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyUsefulLinksScript.js" defer></script>

@@ -374,10 +374,43 @@ a {
 .labels,
 .pages,
 .settings,
-.random-photo {
+.random-photo,
+.translate-section {
   background: #f9f9f9;
   padding: 1rem;
   border-radius: 8px;
+}
+
+
+/* Google Translate Widget styling */
+.google-translate-container #google_translate_element {
+  display: inline-block;
+}
+
+.translate-section .goog-te-combo {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+@media (max-width: 600px) {
+  .skiptranslate iframe {
+    transform: scale(0.8);
+    transform-origin: top left;
+    width: 125% !important;
+    height: 50px !important;
+  }
+}
+
+.translate-shift {
+  transition: transform 0.3s ease;
+  transform: translateY(var(--translate-bar-height, 50px));
 }
 
 
