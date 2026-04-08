@@ -4,7 +4,14 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("archive-placeholder").innerHTML = `<aside class="sidebar-archive">
   <h2>Arhiv</h2>
   <details open>
-    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(18)</span></summary>
+    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(20)</span></summary>
+    <details class="month-group">
+      <summary><a href="https://metodlangus.github.io/posts/2026/04/">april 2026</a>&nbsp;<span class="post-count" dir="ltr">(2)</span></summary>
+      <ul>
+        <li><a href="https://metodlangus.github.io/posts/2026/04/sentanski-vrh-1635-m/">Šentanski vrh (1635 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/04/vitranc-1637-m-ciprnik-1746-m/">Vitranc (1637 m), Ciprnik (1746 m)</a></li>
+      </ul>
+    </details>
     <details class="month-group">
       <summary><a href="https://metodlangus.github.io/posts/2026/03/">marec 2026</a>&nbsp;<span class="post-count" dir="ltr">(3)</span></summary>
       <ul>
