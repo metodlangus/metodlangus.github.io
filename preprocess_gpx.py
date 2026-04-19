@@ -21,6 +21,9 @@ from pathlib import Path
 
 BASE_DIR = Path(os.path.dirname(os.path.abspath(__file__)))
 
+# ── feature toggles ──────────────────────────────────────────────────────────────
+PROCESS_RELIVE = False  # Set to False to skip Relive GPX processing
+
 # ── paths ────────────────────────────────────────────────────────────────────
 GPX_FOLDER        = BASE_DIR / "GPX_tracks"
 MY_GPX_FOLDER     = BASE_DIR / "my_GPX_tracks"
@@ -254,16 +257,21 @@ def main():
     print(f"\n✓ Wrote {OUTPUT_MAIN.name}  ({size_kb:.0f} KB, "
           f"{len(main_geojson['features'])} features)")
 
-    # Relive tracks
-    relive_geojson = build_geojson(MY_GPX_FOLDER, RELIVE_LIST_FILE, "Relive tracks")
-    with open(OUTPUT_RELIVE, "w", encoding="utf-8") as f:
-        json.dump(relive_geojson, f, separators=(",", ":"))
-    size_kb = OUTPUT_RELIVE.stat().st_size / 1024
-    print(f"✓ Wrote {OUTPUT_RELIVE.name}  ({size_kb:.0f} KB, "
-          f"{len(relive_geojson['features'])} features)")
+    # Relive tracks (can be disabled via PROCESS_RELIVE flag)
+    if PROCESS_RELIVE:
+        relive_geojson = build_geojson(MY_GPX_FOLDER, RELIVE_LIST_FILE, "Relive tracks")
+        with open(OUTPUT_RELIVE, "w", encoding="utf-8") as f:
+            json.dump(relive_geojson, f, separators=(",", ":"))
+        size_kb = OUTPUT_RELIVE.stat().st_size / 1024
+        print(f"✓ Wrote {OUTPUT_RELIVE.name}  ({size_kb:.0f} KB, "
+              f"{len(relive_geojson['features'])} features)")
+        stats_collections = [("Main", main_geojson), ("Relive", relive_geojson)]
+    else:
+        print("⊘ Relive track processing disabled (PROCESS_RELIVE=False)")
+        stats_collections = [("Main", main_geojson)]
 
     # Summary stats
-    for label, coll in [("Main", main_geojson), ("Relive", relive_geojson)]:
+    for label, coll in stats_collections:
         pts_raw = sum(f["properties"]["_pts_raw"] for f in coll["features"])
         pts_sim = sum(f["properties"]["_pts_sim"] for f in coll["features"])
         if pts_raw:
