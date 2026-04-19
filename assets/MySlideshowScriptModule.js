@@ -22,12 +22,15 @@
         trackPhotoListUrl: '',
         trackPlayDuration: 90,      // seconds for full track at speed 1×
         trackGroupDist: 250,    // metres — max track-distance to keep photos in one group
+        trackPhotoWindowBeforeMinutes: 60, // minutes before track start
+        trackPhotoWindowAfterMinutes: 60,  // minutes after track end
     };
 
     // Module-level variables that will be set by init
     let initSpeed, maxSpeed, minSpeed, stepSpeed, initQuality, SLIDESHOW_HIDDEN, SLIDESHOW_VISIBLE,
         randomizeImages, defaultImgSrc_png, defaultImgSrc, doubleClickThreshold, WindowBaseUrl,
-        isRelive, isBlogger, isSignedIn, trackPlayer, trackPhotoListUrl, trackPlayDuration, trackGroupDist;
+        isRelive, isBlogger, isSignedIn, trackPlayer, trackPhotoListUrl, trackPlayDuration, trackGroupDist,
+        trackPhotoWindowBeforeMinutes, trackPhotoWindowAfterMinutes;
 
     // SVG path end image with Triglav silhouette
     const endImage = {
@@ -485,20 +488,83 @@
             const trkPts = Array.from(doc.querySelectorAll('trkpt'));
             if (!trkPts.length) throw new Error('No trackpoints in GPX');
 
+            // Helper: parse human-readable time from description (as LOCAL time)
+            function parseDescTime(descText, timeType) {
+                // Match: "Start time: HH:MM DD Mon YYYY" or "Finish time: HH:MM DD Mon YYYY"
+                const pattern = timeType === 'start' 
+                    ? /Start time:\s*(\d{2}):(\d{2})\s+(\d{1,2})\s+(\w+)\s+(\d{4})/
+                    : /Finish time:\s*(\d{2}):(\d{2})\s+(\d{1,2})\s+(\w+)\s+(\d{4})/;
+                const m = descText.match(pattern);
+                if (!m) return null;
+                const [, hh, mm, dd, mon, yyyy] = m;
+                // Parse as local time: "8 Feb 2026 07:09" (not UTC-prefixed)
+                const dateStr = new Date(`${mon} ${dd} ${yyyy} ${hh}:${mm}`);
+                return dateStr.getTime();
+            }
+
+            // First try to parse times from track description
+            let trackStartMs = null, trackEndMs = null;
+            let localTimezoneOffsetMs = 0; // offset from UTC to local time
+            const trk = doc.querySelector('trk');
+            const desc = trk?.querySelector('desc')?.textContent || '';
+            const parsedStart = parseDescTime(desc, 'start');
+            const parsedEnd = parseDescTime(desc, 'finish');
+            
+            // If we have description times, try to detect timezone by comparing with waypoint times
+            if (parsedStart) {
+                const wpts = Array.from(doc.querySelectorAll('wpt'));
+                for (const wpt of wpts) {
+                    const type = wpt.querySelector('type')?.textContent;
+                    const timeStr = wpt.querySelector('time')?.textContent;
+                    if (type === 'Starting Point' && timeStr) {
+                        const waypointUtcMs = new Date(timeStr).getTime();
+                        localTimezoneOffsetMs = parsedStart - waypointUtcMs;
+                        console.log('[Track] Description Start (local):', new Date(parsedStart).toString());
+                        console.log('[Track] Waypoint Start (UTC):', new Date(waypointUtcMs).toISOString());
+                        console.log('[Track] Detected timezone offset:', localTimezoneOffsetMs / 3600000, 'hours');
+                        trackStartMs = parsedStart;
+                        break;
+                    }
+                }
+            }
+            if (parsedEnd) trackEndMs = parsedEnd;
+
+            // Fallback to waypoints if description parsing failed
+            if (!trackStartMs || !trackEndMs) {
+                const wpts = Array.from(doc.querySelectorAll('wpt'));
+                for (const wpt of wpts) {
+                    const type = wpt.querySelector('type')?.textContent;
+                    const timeStr = wpt.querySelector('time')?.textContent;
+                    if (type === 'Starting Point' && timeStr && !trackStartMs) {
+                        trackStartMs = new Date(timeStr).getTime() + localTimezoneOffsetMs;
+                        console.log('[Track] Fallback - Using Waypoint Start (converted to local):', new Date(trackStartMs).toString());
+                    }
+                    if (type === 'Finishing Point' && timeStr && !trackEndMs) {
+                        trackEndMs = new Date(timeStr).getTime() + localTimezoneOffsetMs;
+                        console.log('[Track] Fallback - Using Waypoint Finish (converted to local):', new Date(trackEndMs).toString());
+                    }
+                }
+            }
+
             let cum = 0;
             trkPts.forEach((el, i) => {
                 const lat = parseFloat(el.getAttribute('lat'));
                 const lon = parseFloat(el.getAttribute('lon'));
                 const ele = parseFloat(el.querySelector('ele')?.textContent || 0);
                 const tStr = el.querySelector('time')?.textContent || '';
-                const timeMs = tStr ? new Date(tStr).getTime() : null;
+                // Convert GPX time (UTC) to local time by adding timezone offset
+                const timeMs = tStr ? new Date(tStr).getTime() + localTimezoneOffsetMs : null;
                 if (i > 0) cum += haversine(ts.trackPoints[i-1], {lat, lon});
                 ts.trackPoints.push({lat, lon, ele, dist: cum, timeMs});
             });
             ts.totalDist = cum;
 
-            const trackStartMs = ts.trackPoints[0].timeMs;
-            const trackEndMs   = ts.trackPoints[ts.trackPoints.length-1].timeMs;
+            // Use waypoint times if available, otherwise fallback to trackpoint times
+            if (!trackStartMs) trackStartMs = ts.trackPoints[0].timeMs;
+            if (!trackEndMs) trackEndMs = ts.trackPoints[ts.trackPoints.length-1].timeMs;
+
+            console.log('[Track] FINAL Activity start time (local):', new Date(trackStartMs).toString());
+            console.log('[Track] FINAL Activity end time (local):', new Date(trackEndMs).toString());
 
             // ── Draw track ──
             const lls = ts.trackPoints.map(p => [p.lat, p.lon]);
@@ -526,10 +592,12 @@
             if (ts.PHOTOS.length && trackStartMs && trackEndMs) {
                 const gpxDate = new Date(trackStartMs).toISOString().slice(0, 10);
 
-                function photoToUtcMs(timeKey, offsetH) {
+                function photoToLocalMs(timeKey) {
+                    // Parse photo time as LOCAL time (same as track times)
                     const hh=parseInt(timeKey.slice(0,2)), mm=parseInt(timeKey.slice(2,4)), ss=parseInt(timeKey.slice(4,6));
-                    return new Date(gpxDate+'T'+String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0')+'Z').getTime()
-                        - offsetH*3600*1000;
+                    // Create date in local time: parse "070915" + "2026-02-08" as local time
+                    const localDate = new Date(gpxDate+' '+String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0'));
+                    return localDate.getTime();
                 }
                 function nearestByTime(pMs) {
                     let best=0, bestDiff=Infinity;
@@ -540,24 +608,45 @@
                     return {idx:best, diff:bestDiff};
                 }
 
-                // Auto-detect camera UTC offset using all photos
-                let utcOffset=0, bestScore=-Infinity;
-                for (let offsetH=-12; offsetH<=14; offsetH++) {
-                    let inside=0, totalDiff=0;
-                    for (const p of ts.PHOTOS) {
-                        const pMs=photoToUtcMs(p.timeKey, offsetH);
-                        if (pMs>=trackStartMs && pMs<=trackEndMs) { inside++; totalDiff+=nearestByTime(pMs).diff; }
+                function getProgressAtTime(pMs) {
+                    const pts = ts.trackPoints;
+                    if (!pts.length || !pts[0].timeMs) return 0;
+                    if (pMs <= pts[0].timeMs) return pts[0].dist / ts.totalDist;
+                    if (pMs >= pts[pts.length-1].timeMs) return pts[pts.length-1].dist / ts.totalDist;
+                    for (let i = 0; i < pts.length - 1; i++) {
+                        if (pts[i].timeMs <= pMs && pMs < pts[i+1].timeMs) {
+                            const t1 = pts[i].timeMs, t2 = pts[i+1].timeMs;
+                            const d1 = pts[i].dist, d2 = pts[i+1].dist;
+                            const progress = d1 + (d2 - d1) * (pMs - t1) / (t2 - t1);
+                            return Math.max(0.001, Math.min(0.999, progress / ts.totalDist));
+                        }
                     }
-                    if (inside===0) continue;
-                    const score=inside*1e9 - totalDiff/inside;
-                    if (score>bestScore) { bestScore=score; utcOffset=offsetH; }
+                    return 0; // fallback
                 }
-                console.log('[Track] utcOffset:', utcOffset);
+
+                console.log('[Track] All times are now in LOCAL timezone (not UTC)');
+                console.log('[Track] Using strict time window from activity start to end');
+
+                const photoWindowBeforeMs = (trackPhotoWindowBeforeMinutes ?? 10) * 60000;
+                const photoWindowAfterMs = (trackPhotoWindowAfterMinutes ?? 15) * 60000;
+                const earliestPhotoMs = trackStartMs - photoWindowBeforeMs;
+                const latestPhotoMs = trackEndMs + photoWindowAfterMs;
+                console.log('[Track] Photo window: ', new Date(earliestPhotoMs).toString(), ' to ', new Date(latestPhotoMs).toString());
+
+                ts.PHOTOS = ts.PHOTOS.filter(p => {
+                    const pMs = photoToLocalMs(p.timeKey);
+                    p.localMs = pMs;
+                    console.log('[Track] Photo', p.timeKey, '→', new Date(pMs).toString(), '- Included:', pMs >= earliestPhotoMs && pMs <= latestPhotoMs);
+                    return pMs >= earliestPhotoMs && pMs <= latestPhotoMs;
+                });
+                console.log('[Track] filtered to', ts.PHOTOS.length, 'photos within time window');
+
+                console.log('[Track] photos after time-window filter:', ts.PHOTOS.length,
+                    `(${photoWindowBeforeMs/60000} min before, ${photoWindowAfterMs/60000} min after)`);
 
                 ts.PHOTOS.forEach(p => {
-                    const pMs=photoToUtcMs(p.timeKey, utcOffset);
-                    const {idx}=nearestByTime(pMs);
-                    p.progress=Math.max(0.001, Math.min(0.999, ts.trackPoints[idx].dist/ts.totalDist));
+                    const pMs = p.localMs ?? photoToLocalMs(p.timeKey);
+                    p.progress = getProgressAtTime(pMs);
                 });
                 for (let i=1; i<ts.PHOTOS.length; i++) {
                     if (ts.PHOTOS[i].progress<=ts.PHOTOS[i-1].progress)
@@ -2620,6 +2709,8 @@
         trackPhotoListUrl = config.trackPhotoListUrl;
         trackPlayDuration = config.trackPlayDuration;
         trackGroupDist = config.trackGroupDist;
+        trackPhotoWindowBeforeMinutes = config.trackPhotoWindowBeforeMinutes;
+        trackPhotoWindowAfterMinutes = config.trackPhotoWindowAfterMinutes;
 
         injectTrackStyles();
         generateSlideshowContainers(defaultImgSrc);

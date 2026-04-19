@@ -114,6 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
             trackPhotoListUrl: trackPhotoListUrl,
             trackPlayDuration: 90,  // seconds for full track at speed 1×
             trackGroupDist: 250,    // metres — max track-distance to keep photos in one group
+            trackPhotoWindowBeforeMinutes: 60, // minutes before track start
+            trackPhotoWindowAfterMinutes: 60,  // minutes after track end
         });
 
         // React to auth changes
