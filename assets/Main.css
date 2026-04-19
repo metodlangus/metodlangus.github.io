@@ -408,12 +408,6 @@ a {
   }
 }
 
-.translate-shift {
-  transition: transform 0.3s ease;
-  transform: translateY(var(--translate-bar-height, 50px));
-}
-
-
 /* Searchbox */
 /* Container for the search box - starts offscreen to the right */
 .search-container {
@@ -533,6 +527,11 @@ a {
   .logo-svg {
     width: 80%;
     max-width: 540px; /* adjust as needed */
+  }
+
+  .translate-shift {
+    transition: transform 0.3s ease;
+    transform: translateY(var(--translate-bar-height, 50px));
   }
 }
 
