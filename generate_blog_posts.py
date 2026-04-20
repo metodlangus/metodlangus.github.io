@@ -916,6 +916,7 @@ def generate_sidebar_html(picture_settings, map_settings, current_page):
             <h2>Strani</h2>
             <ul>
               <li><a href="{BASE_SITE_URL}">Dnevnik</a></li>
+              <li><a href="javascript:getRandomPost()">Naključna objava</a></li>
               <li><a href="{BASE_SITE_URL}/predvajalnik-fotografij/">Predvajalnik naključnih fotografij</a></li>
               <li><a href="{BASE_SITE_URL}/galerija-fotografij/">Galerija fotografij</a></li>
               <li><a href="{BASE_SITE_URL}/seznam-vrhov/">Seznam vrhov</a></li>

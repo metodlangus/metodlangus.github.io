@@ -398,3 +398,47 @@ window.addEventListener("scroll", () => {
   btn.style.display = window.scrollY > 400 ? "block" : "none";
 });
 btn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+
+
+
+/* Random post function */
+async function getRandomPost() {{
+  try {{
+    // Fetch the combined posts JSON
+    const [mainRes, reliveRes] = await Promise.all([
+      fetch('https://metodlangus.github.io/data/all-posts.json'),
+      fetch('https://metodlangus.github.io/data/all-relive-posts.json')
+    ]);
+    const mainData = await mainRes.json();
+    const reliveData = await reliveRes.json();
+    const entries = [...(mainData.feed?.entry || []), ...(reliveData.feed?.entry || [])];
+    
+    if (!entries || entries.length === 0) {{
+      throw new Error('No posts found');
+    }}
+    
+    // Extract all post URLs
+    const postLinks = [];
+    for (const entry of entries) {{
+      const links = entry.link || [];
+      const postLink = links.find(l => l.rel === "alternate" && l.type === "text/html");
+      if (postLink && postLink.href) {{
+        postLinks.push(postLink.href.replace(/\/index\.html$/, '/'));
+      }}
+    }}
+    
+    if (postLinks.length === 0) {{
+      throw new Error('No valid post links found');
+    }}
+    
+    // Select random post
+    const randomPost = postLinks[Math.floor(Math.random() * postLinks.length)];
+    
+    // Navigate to random post
+    window.location.href = randomPost;
+  }} catch (error) {{
+    console.error('Error fetching posts:', error);
+    // Fallback: redirect to home
+    window.location.href = 'https://metodlangus.github.io/';
+  }}
+}}
