@@ -186,6 +186,17 @@ document.addEventListener('DOMContentLoaded', () => {
           });
     });
 
+    // Mattia Map (Leaflet-based adventure map)
+    runIfDefined(window.MattiaMapScriptModule, () => {
+        MattiaMapScriptModule.init({
+            mapId: 'map',
+            sidebarId: 'sidebar',
+            toggleBtnId: 'toggleSidebar',
+            postListId: 'postList',
+            keywordsGeo: window.keywords_geo || {}
+        });
+    });
+
     // Attach auth overlay listeners (works for both static and dynamic overlays)
     function attachAuthOverlayListeners(container) {
         // Google login

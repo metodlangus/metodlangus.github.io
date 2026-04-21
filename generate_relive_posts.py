@@ -2866,7 +2866,8 @@ def generate_mattia_map_page():
 <script src='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
 <script src="{BASE_SITE_URL}/mont-nav-keywords-geo.js"></script>
-<script src="{BASE_SITE_URL}/assets/MattiaMapScript.js"></script>
+<script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
+<script src="{BASE_SITE_URL}/assets/MattiaMapScriptModule.js" defer></script>
 
 </body>
 </html>
@@ -2988,7 +2989,7 @@ def generate_useful_links_page():
 
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/MyUsefulLinksScript.js" defer></script>
+  <script src="{BASE_SITE_URL}/assets/MyUsefulLinksScriptModule.js" defer></script>
 </body>
 </html>"""
 
