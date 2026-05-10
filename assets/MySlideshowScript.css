@@ -484,3 +484,77 @@ h2.my-title {
     display: inline-block;
     width: 1em; /* keep alignment nice */
 }
+
+/* Help overlay styles */
+.help-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.help-modal {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    text-align: left;
+}
+
+.help-modal h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.help-modal h3 {
+    color: #555;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+.help-section {
+    margin-bottom: 20px;
+}
+
+.help-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.help-key {
+    font-weight: bold;
+    color: #007acc;
+}
+
+.help-desc {
+    flex: 1;
+    margin-left: 10px;
+}
+
+.help-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #f0f0f0;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.help-modal {
+    position: relative;
+}

@@ -138,6 +138,7 @@
     const slideContainers = [];
     const toggleNavigationButton = [];
     const settingsButton = [];
+    const infoButton = [];
     const previousPhoto = [];
     const toggleSlideshowButton = [];
     const nextPhoto = [];
@@ -1858,6 +1859,14 @@
                                 <div class="tooltip">Celozaslonsko</div>
                             </button>
                         </span>
+                        <span data-is-tooltip-wrapper="true" class="toggle-target" id="navigationControlButton5-${index}" style="display: none;">
+                            <button aria-label="Info" id="infoButton-${index}">
+                                <svg height="24px" viewBox="0 0 24 24" width="24px" style="display: block;">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                                </svg>
+                                <div class="tooltip">Pomoč</div>
+                            </button>
+                        </span>
                     </div>
 
                     <div class='slider-container' id='sliderContainer-${index}' style="display: none; flex-direction: column; gap: 10px;">
@@ -1934,6 +1943,7 @@
             ]);
             toggleNavigationButton.push(document.getElementById(`toggleNavigationButton-${index}`));
             settingsButton.push(document.getElementById(`settingsButton-${index}`));
+            infoButton.push(document.getElementById(`infoButton-${index}`));
             previousPhoto.push(document.getElementById(`previousPhoto-${index}`));
             toggleSlideshowButton.push(document.getElementById(`toggleSlideshowButton-${index}`));
             nextPhoto.push(document.getElementById(`nextPhoto-${index}`));
@@ -1955,7 +1965,7 @@
             controllButton = [
                 `navigationControlButton0-${index}`, `navigationControlButton1-${index}`,
                 `navigationControlButton2-${index}`, `navigationControlButton3-${index}`,
-                `navigationControlButton4-${index}`
+                `navigationControlButton4-${index}`, `navigationControlButton5-${index}`
             ].map(id => document.getElementById(id));
             navigationControlButtons.push(controllButton);
 
@@ -2667,6 +2677,79 @@
         slideshows[index].lastClickTime=slideshows[index].currentTime;
     }
 
+    // Help functionality
+    function showHelp() {
+        const overlay = document.createElement('div');
+        overlay.className = 'help-overlay';
+        const modal = document.createElement('div');
+        modal.className = 'help-modal';
+
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'help-close';
+        closeBtn.textContent = '×';
+        closeBtn.onclick = () => {
+            document.body.removeChild(overlay);
+        };
+
+        const title = document.createElement('h2');
+        title.textContent = 'Pomoč za predvajalnik';
+
+        const buttonsSection = document.createElement('div');
+        buttonsSection.className = 'help-section';
+        buttonsSection.innerHTML = `
+            <h3>Gumbi</h3>
+            <div class="help-item"><span class="help-key"><svg height='24px' viewBox='0 0 24 24' width='24px'><path d='M8 5v14l11-7z'/></svg></span><span class="help-desc">Zaženi ali ustavi predvajanje</span></div>
+            <div class="help-item"><span class="help-key"><svg height='24px' viewBox='0 0 24 24' width='24px'><path d='M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z'/></svg></span><span class="help-desc">Pojdi na prejšnjo sliko</span></div>
+            <div class="help-item"><span class="help-key"><svg height='24px' viewBox='0 0 24 24' width='24px'><path d='M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z'/></svg></span><span class="help-desc">Pojdi na naslednjo sliko</span></div>
+            <div class="help-item"><span class="help-key"><svg height="24px" viewBox="0 0 24 24" width="24px"><path d="M4 4h5V2H2v7h2V4zm16 0v5h2V2h-7v2h5zM9 18H4v-5H2v7h7v-2zm11-5v5h-5v2h7v-7h-2z"></path></svg></span><span class="help-desc">Vklopi ali izklopi celozaslonski način</span></div>
+            <div class="help-item"><span class="help-key"><svg height="24px" viewBox="0 0 24 24" width="24px"><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 21h-4l-.551-2.48a6.991 6.991 0 0 1-1.819-1.05l-2.424.763-2-3.464 1.872-1.718a7.055 7.055 0 0 1 0-2.1L3.206 9.232l2-3.464 2.424.763A6.992 6.992 0 0 1 9.45 5.48L10 3h4l.551 2.48a6.992 6.992 0 0 1 1.819 1.05l2.424-.763 2 3.464-1.872 1.718a7.05 7.05 0 0 1 0 2.1l1.872 1.718-2 3.464-2.424-.763a6.99 6.99 0 0 1-1.819 1.052L14 21z"/><circle cx="12" cy="12" r="3" stroke="#000000" stroke-width="2"/></svg></span><span class="help-desc">Odpre nastavitveni panel</span></div>
+            <div class="help-item"><span class="help-key"><svg height="24px" viewBox="0 0 24 24" width="24px"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></span><span class="help-desc">Odpre to informacijo</span></div>
+        `;
+
+        const clickSection = document.createElement('div');
+        clickSection.className = 'help-section';
+        clickSection.innerHTML = `
+            <h3>Klik z miško</h3>
+            <div class="help-item"><span class="help-key">Leva tretjina</span><span class="help-desc">Pojdi na prejšnjo sliko</span></div>
+            <div class="help-item"><span class="help-key">Srednja tretjina</span><span class="help-desc">Enkratni klik: start/pavza, dvojni klik: celozaslonsko</span></div>
+            <div class="help-item"><span class="help-key">Desna tretjina</span><span class="help-desc">Pojdi na naslednjo sliko</span></div>
+        `;
+
+        const shortcutsSection = document.createElement('div');
+        shortcutsSection.className = 'help-section';
+        shortcutsSection.innerHTML = `
+            <h3>Tipke</h3>
+            <div class="help-item"><span class="help-key">S / 5</span><span class="help-desc">Zaženi ali ustavi predvajanje</span></div>
+            <div class="help-item"><span class="help-key">←</span><span class="help-desc">Pojdi na prejšnjo sliko</span></div>
+            <div class="help-item"><span class="help-key">→</span><span class="help-desc">Pojdi na naslednjo sliko</span></div>
+            <div class="help-item"><span class="help-key">F / 1</span><span class="help-desc">Vklopi/izklopi celozaslonski način</span></div>
+            <div class="help-item"><span class="help-key">N / 2</span><span class="help-desc">Pokaži/skrij navigacijo</span></div>
+            <div class="help-item"><span class="help-key">U / 7</span><span class="help-desc">Pokaži/skrij opis</span></div>
+            <div class="help-item"><span class="help-key">Q / 9</span><span class="help-desc">Vklopi/izklopi samodejno kvaliteto</span></div>
+            <div class="help-item"><span class="help-key">P / 0</span><span class="help-desc">Prednaloži vse slike</span></div>
+            <div class="help-item"><span class="help-key">T</span><span class="help-desc">Skrij/prikaži predvajalnik</span></div>
+            <div class="help-item"><span class="help-key">B / 3</span><span class="help-desc">Pokaži/skrij vrstico napredka</span></div>
+            <div class="help-item"><span class="help-key">E / 8</span><span class="help-desc">Skrij/prikaži prikaz napak</span></div>
+            <div class="help-item"><span class="help-key">+ / 4</span><span class="help-desc">Povečaj hitrost</span></div>
+            <div class="help-item"><span class="help-key">- / 6</span><span class="help-desc">Zmanjšaj hitrost</span></div>
+        `;
+
+        modal.appendChild(closeBtn);
+        modal.appendChild(title);
+        modal.appendChild(buttonsSection);
+        modal.appendChild(clickSection);
+        modal.appendChild(shortcutsSection);
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+
+        // Close on overlay click
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                document.body.removeChild(overlay);
+            }
+        });
+    }
+
     /* ═══════════════════════════════════════════════════════════════
        INITIALIZATION  (unchanged from original, + track config vars + CSS)
     ═══════════════════════════════════════════════════════════════ */
@@ -2735,6 +2818,7 @@
             nextPhoto[index].addEventListener('click',()=>enqueueManualSlide(index,1));
             toggleNavigationButton[index].addEventListener('click',()=>toggleNavigation(index));
             settingsButton[index].addEventListener('click',()=>openSettings(index));
+            infoButton[index].addEventListener('click',()=>showHelp());
             fullscreenButton[index].addEventListener('click',()=>toggleFullscreen(index));
             sliderContainer[index].addEventListener('mouseenter',()=>clearTimeout(slideshows[index].hideTimeout));
             sliderContainer[index].addEventListener('mouseleave',()=>refreshAutoHide(index));
