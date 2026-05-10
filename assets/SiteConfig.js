@@ -457,6 +457,7 @@ if (typeof firebase !== 'undefined') {
 // Shifting for Google Translate banner (to prevent it from covering the header)
 (function() {
   const SHIFT_CLASS = 'translate-shift';
+  const SHIFT_CLASS_ALWAYS = 'translate-shift-always';
 
   const menuBtn = document.querySelector('.menu-toggle');
   const sidebar = document.getElementById('sidebar');
@@ -480,16 +481,16 @@ if (typeof firebase !== 'undefined') {
 
       menuBtn?.classList.add(SHIFT_CLASS);
       sidebar?.classList.add(SHIFT_CLASS);
-      searchBtn?.classList.add(SHIFT_CLASS);
-      searchBox?.classList.add(SHIFT_CLASS);
+      searchBtn?.classList.add(SHIFT_CLASS_ALWAYS);
+      searchBox?.classList.add(SHIFT_CLASS_ALWAYS);
 
     } else {
       document.body.style.removeProperty('--translate-bar-height');
 
       menuBtn?.classList.remove(SHIFT_CLASS);
       sidebar?.classList.remove(SHIFT_CLASS);
-      searchBtn?.classList.remove(SHIFT_CLASS);
-      searchBox?.classList.remove(SHIFT_CLASS);
+      searchBtn?.classList.remove(SHIFT_CLASS_ALWAYS);
+      searchBox?.classList.remove(SHIFT_CLASS_ALWAYS);
     }
   }
 

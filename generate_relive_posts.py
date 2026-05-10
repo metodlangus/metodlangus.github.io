@@ -1160,9 +1160,9 @@ def generate_sitemap_from_folder(folder_path: Path, exclude_dirs=None, exclude_f
         # Build URL (remove index.html) ----------
         if relative_path.endswith("index.html"):
             clean_path = relative_path[:-len("index.html")]
-            url = f"{BASE_BLOG_URL}/{clean_path}".rstrip("/") + "/"
+            url = f"{BASE_SITE_URL}/{clean_path}".rstrip("/") + "/"
         else:
-            url = f"{BASE_BLOG_URL}/{relative_path}"
+            url = f"{BASE_SITE_URL}/{relative_path}"
 
         # Determine priority
         parts = Path(relative_path).parts
@@ -1233,11 +1233,11 @@ def submit_changed_files_to_indexnow(folder_path: Path,
             if not folder_key.endswith("/"):
                 folder_key += "/"
             file_key = rel_path
-            url = f"{BASE_BLOG_URL}/{folder_key}"
+            url = f"{BASE_SITE_URL}/{folder_key}"
             return [file_key, folder_key], url, file_key
 
         # normal file
-        return [rel_path], f"{BASE_BLOG_URL}/{rel_path}", rel_path
+        return [rel_path], f"{BASE_SITE_URL}/{rel_path}", rel_path
 
     # Scan all html files
     for html_file in folder_path.rglob("*.html"):
@@ -1273,7 +1273,7 @@ def submit_changed_files_to_indexnow(folder_path: Path,
     # Submit changed URLs only if index=True
     if index and changed_urls:
         payload = {
-            "host": BASE_BLOG_URL.replace("https://", "").replace("http://", ""),
+            "host": BASE_SITE_URL.replace("https://", "").replace("http://", ""),
             "key": KEY,
             "keyLocation": KEY_LOCATION,
             "urlList": changed_urls
@@ -3337,7 +3337,7 @@ if __name__ == "__main__":
     run_section(17, "Generate sitemap",
         lambda: generate_sitemap_from_folder(
             Path(LOCAL_REPO_PATH),
-            exclude_dirs=["plugins"],
+            exclude_dirs=["plugins", "relive"],
             exclude_files=["mattia-adventures-map.html", "404.html"]),
         pattern_iter=pattern_iter)
 
@@ -3345,7 +3345,7 @@ if __name__ == "__main__":
     run_section(18, "Submit changed files to IndexNow",
         lambda: submit_changed_files_to_indexnow(
             Path(LOCAL_REPO_PATH),
-            exclude_dirs=["plugins"],
+            exclude_dirs=["plugins", "relive"],
             exclude_files=["mattia-adventures-map.html", "404.html"],
             index=True),
         pattern_iter=pattern_iter)

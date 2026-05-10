@@ -399,6 +399,11 @@ a {
   transition: border-color 0.2s ease;
 }
 
+.translate-shift-always {
+  transition: transform 0.3s ease;
+  transform: translateY(var(--translate-bar-height, 50px));
+}
+
 @media (max-width: 600px) {
   .skiptranslate iframe {
     transform: scale(0.75);
