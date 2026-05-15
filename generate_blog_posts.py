@@ -1330,6 +1330,15 @@ def fetch_and_save_all_posts(entries):
     footer_html = generate_footer_html()
     back_to_top_html = generate_back_to_top_html()
 
+    # Compute template hash once - includes shared elements like sidebar, header, footer
+    # When these change, all posts will rebuild
+    template_hash = compute_hash({
+        "sidebar": sidebar_html,
+        "header": header_html,
+        "footer": footer_html,
+        "back_to_top": back_to_top_html
+    })
+
     local_tz = ZoneInfo("Europe/Ljubljana")
     label_posts_raw = defaultdict(list)
 
@@ -1362,10 +1371,11 @@ def fetch_and_save_all_posts(entries):
         labels_html = generate_labels_html(entry, title, slug, year, month, formatted_date, post_id,
                                            label_posts_raw, slugify, remove_first_prefix, remove_all_prefixes)
 
-        # Incremental build: check if entry has changed
+        # Incremental build: check if entry has changed OR if template (sidebar/header/footer) changed
         entry_hash = compute_hash(entry)
+        combined_hash = compute_hash({"entry": entry_hash, "template": template_hash})
         key = f"posts/{year}/{month}/{slug}"
-        if not should_rebuild(cache, key, entry_hash):
+        if not should_rebuild(cache, key, combined_hash):
             # Skip generating this post HTML; label_posts_raw already updated
             continue
 
@@ -1630,7 +1640,7 @@ def fetch_and_save_all_posts(entries):
 </html>""")
 
         print(f"Saved: {filename}")
-        cache[key] = entry_hash
+        cache[key] = combined_hash
 
     save_build_cache(cache)
     return label_posts_raw
@@ -1646,6 +1656,15 @@ def generate_label_pages(entries, label_posts_raw):
     searchbox_html = generate_searchbox_html()
     footer_html = generate_footer_html()
     back_to_top_html = generate_back_to_top_html()
+
+    # Compute template hash once - includes shared elements like sidebar, header, footer
+    # When these change, all label pages will rebuild
+    template_hash = compute_hash({
+        "sidebar": sidebar_html,
+        "header": header_html,
+        "footer": footer_html,
+        "back_to_top": back_to_top_html
+    })
 
     # Build lookup dictionary
     entry_lookup = {}
@@ -1671,7 +1690,7 @@ def generate_label_pages(entries, label_posts_raw):
         # Sort posts by date descending
         posts_sorted = sorted(posts, key=lambda x: x['date'], reverse=True)
 
-        # Compute combined hash of entries for this label (sorted order)
+        # Compute combined hash of entries for this label (sorted order) PLUS template hash
         entry_hashes_list = []
         for post in posts_sorted:
             post_id = str(post.get('postId', '')).strip()
@@ -1682,7 +1701,7 @@ def generate_label_pages(entries, label_posts_raw):
                 continue
             eh = entry_hashes.get(post_id, compute_hash(entry))
             entry_hashes_list.append(eh)
-        combined_hash = compute_hash(entry_hashes_list)
+        combined_hash = compute_hash({"entries": entry_hashes_list, "template": template_hash})
         key = f"label/{label_slug}"
         if not should_rebuild(cache, key, combined_hash):
             print(f"Skipped label page: {label_slug}")
