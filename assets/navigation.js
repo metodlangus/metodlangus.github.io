@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/sardinija/'>Sardinija</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/slovaska/'>Slovaška</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/slovenija/'>Slovenija</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/ceska/'>Češka</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/svica/'>Švica</a></li>
 </ul>
 <h3>Gorstvo:</h3><ul class='label-list'>
