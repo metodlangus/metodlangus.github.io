@@ -4,20 +4,37 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("archive-placeholder").innerHTML = `<aside class="sidebar-archive">
   <h2>Arhiv</h2>
   <details open>
-    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(27)</span></summary>
+    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(44)</span></summary>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/posts/2026/05/">maj 2026</a>&nbsp;<span class="post-count" dir="ltr">(5)</span></summary>
+      <summary><a href="https://metodlangus.github.io/posts/2026/05/">maj 2026</a>&nbsp;<span class="post-count" dir="ltr">(11)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2026/05/cez-begunjscico-2060-m-na-stari-ljubelj/">Čez Begunjščico (2060 m) na stari Ljubelj</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/05/zima-na-sentanskem-vrhu-1635-m/">Zima na Šentanskem vrhu (1635 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/05/sentanski-vrh-1635-m/">Šentanski vrh (1635 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/05/hudajuzna-porezen-1632-m-bohinjska-bistrica/">Hudajužna – Porezen (1632 m) – Bohinjska Bistrica</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/05/potepanje-po-ceski-25-4-4-5-2026/">Potepanje po Češki (25. 4. – 4. 5. 2026)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/05/kremsmauer-1604-m/">Kremsmauer (1604 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/05/mesto-ceski-krumlov/">Mesto Češki Krumlov</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/05/mesto-kolin/">Mesto Kolín</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/05/snezka-1603-m-najvisji-vrh-ceske/">Snežka (1603 m), najvišji vrh Češke</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/05/dolina-bobra/">Dolina Bobra</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/05/vrh-lausche-luz-793-m/">Vrh Lausche / Luž (793 m)</a></li>
       </ul>
     </details>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/posts/2026/04/">april 2026</a>&nbsp;<span class="post-count" dir="ltr">(4)</span></summary>
+      <summary><a href="https://metodlangus.github.io/posts/2026/04/">april 2026</a>&nbsp;<span class="post-count" dir="ltr">(15)</span></summary>
       <ul>
+        <li><a href="https://metodlangus.github.io/posts/2026/04/ceska-svica/">Češka Švica</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/04/ceska-svica-saunstejn/">Češka Švica (Šaunštejn)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/04/saska-svica/">Saška Švica</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/04/grosser-zschirnstein-560-m/">Großer Zschirnstein (560 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/04/mesto-decin/">Mesto Dečín</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/04/kozi-vrch-380-m/">Kozí vrch (380 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/04/nacionalni-naravni-spomenik-vrkoc/">Nacionalni naravni spomenik Vrkoč</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/04/mesto-slany/">Mesto Slany</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/04/mesto-karlstejn-kamnolom-velika-amerika/">Mesto Karlštejn, kamnolom Veliká Amerika</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/04/mesto-hluboka-nad-vltavou/">Mesto Hluboká nad Vltavou</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/04/hagler-1669-m-hoher-nock-1963-m/">Hagler (1669 m), Hoher Nock (1963 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/04/sentanski-vrh-1635-m-1/">Šentanski vrh (1635 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/04/menina-planina/">Menina planina</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/04/sentanski-vrh-1635-m/">Šentanski vrh (1635 m)</a></li>
