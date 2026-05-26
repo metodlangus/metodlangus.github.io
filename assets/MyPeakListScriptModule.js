@@ -154,13 +154,41 @@ const PeakListModule = (() => {
 
                     const peakTags =
                         content.match(/<div class="peak-tag"[^>]*>(.*?)<\/div>/gs) || [];
-                    const peakTag2 =
-                        content.match(/<div class="peak-tag2"[^>]*>(.*?)<\/div>/gs) || [];
+                    const peakTagManual =
+                        content.match(/<div class="peak-tag-manually"[^>]*>[\s\S]*?<\/div>(?=\s*(?:<b>|<div|$))/gs) || [];
 
                     function processPeaks(tag, label3Index) {
                         const doc = new DOMParser().parseFromString(tag, 'text/html');
                         const span = doc.querySelector('b span');
                         if (!span) return;
+
+                        // Try to read manual categories from a hidden .category div inside the tag
+                        const categoryDiv = doc.querySelector('div.category');
+                        let label2s = [];
+                        let label3s = [];
+
+                        if (categoryDiv) {
+                            const text = categoryDiv.textContent.trim();
+                            const inner = text.replace(/^\s*\[|\]\s*$/g, '');
+                            const items = inner.split(',').map(s => s.trim()).filter(Boolean);
+                            items.forEach(it => {
+                                const m = it.match(/^(\d+)\.\s*(.*)$/);
+                                if (m) {
+                                    const num = m[1];
+                                    const val = normalizeSpaces(m[2].trim());
+                                    if (num === '2') label2s.push(val);
+                                    else if (num === '3') label3s.push(val);
+                                }
+                            });
+                        } else {
+                            const label2 = entry.category?.find(c => c.term.startsWith('2.'));
+                            const label3s_from_entry = entry.category?.filter(c => c.term.startsWith('3.')) || [];
+                            if (label2) label2s.push(normalizeSpaces(label2.term.slice(2)));
+                            label3s = label3s_from_entry.map(c => normalizeSpaces(c.term.slice(2)));
+                        }
+
+                        if (label2s.length === 0) label2s = ['Ostalo'];
+                        if (label3s.length === 0) label3s = ['Ostalo'];
 
                         span.textContent
                             .split(',')
@@ -173,37 +201,35 @@ const PeakListModule = (() => {
 
                                 const postLink = stripIndexHtml(fullUrl);
 
-                                const label2 =
-                                    entry.category?.find(c => c.term.startsWith('2.'));
-                                const label3s =
-                                    entry.category?.filter(c => c.term.startsWith('3.')) || [];
-
-                                const l2 = label2 ? label2.term.slice(2) : "Ostalo";
-                                const l3 = label3s[label3Index]?.term.slice(2) ?? "Ostalo";
-
-                                labelMap[l2] ??= {};
-                                labelMap[l2][l3] ??= [];
-
                                 const d = new Date(entry.published.$t);
                                 const date = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
 
-                                const existing = labelMap[l2][l3].find(
-                                    p => normalizeSpaces(p.peakName) === normalizeSpaces(peakName)
-                                );
+                                // Add the peak under each provided label2 and label3 combination
+                                label2s.forEach(l2 => {
+                                    labelMap[l2] ??= {};
+                                    label3s.forEach(l3raw => {
+                                        const l3 = l3raw ?? 'Ostalo';
+                                        labelMap[l2][l3] ??= [];
 
-                                if (existing) {
-                                    existing.publishedDates.push({ date, link: postLink });
-                                } else {
-                                    labelMap[l2][l3].push({
-                                        peakName,
-                                        publishedDates: [{ date, link: postLink }]
+                                        const existing = labelMap[l2][l3].find(
+                                            p => normalizeSpaces(p.peakName) === normalizeSpaces(peakName)
+                                        );
+
+                                        if (existing) {
+                                            existing.publishedDates.push({ date, link: postLink });
+                                        } else {
+                                            labelMap[l2][l3].push({
+                                                peakName,
+                                                publishedDates: [{ date, link: postLink }]
+                                            });
+                                        }
                                     });
-                                }
+                                });
                             });
                     }
 
                     peakTags.forEach(t => processPeaks(t, 0));
-                    peakTag2.forEach(t => processPeaks(t, 1));
+                    peakTagManual.forEach(t => processPeaks(t, 0));
                 });
 
                 startIndex += maxResults;
