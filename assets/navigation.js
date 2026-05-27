@@ -33,18 +33,20 @@ document.addEventListener("DOMContentLoaded", function() {
 </ul>
 <h3>Gorstvo:</h3><ul class='label-list'>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/beneske-predalpe/'>Beneške Predalpe</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/adamello-presanella-alpe/'>Adamello-Presanella Alpe</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/atlas/'>Atlas</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/biokovo/'>Biokovo</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/dinarsko-gorstvo/'>Dinarsko gorstvo</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/brenta/'>Brenta</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/dolomiti/'>Dolomiti</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/julijske-alpe/'>Julijske Alpe</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/kamnisko-savinjske-alpe/'>Kamniško-Savinjske Alpe</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/karavanke/'>Karavanke</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/karnijske-alpe/'>Karnijske Alpe</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/korkonosi/'>Korkonoši</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/korzisko-gorovje/'>Korziško gorovje</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/kriske-alpe/'>Kriške Alpe</a></li>
-<li><a class='label-name' href='https://metodlangus.github.io/search/labels/krkonosi/'>Krkonoši</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/labotniske-alpe/'>Labotniške Alpe</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/luziske-gore/'>Lužiške gore</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/matra/'>Mátra</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/nizke-tatre/'>Nizke Tatre</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/nizke-ture/'>Nizke Ture</a></li>
@@ -54,6 +56,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/tavolara/'>Tavolara</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/tribec/'>Tribeč</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/velebit/'>Velebit</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/velika-kapela/'>Velika Kapela</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/visoke-tatre/'>Visoke Tatre</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/visoke-ture/'>Visoke Ture</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/zgornjeavstrijske-predalpe/'>Zgornjeavstrijske predalpe</a></li>
