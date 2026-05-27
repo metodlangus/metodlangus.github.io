@@ -4,10 +4,13 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("archive-placeholder").innerHTML = `<aside class="sidebar-archive">
   <h2>Arhiv</h2>
   <details open>
-    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(44)</span></summary>
+    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(47)</span></summary>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/posts/2026/05/">maj 2026</a>&nbsp;<span class="post-count" dir="ltr">(11)</span></summary>
+      <summary><a href="https://metodlangus.github.io/posts/2026/05/">maj 2026</a>&nbsp;<span class="post-count" dir="ltr">(14)</span></summary>
       <ul>
+        <li><a href="https://metodlangus.github.io/posts/2026/05/slap-boka/">Slap Boka</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/05/monte-zaiavor-1815-m/">Monte Zaiavor (1815 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/05/greben-kobariskega-stola-1673-m/">Greben Kobariškega Stola (1673 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/05/cez-begunjscico-2060-m-na-stari-ljubelj/">Čez Begunjščico (2060 m) na stari Ljubelj</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/05/zima-na-sentanskem-vrhu-1635-m/">Zima na Šentanskem vrhu (1635 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/05/sentanski-vrh-1635-m/">Šentanski vrh (1635 m)</a></li>
