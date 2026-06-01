@@ -8,17 +8,17 @@ document.addEventListener("DOMContentLoaded", function() {
     <details class="month-group">
       <summary><a href="https://metodlangus.github.io/posts/2026/05/">maj 2026</a>&nbsp;<span class="post-count" dir="ltr">(16)</span></summary>
       <ul>
-        <li><a href="https://metodlangus.github.io/posts/2026/05/kriska-gora-1472-m-tolsti-vrh-1715-m/">Kriška gora (1472 m), Tolsti vrh (1715 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/05/kriska-gora-1472-m-tolsti-vrh-1715-m/">Kriška gora (1472 m), Tolsti vrh (1715 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/05/stara-fuzina-ogradi-2087-m-stogi-zajamniki/">Stara Fužina – Ogradi (2087 m) – Stogi – Zajamniki</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/05/slap-boka/">Slap Boka</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/05/monte-zaiavor-1815-m/">Monte Zaiavor (1815 m)</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2026/05/greben-kobariskega-stola-1673-m/">Greben Kobariškega Stola (1673 m)</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2026/05/cez-begunjscico-2060-m-na-stari-ljubelj/">Čez Begunjščico (2060 m) na stari Ljubelj</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2026/05/zima-na-sentanskem-vrhu-1635-m/">Zima na Šentanskem vrhu (1635 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/05/greben-kobariskega-stola-1673-m/">Greben Kobariškega Stola (1673 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/05/cez-begunjscico-2060-m-na-stari-ljubelj/">Čez Begunjščico (2060 m) na stari Ljubelj</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/05/zima-na-sentanskem-vrhu-1635-m/">Zima na Šentanskem vrhu (1635 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/05/sentanski-vrh-1635-m/">Šentanski vrh (1635 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/05/hudajuzna-porezen-1632-m-bohinjska-bistrica/">Hudajužna – Porezen (1632 m) – Bohinjska Bistrica</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/05/potepanje-po-ceski-25-4-4-5-2026/">Potepanje po Češki (25. 4. – 4. 5. 2026)</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2026/05/kremsmauer-1604-m/">Kremsmauer (1604 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/05/kremsmauer-1604-m/">Kremsmauer (1604 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/05/mesto-ceski-krumlov/">Mesto Češki Krumlov</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/05/mesto-kolin/">Mesto Kolín</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/05/snezka-1603-m-najvisji-vrh-ceske/">Snežka (1603 m), najvišji vrh Češke</a></li>
@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function() {
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2025/12/sentanski-vrh-1635-m-1/">Šentanski vrh (1635 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/12/murnovec-1864-m-schwarzkogel-kresisce-1842-m/">Murnovec (1864 m), Schwarzkogel / Kresišče (1842 m)</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2025/12/vrh-velikih-gac-1053-m/">Vrh Velikih Gač (1053 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/12/vrh-velikih-gac-1053-m/">Vrh Velikih Gač (1053 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/12/latschur-2236-m/">Latschur (2236 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/12/bela-pec-1583-m/">Bela peč (1583 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/12/cez-psico-na-storzic-2132-m/">Čez Psico na Storžič (2132 m)</a></li>
@@ -193,7 +193,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <li><a href="https://metodlangus.github.io/posts/2025/05/veliki-vrh-kriz-1742-m-slap-cedca/">Veliki vrh (Križ) (1742 m), slap Čedca</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/05/skozi-kraljestvo-muflonov/">Skozi kraljestvo muflonov</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/05/greben-begunjscice-2060-m-cez-potocnikovo-planino/">Greben Begunjščice (2060 m) čez Potočnikovo planino</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2025/05/visoki-kurjek-barenkogel-1973-m-lepa-plevelnica-1959-m/">Visoki Kurjek / Bärenkogel (1973 m), Lepa Plevelnica (1959 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2025/05/visoki-kurjek-barenkogel-1973-m-lepa-plevelnica-1959-m/">Visoki Kurjek / Bärenkogel (1973 m), Lepa Plevelnica (1959 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/05/potepanje-po-hrvaski-26-4-4-5-2025/">Potepanje po Hrvaški (26. 4. – 4. 5. 2025)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/05/klek-1181-m/">Klek (1181 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2025/05/split/">Split</a></li>
@@ -288,7 +288,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <li><a href="https://metodlangus.github.io/posts/2024/09/gerlachovsky-stit-2654-m-najvisji-vrh-slovaske-vychodna-vysoka-2429-m/">Gerlachovský štít (2654 m) - najvišji vrh Slovaške, Východná Vysoká (2429 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/09/jezero-strbske-pleso/">Jezero Štrbské Pleso</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/09/krivan-2494-m-simbol-slovaske-narodne-zavesti/">Kriváň (2494 m) - simbol slovaške narodne zavesti</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2024/09/nizke-tatre-derese-2004-m-chopok-2024-m-dumbier-2043-m/">Nizke Tatre - Dereše (2004 m), Chopok (2024 m), Ďumbier (2043 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2024/09/nizke-tatre-derese-2004-m-chopok-2024-m-dumbier-2043-m/">Nizke Tatre - Dereše (2004 m), Chopok (2024 m), Ďumbier (2043 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/09/jama-harmanecka-jaskyna/">Jama Harmanecká jaskyňa</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/09/park-skalka/">Park Skalka</a></li>
       </ul>
@@ -314,7 +314,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <li><a href="https://metodlangus.github.io/posts/2024/07/precenje-mojstrovk-in-sit/">Prečenje Mojstrovk in Šit</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/07/vikend-v-ksa-6-4-7-2024/">Vikend v KSA (6. – 4. 7. 2024)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2024/07/strelovec-1763-m-kroficka-2083-m/">Strelovec (1763 m), Krofička (2083 m)</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2024/07/matkova-kopa-1957-m-krnicka-gora-2064-m/">Matkova Kopa (1957 m), Krnička gora (2064 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2024/07/matkova-kopa-1957-m-krnicka-gora-2064-m/">Matkova Kopa (1957 m), Krnička gora (2064 m)</a></li>
       </ul>
     </details>
     <details class="month-group">

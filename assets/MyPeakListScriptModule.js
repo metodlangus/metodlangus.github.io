@@ -193,6 +193,7 @@ const PeakListModule = (() => {
                         span.textContent
                             .split(',')
                             .map(normalizeSpaces)
+                            .filter(peakName => peakName.length > 0)
                             .forEach(peakName => {
 
                                 const fullUrl =
