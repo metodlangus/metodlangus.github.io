@@ -1,0 +1,66 @@
+name: Auto Update Blog Pages
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update-blog:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install python-dateutil babel python-slugify beautifulsoup4 requests python-dotenv pytz geopy gpxpy
+
+      - name: Install Node.js dependencies
+        working-directory: ${{ github.workspace }}
+        run: npm install
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Create .env file with secrets
+        run: |
+          echo "SITE_VERIFICATION=${{ secrets.SITE_VERIFICATION }}" >> .env
+          echo "INDEXNOW_KEY=${{ secrets.INDEXNOW_KEY }}" >> .env
+
+      - name: Run blog generation script
+        run: |
+          python generate_blog_posts.py --pattern skip_geotag_photos --non-interactive
+
+      - name: Commit and push changes
+        run: |
+          if git diff --quiet; then
+            echo "No changes to commit"
+          else
+            git add -A
+            git commit -m "Auto-update blog pages"
+            git push
+          fi
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: workflow-logs
+          path: |
+            .build/
+            *.log

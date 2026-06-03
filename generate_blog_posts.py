@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from babel.dates import format_datetime
 from xml.etree.ElementTree import Element, SubElement, ElementTree
 from zoneinfo import ZoneInfo  # Python 3.9+
-from dateutil import parser  # pip install python-dateutil
+from dateutil import parser as dateutil_parser  # pip install python-dateutil
 from bs4 import BeautifulSoup, NavigableString
 from collections import defaultdict
 from urllib.parse import urlparse, urlunparse, urljoin
@@ -17,7 +17,13 @@ import subprocess
 import hashlib
 import time
 import sys
-import winsound
+import argparse
+import platform
+# Only import winsound on Windows
+if platform.system() == 'Windows':
+    import winsound
+else:
+    winsound = None
 from dotenv import load_dotenv
 
 ##### Commit message: #####
@@ -27,6 +33,7 @@ GITHUB_USER_NAME = "metodlangus"
 GITHUB_REPO_NAME = "metodlangus.github.io"
 LOCAL_HOST_URL = f"http://127.0.0.1:5502"
 LOCAL_REPO_PATH  = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = Path(LOCAL_REPO_PATH)
 
 # Nastavitve - Change this one line when switching local <-> GitHub Pages
 BASE_SITE_URL = f"https://{GITHUB_REPO_NAME}"
@@ -34,10 +41,12 @@ DEBUG_NUM_ENTRIES = None  # Set to None to process all entries
 # BASE_SITE_URL = f"{LOCAL_HOST_URL}/{GITHUB_REPO_NAME}"
 # DEBUG_NUM_ENTRIES = 5
 
+REBUILD_ALL_PAGES = False  # Set True to force full rebuild of everything
+
 BLOG_AUTHOR = "Metod Langus"
 BLOG_TITLE = "Gorski užitki"
 
-load_dotenv()
+load_dotenv(dotenv_path=PROJECT_ROOT / ".env")
 SITE_VERIFICATION = os.getenv("SITE_VERIFICATION")
 if not SITE_VERIFICATION:
     raise ValueError("SITE_VERIFICATION is not set")
@@ -71,12 +80,12 @@ TRANSLATE_HEAD = """<script>
   </script>
   <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer></script>"""
 
-OUTPUT_DIR = Path.cwd() # Current path
+OUTPUT_DIR = PROJECT_ROOT
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-SITEMAP_FILE = "sitemap.xml"
-LASTMOD_DB = Path(".build/lastmod.json")
-BUILD_CACHE_FILE = Path(".build/build_cache.json")
-BASE_FEED_PATH = f"{LOCAL_REPO_PATH }/data/all-posts.json"
+SITEMAP_FILE = PROJECT_ROOT / "sitemap.xml"
+LASTMOD_DB = PROJECT_ROOT / ".build" / "lastmod.json"
+BUILD_CACHE_FILE = PROJECT_ROOT / ".build" / "build_cache.json"
+BASE_FEED_PATH = PROJECT_ROOT / "data" / "all-posts.json"
 REMOTE_DB_URL = f"{BASE_SITE_URL}/.build/lastmod.json"
 
 # Indexnow settings
@@ -85,6 +94,9 @@ KEY = os.getenv("INDEXNOW_KEY")
 if not KEY:
     raise ValueError("INDEXNOW_KEY is not set")
 KEY_LOCATION = f"{BASE_SITE_URL}/{KEY}.txt"
+
+# Global flag for non-interactive mode (set from CLI args)
+NON_INTERACTIVE = False
 
 def load_lastmod_db():
     if LASTMOD_DB.exists():
@@ -95,7 +107,7 @@ def load_lastmod_db():
 def save_lastmod_db(db):
     LASTMOD_DB.parent.mkdir(parents=True, exist_ok=True)
     with open(LASTMOD_DB, "w", encoding="utf-8") as f:
-        json.dump(db, f, indent=2, ensure_ascii=False)
+        json.dump(db, f, indent=2, ensure_ascii=False, sort_keys=True)
 
 # ============ Build Cache for Incremental Generation ============
 
@@ -110,7 +122,7 @@ def save_build_cache(cache):
     """Save the build cache to .build/build_cache.json."""
     BUILD_CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
     with open(BUILD_CACHE_FILE, "w", encoding="utf-8") as f:
-        json.dump(cache, f, indent=2, ensure_ascii=False)
+        json.dump(cache, f, indent=2, ensure_ascii=False, sort_keys=True)
 
 def compute_hash(data) -> str:
     """Compute SHA256 hash of arbitrary data (serialized as JSON)."""
@@ -119,6 +131,10 @@ def compute_hash(data) -> str:
 
 def should_rebuild(cache, key, new_hash):
     """Check if a page should be rebuilt. Returns True if needed."""
+    # Full rebuild of everything
+    if REBUILD_ALL_PAGES:
+        print(f"  REBUILD_ALL_PAGES enabled → forcing rebuild: {key}")
+        return True
     # Always rebuild in debug mode because links/structures change
     if DEBUG_NUM_ENTRIES is not None:
         return True
@@ -131,10 +147,16 @@ def should_rebuild(cache, key, new_hash):
 # ================================================================
 
 def compute_md5(file_path: Path) -> str:
+    """
+    Compute MD5 hash with normalized line endings (LF only).
+    This ensures Windows (CRLF) and Linux (LF) produce identical hashes.
+    """
     h = hashlib.md5()
     with open(file_path, "rb") as f:
-        for chunk in iter(lambda: f.read(8192), b""):
-            h.update(chunk)
+        content = f.read()
+    # Normalize line endings to LF for consistent hashing across platforms
+    content = content.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    h.update(content)
     return h.hexdigest()
 
 def override_domain(url, base_site_url):
@@ -164,7 +186,7 @@ def parse_entry_date(entry, index=None):
     local_tz = ZoneInfo("Europe/Ljubljana")
 
     try:
-        parsed_date = parser.isoparse(published).astimezone(local_tz)
+        parsed_date = dateutil_parser.isoparse(published).astimezone(local_tz)
         formatted_date = parsed_date.isoformat()
         year = str(parsed_date.year)
         month = f"{parsed_date.month:02d}"
@@ -397,6 +419,20 @@ def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
     # Fallback alt text content
     alt_text = description
 
+    if thumbnail and page_number == 1:
+        thumbnail_html = (
+            f'<img src="{thumbnail.replace("/s72-c", "/s600-rw")}" '
+            f'alt="{alt_text}" loading="lazy">'
+        )
+    elif thumbnail:
+        thumbnail_html = (
+            f'<img data-src="{thumbnail.replace("/s72-c", "/s600-rw")}" '
+            f'src="data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\'/%3E" '
+            f'alt="{alt_text}" loading="lazy">'
+        )
+    else:
+        thumbnail_html = ""
+
     # --- Render HTML ---
     return f"""
           <div class="photo-entry{hidden_class}" data-page="{page_number}">
@@ -414,9 +450,7 @@ def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
                 </div>
                 <div class="my-thumbnail" id="post-snippet-{post_id}">
                   <div class="my-snippet-thumbnail">
-                    {'<img src="' + thumbnail.replace('/s72-c', '/s600-rw') + '" alt="' + alt_text + '" loading="lazy">' if thumbnail else ""}
-                    if page_number == 1 else
-                    {'<img data-src="' + thumbnail.replace('/s72-c', '/s600-rw') + '" src="data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\'/%3E" alt="' + alt_text + '" loading="lazy">' if thumbnail else ""}
+                    {thumbnail_html}
                   </div>
                 </div>
                 <a href="{alternate_link}" aria-label="{title}"></a>
@@ -1150,8 +1184,15 @@ def generate_url_element(loc, lastmod=None, changefreq=None, priority=None):
 def generate_sitemap_from_folder(folder_path: Path, exclude_dirs=None, exclude_files=None):
     """
     Generate sitemap.xml by scanning all .html files in folder_path,
-    excluding directories in exclude_dirs and files in exclude_files.
+    with strict ordering:
+
+    1. Root pages
+    2. /posts/YYYY/
+    3. /posts/YYYY/MM/
+    4. /posts/YYYY/MM/post
+    5. search last
     """
+
     if exclude_dirs is None:
         exclude_dirs = []
     if exclude_files is None:
@@ -1162,7 +1203,58 @@ def generate_sitemap_from_folder(folder_path: Path, exclude_dirs=None, exclude_f
 
     urlset = Element("urlset", {"xmlns": "http://www.sitemaps.org/schemas/sitemap/0.9"})
 
-    for html_file in folder_path.rglob("*.html"):
+    # -----------------------------
+    # SAFE SORT KEY (FIXED)
+    # -----------------------------
+    def sitemap_sort_key(path: Path):
+        rel = path.relative_to(folder_path).as_posix().lower()
+        parts = Path(rel).parts
+
+        # 1. homepage
+        if rel == "index.html":
+            return (0, 0, 0, 0, "")
+
+        # 2. root pages (fixed order optional)
+        if len(parts) == 2 and parts[1] == "index.html":
+            return (1, 0, 0, 0, rel)
+
+        # -----------------------------
+        # POSTS HANDLING
+        # -----------------------------
+        if parts and parts[0] == "posts":
+
+            # /posts/YYYY/index.html  -> YEAR INDEX
+            if len(parts) == 3 and parts[2] == "index.html":
+                year = int(parts[1]) if parts[1].isdigit() else 0
+                return (2, year, 0, 0, "")
+
+            # /posts/YYYY/MM/index.html -> MONTH INDEX
+            if len(parts) == 4 and parts[3] == "index.html":
+                year = int(parts[1]) if parts[1].isdigit() else 0
+                month = int(parts[2]) if parts[2].isdigit() else 0
+                return (3, year, month, 0, "")
+
+            # /posts/YYYY/MM/post.html -> ARTICLE
+            if len(parts) >= 4:
+                year = int(parts[1]) if parts[1].isdigit() else 0
+                month = int(parts[2]) if parts[2].isdigit() else 0
+                return (4, year, month, parts[-1])
+
+        # 5. search last
+        if parts and parts[0] == "search":
+            return (5, rel)
+
+        # fallback
+        return (6, rel)
+
+    html_files = sorted(folder_path.rglob("*.html"))
+
+    html_files = sorted(
+        html_files,
+        key=sitemap_sort_key
+    )
+
+    for html_file in html_files:
         relative_path = html_file.relative_to(folder_path).as_posix()
 
         # Skip excluded directories
@@ -3370,8 +3462,17 @@ def git_commit(default_message):
 
     print(f"\nGit changes detected.")
     print(f"Proposed commit message:\n  {default_message}")
-    # Play default system beep
-    winsound.Beep(1000, 500)  # Frequency 1000Hz, Duration 500ms
+    # Play default system beep (Windows only)
+    if winsound:
+        winsound.Beep(1000, 500)  # Frequency 1000Hz, Duration 500ms
+    else:
+        print("\a")  # System bell (works on Unix/Linux/macOS)
+
+    # In non-interactive mode, skip intermediate commits and defer to CI workflow
+    if NON_INTERACTIVE:
+      print("Non-interactive mode: skipping commit (deferred to workflow).")
+      return
+
     choice = input("[c]ommit / [e]dit message / [s]kip? ").strip().lower()
 
     if choice == "s":
@@ -3440,15 +3541,45 @@ if __name__ == "__main__":
     # 0.3 Copy post content in input_post.txt and with data-skip_attributes_to_posts.py append data-skip tags to photos
     # 0.4 Copy post back and publish it
 
-    pattern_iter = choose_pattern()
+    # Parse command-line arguments
+    arg_parser = argparse.ArgumentParser(description="Generate blog posts")
+    arg_parser.add_argument("--pattern", type=str, choices=list(PATTERNS.keys()), 
+                        help=f"Select a pattern: {', '.join(PATTERNS.keys())}")
+    arg_parser.add_argument("--non-interactive", action="store_true", 
+                        help="Run in non-interactive mode (skip prompts)")
+    args = arg_parser.parse_args()
 
-    # Play default system beep
-    winsound.Beep(1000, 500)  # Frequency 1000Hz, Duration 500ms
-    input("Please make sure that phase 0 is completed (Upload GPX, write post, append data-skip tags, publish post). Press Enter to continue...")
+    # Set global non-interactive flag
+    NON_INTERACTIVE = args.non_interactive
+    
+    if NON_INTERACTIVE:
+        print("🔄 Running in non-interactive mode (CI/automated workflow)")
+
+    # Determine pattern
+    if args.pattern:
+        pattern_name = args.pattern
+        print(f"Selected pattern: {pattern_name} -> {PATTERNS[pattern_name]}")
+        pattern_iter = iter(PATTERNS[pattern_name])
+    elif args.non_interactive:
+        # In non-interactive mode, default to skip_geotag_photos
+        pattern_name = "skip_geotag_photos"
+        print(f"Non-interactive mode: using default pattern '{pattern_name}'")
+        pattern_iter = iter(PATTERNS[pattern_name])
+    else:
+        pattern_iter = choose_pattern()
+
+    # Skip interactive prompts if in non-interactive mode
+    if not args.non_interactive:
+        # Play default system beep (Windows only)
+        if winsound:
+            winsound.Beep(1000, 500)  # Frequency 1000Hz, Duration 500ms
+        else:
+            print("\a")  # System bell (works on Unix/Linux/macOS)
+        input("Please make sure that phase 0 is completed (Upload GPX, write post, append data-skip tags, publish post). Press Enter to continue...")
 
     # 1. Create feeds
     run_section(1, "Create feeds",
-        lambda: subprocess.run(["python", "get_blogger_feeds.py"], check=True),
+        lambda: subprocess.run([sys.executable, str(PROJECT_ROOT / "get_blogger_feeds.py")], check=True),
         pattern_iter=pattern_iter)
 
     # 2. Fetch entries and posts
@@ -3552,10 +3683,14 @@ if __name__ == "__main__":
         lambda: subprocess.run(["python", "update_data-skip_atributes.py"], check=True),
         pattern_iter=pattern_iter)
     
-    # Prompt user to connect phone before continuing
-    # Play default system beep
-    winsound.Beep(1000, 500)  # Frequency 1000Hz, Duration 500ms
-    input("Please connect your phone and ensure ADB is enabled. Press Enter to continue...")
+    # Prompt user to connect phone before continuing (skip in non-interactive mode)
+    if not args.non_interactive:
+        # Play default system beep (Windows only)
+        if winsound:
+            winsound.Beep(1000, 500)  # Frequency 1000Hz, Duration 500ms
+        else:
+            print("\a")  # System bell (works on Unix/Linux/macOS)
+        input("Please connect your phone and ensure ADB is enabled. Press Enter to continue...")
 
     # 21. Update extracted_photos_with_gps_data.txt
     run_section(22, "Update extracted_photos_with_gps_data.txt",

@@ -5,6 +5,7 @@ from pathlib import Path
 import gpxpy
 import os
 import json
+from datetime import datetime
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -70,10 +71,27 @@ def extract_start_coordinates(gpx_file):
     return None, None
 
 
+def gpx_sort_key(path: Path):
+    """
+    Sort GPX files by timestamp encoded in filename:
+    2024-06-02 064627.gpx
+
+    Falls back to filename ordering if parsing fails.
+    """
+    try:
+        return (
+            0,
+            datetime.strptime(path.stem, "%Y-%m-%d %H%M%S"),
+            path.name,
+        )
+    except ValueError:
+        return (1, path.name)
+
+
 def generate_tracks_list():
     posts = extract_gpx_and_cover()
     with OUTPUT_FILE.open("w", encoding="utf-8") as out:
-        for gpx_file in GPX_FOLDER.glob("*.gpx"):
+        for gpx_file in sorted(GPX_FOLDER.glob("*.gpx"), key=gpx_sort_key):
             filename = gpx_file.name
             lat, lng = extract_start_coordinates(gpx_file)
             lat = lat or 0.0
