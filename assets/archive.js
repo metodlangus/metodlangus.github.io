@@ -4,12 +4,13 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("archive-placeholder").innerHTML = `<aside class="sidebar-archive">
   <h2>Arhiv</h2>
   <details open>
-    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(49)</span></summary>
+    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(50)</span></summary>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/posts/2026/05/">maj 2026</a>&nbsp;<span class="post-count" dir="ltr">(16)</span></summary>
+      <summary><a href="https://metodlangus.github.io/posts/2026/05/">maj 2026</a>&nbsp;<span class="post-count" dir="ltr">(17)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2026/05/kriska-gora-1472-m-tolsti-vrh-1715-m/">Kriška gora (1472 m), Tolsti vrh (1715 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/05/stara-fuzina-ogradi-2087-m-stogi-zajamniki/">Stara Fužina – Ogradi (2087 m) – Stogi – Zajamniki</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/05/vikend-na-ta-na-meji-23-24-5-2025/">Vikend na Ta na meji (23. – 24. 5. 2025)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/05/slap-boka/">Slap Boka</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/05/monte-zaiavor-1815-m/">Monte Zaiavor (1815 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/05/greben-kobariskega-stola-1673-m/">Greben Kobariškega Stola (1673 m)</a></li>
