@@ -139,11 +139,34 @@ def prepare_output_file(filepath):
 
 def main():
     print("🔁 Downloading keywords map...")
-    r = requests.get(INPUT_URL, timeout=20)
-    r.raise_for_status()
-    txt = r.text
 
-    groups = re.findall(r"keywords_map\['(.*?)'\]\s*=\s*\[(.*?)\];", txt, re.DOTALL)
+    try:
+        r = requests.get(INPUT_URL, timeout=20)
+
+        if r.status_code != 200:
+            print(f"⚠ Skipping Section 5: source not available (HTTP {r.status_code})")
+            return
+
+        if not r.text or len(r.text.strip()) < 10:
+            print("⚠ Skipping Section 5: empty or invalid response")
+            return
+
+        txt = r.text
+
+    except requests.RequestException as e:
+        print(f"⚠ Skipping Section 5: request failed ({e})")
+        return
+
+    groups = re.findall(
+        r"keywords_map\['(.*?)'\]\s*=\s*\[(.*?)\];",
+        txt,
+        re.DOTALL
+    )
+
+    if not groups:
+        print("⚠ Skipping Section 5: no groups found in source")
+        return
+
     print(f"Found {len(groups)} groups in source")
 
     existing = js_object_load(OUTPUT_FILE)
@@ -151,6 +174,10 @@ def main():
 
     missing = [(pid, raw) for pid, raw in groups if pid not in existing]
     print(f"Missing groups: {len(missing)}")
+
+    if not missing:
+        print("✔ Nothing to update — skipping write step")
+        return
 
     prepare_output_file(OUTPUT_FILE)
 

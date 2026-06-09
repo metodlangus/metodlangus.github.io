@@ -3399,6 +3399,29 @@ def generate_404_page():
 </body>
 </html>"""
 
+def safe_run_geotags_map():
+    print("🔁 Running geotags_map.py safely...")
+
+    result = subprocess.run(
+        ["python", "geotags_map.py"],
+        capture_output=True,
+        text=True
+    )
+
+    # Always print output for debugging
+    if result.stdout:
+        print(result.stdout)
+
+    if result.stderr:
+        print(result.stderr)
+
+    if result.returncode != 0:
+        print(f"⚠ geotags_map.py exited with code {result.returncode} — skipping without breaking pipeline")
+        return False
+
+    print("✔ geotags_map.py completed successfully")
+    return True
+
     # Incremental build: check if page changed
     key = "static/404"
     new_hash = compute_hash(html_content)
@@ -3605,7 +3628,7 @@ if __name__ == "__main__":
 
     # 5-6 Generate Mattia map
     run_section(5, "Run geotags map",
-        lambda: subprocess.run(["python", "geotags_map.py"], check=True),
+        lambda: safe_run_geotags_map(),
         pattern_iter=pattern_iter)
 
     run_section(6, "Generate mattia map page",
