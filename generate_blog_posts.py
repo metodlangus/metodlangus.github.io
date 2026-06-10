@@ -1463,9 +1463,12 @@ def fetch_and_save_all_posts(entries):
         labels_html = generate_labels_html(entry, title, slug, year, month, formatted_date, post_id,
                                            label_posts_raw, slugify, remove_first_prefix, remove_all_prefixes)
 
+        # Navigation and labels
+        nav_html = generate_post_navigation_html(entries, slugs, index, local_tz, year, month)
+
         # Incremental build: check if entry has changed OR if template (sidebar/header/footer) changed
         entry_hash = compute_hash(entry)
-        combined_hash = compute_hash({"entry": entry_hash, "template": template_hash})
+        combined_hash = compute_hash({"entry": entry_hash, "template": template_hash, "navigation": nav_html})
         key = f"posts/{year}/{month}/{slug}"
         if not should_rebuild(cache, key, combined_hash):
             # Skip generating this post HTML; label_posts_raw already updated
@@ -1508,8 +1511,6 @@ def fetch_and_save_all_posts(entries):
         og_url = f"{BASE_SITE_URL}/posts/{year}/{month}/{slug}/"
         metadata_html = f"<div class='post-date' data-date='{formatted_date}'></div>"
 
-        # Navigation and labels
-        nav_html = generate_post_navigation_html(entries, slugs, index, local_tz, year, month)
         # Open Graph and tags
         categories = [c.get("term", "") for c in entry.get("category", [])]
 
