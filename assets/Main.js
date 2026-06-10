@@ -405,13 +405,13 @@ btn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth"
 async function getRandomPost() {{
   try {{
     // Fetch the combined posts JSON
-    const [mainRes, reliveRes] = await Promise.all([
-      fetch('https://metodlangus.github.io/data/all-posts.json'),
-      fetch('https://metodlangus.github.io/data/all-relive-posts.json')
+    const [mainRes/*, reliveRes*/] = await Promise.all([
+      fetch('https://metodlangus.github.io/data/all-posts.json')/*,
+      fetch('https://metodlangus.github.io/data/all-relive-posts.json')*/
     ]);
     const mainData = await mainRes.json();
-    const reliveData = await reliveRes.json();
-    const entries = [...(mainData.feed?.entry || []), ...(reliveData.feed?.entry || [])];
+    // const reliveData = await reliveRes.json();
+    const entries = [...(mainData.feed?.entry || [])/* , ...(reliveData.feed?.entry || []) */];
     
     if (!entries || entries.length === 0) {{
       throw new Error('No posts found');
