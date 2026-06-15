@@ -1540,8 +1540,8 @@ def fetch_and_save_all_posts(entries):
         for tag in tags:
             og_meta_html += f'  <meta property="article:tag" content="{tag}">\n'
 
-        # Generate keywords from <div class="peak-tag">
-        peak_divs = soup.find_all("div", class_="peak-tag")
+        # Generate keywords from <div class="peak-tag"> and <div class="peak-tag-manually">
+        peak_divs = soup.find_all("div", class_=["peak-tag", "peak-tag-manually"])
         keywords_list = []
         for div in peak_divs:
             text = " ".join(div.get_text(separator=",").split())

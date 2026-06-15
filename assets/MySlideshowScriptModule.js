@@ -2586,7 +2586,7 @@
 
     function createToggleButton() {
         if (mySlideshowContainer.length>0) {
-            var targetDiv=document.querySelector(".peak-tag"); if(!targetDiv){console.warn("Target div not found!");return;}
+            var targetDiv=document.querySelector(".peak-tag, .peak-tag-manually"); if(!targetDiv){console.warn("Target div not found!");return;}
             const container=document.createElement("div"); container.style.display="flex";
             const content=document.createElement("div"); content.style.flexGrow="1";
             toggleButton=document.createElement("button");
