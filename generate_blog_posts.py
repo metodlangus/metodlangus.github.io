@@ -25,6 +25,10 @@ if platform.system() == 'Windows':
 else:
     winsound = None
 from dotenv import load_dotenv
+from pathlib import Path
+import subprocess
+from rjsmin import jsmin
+from csscompressor import compress  # pip install csscompressor
 
 ##### Commit message: #####
 # Update blog posts
@@ -42,6 +46,9 @@ DEBUG_NUM_ENTRIES = None  # Set to None to process all entries
 # DEBUG_NUM_ENTRIES = 5
 
 REBUILD_ALL_PAGES = False  # Set True to force full rebuild of everything
+
+ASSETS = "assets_min" # Use minified scripts and styles for production
+# ASSETS = "assets_min" # Use unminified scripts for local testing
 
 BLOG_AUTHOR = "Metod Langus"
 BLOG_TITLE = "Gorski užitki"
@@ -158,6 +165,72 @@ def compute_md5(file_path: Path) -> str:
     content = content.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
     h.update(content)
     return h.hexdigest()
+
+def minify_asset_cached(input_path: Path, output_path: Path, cache: dict):
+    input_path = Path(input_path)
+    output_path = Path(output_path)
+
+    ext = input_path.suffix.lower()
+    cache_key = f"{ext}:{input_path.as_posix()}"
+
+    new_hash = compute_md5(input_path)
+
+    if cache.get(cache_key) == new_hash:
+        print(f"⏩ Skipping unchanged {ext}: {input_path}")
+        return
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    try:
+        subprocess.run(
+            [
+                "npx",
+                "esbuild",
+                str(input_path),
+                "--minify",
+                f"--outfile={output_path}"
+            ],
+            check=True,
+            capture_output=True,
+            text=True
+        )
+
+        print(f"✔ Minified with esbuild: {input_path} → {output_path}")
+
+    except (FileNotFoundError, subprocess.CalledProcessError) as e:
+        print(f"⚠ esbuild unavailable ({e}), using Python fallback")
+
+        with open(input_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        if ext == ".js":
+            minified = jsmin(content)
+        elif ext == ".css":
+            minified = compress(content)
+        else:
+            raise ValueError(f"Unsupported asset type: {ext}")
+
+        with open(output_path, "w", encoding="utf-8", newline="\n") as f:
+            f.write(minified)
+
+        print(f"✔ Minified with fallback: {input_path} → {output_path}")
+
+    cache[cache_key] = new_hash
+
+def minify_all_assets():
+    cache = load_build_cache()
+
+    src_dir = PROJECT_ROOT / "assets"
+    out_dir = PROJECT_ROOT / "assets_min"
+
+    for ext in ("*.js", "*.css"):
+        for asset_file in src_dir.rglob(ext):
+            rel_path = asset_file.relative_to(src_dir)
+            output_file = out_dir / rel_path
+
+            minify_asset_cached(asset_file, output_file, cache)
+
+    save_build_cache(cache)
 
 def override_domain(url, base_site_url):
     """
@@ -910,10 +983,10 @@ def generate_sidebar_html(picture_settings, map_settings, current_page):
     if current_page in ["posts", "labels", "home"]:
         posts_sections = f"""
         <div class="labels" id="navigation-placeholder">
-          <script src="{BASE_SITE_URL}/assets/navigation.js"></script>
+          <script src="{BASE_SITE_URL}/{ASSETS}/navigation.js"></script>
         </div>
         <div class="archive" id="archive-placeholder">
-          <script src="{BASE_SITE_URL}/assets/archive.js"></script>
+          <script src="{BASE_SITE_URL}/{ASSETS}/archive.js"></script>
         </div>
         """
 
@@ -1673,10 +1746,10 @@ def fetch_and_save_all_posts(entries):
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css' rel='stylesheet'>
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css' rel='stylesheet'>
   <link href='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.css' rel='stylesheet'>
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyMapScript.css">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MySlideshowScript.css">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPostContainerScript.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/MyMapScript.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/MySlideshowScript.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/MyPostContainerScript.css">
 </head>
 
 <body>
@@ -1723,12 +1796,12 @@ def fetch_and_save_all_posts(entries):
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
   {TRANSLATE_HEAD}
-  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/MyMapScriptModule.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/MyFiltersScriptModule.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/MySlideshowScriptModule.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/MyPopularPostsModule.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/SiteConfig.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/MyMapScriptModule.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/MyFiltersScriptModule.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/MySlideshowScriptModule.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/MyPopularPostsModule.js" defer></script>
 </body>
 </html>""")
 
@@ -1867,8 +1940,8 @@ def generate_label_pages(entries, label_posts_raw):
 
   <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPostContainerScript.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/MyPostContainerScript.css">
 </head>
 
 <body>
@@ -1897,8 +1970,8 @@ def generate_label_pages(entries, label_posts_raw):
   {footer_html}
 
   {TRANSLATE_HEAD}
-  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/SiteConfig.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/Main.js" defer></script>
 </body>
 </html>"""
 
@@ -2030,8 +2103,8 @@ def generate_archive_pages(entries):
 
   <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPostContainerScript.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/MyPostContainerScript.css">
 </head>
 <body>
   <div class="page-wrapper">
@@ -2059,8 +2132,8 @@ def generate_archive_pages(entries):
   {footer_html}
 
   {TRANSLATE_HEAD}
-  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/SiteConfig.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/Main.js" defer></script>
 </body>
 </html>"""
 
@@ -2145,8 +2218,8 @@ def generate_archive_pages(entries):
 
   <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPostContainerScript.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/MyPostContainerScript.css">
 </head>
 <body>
   <div class="page-wrapper">
@@ -2174,8 +2247,8 @@ def generate_archive_pages(entries):
   {footer_html}
 
   {TRANSLATE_HEAD}
-  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/SiteConfig.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/Main.js" defer></script>
 </body>
 </html>"""
 
@@ -2286,7 +2359,7 @@ def generate_about_page(current_page):
 
   <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/Main.css">
 </head>
 
 <body>
@@ -2312,8 +2385,8 @@ def generate_about_page(current_page):
   {footer_html}
 
   {TRANSLATE_HEAD}
-  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/SiteConfig.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/Main.js" defer></script>
 </body>
 </html>"""
 
@@ -2406,8 +2479,8 @@ def generate_predvajalnik_page(current_page):
 
   <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MySlideshowScript.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/MySlideshowScript.css">
 </head>
 
 <body>
@@ -2438,10 +2511,10 @@ def generate_predvajalnik_page(current_page):
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
   {TRANSLATE_HEAD}
-  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/MyFiltersScriptModule.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/MySlideshowScriptModule.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/SiteConfig.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/MyFiltersScriptModule.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/MySlideshowScriptModule.js" defer></script>
 </body>
 </html>"""
 
@@ -2535,8 +2608,8 @@ def generate_gallery_page(current_page):
   <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
   <link href='https://metodlangus.github.io/plugins/lightbox2/2.11.1/css/lightbox.min.css' rel='stylesheet'>
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyGalleryScript.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/MyGalleryScript.css">
 </head>
 
 <body>
@@ -2568,10 +2641,10 @@ def generate_gallery_page(current_page):
   <script src='https://metodlangus.github.io/plugins/lightbox2/2.11.1/js/lightbox-plus-jquery.min.js'></script>
   <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
   {TRANSLATE_HEAD}
-  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/MyFiltersScriptModule.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/MyGalleryScriptModule.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/SiteConfig.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/MyFiltersScriptModule.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/MyGalleryScriptModule.js" defer></script>
 </body>
 </html>"""
 
@@ -2664,8 +2737,8 @@ def generate_peak_list_page():
 
   <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPeakListScript.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/MyPeakListScript.css">
 </head>
 
 <body>
@@ -2692,9 +2765,9 @@ def generate_peak_list_page():
   {footer_html}
 
   {TRANSLATE_HEAD}
-  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/MyPeakListScriptModule.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/SiteConfig.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/MyPeakListScriptModule.js" defer></script>
 </body>
 </html>"""
 
@@ -2794,8 +2867,8 @@ def generate_big_map_page():
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css' rel='stylesheet'>
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css' rel='stylesheet'>
   <link href='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.css' rel='stylesheet'>
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyMemoryMapScript.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/MyMemoryMapScript.css">
 </head>
 
 <body>
@@ -2843,9 +2916,9 @@ def generate_big_map_page():
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
   {TRANSLATE_HEAD}
-  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/MyMemoryMapScriptModule.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/SiteConfig.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/MyMemoryMapScriptModule.js" defer></script>
 </body>
 </html>"""
 
@@ -2928,9 +3001,9 @@ def generate_home_en_page(homepage_html):
 
   <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyRandomPhoto.css">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPostContainerScript.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/MyRandomPhoto.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/MyPostContainerScript.css">
 </head>
 
 <body>
@@ -2958,9 +3031,9 @@ def generate_home_en_page(homepage_html):
   {footer_html}
 
   {TRANSLATE_HEAD}
-  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/MyRandomPhotoModule.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/SiteConfig.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/MyRandomPhotoModule.js" defer></script>
 </body>
 </html>"""
 
@@ -3040,9 +3113,9 @@ def generate_home_si_page(homepage_html):
 
   <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyRandomPhoto.css">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPostContainerScript.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/MyRandomPhoto.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/MyPostContainerScript.css">
 </head>
 
 <body>
@@ -3070,9 +3143,9 @@ def generate_home_si_page(homepage_html):
   {footer_html}
 
   {TRANSLATE_HEAD}
-  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/MyRandomPhotoModule.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/SiteConfig.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/MyRandomPhotoModule.js" defer></script>
 </body>
 </html>"""
 
@@ -3111,7 +3184,7 @@ def generate_mattia_map_page():
 
 <link href='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.css' rel='stylesheet'>
 <link href='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.css' rel='stylesheet'>
-<link rel="stylesheet" href="{BASE_SITE_URL}/assets/MattiaMapScript.css">
+<link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/MattiaMapScript.css">
 
 </head>
 <body>
@@ -3124,8 +3197,8 @@ def generate_mattia_map_page():
 <script src='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
 <script src="{BASE_SITE_URL}/mont-nav-keywords-geo.js"></script>
-<script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
-<script src="{BASE_SITE_URL}/assets/MattiaMapScriptModule.js" defer></script>
+<script src="{BASE_SITE_URL}/{ASSETS}/SiteConfig.js" defer></script>
+<script src="{BASE_SITE_URL}/{ASSETS}/MattiaMapScriptModule.js" defer></script>
 
 </body>
 </html>
@@ -3216,8 +3289,8 @@ def generate_useful_links_page():
 
   <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyUsefulLinksScript.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/MyUsefulLinksScript.css">
 </head>
 
 <body>
@@ -3245,9 +3318,9 @@ def generate_useful_links_page():
   {footer_html}
 
   {TRANSLATE_HEAD}
-  <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
-  <script src="{BASE_SITE_URL}/assets/MyUsefulLinksScriptModule.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/SiteConfig.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/MyUsefulLinksScriptModule.js" defer></script>
 </body>
 </html>"""
 
@@ -3320,7 +3393,7 @@ def generate_404_page():
   <link rel="icon" href="{BASE_SITE_URL}/photos/favicon.ico" type="image/x-icon">
 
   <!-- CSS -->
-  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/My404PageScript.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/My404PageScript.css">
 </head>
 
 <body>
@@ -3395,7 +3468,7 @@ def generate_404_page():
     </div>
   </div>
 
-  <script src="{BASE_SITE_URL}/assets/My404PageScriptModule.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/My404PageScriptModule.js" defer></script>
 
 </body>
 </html>"""
@@ -3447,9 +3520,9 @@ COMMIT_AFTER_SECTIONS = {
 
 # List of patterns running 
 PATTERNS = {
-    "full_run": "r" * 22,
-    "skip_geotag_photos" : "rrrrrrrrrrrrrrrrrrrrrs",  # skip geotaging photos
-    "just_geotag_photos" : "sssssssssssssssssssssr",  # run just geotaging photos
+    "full_run": "r" * 23,
+    "skip_geotag_photos" : "rrrrrrrrrrrrrrrrrrrrrrs",  # skip geotaging photos
+    "just_geotag_photos" : "ssssssssssssssssssssssr",  # run just geotaging photos
 }
 
 def choose_pattern():
@@ -3671,6 +3744,9 @@ if __name__ == "__main__":
 
     run_section(16, "Generate 404 page",
         generate_404_page, pattern_iter=pattern_iter)
+
+    run_section(16.5,"Minify JS/CSS assets",
+        minify_all_assets, pattern_iter=pattern_iter)
 
     # 16 Generate sitemap
     run_section(17, "Generate sitemap",

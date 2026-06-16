@@ -1,0 +1,5 @@
+const fs=require("fs");const{BetaAnalyticsDataClient}=require("@google-analytics/data");const propertyId=process.env.GA_PROPERTY_ID;const client=new BetaAnalyticsDataClient({keyFilename:"ga4-key.json"});function extractPostIdFromPath(path){const match=path.match(/^\/posts\/(\d{4})\/(\d{2})\/[^\/]+\/$/);return match?match[1]:null;}
+async function run(){const[response]=await client.runReport({property:`properties/${propertyId}`,dateRanges:[{startDate:"365daysAgo",endDate:"today"}],dimensions:[{name:"pagePath"}],metrics:[{name:"screenPageViews"}],orderBys:[{metric:{metricName:"screenPageViews"},desc:true}],limit:50});const results=[];for(const row of response.rows){const path=row.dimensionValues[0].value;if(!path.startsWith("/posts/"))continue;if(!/^\/posts\/\d{4}\/\d{2}\/[^\/]+\/$/.test(path))continue;const postId=extractPostIdFromPath(path);if(postId){results.push({path,postId});}
+if(results.length>=5)break;}
+fs.mkdirSync("data",{recursive:true});fs.writeFileSync("data/popular-posts.json",JSON.stringify(results,null,2));console.log("Popular posts updated:",results);}
+run();
