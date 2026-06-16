@@ -983,10 +983,10 @@ def generate_sidebar_html(picture_settings, map_settings, current_page):
     if current_page in ["posts", "labels", "home"]:
         posts_sections = f"""
         <div class="labels" id="navigation-placeholder">
-          <script src="{BASE_SITE_URL}/{ASSETS}/navigation.js"></script>
+          <script src="{BASE_SITE_URL}/{ASSETS}/navigation.js" defer></script>
         </div>
         <div class="archive" id="archive-placeholder">
-          <script src="{BASE_SITE_URL}/{ASSETS}/archive.js"></script>
+          <script src="{BASE_SITE_URL}/{ASSETS}/archive.js" defer></script>
         </div>
         """
 
@@ -1782,19 +1782,19 @@ def fetch_and_save_all_posts(entries):
   {back_to_top_html}
   {footer_html}
 
-  <script src='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.js'></script>
-  <script src='https://metodlangus.github.io/plugins/togeojson/0.16.0/togeojson.min.js'></script>
-  <script src='https://metodlangus.github.io/plugins/leaflet-gpx/1.6.0/gpx.min.js'></script>
-  <script src='https://metodlangus.github.io/plugins/@raruto/leaflet-elevation/dist/leaflet-elevation.min.js'></script>
-  <script src='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
-  <script src='https://metodlangus.github.io/plugins/leaflet-polylinedecorator/1.1.0/leaflet.polylineDecorator.min.js'></script>
-  <script src='{BASE_SITE_URL}/scripts/leaflet-download-gpx-button.js'></script>
-  <script src='https://metodlangus.github.io/plugins/lightbox2/2.11.1/js/lightbox-plus-jquery.min.js'></script>
-  <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
-  <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js'></script>
-  <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+  <script src='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.js' defer></script>
+  <script src='https://metodlangus.github.io/plugins/togeojson/0.16.0/togeojson.min.js' defer></script>
+  <script src='https://metodlangus.github.io/plugins/leaflet-gpx/1.6.0/gpx.min.js' defer></script>
+  <script src='https://metodlangus.github.io/plugins/@raruto/leaflet-elevation/dist/leaflet-elevation.min.js' defer></script>
+  <script src='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js' defer></script>
+  <script src='https://metodlangus.github.io/plugins/leaflet-polylinedecorator/1.1.0/leaflet.polylineDecorator.min.js' defer></script>
+  <script src='{BASE_SITE_URL}/scripts/leaflet-download-gpx-button.js' defer></script>
+  <script src='https://metodlangus.github.io/plugins/lightbox2/2.11.1/js/lightbox-plus-jquery.min.js' defer></script>
+  <script src='https://metodlangus.github.io/scripts/full_img_size_button.js' defer></script>
+  <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js' defer></script>
+  <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js' defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js" defer></script>
   {TRANSLATE_HEAD}
   <script src="{BASE_SITE_URL}/{ASSETS}/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/{ASSETS}/Main.js" defer></script>
@@ -2508,8 +2508,8 @@ def generate_predvajalnik_page(current_page):
   {back_to_top_html}
   {footer_html}
 
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js" defer></script>
   {TRANSLATE_HEAD}
   <script src="{BASE_SITE_URL}/{ASSETS}/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/{ASSETS}/Main.js" defer></script>
@@ -2638,8 +2638,8 @@ def generate_gallery_page(current_page):
   {back_to_top_html}
   {footer_html}
 
-  <script src='https://metodlangus.github.io/plugins/lightbox2/2.11.1/js/lightbox-plus-jquery.min.js'></script>
-  <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
+  <script src='https://metodlangus.github.io/plugins/lightbox2/2.11.1/js/lightbox-plus-jquery.min.js' defer></script>
+  <script src='https://metodlangus.github.io/scripts/full_img_size_button.js' defer></script>
   {TRANSLATE_HEAD}
   <script src="{BASE_SITE_URL}/{ASSETS}/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/{ASSETS}/Main.js" defer></script>
@@ -2902,19 +2902,19 @@ def generate_big_map_page():
   {back_to_top_html}
   {footer_html}
 
-  <script src='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.js'></script>
-  <script src='https://metodlangus.github.io/plugins/togeojson/0.16.0/togeojson.min.js'></script>
-  <script src='https://metodlangus.github.io/plugins/leaflet-gpx/1.6.0/gpx.min.js'></script>
-  <script src='https://metodlangus.github.io/plugins/@raruto/leaflet-elevation/dist/leaflet-elevation.min.js'></script>
-  <script src='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
-  <script src='https://metodlangus.github.io/plugins/leaflet-polylinedecorator/1.1.0/leaflet.polylineDecorator.min.js'></script>
-  <script src='https://metodlangus.github.io/scripts/leaflet-download-gpx-button.js'></script>
-  <script src='https://metodlangus.github.io/plugins/lightbox2/2.11.1/js/lightbox-plus-jquery.min.js'></script>
-  <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
-  <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js'></script>
-  <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+  <script src='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.js' defer></script>
+  <script src='https://metodlangus.github.io/plugins/togeojson/0.16.0/togeojson.min.js' defer></script>
+  <script src='https://metodlangus.github.io/plugins/leaflet-gpx/1.6.0/gpx.min.js' defer></script>
+  <script src='https://metodlangus.github.io/plugins/@raruto/leaflet-elevation/dist/leaflet-elevation.min.js' defer></script>
+  <script src='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js' defer></script>
+  <script src='https://metodlangus.github.io/plugins/leaflet-polylinedecorator/1.1.0/leaflet.polylineDecorator.min.js' defer></script>
+  <script src='https://metodlangus.github.io/scripts/leaflet-download-gpx-button.js' defer></script>
+  <script src='https://metodlangus.github.io/plugins/lightbox2/2.11.1/js/lightbox-plus-jquery.min.js' defer></script>
+  <script src='https://metodlangus.github.io/scripts/full_img_size_button.js' defer></script>
+  <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js' defer></script>
+  <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js' defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js" defer></script>
   {TRANSLATE_HEAD}
   <script src="{BASE_SITE_URL}/{ASSETS}/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/{ASSETS}/Main.js" defer></script>
@@ -3194,9 +3194,9 @@ def generate_mattia_map_page():
 
 <div id="map"></div>
 
-<script src='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
-<script src="{BASE_SITE_URL}/mont-nav-keywords-geo.js"></script>
+<script src='https://metodlangus.github.io/plugins/leaflet/1.7.1/leaflet.min.js' defer></script>
+<script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js' defer></script>
+<script src="{BASE_SITE_URL}/mont-nav-keywords-geo.js" defer></script>
 <script src="{BASE_SITE_URL}/{ASSETS}/SiteConfig.js" defer></script>
 <script src="{BASE_SITE_URL}/{ASSETS}/MattiaMapScriptModule.js" defer></script>
 
