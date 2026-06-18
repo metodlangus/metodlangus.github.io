@@ -87,5 +87,4 @@ document.addEventListener("DOMContentLoaded",function(){document.getElementById(
         <span class='show-more pill-button'>Pokaži več</span>
         <span class='show-less pill-button hidden'>Pokaži manj</span>
         
-</aside>`;document.querySelectorAll("#navigation-placeholder details").forEach(function(det,idx){var key="navigation-state-"+idx;if(sessionStorage.getItem(key)==="open"){det.setAttribute("open","");}else if(sessionStorage.getItem(key)==="closed"){det.removeAttribute("open");}
-det.addEventListener("toggle",function(){sessionStorage.setItem(key,det.open?"open":"closed");});});});
+</aside>`,document.querySelectorAll("#navigation-placeholder details").forEach(function(a,e){var l="navigation-state-"+e;sessionStorage.getItem(l)==="open"?a.setAttribute("open",""):sessionStorage.getItem(l)==="closed"&&a.removeAttribute("open"),a.addEventListener("toggle",function(){sessionStorage.setItem(l,a.open?"open":"closed")})})});

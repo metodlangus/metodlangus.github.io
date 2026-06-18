@@ -477,5 +477,4 @@ document.addEventListener("DOMContentLoaded",function(){document.getElementById(
       </ul>
     </details>
   </details>
-</aside>`;document.querySelectorAll("#archive-placeholder details").forEach(function(det,idx){var key="archive-state-"+idx;if(sessionStorage.getItem(key)==="open"){det.setAttribute("open","");}else if(sessionStorage.getItem(key)==="closed"){det.removeAttribute("open");}
-det.addEventListener("toggle",function(){sessionStorage.setItem(key,det.open?"open":"closed");});});});
+</aside>`,document.querySelectorAll("#archive-placeholder details").forEach(function(a,s){var t="archive-state-"+s;sessionStorage.getItem(t)==="open"?a.setAttribute("open",""):sessionStorage.getItem(t)==="closed"&&a.removeAttribute("open"),a.addEventListener("toggle",function(){sessionStorage.setItem(t,a.open?"open":"closed")})})});

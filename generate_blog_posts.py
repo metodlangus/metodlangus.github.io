@@ -171,7 +171,9 @@ def minify_asset_cached(input_path: Path, output_path: Path, cache: dict):
     output_path = Path(output_path)
 
     ext = input_path.suffix.lower()
-    cache_key = f"{ext}:{input_path.as_posix()}"
+
+    rel_path = input_path.relative_to(PROJECT_ROOT)
+    cache_key = rel_path.as_posix()
 
     new_hash = compute_md5(input_path)
 
@@ -188,6 +190,7 @@ def minify_asset_cached(input_path: Path, output_path: Path, cache: dict):
                 "esbuild",
                 str(input_path),
                 "--minify",
+                "--charset=utf8",
                 f"--outfile={output_path}"
             ],
             check=True,
