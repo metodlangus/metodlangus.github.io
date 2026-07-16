@@ -39,10 +39,12 @@ LOCAL_HOST_URL = f"http://127.0.0.1:5502"
 LOCAL_REPO_PATH  = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = Path(LOCAL_REPO_PATH)
 
-# Nastavitve - Change this one line when switching local <-> GitHub Pages
+# Nastavitve - Change this one line when switching local <-> GitHub Pages <-> Codespace
 BASE_SITE_URL = f"https://{GITHUB_REPO_NAME}"
 DEBUG_NUM_ENTRIES = None  # Set to None to process all entries
 # BASE_SITE_URL = f"{LOCAL_HOST_URL}/{GITHUB_REPO_NAME}"
+# DEBUG_NUM_ENTRIES = 5
+# BASE_SITE_URL = f"https://effective-acorn-56xrp6qw97vf445-5500.app.github.dev"
 # DEBUG_NUM_ENTRIES = 5
 
 REBUILD_ALL_PAGES = False  # Set True to force full rebuild of everything
