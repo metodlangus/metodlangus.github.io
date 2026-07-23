@@ -2325,6 +2325,12 @@
     function toggleSlideshowOrImageVisibility(index) {
         const separators=document.querySelectorAll('.separator'); const myPostContainers=document.querySelectorAll('.my-post-container'); const tables=document.querySelectorAll('table.tr-caption-container');
         updateImageSources(1200);
+        if (toggleButton) {
+            toggleButton.style.webkitTapHighlightColor = 'transparent';
+            toggleButton.style.outline = 'none';
+            toggleButton.style.webkitTouchCallout = 'none';
+            toggleButton.style.userSelect = 'none';
+        }
         let isSlideshowVisible=false;
         mySlideshowContainer.forEach(function(slideshowDiv){if(slideshowDiv.style.display==="block")isSlideshowVisible=true;});
         if (isSlideshowVisible) {

@@ -1029,3 +1029,24 @@ div#PageList1 ul li {
   background: #e0e0e0;
   color: #000;
 }
+
+/* Remove blue tap-highlight / focus ring on tappable buttons & links (mobile) */
+.menu-toggle,
+.search-toggle,
+.search-close,
+.pill-button,
+#cookie-banner button,
+#backToTop,
+.close-button,
+.auth-box button,
+.auth-close-btn,
+.nav-links a,
+.blog-pager a,
+.blog-pager .pagecurrent,
+a.my-labels,
+.sidebar-archive summary,
+.search-posts-container .image-link {
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  -webkit-touch-callout: none;
+}

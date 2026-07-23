@@ -1,0 +1,167 @@
+.my-lightbox-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 1000000;
+    align-items: center;
+    justify-content: center;
+}
+.my-lightbox-backdrop.open { display: flex; }
+.my-lightbox-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 99vw;
+    max-height: 99vh;
+    box-sizing: border-box;
+}
+.my-lightbox-box {
+    position: relative;
+    margin: 0;
+    background: #fff;
+    border-radius: 6px;
+    overflow: hidden;
+    transition: width 0.15s ease-out, height 0.15s ease-out;
+}
+.my-lightbox-box img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+/* clickable overlay zones over the photo: prev / neutral / next */
+.my-lightbox-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    z-index: 100001;
+    -webkit-tap-highlight-color: transparent;
+}
+.my-lightbox-overlay > div {
+    flex: 1;
+    height: 100%;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+}
+.my-lightbox-overlay .op-prev,
+.my-lightbox-overlay .op-next { cursor: pointer; }
+.my-lightbox-overlay .op-mid { cursor: default; }
+/* prev/next chevrons — NO circular background, just the arrow
+    (white with a soft drop-shadow so it reads over light photos).
+    Hidden by default, revealed on hover of the photo box. */
+.my-lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 56px;
+    height: 56px;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    z-index: 100003;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: color 0.15s ease, opacity 0.2s ease;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.6));
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+}
+.my-lightbox-box:hover .my-lightbox-nav,
+.my-lightbox-nav:focus-visible { opacity: 1; }
+.my-lightbox-nav:hover { color: #fff; }
+.my-lightbox-nav.prev { left: 8px; }
+.my-lightbox-nav.next { right: 8px; }
+.my-lightbox-nav svg { width: 40px; height: 40px; display: block; }
+.my-lightbox-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    color: #111;
+    font-size: 18px;
+    line-height: 34px;
+    text-align: center;
+    cursor: pointer;
+    z-index: 100002;
+}
+.my-lightbox-close:hover { background: #fff; }
+.my-lightbox-footer {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.my-lightbox-counter {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 14px;
+    font-family: inherit;
+}
+.my-lightbox-preloadall {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.9);
+    border-radius: 4px;
+    padding: 2px 10px;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    transition:
+        color 0.3s ease,
+        border-color 0.3s ease,
+        background-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+.my-lightbox-preloadall:hover:not(:disabled) { background: rgba(255, 255, 255, 0.25); }
+.my-lightbox-preloadall:disabled { opacity: 0.5; cursor: default; }
+body.my-lightbox-open { overflow: hidden; }
+body.my-lightbox-open .top-header { display: none !important; }
+body.my-lightbox-open .content-wrapper > h1 { display: none !important; }
+.my-lightbox-caption {
+    position: absolute;
+    bottom: 0;
+    width: 97%;
+    text-align: center;
+    padding: 1.5%;
+    font-size: 14px;
+    color: #f2f2f2;
+    text-shadow: 2px 2px 4px black,
+                0 0 30px rgba(0,0,0,.7),
+                0 0 10px black,
+                -1px -1px 5px rgba(0,0,0,.5),
+                1px -1px 5px rgba(0,0,0,.5),
+                -1px 1px 5px rgba(0,0,0,.5),
+                1px 1px 5px rgba(0,0,0,.5);
+    z-index: 100004;
+    pointer-events: none;
+}
+
+.my-lightbox-preloadall.buffer-yellow{
+    color:#ffd54a;
+    border-color:#ffd54a;
+    background:rgba(255,213,74,.12);
+}
+
+.my-lightbox-preloadall.buffer-orange{
+    color:#ff9800;
+    border-color:#ff9800;
+    background:rgba(255,152,0,.14);
+}
+
+.my-lightbox-preloadall.buffer-red{
+    color:#ff4b4b;
+    border-color:#ff4b4b;
+    background:rgba(255,75,75,.16);
+}

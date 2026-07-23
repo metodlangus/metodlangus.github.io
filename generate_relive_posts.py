@@ -247,7 +247,10 @@ def fix_images_for_lightbox(html_content, post_title):
         a_tag["href"] = new_href
 
         # Step 3: Add lightbox attribute
-        a_tag["data-lightbox"] = "Gallery"
+        if image_index == 0:
+            a_tag["data-lightbox"] = "Cover"
+        else:
+            a_tag["data-lightbox"] = "Gallery"
 
         # Step 4: Loading and priority
         if image_index == 0:
@@ -1526,11 +1529,11 @@ def fetch_and_save_all_posts(entries):
   <link href='https://metodlangus.github.io/plugins/@raruto/leaflet-elevation/dist/leaflet-elevation.min.css' rel='stylesheet'>
   <link href='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet'>
   <link href='https://metodlangus.github.io/scripts/leaflet-download-gpx-button.css' rel='stylesheet'>
-  <link href='https://metodlangus.github.io/plugins/lightbox2/2.11.1/css/lightbox.min.css' rel='stylesheet'>
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css' rel='stylesheet'>
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css' rel='stylesheet'>
   <link href='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.css' rel='stylesheet'>
   <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyLightboxScriptModule.css">
   <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyMapScript.css">
   <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MySlideshowScript.css">
   <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyPostContainerScript.css">
@@ -1572,14 +1575,13 @@ def fetch_and_save_all_posts(entries):
   <script src='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
   <script src='https://metodlangus.github.io/plugins/leaflet-polylinedecorator/1.1.0/leaflet.polylineDecorator.min.js'></script>
   <script src='https://metodlangus.github.io/scripts/leaflet-download-gpx-button.js'></script>
-  <script src='https://metodlangus.github.io/plugins/lightbox2/2.11.1/js/lightbox-plus-jquery.min.js'></script>
-  <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
   <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/assets/MyLightboxScriptModule.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyMapScriptModule.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyFiltersScriptModule.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MySlideshowScriptModule.js" defer></script>
@@ -2322,8 +2324,8 @@ def generate_gallery_page(current_page):
 
   <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Open+Sans&display=swap" rel="stylesheet">
-  <link href='https://metodlangus.github.io/plugins/lightbox2/2.11.1/css/lightbox.min.css' rel='stylesheet'>
   <link rel="stylesheet" href="{BASE_SITE_URL}/assets/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyLightboxScriptModule.css">
   <link rel="stylesheet" href="{BASE_SITE_URL}/assets/MyGalleryScript.css">
 </head>
 
@@ -2353,10 +2355,9 @@ def generate_gallery_page(current_page):
   {back_to_top_html}
   {footer_html}
 
-  <script src='https://metodlangus.github.io/plugins/lightbox2/2.11.1/js/lightbox-plus-jquery.min.js'></script>
-  <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/assets/MyLightboxScriptModule.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyFiltersScriptModule.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyGalleryScriptModule.js" defer></script>
 </body>
@@ -2560,7 +2561,6 @@ def generate_big_map_page():
   <link href='https://metodlangus.github.io/plugins/@raruto/leaflet-elevation/dist/leaflet-elevation.min.css' rel='stylesheet'>
   <link href='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet'>
   <link href='https://metodlangus.github.io/scripts/leaflet-download-gpx-button.css' rel='stylesheet'>
-  <link href='https://metodlangus.github.io/plugins/lightbox2/2.11.1/css/lightbox.min.css' rel='stylesheet'>
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css' rel='stylesheet'>
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css' rel='stylesheet'>
   <link href='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.css' rel='stylesheet'>
@@ -2606,8 +2606,6 @@ def generate_big_map_page():
   <script src='https://metodlangus.github.io/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
   <script src='https://metodlangus.github.io/plugins/leaflet-polylinedecorator/1.1.0/leaflet.polylineDecorator.min.js'></script>
   <script src='https://metodlangus.github.io/scripts/leaflet-download-gpx-button.js'></script>
-  <script src='https://metodlangus.github.io/plugins/lightbox2/2.11.1/js/lightbox-plus-jquery.min.js'></script>
-  <script src='https://metodlangus.github.io/scripts/full_img_size_button.js'></script>
   <script src='https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.js'></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
