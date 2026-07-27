@@ -43,15 +43,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // Memory Map
     runIfDefined(window.MyMemoryMapModule, () => {
         auth.onAuthStateChanged(user => {
-        
+            const isPrivileged = hasPrivilegedAccess(user);
             const overlay = document.getElementById("authOverlay");
-            if (!overlay) return;
-            if (user) {
-              console.log("User signed in:", user.displayName || user.email);
-              overlay.style.display = "none";
-            } else {
-              console.log("User not signed in");
-              overlay.style.display = "flex";
+            if (overlay) {
+                if (isPrivileged) {
+                    console.log(
+                        user
+                            ? "User signed in:"
+                            : "Admin mode unlocked",
+                        user?.displayName || user?.email || ""
+                    );
+
+                    overlay.style.display = "none";
+                } else {
+                    console.log("User not signed in");
+                    overlay.style.display = "flex";
+                }
             }
 
             // Destroy previous map safely
@@ -59,14 +66,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 MyMemoryMapModule.destroy();
             }
 
-            // Re-initialize the module with current signin status
+            // Re-initialize the module with current privileged status
             MyMemoryMapModule.init({
                 mapId: 'map',
                 baseUrl: WindowBaseUrl,
                 initPhotosValue: initMapPhotos,
                 isRelive: isRelive,
                 enableRelive: true,
-                isSignedIn: !!user,
+                isSignedIn: isPrivileged,
                 enableViewportGallery: true
             });
         });
@@ -81,13 +88,14 @@ document.addEventListener('DOMContentLoaded', () => {
         auth.onAuthStateChanged(user => {
             if (!mapInitialized) {
                 mapInitialized = true;
+                const isPrivileged = hasPrivilegedAccess(user);
                 MyMapModule.init({
                     usePostTitle: false,
                     trackColour: 'orange',
                     isRelive: isRelive,
-                    isSignedIn: !!user
+                    isSignedIn: isPrivileged
                 });
-                console.log("MyMapModule initialized. User signed in:", !!user);
+                console.log("MyMapModule initialized. Privileged access:", isPrivileged);
             }
         });
     });
@@ -132,10 +140,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // React to auth changes
         auth.onAuthStateChanged(user => {
-            const isSignedIn = !!user;
-            window.isSignedIn = isSignedIn;
+            const isPrivileged = hasPrivilegedAccess(user);
+            window.isSignedIn = isPrivileged;
 
-            window.updateTrackButtonsAuth?.(isSignedIn);
+            window.updateTrackButtonsAuth?.(isPrivileged);
         });
     });
 
@@ -465,6 +473,264 @@ if (typeof firebase !== 'undefined') {
     window.signInWithGithub = signInWithGithub;
     window.onAuthStateChanged = auth.onAuthStateChanged.bind(auth);
 }
+
+function isAdminUnlocked() {
+    return localStorage.getItem('adminUnlocked') === 'true';
+}
+
+function hasPrivilegedAccess(user) {
+    return !!user || isAdminUnlocked();
+}
+
+function lockAdminMode() {
+    localStorage.removeItem('adminUnlocked');
+    window.location.reload();
+}
+
+window.isAdminUnlocked = isAdminUnlocked;
+window.hasPrivilegedAccess = hasPrivilegedAccess;
+window.lockAdminMode = lockAdminMode;
+
+(function () {
+    const FOOTER_SELECTOR = '.site-footer';
+    const SECRET_SEQUENCE = ['L', 'L', 'L', 'LH'];
+    const LOCK_SEQUENCE = ['R', 'R', 'R'];
+
+    const MAX_SEQUENCE_TIME_MS = 5000;
+    const MAX_LOCK_SEQUENCE_TIME_MS = 2000;
+    const LONG_PRESS_MS = 2000;
+
+    let enteredSequence = [];
+    let sequenceStartTime = null;
+
+    let lockSequence = [];
+    let lockSequenceStartTime = null;
+
+    let pressTimer = null;
+    let pressStartTime = 0;
+    let longPressTriggered = false;
+    let pressedZone = null;
+
+    function unlockAdminMode() {
+        localStorage.setItem('adminUnlocked', 'true');
+
+        console.info('Admin mode unlocked');
+        window.location.reload();
+    }
+
+    function resetSequence() {
+        enteredSequence = [];
+        sequenceStartTime = null;
+    }
+
+    function lockAdminModeFromFooter() {
+        console.log('[ADMIN] Lock sequence completed.');
+
+        localStorage.removeItem('adminUnlocked');
+
+        console.log('[ADMIN] adminUnlocked removed from localStorage.');
+        window.location.reload();
+    }
+
+    function resetLockSequence(reason) {
+        console.log('[ADMIN] Reset lock sequence:', reason);
+
+        lockSequence = [];
+        lockSequenceStartTime = null;
+    }
+
+    function addLockAction(action) {
+
+        // Optional: lock only when currently privileged
+        const currentUser = window.auth?.currentUser || null;
+
+        if (!hasPrivilegedAccess(currentUser)) {
+            return;
+        }
+
+        const now = Date.now();
+
+        if (action !== 'R') {
+            resetLockSequence('Not a right click.');
+            return;
+        }
+
+        if (!lockSequenceStartTime) {
+            lockSequenceStartTime = now;
+        }
+
+        const elapsed = now - lockSequenceStartTime;
+
+        if (elapsed > MAX_LOCK_SEQUENCE_TIME_MS) {
+            resetLockSequence('Timeout.');
+            lockSequenceStartTime = now;
+        }
+
+        lockSequence.push(action);
+
+        if (lockSequence.length > LOCK_SEQUENCE.length) {
+            lockSequence.shift();
+        }
+
+        console.log('[ADMIN] Lock sequence:', lockSequence);
+
+        const isCorrect = lockSequence.every((value, index) => {
+            return value === LOCK_SEQUENCE[index];
+        });
+
+        if (!isCorrect) {
+            resetLockSequence('Wrong sequence.');
+            return;
+        }
+
+        if (lockSequence.length === LOCK_SEQUENCE.length) {
+            lockAdminModeFromFooter();
+        }
+    }
+
+    function addSecretAction(action) {
+        addLockAction(action);
+        
+        const now = Date.now();
+
+        if (!sequenceStartTime) {
+            sequenceStartTime = now;
+        }
+
+        if ((now - sequenceStartTime) > MAX_SEQUENCE_TIME_MS) {
+            resetSequence();
+            sequenceStartTime = now;
+        }
+
+        enteredSequence.push(action);
+
+        if (enteredSequence.length > SECRET_SEQUENCE.length) {
+            enteredSequence.shift();
+        }
+
+        const isCorrectSoFar = enteredSequence.every((value, index) => {
+            return value === SECRET_SEQUENCE[index];
+        });
+
+        if (!isCorrectSoFar) {
+            resetSequence();
+
+            // If current action can be first action, keep it
+            if (action === SECRET_SEQUENCE[0]) {
+                enteredSequence = [action];
+                sequenceStartTime = now;
+            }
+
+            return;
+        }
+
+        if (enteredSequence.length === SECRET_SEQUENCE.length) {
+            unlockAdminMode();
+        }
+    }
+
+    function getFooterZone(event, footer) {
+        const rect = footer.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+
+        return x < rect.width / 2 ? 'L' : 'R';
+    }
+
+    function initFooterAdminUnlock() {
+        const footer = document.querySelector(FOOTER_SELECTOR);
+        if (!footer) return;
+
+        footer.addEventListener('pointerdown', function (event) {
+
+            if (event.button !== undefined && event.button !== 0) return;
+
+            event.preventDefault();
+
+            if (footer.setPointerCapture && event.pointerId !== undefined) {
+                try {
+                    footer.setPointerCapture(event.pointerId);
+                } catch (err) {
+                }
+            }
+
+            pressedZone = getFooterZone(event, footer);
+            pressStartTime = Date.now();
+            longPressTriggered = false;
+
+            clearTimeout(pressTimer);
+
+            pressTimer = setTimeout(function () {
+                if (!pressedZone) {
+                    return;
+                }
+
+                longPressTriggered = true;
+
+                const action = pressedZone + 'H';
+
+                addSecretAction(action);
+            }, LONG_PRESS_MS);
+        }, { passive: false });
+
+
+        footer.addEventListener('pointerup', function (event) {
+
+            event.preventDefault();
+
+            clearTimeout(pressTimer);
+
+            if (!pressedZone) {
+                return;
+            }
+
+            const pressDuration = Date.now() - pressStartTime;
+
+            if (!longPressTriggered && pressDuration < LONG_PRESS_MS) {
+                const releasedZone = getFooterZone(event, footer);
+
+                if (releasedZone === pressedZone) {
+                    addSecretAction(pressedZone);
+                }
+            }
+
+            if (footer.releasePointerCapture && event.pointerId !== undefined) {
+                try {
+                    footer.releasePointerCapture(event.pointerId);
+                } catch (err) {
+                }
+            }
+
+            pressedZone = null;
+            longPressTriggered = false;
+        }, { passive: false });
+
+
+        footer.addEventListener('pointerleave', function (event) {
+            // On mobile, small finger movement can trigger pointerleave.
+            // Do not cancel touch sequence here.
+            if (event.pointerType === 'touch') {
+                return;
+            }
+
+            clearTimeout(pressTimer);
+            pressedZone = null;
+            longPressTriggered = false;
+        });
+
+
+        footer.addEventListener('pointercancel', function () {
+            clearTimeout(pressTimer);
+            pressedZone = null;
+            longPressTriggered = false;
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initFooterAdminUnlock);
+    } else {
+        initFooterAdminUnlock();
+    }
+})();
 
 // Shifting for Google Translate banner (to prevent it from covering the header)
 (function() {

@@ -90,6 +90,10 @@
   padding: 1rem;
   text-align: center;
   border-top: 1px solid #ccc;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 .site-footer p {

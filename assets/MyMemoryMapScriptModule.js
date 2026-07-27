@@ -489,7 +489,7 @@ function createMap() {
 
             viewportPhotoCache.main = null;
             viewportPhotoCache.relive = null;
-            clearViewportGallery();
+            refreshViewportGallery();
         });
     }
 
@@ -862,6 +862,12 @@ function createMap() {
             photos = photos.filter(photo => {
                 return bounds.contains([photo.latitude, photo.longitude]) &&
                     isPhotoWithinCurrentPhotoFilters(photo);
+            });
+
+            photos.sort((a, b) => {
+                const timeA = a.captureDate ? a.captureDate.getTime() : -1;
+                const timeB = b.captureDate ? b.captureDate.getTime() : -1;
+                return timeB - timeA; // newest -> oldest
             });
 
             if (mapViewportGalleryCountEl) {
