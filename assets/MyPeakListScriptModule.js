@@ -3,10 +3,11 @@ const PeakListModule = (() => {
     let config = {
         WindowBaseUrl: '',
         isRelive: false,
-        isBlogger: false
+        isBlogger: false,
+        isActivityList: false
     };
 
-    let WindowBaseUrl, isRelive, isBlogger;
+    let WindowBaseUrl, isRelive, isBlogger, isActivityList;
     let activeView = 'grouped';
     let allPeaks = [];
     let stylesInjected = false;
@@ -119,29 +120,13 @@ const PeakListModule = (() => {
     }
 
     function sortPeaksAlphabeticallyFlat(peaks) {
-        const withHeight = [];
-        const withoutHeight = [];
-
-        peaks.forEach(peak => {
-            if (peak.height !== null && peak.height !== undefined) {
-                withHeight.push(peak);
-            } else {
-                withoutHeight.push(peak);
-            }
+        return [...peaks].sort((a, b) => {
+            return normalizeSpaces(a.peakName).localeCompare(normalizeSpaces(b.peakName));
         });
-
-        return [
-            ...withHeight.sort((a, b) => {
-                return normalizeSpaces(a.peakName).localeCompare(normalizeSpaces(b.peakName));
-            }),
-            ...withoutHeight.sort((a, b) => {
-                return normalizeSpaces(a.peakName).localeCompare(normalizeSpaces(b.peakName));
-            })
-        ];
     }
 
     function ensureViewControls() {
-        if (isRelive) return;
+        if (isRelive || isActivityList) return;
 
         const loadingMessage = document.getElementById('loadingMessage');
         const mountainContainer = document.getElementById('mountainContainer');
@@ -338,7 +323,7 @@ const PeakListModule = (() => {
         const mountainContainer = document.getElementById('mountainContainer');
         if (!mountainContainer) return;
 
-        if (isRelive) {
+        if (isRelive || isActivityList) {
             renderFlatPeaks(sortPeaksAlphabeticallyFlat(peaks), false, false);
             return;
         }
@@ -503,7 +488,7 @@ const PeakListModule = (() => {
 
                                 const d = new Date(entry.published.$t);
                                 const date = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
-                                const height = parsePeakHeight(peakName);
+                                const height = (isRelive || isActivityList) ? null : parsePeakHeight(peakName);
                                 const categories = buildCategoryEntries(label2s, label3s);
 
                                 addPeakToCollection(allPeaks, peakName, height, categories, { date, link: postLink });
@@ -533,6 +518,7 @@ const PeakListModule = (() => {
         WindowBaseUrl = config.WindowBaseUrl;
         isRelive = config.isRelive;
         isBlogger = config.isBlogger;
+        isActivityList = config.isActivityList;
 
         if (!WindowBaseUrl) {
             console.warn('PeakListModule: WindowBaseUrl is missing');
