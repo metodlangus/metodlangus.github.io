@@ -8,11 +8,32 @@ let config = {
     initPhotosValue: -2,
     center: [46.27396640, 14.30939080],
     zoom: 8,
-    isSignedIn: false
+    isSignedIn: false,
+
+    // Viewport gallery below map
+    enableViewportGallery: false,
+    viewportGalleryWrapperId: 'mapViewportGalleryWrapper',
+    viewportGalleryContainerId: 'mapViewportGallery',
+    viewportGalleryCountId: 'mapViewportGalleryCount',
+    viewportGalleryLoadingId: 'mapViewportGalleryLoading',
+    viewportGalleryLightboxName: 'MapViewportGallery'
 };
 
 let map, gpxFolder, trackListUrl, photoListUrl, isRelive;
 let reliveGpxFolder, reliveTrackListUrl, relivePhotoListUrl;
+
+let mapViewportGalleryWrapper = null;
+let mapViewportGalleryContainer = null;
+let mapViewportGalleryCountEl = null;
+let mapViewportGalleryLoadingEl = null;
+
+let viewportGalleryBuildInProgress = false;
+let viewportGalleryRefreshTimer = null;
+
+const viewportPhotoCache = {
+    main: null,
+    relive: null
+};
 
 // Tile layers
 let opentopoMap;
@@ -70,6 +91,24 @@ const trackColors = ['orange', 'blue', 'green', 'red', 'purple', 'brown', 'yello
 // -----------------
 // INIT
 // -----------------
+function initViewportGalleryElements() {
+    mapViewportGalleryWrapper = document.getElementById(config.viewportGalleryWrapperId);
+    mapViewportGalleryContainer = document.getElementById(config.viewportGalleryContainerId);
+    mapViewportGalleryCountEl = document.getElementById(config.viewportGalleryCountId);
+    mapViewportGalleryLoadingEl = document.getElementById(config.viewportGalleryLoadingId);
+
+    if (!mapViewportGalleryWrapper && config.enableViewportGallery) {
+        console.warn(`MemoryMap: #${config.viewportGalleryWrapperId} not found. Viewport gallery disabled.`);
+    }
+
+    if (!mapViewportGalleryContainer && config.enableViewportGallery) {
+        console.warn(`MemoryMap: #${config.viewportGalleryContainerId} not found. Viewport gallery disabled.`);
+    }
+
+    if (mapViewportGalleryWrapper) {
+        mapViewportGalleryWrapper.style.display = 'none';
+    }
+}
 
 function populateFilterInputs() {
     const defaults = {
@@ -211,6 +250,7 @@ function init(userConfig = {}) {
     createMap();
     initPhotoSlider();
     populateFilterInputs();
+    initViewportGalleryElements();
 }
 
 // -----------------
@@ -365,6 +405,31 @@ function createMap() {
         });
     }
 
+    function findAndOpenPhotoMarker(lat, lng) {
+        const tolerance = 0.00001;
+        function searchGroup(group) {
+            let found = null;
+            group.eachLayer(marker => {
+                if (found) return;
+                const pos = marker.getLatLng();
+                if (
+                    Math.abs(pos.lat - lat) < tolerance &&
+                    Math.abs(pos.lng - lng) < tolerance
+                ) {
+                    found = marker;
+                }
+            });
+            return found;
+        }
+        let marker = searchGroup(markers);
+        if (!marker && config.enableRelive) {
+            marker = searchGroup(reliveMarkers);
+        }
+        if (marker) {
+            setTimeout(() => marker.openPopup(), 500);
+        }
+    }
+
     fetch(photoListUrl)
         .then(r => r.text()).then(data => addMarkers(data, markers, false))
         .catch(err => console.error('Error fetching photos:', err));
@@ -421,6 +486,10 @@ function createMap() {
             clearPolylines(true);
             loadTrackMarkers();
             if (config.enableRelive) loadReliveTrackMarkers();
+
+            viewportPhotoCache.main = null;
+            viewportPhotoCache.relive = null;
+            clearViewportGallery();
         });
     }
 
@@ -630,6 +699,287 @@ function createMap() {
         }
     }
 
+    // -----------------
+    // VIEWPORT PHOTO GALLERY
+    // -----------------
+
+    function parsePhotoLineForGallery(line, isReliveSource) {
+        if (!line || !line.trim()) return null;
+
+        const regex = /(.+?),\s*Link:\s*(https?:\/\/[^\s]+),\s*data-skip=([^\s,]+),\s*"([^"]+)",\s*([^,]+),\s*Latitude:\s*([+-]?\d+\.\d+),\s*Longitude:\s*([+-]?\d+\.\d+)/;
+        const match = line.match(regex);
+        if (!match) return null;
+
+        let dataSkip = match[3] || "3";
+        dataSkip = dataSkip.replace(/best/g, "0").replace(/cover/g, "-1").replace(/peak/g, "-2");
+
+        const imageName = match[1];
+        const imageLink = match[2];
+        const postTitle = match[4];
+        const postSlug = match[5] || "";
+        const latitude = parseFloat(match[6]);
+        const longitude = parseFloat(match[7]);
+
+        if (!imageLink || isNaN(latitude) || isNaN(longitude)) return null;
+
+        let captureDate = null;
+
+        try {
+            const imageTimeRegex = /^(\d{8})_(\d{6})(\d{3})?\.jpg$|^IMG(\d{8})(\d{6})\.jpg$|^IMG-(\d{8})_(\d{6})\.JPG$/i;
+            const imageTimeMatch = imageName.match(imageTimeRegex);
+
+            if (imageTimeMatch) {
+                const datePart = imageTimeMatch[1] || imageTimeMatch[4] || imageTimeMatch[6];
+                const timePart = imageTimeMatch[2] || imageTimeMatch[5] || imageTimeMatch[7];
+                const millisPart = imageTimeMatch[3] || '';
+
+                let captureDateString =
+                    `${datePart.slice(0, 4)}-${datePart.slice(4, 6)}-${datePart.slice(6, 8)}T` +
+                    `${timePart.slice(0, 2)}:${timePart.slice(2, 4)}:${timePart.slice(4, 6)}`;
+
+                if (millisPart) captureDateString += `.${millisPart}`;
+
+                captureDate = new Date(captureDateString);
+                if (isNaN(captureDate.getTime())) captureDate = null;
+            }
+        } catch (error) {
+            console.warn('Viewport gallery date parse error:', error);
+        }
+
+        return {
+            imageName,
+            imageLink,
+            dataSkip,
+            postTitle,
+            postLink: isReliveSource
+                ? `${config.baseUrl}/relive/posts/${postSlug}`
+                : `${config.baseUrl}/posts/${postSlug}`,
+            latitude,
+            longitude,
+            captureDate,
+            isReliveSource
+        };
+    }
+
+    function isPhotoWithinCurrentPhotoFilters(photo) {
+        const PhotosMapRange = getPhotosMapSliderValue();
+
+        const dataSkipValues = photo.dataSkip.split(";");
+        const isWithinRange = dataSkipValues.some(value => {
+            const numericValue = parseFloat(value);
+
+            if (!isNaN(numericValue)) {
+                if ([0, -1, -2].includes(PhotosMapRange)) {
+                    return numericValue === PhotosMapRange;
+                }
+
+                return numericValue <= PhotosMapRange;
+            }
+
+            return false;
+        });
+
+        if (!isWithinRange) return false;
+
+        if (!photo.captureDate) return true;
+
+        const timeFilterStart = localStorage.getItem('timeFilterStart') || "00:00";
+        const timeFilterEnd = localStorage.getItem('timeFilterEnd') || "23:59";
+        const dayFilterStart = localStorage.getItem('dayFilterStart') || "1970-01-01";
+        const dayFilterEnd = localStorage.getItem('dayFilterEnd') || "9999-12-31";
+        const dailyTimeFilterStart = localStorage.getItem('dailyTimeFilterStart') || "00:00";
+        const dailyTimeFilterEnd = localStorage.getItem('dailyTimeFilterEnd') || "23:59";
+
+        const filterStartDate = new Date(`${dayFilterStart}T${timeFilterStart}`);
+        const filterEndDate = new Date(`${dayFilterEnd}T${timeFilterEnd}`);
+
+        if (!isNaN(filterStartDate.getTime()) && !isNaN(filterEndDate.getTime())) {
+            if (filterStartDate > filterEndDate) return false;
+            if (photo.captureDate < filterStartDate || photo.captureDate > filterEndDate) return false;
+        }
+
+        const captureHHMM = photo.captureDate.toTimeString().slice(0, 5);
+
+        if (dailyTimeFilterStart > dailyTimeFilterEnd) return false;
+        if (captureHHMM < dailyTimeFilterStart || captureHHMM > dailyTimeFilterEnd) return false;
+
+        return true;
+    }
+
+    async function getViewportPhotosFromSource(url, cacheKey, isReliveSource) {
+        if (!viewportPhotoCache[cacheKey]) {
+            const response = await fetch(url);
+            const data = await response.text();
+
+            viewportPhotoCache[cacheKey] = data
+                .split('\n')
+                .map(line => parsePhotoLineForGallery(line, isReliveSource))
+                .filter(Boolean);
+        }
+
+        return viewportPhotoCache[cacheKey];
+    }
+
+    async function buildViewportGallery() {
+        if (viewportGalleryBuildInProgress) return;
+
+        viewportGalleryBuildInProgress = true;
+
+        try {
+            if (!config.enableViewportGallery || !mapViewportGalleryContainer) return;
+
+            if (mapViewportGalleryLoadingEl) {
+                mapViewportGalleryLoadingEl.style.display = 'block';
+            }
+
+            mapViewportGalleryContainer.innerHTML = '';
+
+            const bounds = map.getBounds();
+
+            let photos = [];
+
+            try {
+                const mainPhotos = await getViewportPhotosFromSource(photoListUrl, 'main', false);
+                photos.push(...mainPhotos);
+
+                if (config.enableRelive) {
+                    const relivePhotos = await getViewportPhotosFromSource(relivePhotoListUrl, 'relive', true);
+                    photos.push(...relivePhotos);
+                }
+            } catch (error) {
+                console.error('Viewport gallery photo loading error:', error);
+
+                if (mapViewportGalleryLoadingEl) {
+                    mapViewportGalleryLoadingEl.style.display = 'none';
+                }
+
+                mapViewportGalleryContainer.innerHTML =
+                    `<p class="map-gallery-empty">Napaka pri nalaganju slik.</p>`;
+
+                return;
+            }
+
+            photos = photos.filter(photo => {
+                return bounds.contains([photo.latitude, photo.longitude]) &&
+                    isPhotoWithinCurrentPhotoFilters(photo);
+            });
+
+            if (mapViewportGalleryCountEl) {
+                mapViewportGalleryCountEl.textContent = photos.length;
+            }
+
+            if (mapViewportGalleryLoadingEl) {
+                mapViewportGalleryLoadingEl.style.display = 'none';
+            }
+
+            if (!photos.length) {
+                mapViewportGalleryContainer.innerHTML =
+                    `<p class="map-gallery-empty">V trenutnem pogledu zemljevida ni slik.</p>`;
+                return;
+            }
+
+            const fragment = document.createDocumentFragment();
+
+            photos.forEach(photo => {
+            const item = document.createElement('div');
+            item.className = 'map-gallery-item';
+
+            const showOnMapBtn = document.createElement('button');
+            showOnMapBtn.className = 'map-gallery-show-on-map';
+            showOnMapBtn.type = 'button';
+            showOnMapBtn.title = 'Prikaži na zemljevidu';
+            showOnMapBtn.innerHTML = '&#128205;';
+
+            showOnMapBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                map.setView(
+                    [photo.latitude, photo.longitude],
+                    Math.max(map.getZoom(), 16),
+                    {
+                        animate: true
+                    }
+                );
+
+                // Optional: open matching popup
+                findAndOpenPhotoMarker(photo.latitude, photo.longitude);
+            });
+
+            item.dataset.lat = photo.latitude;
+            item.dataset.lng = photo.longitude;
+
+            const link = document.createElement('a');
+            link.href = photo.imageLink;
+            link.setAttribute('data-lightbox', config.viewportGalleryLightboxName);
+            link.setAttribute('data-title', photo.postTitle || '');
+
+            const img = document.createElement('img');
+            img.src = photo.imageLink;
+            img.alt = photo.postTitle || '';
+            img.loading = 'lazy';
+
+            // Used by MyLightboxModule as caption priority #1
+            img.setAttribute('data-caption', photo.postTitle || '');
+
+            // Optional but useful: marks image itself as part of this lightbox group too
+            img.setAttribute('data-lightbox', config.viewportGalleryLightboxName);
+
+            const caption = document.createElement('div');
+            caption.className = 'map-gallery-caption';
+            caption.textContent = photo.postTitle || '';
+
+            item.appendChild(showOnMapBtn);
+            link.appendChild(img);
+            item.appendChild(link);
+            item.appendChild(caption);
+
+            fragment.appendChild(item);
+        });
+
+            mapViewportGalleryContainer.appendChild(fragment);
+
+        } finally {
+            viewportGalleryBuildInProgress = false;
+        }
+    }
+
+    async function toggleViewportGallery(button) {
+        if (!config.enableViewportGallery || !mapViewportGalleryWrapper || !mapViewportGalleryContainer) return;
+
+        const isVisible = mapViewportGalleryWrapper.style.display !== 'none';
+
+        if (isVisible) {
+            mapViewportGalleryWrapper.style.display = 'none';
+            if (button) button.classList.remove('active');
+            return;
+        }
+
+        mapViewportGalleryWrapper.style.display = 'block';
+        if (button) button.classList.add('active');
+
+        await buildViewportGallery();
+
+        mapViewportGalleryWrapper.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }
+
+    function clearViewportGallery() {
+        if (mapViewportGalleryContainer) {
+            mapViewportGalleryContainer.innerHTML = '';
+        }
+
+        if (mapViewportGalleryCountEl) {
+            mapViewportGalleryCountEl.textContent = '0';
+        }
+
+        if (mapViewportGalleryLoadingEl) {
+            mapViewportGalleryLoadingEl.style.display = 'none';
+        }
+    }
+
     // Custom control: show tracks in current viewport
     const ShowTracksControl = L.Control.extend({
         options: { position: 'topleft' },
@@ -665,6 +1015,25 @@ function createMap() {
                         if (config.enableRelive) clearPolylines(true);
                     });
             }
+            return container;
+        }
+    });
+
+    // Custom control: toggle photos from current viewport in gallery below map
+    const ShowViewportGalleryControl = L.Control.extend({
+        options: { position: 'topleft' },
+        onAdd: function (map) {
+            const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
+            const button = L.DomUtil.create('a', 'leaflet-control-show-gallery', container);
+
+            button.href = '#';
+            button.title = 'Show / Hide Photos From Current Map View';
+            button.innerHTML = '<span>&#128247;</span>';
+
+            L.DomEvent.on(button, 'click', L.DomEvent.stopPropagation)
+                .on(button, 'click', L.DomEvent.preventDefault)
+                .on(button, 'click', () => toggleViewportGallery(button));
+
             return container;
         }
     });
@@ -915,6 +1284,7 @@ function createMap() {
 
     map.addControl(new ShowTracksControl());
     map.addControl(new ClearTracksControl());
+    map.addControl(new ShowViewportGalleryControl());
 
     if (config.isSignedIn) {
         map.on('click',   handleTrackClick);
@@ -923,6 +1293,23 @@ function createMap() {
 
     loadTrackMarkers();
     if (config.enableRelive) loadReliveTrackMarkers();
+
+    function refreshViewportGallery() {
+        clearTimeout(viewportGalleryRefreshTimer);
+
+        viewportGalleryRefreshTimer = setTimeout(() => {
+            if (
+                config.enableViewportGallery &&
+                mapViewportGalleryWrapper &&
+                mapViewportGalleryWrapper.style.display !== 'none'
+            ) {
+                buildViewportGallery();
+            }
+        }, 100);
+    }
+
+    map.on('moveend', refreshViewportGallery);
+    map.on('zoomend', refreshViewportGallery);
 }
 
 // -----------------

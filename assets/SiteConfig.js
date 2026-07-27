@@ -66,7 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 initPhotosValue: initMapPhotos,
                 isRelive: isRelive,
                 enableRelive: true,
-                isSignedIn: !!user
+                isSignedIn: !!user,
+                enableViewportGallery: true
             });
         });
 

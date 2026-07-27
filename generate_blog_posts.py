@@ -2873,6 +2873,7 @@ def generate_big_map_page():
   <link href='https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css' rel='stylesheet'>
   <link href='https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@3.1.0/dist/Control.Geocoder.min.css' rel='stylesheet'>
   <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/Main.css">
+  <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/MyLightboxScriptModule.css">
   <link rel="stylesheet" href="{BASE_SITE_URL}/{ASSETS}/MyMemoryMapScript.css">
 </head>
 
@@ -2899,6 +2900,19 @@ def generate_big_map_page():
             </div>
           </div>
         </div>
+        <div id="mapViewportGalleryWrapper" class="map-viewport-gallery-wrapper" style="display:none;">
+          <div class="map-viewport-gallery-header">
+            <strong>Slike v trenutnem pogledu zemljevida</strong>
+            <span>
+              Število slik:
+              <span id="mapViewportGalleryCount">0</span>
+            </span>
+          </div>
+          <div id="mapViewportGalleryLoading" class="map-viewport-gallery-loading" style="display:none;">
+            Nalaganje slik...
+          </div>
+          <div id="mapViewportGallery" class="map-viewport-gallery"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -2921,6 +2935,7 @@ def generate_big_map_page():
   {TRANSLATE_HEAD}
   <script src="{BASE_SITE_URL}/{ASSETS}/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/{ASSETS}/Main.js" defer></script>
+  <script src="{BASE_SITE_URL}/{ASSETS}/MyLightboxScriptModule.js" defer></script>
   <script src="{BASE_SITE_URL}/{ASSETS}/MyMemoryMapScriptModule.js" defer></script>
 </body>
 </html>"""
