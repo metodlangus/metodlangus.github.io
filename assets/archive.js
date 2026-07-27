@@ -4,7 +4,18 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("archive-placeholder").innerHTML = `<aside class="sidebar-archive">
   <h2>Arhiv</h2>
   <details open>
-    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(52)</span></summary>
+    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(58)</span></summary>
+    <details class="month-group">
+      <summary><a href="https://metodlangus.github.io/posts/2026/07/">julij 2026</a>&nbsp;<span class="post-count" dir="ltr">(6)</span></summary>
+      <ul>
+        <li><a href="https://metodlangus.github.io/posts/2026/07/podaljsan-vikend-v-dolomitih-2-6-7-2026/">Podaljšan vikend v Dolomitih (2. – 6. 7. 2026)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/07/monte-cavallino-2689-m/">Monte Cavallino (2689 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/07/quota-3065-3065-m/">Quota 3065 (3065 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/07/rifugio-padon/">Rifugio Padon</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/07/punta-penia-3343-m/">Punta Penia (3343 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/07/tofana-di-rozes-3225-m/">Tofana di Rozes (3225 m)</a></li>
+      </ul>
+    </details>
     <details class="month-group">
       <summary><a href="https://metodlangus.github.io/posts/2026/06/">junij 2026</a>&nbsp;<span class="post-count" dir="ltr">(2)</span></summary>
       <ul>
