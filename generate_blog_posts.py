@@ -456,10 +456,13 @@ def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
     alternate_link = override_domain(urlunparse(parsed._replace(path=path)), BASE_SITE_URL)
     categories = entry.get("category", [])
 
-    label_one = next((c["term"].replace("1. ", "") for c in categories if c["term"].startswith("1. ")), "")
+    label_ones = [c["term"].replace("1. ", "") for c in categories if c["term"].startswith("1. ")]
     label_six = next((c["term"].replace("6. ", "") for c in categories if c["term"].startswith("6. ")), "")
 
-    label_one_link = f"{BASE_SITE_URL}/search/labels/{slugify_func(label_one)}/" if label_one else ""
+    label_one_html = "".join(
+        f'<a href="{BASE_SITE_URL}/search/labels/{slugify_func(label_one)}/" class="my-labels">{label_one}</a>'
+        for label_one in label_ones
+    )
     label_six_link = f"{BASE_SITE_URL}/search/labels/{slugify_func(label_six)}/" if label_six else ""
 
     page_number = 1 if entries_per_page == 0 else (index // entries_per_page + 1)
@@ -519,10 +522,10 @@ def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
           <div class="photo-entry{hidden_class}" data-page="{page_number}">
             <article class="my-post-outer-container">
               <div class="post">
-                {'<div class="my-tag-container"><a href="' + label_six_link + '" class="my-labels label-six">' + label_six + '</a></div>' if label_six else ""}
+                {'<div class="my-tag-container"><a href="' + label_six_link + '" class="my-labels label-six">' + remove_first_prefix(label_six) + '</a></div>' if label_six else ""}
                 <a href="{alternate_link}" class="my-post-link" aria-label="{title}">
                   <div class="my-title-container">
-                    {'<a href="' + label_one_link + '" class="my-labels">' + label_one + '</a>' if label_one else ""}
+                    {label_one_html}
                     <h2 class="my-title">{title}</h2>
                   </div>
                 </a>
