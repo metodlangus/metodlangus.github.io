@@ -39,7 +39,7 @@ LOCAL_HOST_URL = f"http://127.0.0.1:5502"
 LOCAL_REPO_PATH  = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = Path(LOCAL_REPO_PATH)
 
-# Nastavitve - Change this one line when switching local <-> GitHub Pages <-> Codespace
+# Nastavitve - Change this one line when switching local <-> GitHub Pages <-> Codespace (Use --simulation)
 BASE_SITE_URL = f"https://{GITHUB_REPO_NAME}"
 DEBUG_NUM_ENTRIES = None  # Set to None to process all entries
 # BASE_SITE_URL = f"{LOCAL_HOST_URL}/{GITHUB_REPO_NAME}"
@@ -47,10 +47,15 @@ DEBUG_NUM_ENTRIES = None  # Set to None to process all entries
 # BASE_SITE_URL = f"https://effective-acorn-56xrp6qw97vf445-5500.app.github.dev"
 # DEBUG_NUM_ENTRIES = 5
 
-REBUILD_ALL_PAGES = False  # Set True to force full rebuild of everything
+# Use minified/unminified scripts and styles for production/local testing
+ASSETS = "assets_min"
+# ASSETS = "assets"
 
-ASSETS = "assets_min" # Use minified scripts and styles for production
-# ASSETS = "assets_min" # Use unminified scripts for local testing
+# Set True to force full rebuild of everything (Use --rebuild-all)
+REBUILD_ALL_PAGES = False
+
+# Global flag for non-interactive mode (set from CLI args) (Use --non-interactive)
+NON_INTERACTIVE = False
 
 BLOG_AUTHOR = "Metod Langus"
 BLOG_TITLE = "Gorski užitki"
@@ -103,9 +108,6 @@ KEY = os.getenv("INDEXNOW_KEY")
 if not KEY:
     raise ValueError("INDEXNOW_KEY is not set")
 KEY_LOCATION = f"{BASE_SITE_URL}/{KEY}.txt"
-
-# Global flag for non-interactive mode (set from CLI args)
-NON_INTERACTIVE = False
 
 def load_lastmod_db():
     if LASTMOD_DB.exists():
@@ -3544,6 +3546,7 @@ PATTERNS = {
     "full_run": "r" * 23,
     "skip_geotag_photos" : "rrrrrrrrrrrrrrrrrrrrrrs",  # skip geotaging photos
     "just_geotag_photos" : "ssssssssssssssssssssssr",  # run just geotaging photos
+    "just_minify_assets" : "ssssssssssssssssrssssss",  # run just minification of assets
 }
 
 def choose_pattern():
@@ -3661,17 +3664,59 @@ if __name__ == "__main__":
 
     # Parse command-line arguments
     arg_parser = argparse.ArgumentParser(description="Generate blog posts")
-    arg_parser.add_argument("--pattern", type=str, choices=list(PATTERNS.keys()), 
-                        help=f"Select a pattern: {', '.join(PATTERNS.keys())}")
-    arg_parser.add_argument("--non-interactive", action="store_true", 
-                        help="Run in non-interactive mode (skip prompts)")
+
+    arg_parser.add_argument(
+        "--pattern",
+        type=str,
+        choices=list(PATTERNS.keys()),
+        help=f"Select a pattern: {', '.join(PATTERNS.keys())}"
+    )
+
+    arg_parser.add_argument(
+        "--non-interactive",
+        action="store_true",
+        help="Run in non-interactive mode (skip prompts)"
+    )
+
+    arg_parser.add_argument(
+        "--simulation",
+        action="store_true",
+        help="Run in simulation mode with alternative settings"
+    )
+
+    arg_parser.add_argument(
+        "--rebuild-all",
+        action="store_true",
+        help="Force full rebuild of all pages"
+    )
+
     args = arg_parser.parse_args()
 
-    # Set global non-interactive flag
+    # Set global flags
     NON_INTERACTIVE = args.non_interactive
-    
+    SIMULATION = args.simulation
+    REBUILD_ALL_PAGES = args.rebuild_all
+
     if NON_INTERACTIVE:
         print("🔄 Running in non-interactive mode (CI/automated workflow)")
+
+    if REBUILD_ALL_PAGES:
+        print("🔨 Full rebuild enabled")
+
+    if SIMULATION:
+        print("🧪 Running in simulation mode")
+
+        is_codespace = os.environ.get("CODESPACES", "").lower() == "true"
+
+        if is_codespace:
+            print("📦 GitHub Codespaces detected")
+            BASE_SITE_URL = "https://effective-acorn-56xrp6qw97vf445-5500.app.github.dev"
+        else:
+            print("💻 Local VS Code detected")
+            BASE_SITE_URL = f"{LOCAL_HOST_URL}/{GITHUB_REPO_NAME}"
+
+        DEBUG_NUM_ENTRIES = 5
+        ASSETS = "assets"  # Use unminified scripts for local testing
 
     # Determine pattern
     if args.pattern:
