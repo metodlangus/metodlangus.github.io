@@ -1,5 +1,7 @@
 (function (window) {
 
+const DEFAULT_VIEWPORT_GALLERY_PHOTOS_PER_PACKET = 50;
+
 let config = {
     mapId: 'map',
     baseUrl: '',
@@ -16,7 +18,8 @@ let config = {
     viewportGalleryContainerId: 'mapViewportGallery',
     viewportGalleryCountId: 'mapViewportGalleryCount',
     viewportGalleryLoadingId: 'mapViewportGalleryLoading',
-    viewportGalleryLightboxName: 'MapViewportGallery'
+    viewportGalleryLightboxName: 'MapViewportGallery',
+    viewportGalleryPhotosPerPacket: DEFAULT_VIEWPORT_GALLERY_PHOTOS_PER_PACKET
 };
 
 let map, gpxFolder, trackListUrl, photoListUrl, isRelive;
@@ -29,6 +32,7 @@ let mapViewportGalleryLoadingEl = null;
 
 let viewportGalleryBuildInProgress = false;
 let viewportGalleryRefreshTimer = null;
+let viewportGalleryVisibleCount = DEFAULT_VIEWPORT_GALLERY_PHOTOS_PER_PACKET;
 
 const viewportPhotoCache = {
     main: null,
@@ -228,6 +232,7 @@ let pendingTrackToLoad = null;
 
 function init(userConfig = {}) {
     config = { ...config, ...userConfig };
+    viewportGalleryVisibleCount = parseInt(config.viewportGalleryPhotosPerPacket, 10) || DEFAULT_VIEWPORT_GALLERY_PHOTOS_PER_PACKET;
 
     const blogCfg = createblogCfg();
 
@@ -489,6 +494,7 @@ function createMap() {
 
             viewportPhotoCache.main = null;
             viewportPhotoCache.relive = null;
+            resetViewportGalleryPacket();
             refreshViewportGallery();
         });
     }
@@ -820,6 +826,17 @@ function createMap() {
         return viewportPhotoCache[cacheKey];
     }
 
+    function getViewportGalleryPhotosPerPacket() {
+        const value = parseInt(config.viewportGalleryPhotosPerPacket, 10);
+        return Number.isFinite(value) && value > 0
+            ? value
+            : DEFAULT_VIEWPORT_GALLERY_PHOTOS_PER_PACKET;
+    }
+
+    function resetViewportGalleryPacket() {
+        viewportGalleryVisibleCount = getViewportGalleryPhotosPerPacket();
+    }
+
     async function buildViewportGallery() {
         if (viewportGalleryBuildInProgress) return;
 
@@ -870,15 +887,21 @@ function createMap() {
                 return timeB - timeA; // newest -> oldest
             });
 
+            const totalPhotosInViewport = photos.length;
+            const visiblePhotos = photos.slice(0, viewportGalleryVisibleCount);
+
             if (mapViewportGalleryCountEl) {
-                mapViewportGalleryCountEl.textContent = photos.length;
+                mapViewportGalleryCountEl.textContent =
+                    visiblePhotos.length < totalPhotosInViewport
+                        ? `${visiblePhotos.length} / ${totalPhotosInViewport}`
+                        : String(totalPhotosInViewport);
             }
 
             if (mapViewportGalleryLoadingEl) {
                 mapViewportGalleryLoadingEl.style.display = 'none';
             }
 
-            if (!photos.length) {
+            if (!visiblePhotos.length) {
                 mapViewportGalleryContainer.innerHTML =
                     `<p class="map-gallery-empty">V trenutnem pogledu zemljevida ni slik.</p>`;
                 return;
@@ -886,7 +909,7 @@ function createMap() {
 
             const fragment = document.createDocumentFragment();
 
-            photos.forEach(photo => {
+            visiblePhotos.forEach(photo => {
             const item = document.createElement('div');
             item.className = 'map-gallery-item';
 
@@ -924,6 +947,8 @@ function createMap() {
             img.src = photo.imageLink;
             img.alt = photo.postTitle || '';
             img.loading = 'lazy';
+            img.decoding = 'async';
+            img.fetchPriority = 'low';
 
             // Used by MyLightboxModule as caption priority #1
             img.setAttribute('data-caption', photo.postTitle || '');
@@ -942,6 +967,24 @@ function createMap() {
 
             fragment.appendChild(item);
         });
+
+            if (visiblePhotos.length < totalPhotosInViewport) {
+                const loadMoreWrapper = document.createElement('div');
+                loadMoreWrapper.className = 'map-gallery-load-more-wrapper';
+
+                const loadMoreButton = document.createElement('button');
+                loadMoreButton.type = 'button';
+                loadMoreButton.className = 'map-gallery-load-more';
+                loadMoreButton.textContent = 'Prikaži več slik';
+
+                loadMoreButton.addEventListener('click', () => {
+                    viewportGalleryVisibleCount += getViewportGalleryPhotosPerPacket();
+                    buildViewportGallery();
+                });
+
+                loadMoreWrapper.appendChild(loadMoreButton);
+                fragment.appendChild(loadMoreWrapper);
+            }
 
             mapViewportGalleryContainer.appendChild(fragment);
 
@@ -964,6 +1007,7 @@ function createMap() {
         mapViewportGalleryWrapper.style.display = 'block';
         if (button) button.classList.add('active');
 
+        resetViewportGalleryPacket();
         await buildViewportGallery();
 
         mapViewportGalleryWrapper.scrollIntoView({
@@ -1309,6 +1353,7 @@ function createMap() {
                 mapViewportGalleryWrapper &&
                 mapViewportGalleryWrapper.style.display !== 'none'
             ) {
+                resetViewportGalleryPacket();
                 buildViewportGallery();
             }
         }, 100);

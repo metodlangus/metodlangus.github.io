@@ -216,3 +216,25 @@
 .map-gallery-show-on-map:hover {
     background: rgba(0,0,0,0.50);
 }
+
+.map-gallery-load-more-wrapper {
+    grid-column: 1 / -1;
+    text-align: center;
+    margin-top: 6px;
+    margin-bottom: 12px;
+}
+
+.map-gallery-load-more {
+    padding: 8px 18px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid #000;
+    border-radius: 5px;
+    background-color: #f3891d;
+    color: #000;
+    transition: all .3s ease;
+}
+
+.map-gallery-load-more:hover {
+    background: #ff7e00;
+}

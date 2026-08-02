@@ -74,7 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 isRelive: isRelive,
                 enableRelive: true,
                 isSignedIn: isPrivileged,
-                enableViewportGallery: true
+                enableViewportGallery: true,
+                viewportGalleryPhotosPerPacket: 50
             });
         });
 
