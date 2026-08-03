@@ -1,10 +1,20 @@
 document.addEventListener("DOMContentLoaded",function(){document.getElementById("archive-placeholder").innerHTML=`<aside class="sidebar-archive">
   <h2>Arhiv</h2>
   <details open>
-    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(58)</span></summary>
+    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(64)</span></summary>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/posts/2026/07/">julij 2026</a>&nbsp;<span class="post-count" dir="ltr">(6)</span></summary>
+      <summary><a href="https://metodlangus.github.io/posts/2026/08/">avgust 2026</a>&nbsp;<span class="post-count" dir="ltr">(2)</span></summary>
       <ul>
+        <li><a href="https://metodlangus.github.io/posts/2026/08/cima-delle-cenge-visoka-polica-2007-m-vetta-bella-2049-m/">Cima delle Cenge / Visoka polica (2007 m), Vetta Bella (2049 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/08/hochobir-ojstrc-2139-m/">Hochobir / Ojstrc (2139 m)</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary><a href="https://metodlangus.github.io/posts/2026/07/">julij 2026</a>&nbsp;<span class="post-count" dir="ltr">(9)</span></summary>
+      <ul>
+        <li><a href="https://metodlangus.github.io/posts/2026/07/plaski-vogel-2349-m/">Plaski Vogel (2349 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/07/palec-selenitza-2026-m-vrtaca-wertatscha-2180-m/">Palec / Selenitza 2026 m, Vrtača / Wertatscha 2180 m</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/07/ablanca-2005-m/">Ablanca (2005 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/07/podaljsan-vikend-v-dolomitih-2-6-7-2026/">Podaljšan vikend v Dolomitih (2. – 6. 7. 2026)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/07/monte-cavallino-2689-m/">Monte Cavallino (2689 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/07/quota-3065-3065-m/">Quota 3065 (3065 m)</a></li>
@@ -14,8 +24,9 @@ document.addEventListener("DOMContentLoaded",function(){document.getElementById(
       </ul>
     </details>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/posts/2026/06/">junij 2026</a>&nbsp;<span class="post-count" dir="ltr">(2)</span></summary>
+      <summary><a href="https://metodlangus.github.io/posts/2026/06/">junij 2026</a>&nbsp;<span class="post-count" dir="ltr">(3)</span></summary>
       <ul>
+        <li><a href="https://metodlangus.github.io/posts/2026/06/vernar-2220-m-tosc-2273-m-veliki-prsivec-2056-m/">Vernar (2220 m), Tosc (2273 m), Veliki Pršivec (2056 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/06/begunjscica-2060-m/">Begunjščica (2060 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/06/cez-storzic-2132-m-do-vrha-zaplate-1820-m/">Čez Storžič (2132 m) do Vrha Zaplate (1820 m)</a></li>
       </ul>
