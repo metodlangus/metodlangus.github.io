@@ -195,3 +195,44 @@ h2.my-title {
     opacity: 1;
   }
 }
+
+/* Post statistics overlay. */
+.my-post-outer-container .post .my-stats-container {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  padding: 24px;
+  padding-bottom: 18px;
+  display: none;
+  gap: 6px;
+  transition: all 400ms ease;
+  z-index: 3;
+}
+
+.my-post-outer-container .post:hover .my-stats-container {
+  opacity: 0.2;
+}
+
+.my-post-outer-container .my-stats-container .track-stat-label {
+  background-color: rgba(255, 255, 255, 0.5);
+  color: #333;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  margin-bottom: 0;
+  display: inline-block;
+  position: relative;
+}
+
+.my-post-outer-container .post .my-stats-container {
+  align-items: flex-start;
+  line-height: 1;
+}
+
+.my-post-outer-container .my-stats-container .track-stat-arrow {
+  display: inline-block;
+  font-weight: 900;
+  font-size: 0.8em;
+  transform: translateY(-2px) scaleX(2);
+  margin-right: 1px;
+}

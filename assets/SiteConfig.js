@@ -492,6 +492,21 @@ window.isAdminUnlocked = isAdminUnlocked;
 window.hasPrivilegedAccess = hasPrivilegedAccess;
 window.lockAdminMode = lockAdminMode;
 
+// Show/hide track stats containers depending on access
+function updateStatsVisibility(user) {
+    const show = hasPrivilegedAccess(user);
+    document.querySelectorAll('.my-stats-container').forEach(el => {
+        el.style.display = show ? 'flex' : 'none';
+    });
+}
+
+if (typeof checkSignIn === 'function') {
+    checkSignIn().then(user => updateStatsVisibility(user)).catch(() => updateStatsVisibility(null));
+}
+if (window.onAuthStateChanged) {
+    window.onAuthStateChanged(user => updateStatsVisibility(user));
+}
+
 (function () {
     const FOOTER_SELECTOR = '.site-footer';
     const SECRET_SEQUENCE = ['L', 'L', 'L', 'LH'];

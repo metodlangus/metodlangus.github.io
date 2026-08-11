@@ -70,6 +70,56 @@ def extract_start_coordinates(gpx_file):
         print(f"Error parsing {gpx_file}: {e}")
     return None, None
 
+def extract_distance_and_elevation_gain(gpx_file):
+    """
+    Extract distance and elevation gain from GPX description.
+
+    Returns:
+        distance_km, elevation_gain_m
+
+    Example extracted values:
+        Distance: 9.1 km
+        Elevation gain: 1156 m
+    """
+    try:
+        with open(gpx_file, "r", encoding="utf-8") as f:
+            gpx_text = f.read()
+
+        # Prefer track description, fallback also works if data is only in waypoint desc
+        desc_matches = re.findall(
+            r"<desc><!\[CDATA\[(.*?)\]\]></desc>",
+            gpx_text,
+            flags=re.DOTALL | re.IGNORECASE
+        )
+
+        for desc in desc_matches:
+            # Remove HTML tags but keep text spacing readable
+            soup = BeautifulSoup(desc, "html.parser")
+            desc_text = soup.get_text(" ", strip=True)
+
+            distance_match = re.search(
+                r"Distance:\s*([\d.,]+)\s*km",
+                desc_text,
+                flags=re.IGNORECASE
+            )
+
+            elevation_gain_match = re.search(
+                r"Elevation gain:\s*([\d.,]+)\s*m",
+                desc_text,
+                flags=re.IGNORECASE
+            )
+
+            distance_km = distance_match.group(1).replace(",", ".") if distance_match else ""
+            elevation_gain_m = elevation_gain_match.group(1).replace(",", ".") if elevation_gain_match else ""
+
+            if distance_km or elevation_gain_m:
+                return distance_km, elevation_gain_m
+
+    except Exception as e:
+        print(f"Error extracting distance/elevation from {gpx_file}: {e}")
+
+    return "", ""
+
 
 def gpx_sort_key(path: Path):
     """
@@ -90,12 +140,16 @@ def gpx_sort_key(path: Path):
 
 def generate_tracks_list():
     posts = extract_gpx_and_cover()
+
     with OUTPUT_FILE.open("w", encoding="utf-8") as out:
         for gpx_file in sorted(GPX_FOLDER.glob("*.gpx"), key=gpx_sort_key):
             filename = gpx_file.name
+
             lat, lng = extract_start_coordinates(gpx_file)
             lat = lat or 0.0
             lng = lng or 0.0
+
+            distance_km, elevation_gain_m = extract_distance_and_elevation_gain(gpx_file)
 
             if filename in posts:
                 entry = posts[filename]
@@ -105,8 +159,11 @@ def generate_tracks_list():
                 cover = ""
                 post_link = ""
 
-            # Write single-line format: latitude;longitude;filename;coverPhoto;postLink
-            out.write(f"{lat};{lng};{filename};{cover};{post_link}\n")
+            # Format:
+            # latitude;longitude;filename;coverPhoto;postLink;distanceKm;elevationGainM
+            out.write(
+                f"{lat};{lng};{filename};{cover};{post_link};{distance_km};{elevation_gain_m}\n"
+            )
 
 
 if __name__ == "__main__":

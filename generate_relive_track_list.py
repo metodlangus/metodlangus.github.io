@@ -5,6 +5,7 @@ from pathlib import Path
 import gpxpy
 import os
 import json
+from datetime import datetime
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -68,6 +69,73 @@ def extract_start_coordinates(gpx_file):
         print(f"Error parsing {gpx_file}: {e}")
     return None, None
 
+def extract_distance_and_elevation_gain(gpx_file):
+    """
+    Extract distance and elevation gain from GPX description.
+
+    Returns:
+        distance_km, elevation_gain_m
+
+    Example extracted values:
+        Distance: 9.1 km
+        Elevation gain: 1156 m
+    """
+    try:
+        with open(gpx_file, "r", encoding="utf-8") as f:
+            gpx_text = f.read()
+
+        # Prefer track description, fallback also works if data is only in waypoint desc
+        desc_matches = re.findall(
+            r"<desc><!\[CDATA\[(.*?)\]\]></desc>",
+            gpx_text,
+            flags=re.DOTALL | re.IGNORECASE
+        )
+
+        for desc in desc_matches:
+            # Remove HTML tags but keep text spacing readable
+            soup = BeautifulSoup(desc, "html.parser")
+            desc_text = soup.get_text(" ", strip=True)
+
+            distance_match = re.search(
+                r"Distance:\s*([\d.,]+)\s*km",
+                desc_text,
+                flags=re.IGNORECASE
+            )
+
+            elevation_gain_match = re.search(
+                r"Elevation gain:\s*([\d.,]+)\s*m",
+                desc_text,
+                flags=re.IGNORECASE
+            )
+
+            distance_km = distance_match.group(1).replace(",", ".") if distance_match else ""
+            elevation_gain_m = elevation_gain_match.group(1).replace(",", ".") if elevation_gain_match else ""
+
+            if distance_km or elevation_gain_m:
+                return distance_km, elevation_gain_m
+
+    except Exception as e:
+        print(f"Error extracting distance/elevation from {gpx_file}: {e}")
+
+    return "", ""
+
+
+def gpx_sort_key(path: Path):
+    """
+    Sort GPX files by timestamp encoded in filename:
+    2024-06-02 064627.gpx
+
+    Falls back to filename ordering if parsing fails.
+    """
+    try:
+        return (
+            0,
+            datetime.strptime(path.stem, "%Y-%m-%d %H%M%S"),
+            path.name,
+        )
+    except ValueError:
+        return (1, path.name)
+
 
 def generate_tracks_list():
     posts = extract_gpx_and_cover()
@@ -88,15 +156,21 @@ def generate_tracks_list():
             lat = lat or 0.0
             lng = lng or 0.0
 
-            entry = posts[filename]
-            cover = entry["coverPhoto"]
-            post_link = entry["postUrl"]
+            distance_km, elevation_gain_m = extract_distance_and_elevation_gain(gpx_file)
 
-            # Write single-line format: latitude;longitude;filename;coverPhoto;postLink
-            out.write(f"{lat};{lng};{filename};{cover};{post_link}\n")
-            written += 1
+            if filename in posts:
+                entry = posts[filename]
+                cover = entry["coverPhoto"]
+                post_link = entry["postUrl"]
+            else:
+                cover = ""
+                post_link = ""
 
-    print(f"Done. {written} tracks written, {skipped} skipped.")
+            # Format:
+            # latitude;longitude;filename;coverPhoto;postLink;distanceKm;elevationGainM
+            out.write(
+                f"{lat};{lng};{filename};{cover};{post_link};{distance_km};{elevation_gain_m}\n"
+            )
 
 
 if __name__ == "__main__":

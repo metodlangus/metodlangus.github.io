@@ -10,7 +10,7 @@ from zoneinfo import ZoneInfo  # Python 3.9+
 from dateutil import parser  # pip install python-dateutil
 from bs4 import BeautifulSoup, NavigableString
 from collections import defaultdict
-from urllib.parse import urlparse, urlunparse, urljoin
+from urllib.parse import unquote, urlparse, urlunparse, urljoin
 import os
 import json
 import subprocess
@@ -26,6 +26,9 @@ GITHUB_USER_NAME = "metodlangus"
 GITHUB_REPO_NAME = "metodlangus.github.io"
 LOCAL_HOST_URL = f"http://127.0.0.1:5502"
 LOCAL_REPO_PATH  = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = Path(LOCAL_REPO_PATH)
+
+TRACK_LIST_FILE   = PROJECT_ROOT / "list_of_tracks.txt"
 
 # Nastavitve - Change this one line when switching local <-> GitHub Pages
 BASE_SITE_URL = f"https://{GITHUB_REPO_NAME}"
@@ -34,6 +37,8 @@ DEBUG_NUM_ENTRIES = None  # Set to None to process all entries
 # BASE_SITE_URL = f"{LOCAL_HOST_URL}/{GITHUB_REPO_NAME}"
 # BASE_BLOG_URL = f"{LOCAL_HOST_URL}/{GITHUB_REPO_NAME}/relive"
 # DEBUG_NUM_ENTRIES = 5
+
+TRACK_STATS = None
 
 BLOG_AUTHOR = "Metod Langus"
 BLOG_TITLE = "Gorski užitki"
@@ -296,6 +301,95 @@ def remove_leading_hidden_blocks(html: str) -> str:
 
     return html
 
+def load_track_stats():
+    track_stats = {}
+
+    if not TRACK_LIST_FILE.exists():
+        return track_stats
+
+    with open(TRACK_LIST_FILE, "r", encoding="utf-8") as f:
+        for line in f:
+            parts = line.strip().split(";")
+
+            # Format:
+            # lat;lng;filename;coverPhoto;postLink;distanceKm;elevationGainM
+            if len(parts) < 7:
+                continue
+
+            filename = parts[2].strip()
+            distance_km = parts[5].strip()
+            elevation_gain_m = parts[6].strip()
+
+            track_stats[filename] = {
+                "distance_km": distance_km,
+                "elevation_gain_m": elevation_gain_m,
+            }
+
+    return track_stats
+
+def extract_gpx_filenames_from_content(content_html):
+    gpx_urls = re.findall(
+        r"var\s+gpxURL\d*\s*=\s*.+?\.gpx",
+        content_html,
+        flags=re.IGNORECASE
+    )
+
+    return [
+        unquote(Path(gpx_url).name)
+        for gpx_url in gpx_urls
+    ]
+
+def build_track_stat_labels_from_content(content_html):
+    global TRACK_STATS
+
+    if TRACK_STATS is None:
+        TRACK_STATS = load_track_stats()
+
+    total_distance_km = 0.0
+    total_elevation_gain_m = 0.0
+    found_any = False
+
+    # Use set() so same GPX file is not counted more than once
+    for gpx_filename in set(extract_gpx_filenames_from_content(content_html)):
+        stats = TRACK_STATS.get(gpx_filename)
+
+        if not stats:
+            continue
+
+        distance_km = stats.get("distance_km", "")
+        elevation_gain_m = stats.get("elevation_gain_m", "")
+
+        if distance_km:
+            try:
+                total_distance_km += float(str(distance_km).replace(",", "."))
+                found_any = True
+            except ValueError:
+                pass
+
+        if elevation_gain_m:
+            try:
+                total_elevation_gain_m += float(str(elevation_gain_m).replace(",", "."))
+                found_any = True
+            except ValueError:
+                pass
+
+    if not found_any:
+        return ""
+
+    labels = []
+
+    if total_distance_km > 0:
+        labels.append(
+            f'<span class="my-labels track-stat-label">{total_distance_km:.1f} km</span>'
+        )
+
+    if total_elevation_gain_m > 0:
+        labels.append(
+            f'<span class="my-labels track-stat-label"><span class="track-stat-arrow">↑</span> {int(round(total_elevation_gain_m))} m</span>'
+        )
+
+    return f'<div class="my-stats-container" style="display: none;">{"".join(labels)}</div>' if labels else ""
+
 def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
 
     published_raw = entry.get("published", {}).get("$t", "1970-01-01T00:00:00Z")
@@ -325,6 +419,8 @@ def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
     # --- Extract summary / description for alt text ---
     content_html = entry.get("content", {}).get("$t", "")
     soup = BeautifulSoup(content_html, "html.parser")
+
+    label_stats_html = build_track_stat_labels_from_content(content_html)
 
     # Normalize whitespace in text nodes (prevents newlines in extracted text)
     for text_node in soup.find_all(string=True):
@@ -362,6 +458,7 @@ def render_post_html(entry, index, entries_per_page, slugify_func, post_id):
           <div class="photo-entry{hidden_class}" data-page="{page_number}">
             <article class="my-post-outer-container">
               <div class="post">
+                {label_stats_html}
                 {'<div class="my-tag-container"><a href="' + label_six_link + '" class="my-labels label-six">' + label_six + '</a></div>' if label_six else ""}
                 <a href="{alternate_link}" class="my-post-link" aria-label="{title}">
                   <div class="my-title-container">
@@ -1722,6 +1819,8 @@ def generate_label_pages(entries, label_posts_raw):
   {back_to_top_html}
   {footer_html}
 
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
 </body>
@@ -1881,6 +1980,8 @@ def generate_archive_pages(entries):
   {back_to_top_html}
   {footer_html}
 
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
 </body>
@@ -1986,6 +2087,8 @@ def generate_archive_pages(entries):
   {back_to_top_html}
   {footer_html}
 
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
 </body>
@@ -2731,6 +2834,8 @@ def generate_home_en_page(homepage_html):
   {back_to_top_html}
   {footer_html}
 
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyRandomPhotoModule.js" defer></script>
@@ -2834,6 +2939,8 @@ def generate_home_si_page(homepage_html):
   {back_to_top_html}
   {footer_html}
 
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyRandomPhotoModule.js" defer></script>
