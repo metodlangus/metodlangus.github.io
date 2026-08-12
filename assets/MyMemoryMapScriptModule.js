@@ -74,6 +74,7 @@ const reliveTrackGeojsonCache = {};
 // independently of the marker cluster groups.
 const polylinesLayerGroup       = L.layerGroup();
 const relivePolylinesLayerGroup = L.layerGroup();
+const arrowsLayerGroup          = L.layerGroup();
 
 const trackColors = ['orange', 'blue', 'green', 'red', 'purple', 'brown', 'yellow', 'pink',
     'cyan', 'magenta', 'lime', 'teal', 'indigo', 'violet', 'coral', 'navy', 'olive', 'maroon',
@@ -516,6 +517,26 @@ function createMap() {
         return { trackName: name, trackDate: date };
     }
 
+    function refreshArrowLayer() {
+        arrowsLayerGroup.clearLayers();
+
+        if (!map || !map.hasLayer(arrowsLayerGroup)) {
+            return;
+        }
+
+        Object.values(tracks).forEach(td => {
+            if (td.arrowLayer) {
+                arrowsLayerGroup.addLayer(td.arrowLayer);
+            }
+        });
+
+        Object.values(reliveTracks).forEach(td => {
+            if (td.arrowLayer) {
+                arrowsLayerGroup.addLayer(td.arrowLayer);
+            }
+        });
+    }
+
     // Draw a polyline for one marker.
     // The marker is always moved out of the cluster into nonClusteredMarkers
     // so it renders as a standalone pin at the track start, never clustered.
@@ -567,9 +588,10 @@ function createMap() {
         // Add polylines to the dedicated layer group
         const polylineGroup = isReliveSource ? relivePolylinesLayerGroup : polylinesLayerGroup;
         polylineGroup.addLayer(polyline);
-        polylineGroup.addLayer(arrowLayer);
 
         trackStore[filename] = { polyline, arrowLayer, color: trackColor, clusterMarker };
+
+        refreshArrowLayer();
 
         polyline.on("click",       () => highlightTrack(trackStore[filename], isReliveSource));
         clusterMarker.on("click",  () => { if (trackStore[filename]) highlightTrack(trackStore[filename], isReliveSource); });
@@ -665,6 +687,8 @@ function createMap() {
 
         polylineGrp.clearLayers();
         Object.keys(trackStore).forEach(k => delete trackStore[k]);
+
+        refreshArrowLayer();
     }
 
     // Show tracks in current viewport — draw polylines for visible markers.
@@ -1260,6 +1284,7 @@ function createMap() {
         overlayLayers["GPX sledi (Relive)"] = reliveLayerGroup;
         overlayLayers["Slike (Relive)"]     = reliveMarkers;
     }
+    overlayLayers["Smer poti"] = arrowsLayerGroup;
 
     const baseLayers = {
         "OpenTopoMap":    opentopoMap,
@@ -1271,7 +1296,8 @@ function createMap() {
         "GPX sledi":          "true",
         "Slike":              "true",
         "GPX sledi (Relive)": "false",
-        "Slike (Relive)":     "false"
+        "Slike (Relive)":     "false",
+        "Smer poti":          "false",
     };
 
     // Step 1: base tile layer first
@@ -1285,6 +1311,7 @@ function createMap() {
     // Step 3: polyline groups always on map — independent of layer control
     polylinesLayerGroup.addTo(map);
     if (config.enableRelive) relivePolylinesLayerGroup.addTo(map);
+    arrowsLayerGroup.addTo(map);
 
     // Step 4: restore overlay visibility
     Object.entries(overlayLayers).forEach(([name, layer]) => {
@@ -1318,11 +1345,13 @@ function createMap() {
         localStorage.setItem('mapOverlay_' + e.name, "true");
         if (e.name === "GPX sledi")          syncNonClustered(false, true);
         if (e.name === "GPX sledi (Relive)") syncNonClustered(true,  true);
+        if (e.name === "Smer poti")          refreshArrowLayer();
     });
     map.on('overlayremove', e => {
         localStorage.setItem('mapOverlay_' + e.name, "false");
         if (e.name === "GPX sledi")          syncNonClustered(false, false);
         if (e.name === "GPX sledi (Relive)") syncNonClustered(true,  false);
+        if (e.name === "Smer poti")          arrowsLayerGroup.clearLayers();
     });
     if (L.Control.geocoder) {
         L.Control.geocoder({ defaultMarkGeocode: false, position: 'topright' })
