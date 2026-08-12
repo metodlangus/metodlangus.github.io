@@ -1,3 +1,22 @@
+/*
+ * PeakListModule
+ *
+ * Renders peak/activity lists with mode-dependent sorting controls.
+ *
+ * Normal peak page:
+ *   Po državi, Po datumu, Po razdalji, Po vzponu, Po višini, Po abecedi
+ *
+ * Relive page:
+ *   Po datumu, Po razdalji, Po vzponu, Po abecedi
+ *
+ * Activity list:
+ *   Keeps existing simple alphabetical flat list.
+ *
+ * Distance and elevation gain are loaded from:
+ *   - list_of_tracks.txt
+ *   - list_of_relive_tracks.txt for Relive mode
+ */
+
 const PeakListModule = (() => {
 
     let config = {
@@ -10,6 +29,9 @@ const PeakListModule = (() => {
     let WindowBaseUrl, isRelive, isBlogger, isActivityList;
     let activeView = 'grouped';
     let allPeaks = [];
+    let allHikes = [];
+    let trackStatsByFilename = {};
+    let peakSearchQuery = '';
     let stylesInjected = false;
     let controlsInjected = false;
 
@@ -19,12 +41,58 @@ const PeakListModule = (() => {
         return await response.json();
     }
 
+    async function fetchText(url) {
+        const response = await fetch(url);
+        return await response.text();
+    }
+
     // Normalize spaces
     function normalizeSpaces(str) {
         return str
             .replace(/[\u00A0\u1680\u180E\u2000-\u200B\u202F\u205F\u3000]/g, ' ')
             .replace(/\s+/g, ' ')
             .trim();
+    }
+
+    function normalizeSearchText(str) {
+        return normalizeSpaces(str || '')
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function getSearchTokens() {
+        return normalizeSearchText(peakSearchQuery)
+            .split(' ')
+            .filter(Boolean);
+    }
+
+    function peakMatchesSearch(peakName) {
+        const tokens = getSearchTokens();
+        if (!tokens.length) return true;
+
+        const normalizedPeakName = normalizeSearchText(peakName);
+        return tokens.every(token => normalizedPeakName.includes(token));
+    }
+
+    function filterPeaksForSearch(peaks) {
+        return peaks.filter(peak => peakMatchesSearch(peak.peakName));
+    }
+
+    function filterHikesForSearch(hikes) {
+        const tokens = getSearchTokens();
+        if (!tokens.length) return hikes;
+
+        return hikes
+            .map(hike => {
+                const matchingPeaks = hike.peaks.filter(peakName => peakMatchesSearch(peakName));
+
+                return {
+                    ...hike,
+                    peaks: matchingPeaks
+                };
+            })
+            .filter(hike => hike.peaks.length > 0);
     }
 
     function parsePeakHeight(peakName) {
@@ -125,8 +193,103 @@ const PeakListModule = (() => {
         });
     }
 
+    async function loadTrackStats() {
+        const stats = {};
+        const trackListUrl = isRelive
+            ? `${WindowBaseUrl}/list_of_relive_tracks.txt`
+            : `${WindowBaseUrl}/list_of_tracks.txt`;
+
+        try {
+            const text = await fetchText(trackListUrl);
+
+            text.split('\n').forEach(line => {
+                const parts = line.trim().split(';');
+
+                // Format:
+                // lat;lng;filename;coverPhoto;postLink;distanceKm;elevationGainM
+                if (parts.length < 7) return;
+
+                const filename = normalizeSpaces(parts[2] || '');
+                const distanceKm = parseFloat(String(parts[5] || '').replace(',', '.')) || 0;
+                const elevationGainM = parseFloat(String(parts[6] || '').replace(',', '.')) || 0;
+
+                if (!filename) return;
+
+                stats[filename] = {
+                    distanceKm,
+                    elevationGainM
+                };
+            });
+        } catch (error) {
+            console.warn('PeakListModule: could not load list_of_tracks.txt', error);
+        }
+
+        return stats;
+    }
+
+    function extractGpxFilenamesFromContent(content) {
+        const filenames = [];
+
+        const matches = content.matchAll(
+            /var\s+gpxURL\d*\s*=\s*['"`]?([\s\S]*?\.gpx)/gi
+        );
+
+        for (const match of matches) {
+            let gpxUrl = match[1] || '';
+
+            // Handles polluted HTML anchor tags if content was copied through editor
+            gpxUrl = gpxUrl
+                .replace(/<[^>]*>/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim()
+                .replace(/^['"`]+|['"`]+$/g, '');
+
+            const filename = decodeURIComponent(gpxUrl.split('/').pop() || '').trim();
+
+            if (filename) {
+                filenames.push(normalizeSpaces(filename));
+            }
+        }
+
+        return [...new Set(filenames)];
+    }
+
+    function getPostTrackStats(content) {
+        let totalDistanceKm = 0;
+        let totalElevationGainM = 0;
+
+        extractGpxFilenamesFromContent(content).forEach(filename => {
+            const stats = trackStatsByFilename[filename];
+
+            if (!stats) return;
+
+            totalDistanceKm += stats.distanceKm || 0;
+            totalElevationGainM += stats.elevationGainM || 0;
+        });
+
+        return {
+            distanceKm: totalDistanceKm,
+            elevationGainM: totalElevationGainM
+        };
+    }
+
+    function addHikeToCollection(collection, hike) {
+        collection.push({
+            date: hike.date,
+            dateKey: hike.dateKey,
+            timestamp: hike.timestamp,
+            link: hike.link,
+            links: hike.link ? [hike.link] : [],
+            distanceKm: hike.distanceKm || 0,
+            elevationGainM: hike.elevationGainM || 0,
+            peaks: [...hike.peaks]
+        });
+
+        return collection[collection.length - 1];
+    }
+
     function ensureViewControls() {
-        if (isRelive || isActivityList) return;
+        if (isActivityList) return;
 
         const loadingMessage = document.getElementById('loadingMessage');
         const mountainContainer = document.getElementById('mountainContainer');
@@ -136,25 +299,64 @@ const PeakListModule = (() => {
         controls.id = 'peak-list-controls';
         controls.className = 'peak-list-controls';
 
-        ['grouped', 'height', 'alphabetical'].forEach(viewKey => {
+        const searchWrapper = document.createElement('div');
+        searchWrapper.className = 'peak-list-search-wrapper';
+
+        const searchInput = document.createElement('input');
+        searchInput.id = 'peak-list-search';
+        searchInput.className = 'peak-list-search';
+        searchInput.type = 'search';
+        searchInput.placeholder = 'Išči vrh';
+        searchInput.value = peakSearchQuery;
+        searchInput.autocomplete = 'off';
+
+        searchInput.addEventListener('input', () => {
+            peakSearchQuery = searchInput.value;
+            renderCurrentView(allPeaks);
+        });
+
+        searchWrapper.appendChild(searchInput);
+        controls.appendChild(searchWrapper);
+
+        const buttonRow = document.createElement('div');
+        buttonRow.className = 'peak-list-button-row';
+
+        const viewKeys = isRelive
+            ? ['time', 'distance', 'gain', 'alphabetical']
+            : ['grouped', 'time', 'distance', 'gain', 'height', 'alphabetical'];
+
+        viewKeys.forEach(viewKey => {
             const button = document.createElement('button');
             button.className = 'peak-list-view-btn';
             button.type = 'button';
             button.dataset.view = viewKey;
 
+            if (['time', 'distance', 'gain'].includes(viewKey)) {
+                button.dataset.privilegedView = 'true';
+                button.style.display = 'none';
+            }
+
             button.textContent = viewKey === 'grouped'
                 ? 'Po državi'
-                : viewKey === 'height'
-                    ? 'Po višini'
-                    : 'Po abecedi';
+                : viewKey === 'time'
+                    ? 'Po datumu'
+                    : viewKey === 'distance'
+                        ? 'Po razdalji'
+                        : viewKey === 'gain'
+                            ? 'Po vzponu'
+                            : viewKey === 'height'
+                                ? 'Po višini'
+                                : 'Po abecedi';
 
             button.addEventListener('click', () => {
                 activeView = viewKey;
                 renderCurrentView(allPeaks);
             });
 
-            controls.appendChild(button);
+            buttonRow.appendChild(button);
         });
+
+        controls.appendChild(buttonRow);
 
         const insertTarget = loadingMessage && loadingMessage.parentNode
             ? loadingMessage
@@ -162,6 +364,16 @@ const PeakListModule = (() => {
 
         insertTarget.parentNode.insertBefore(controls, insertTarget);
         controlsInjected = true;
+
+        if (typeof checkSignIn === 'function') {
+            checkSignIn()
+                .then(user => updateHikeSortControlsVisibility(user))
+                .catch(() => updateHikeSortControlsVisibility(null));
+        }
+
+        if (window.onAuthStateChanged) {
+            window.onAuthStateChanged(user => updateHikeSortControlsVisibility(user));
+        }
     }
 
     function setActiveControl(viewKey) {
@@ -169,6 +381,19 @@ const PeakListModule = (() => {
         buttons.forEach(button => {
             button.classList.toggle('active', button.dataset.view === viewKey);
         });
+    }
+
+    function updateHikeSortControlsVisibility(user) {
+        const show = hasPrivilegedAccess(user);
+
+        document.querySelectorAll('.peak-list-view-btn[data-privileged-view="true"]').forEach(button => {
+            button.style.display = show ? '' : 'none';
+        });
+
+        if (!show && ['time', 'distance', 'gain'].includes(activeView)) {
+            activeView = isRelive ? 'alphabetical' : 'grouped';
+            renderCurrentView(allPeaks);
+        }
     }
 
     function appendDates(container, publishedDates) {
@@ -319,23 +544,133 @@ const PeakListModule = (() => {
         mountainContainer.appendChild(ul);
     }
 
+    function renderHikesSorted(hikes, sortMode = 'time') {
+        const mountainContainer = document.getElementById('mountainContainer');
+        mountainContainer.innerHTML = '';
+
+        const sortedHikes = [...hikes].sort((a, b) => {
+            if (sortMode === 'distance') {
+                const diff = (b.distanceKm || 0) - (a.distanceKm || 0);
+                return diff !== 0 ? diff : b.timestamp - a.timestamp;
+            }
+
+            if (sortMode === 'gain') {
+                const diff = (b.elevationGainM || 0) - (a.elevationGainM || 0);
+                return diff !== 0 ? diff : b.timestamp - a.timestamp;
+            }
+
+            return b.timestamp - a.timestamp;
+        });
+
+        const ul = document.createElement('ul');
+        ul.className = 'peak-date-list';
+
+        sortedHikes.forEach(hike => {
+            const li = document.createElement('li');
+            li.className = 'peak-list-item peak-date-item';
+
+            const mainRow = document.createElement('div');
+            mainRow.className = 'peak-main-row peak-date-main-row';
+
+            const dateSpan = document.createElement('span');
+            dateSpan.className = 'peak-name peak-date-name';
+
+            if (hike.links && hike.links.length === 1) {
+                const dateLink = document.createElement('a');
+                dateLink.href = hike.links[0];
+                dateLink.textContent = hike.date;
+                dateSpan.appendChild(dateLink);
+            } else {
+                dateSpan.textContent = hike.date;
+            }
+
+            mainRow.appendChild(dateSpan);
+
+            const stats = document.createElement('div');
+            stats.className = 'peak-track-stats';
+
+            if (hike.distanceKm > 0) {
+                const distanceBadge = document.createElement('span');
+                distanceBadge.className = 'peak-track-stat-badge';
+                distanceBadge.textContent = `${hike.distanceKm.toFixed(1)} km`;
+                stats.appendChild(distanceBadge);
+            }
+
+            if (hike.elevationGainM > 0) {
+                const elevationBadge = document.createElement('span');
+                elevationBadge.className = 'peak-track-stat-badge';
+                elevationBadge.innerHTML = `<span class="track-stat-arrow">↑</span> ${Math.round(hike.elevationGainM)} m`;
+                stats.appendChild(elevationBadge);
+            }
+
+            mainRow.appendChild(stats);
+
+            if (hike.peaks && hike.peaks.length) {
+                const peaksText = document.createElement('span');
+                peaksText.className = 'peak-name peak-day-peaks-text';
+
+                peaksText.textContent = hike.peaks
+                    .sort((a, b) => normalizeSpaces(a).localeCompare(normalizeSpaces(b)))
+                    .join(', ');
+
+                mainRow.appendChild(peaksText);
+            }
+
+            li.appendChild(mainRow);
+            ul.appendChild(li);
+        });
+
+        mountainContainer.appendChild(ul);
+    }
+        
     function renderCurrentView(peaks) {
         const mountainContainer = document.getElementById('mountainContainer');
         if (!mountainContainer) return;
 
-        if (isRelive || isActivityList) {
-            renderFlatPeaks(sortPeaksAlphabeticallyFlat(peaks), false, false);
+        const filteredPeaks = filterPeaksForSearch(peaks);
+        const filteredHikes = filterHikesForSearch(allHikes);
+
+        if (isActivityList) {
+            renderFlatPeaks(sortPeaksAlphabeticallyFlat(filteredPeaks), false, false);
             return;
         }
 
-        if (activeView === 'height') {
-            renderFlatPeaks(sortPeaksByHeight(peaks), true, true);
+        if (
+            ['time', 'distance', 'gain'].includes(activeView) &&
+            !document.querySelector(`.peak-list-view-btn[data-view="${activeView}"]:not([style*="display: none"])`)
+        ) {
+            activeView = isRelive ? 'alphabetical' : 'grouped';
+        }
+
+        if (isRelive) {
+            if (activeView === 'time') {
+                renderHikesSorted(filteredHikes, 'time');
+            } else if (activeView === 'distance') {
+                renderHikesSorted(filteredHikes, 'distance');
+            } else if (activeView === 'gain') {
+                renderHikesSorted(filteredHikes, 'gain');
+            } else {
+                renderFlatPeaks(sortPeaksAlphabeticallyFlat(filteredPeaks), false, false);
+            }
+
+            setActiveControl(activeView);
+            return;
+        }
+
+        if (activeView === 'time') {
+            renderHikesSorted(filteredHikes, 'time');
+        } else if (activeView === 'distance') {
+            renderHikesSorted(filteredHikes, 'distance');
+        } else if (activeView === 'gain') {
+            renderHikesSorted(filteredHikes, 'gain');
+        } else if (activeView === 'height') {
+            renderFlatPeaks(sortPeaksByHeight(filteredPeaks), true, true);
         } else if (activeView === 'alphabetical') {
-            renderFlatPeaks(sortPeaksAlphabeticallyFlat(peaks), false, true);
+            renderFlatPeaks(sortPeaksAlphabeticallyFlat(filteredPeaks), false, true);
         } else {
             const labelMap = {};
 
-            peaks.forEach(item => {
+            filteredPeaks.forEach(item => {
                 const categories = item.categories && item.categories.length
                     ? item.categories
                     : [{ label2: 'Ostalo', label3: 'Ostalo' }];
@@ -412,7 +747,10 @@ const PeakListModule = (() => {
             let startIndex = 1; // Start index of blog posts to fetch
             let hasMoreEntries = true;
             let feedUrl;
+
             allPeaks = [];
+            allHikes = [];
+            trackStatsByFilename = await loadTrackStats();
 
             while (hasMoreEntries) {
                 if (isBlogger) {
@@ -438,18 +776,27 @@ const PeakListModule = (() => {
                 entries.forEach(entry => {
                     const content = entry.content?.$t || '';
 
-                    const peakTags =
-                        content.match(/<div class="peak-tag"[^>]*>(.*?)<\/div>/gs) || [];
-                    const peakTagManual =
-                        content.match(/<div class="peak-tag-manually"[^>]*>[\s\S]*?<\/div>(?=\s*(?:<b>|<div|$))/gs) || [];
+                    const postPeaks = new Set();
 
-                    function processPeaks(tag) {
-                        const doc = new DOMParser().parseFromString(tag, 'text/html');
-                        const span = doc.querySelector('b span');
+                    const fullUrl = entry.link.find(l => l.rel === 'alternate')?.href || '';
+                    const postLink = fullUrl ? stripIndexHtml(fullUrl) : '';
+
+                    const d = new Date(entry.published.$t);
+                    const date = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+                    const dateKey = d.toISOString().slice(0, 10);
+                    const timestamp = d.getTime();
+
+                    const postTrackStats = getPostTrackStats(content);
+
+                    const postDoc = new DOMParser().parseFromString(content, 'text/html');
+                    const peakElements = postDoc.querySelectorAll('.peak-tag, .peak-tag-manually');
+
+                    function processPeaks(peakElement) {
+                        const span = peakElement.querySelector('b span');
                         if (!span) return;
 
                         // Try to read manual categories from a hidden .category div inside the tag
-                        const categoryDiv = doc.querySelector('div.category');
+                        const categoryDiv = peakElement.querySelector('div.category');
                         let label2s = [];
                         let label3s = [];
 
@@ -457,11 +804,13 @@ const PeakListModule = (() => {
                             const text = categoryDiv.textContent.trim();
                             const inner = text.replace(/^\s*\[|\]\s*$/g, '');
                             const items = inner.split(',').map(s => s.trim()).filter(Boolean);
+
                             items.forEach(it => {
                                 const m = it.match(/^(\d+)\.\s*(.*)$/);
                                 if (m) {
                                     const num = m[1];
                                     const val = normalizeSpaces(m[2].trim());
+
                                     if (num === '2') label2s.push(val);
                                     else if (num === '3') label3s.push(val);
                                 }
@@ -469,6 +818,7 @@ const PeakListModule = (() => {
                         } else {
                             const label2 = entry.category?.find(c => c.term.startsWith('2.'));
                             const label3sFromEntry = entry.category?.filter(c => c.term.startsWith('3.')) || [];
+
                             if (label2) label2s.push(normalizeSpaces(label2.term.slice(2)));
                             label3s = label3sFromEntry.map(c => normalizeSpaces(c.term.slice(2)));
                         }
@@ -481,22 +831,36 @@ const PeakListModule = (() => {
                             .map(normalizeSpaces)
                             .filter(peakName => peakName.length > 0)
                             .forEach(peakName => {
-                                const fullUrl = entry.link.find(l => l.rel === 'alternate')?.href;
-                                if (!fullUrl) return;
+                                if (!postLink) return;
 
-                                const postLink = stripIndexHtml(fullUrl);
-
-                                const d = new Date(entry.published.$t);
-                                const date = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
                                 const height = (isRelive || isActivityList) ? null : parsePeakHeight(peakName);
                                 const categories = buildCategoryEntries(label2s, label3s);
 
-                                addPeakToCollection(allPeaks, peakName, height, categories, { date, link: postLink });
+                                addPeakToCollection(
+                                    allPeaks,
+                                    peakName,
+                                    height,
+                                    categories,
+                                    { date, link: postLink }
+                                );
+
+                                postPeaks.add(peakName);
                             });
                     }
 
-                    peakTags.forEach(t => processPeaks(t));
-                    peakTagManual.forEach(t => processPeaks(t));
+                    peakElements.forEach(peakElement => processPeaks(peakElement));
+
+                    if (postPeaks.size > 0) {
+                        addHikeToCollection(allHikes, {
+                            date,
+                            dateKey,
+                            timestamp,
+                            link: postLink,
+                            distanceKm: postTrackStats.distanceKm,
+                            elevationGainM: postTrackStats.elevationGainM,
+                            peaks: [...postPeaks]
+                        });
+                    }
                 });
 
                 startIndex += maxResults;
@@ -519,6 +883,10 @@ const PeakListModule = (() => {
         isRelive = config.isRelive;
         isBlogger = config.isBlogger;
         isActivityList = config.isActivityList;
+
+        if (isRelive && activeView === 'grouped') {
+            activeView = 'time';
+        }
 
         if (!WindowBaseUrl) {
             console.warn('PeakListModule: WindowBaseUrl is missing');

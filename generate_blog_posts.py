@@ -192,19 +192,26 @@ def minify_asset_cached(input_path: Path, output_path: Path, cache: dict):
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     try:
-        subprocess.run(
+        result = subprocess.run(
             [
                 "npx",
+                "--no-install",
                 "esbuild",
                 str(input_path),
                 "--minify",
                 "--charset=utf8",
                 f"--outfile={output_path}"
             ],
-            check=True,
             capture_output=True,
-            text=True
+            text=True,
+            timeout=30
         )
+
+        print("Return code:", result.returncode)
+        print("STDOUT:", result.stdout[:500])
+        print("STDERR:", result.stderr[:500])
+
+        result.check_returncode()
 
         print(f"✔ Minified with esbuild: {input_path} → {output_path}")
 
@@ -2877,6 +2884,8 @@ def generate_peak_list_page():
   {back_to_top_html}
   {footer_html}
 
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js" defer></script>
   {TRANSLATE_HEAD}
   <script src="{BASE_SITE_URL}/{ASSETS}/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/{ASSETS}/Main.js" defer></script>

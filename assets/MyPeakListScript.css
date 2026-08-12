@@ -10,9 +10,15 @@
 
 .peak-list-controls {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 0.5rem;
   margin-bottom: 1rem;
+}
+
+.peak-list-button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .peak-list-view-btn {
@@ -42,13 +48,13 @@
   gap: 0.4rem;
 }
 
-.peak-category-badges {
+.peak-category-badges, .peak-track-stats {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
 }
 
-.peak-category-badge {
+.peak-category-badge, .peak-track-stat-badge {
   display: inline-flex;
   align-items: center;
   padding: 0.2rem 0.55rem;
@@ -61,4 +67,24 @@
 
 .peak-dates {
   color: #5b5b5b;
+}
+
+.peak-list-search-wrapper {
+    margin-bottom: 10px;
+}
+
+.peak-list-search {
+    width: 100%;
+    max-width: 320px;
+    padding: 7px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.peak-list-search:focus {
+    outline: none;
+    border-color: #f3891d;
+    box-shadow: 0 0 0 2px rgba(243, 137, 29, 0.18);
 }

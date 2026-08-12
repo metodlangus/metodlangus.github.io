@@ -17,7 +17,10 @@ import subprocess
 import hashlib
 import time
 import sys
-import winsound
+try:
+    import winsound
+except:
+    pass
 
 ##### Commit message: #####
 # Update blog posts
@@ -2574,6 +2577,8 @@ def generate_peak_list_page():
   {back_to_top_html}
   {footer_html}
 
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/SiteConfig.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/Main.js" defer></script>
   <script src="{BASE_SITE_URL}/assets/MyPeakListScriptModule.js" defer></script>
@@ -3310,7 +3315,10 @@ def git_commit(default_message):
     print(f"\nGit changes detected.")
     print(f"Proposed commit message:\n  {default_message}")
     # Play default system beep
-    winsound.Beep(1000, 500)  # Frequency 1000Hz, Duration 500ms
+    try:
+        winsound.Beep(1000, 500)  # Frequency 1000Hz, Duration 500ms
+    except:
+        pass
     choice = input("[c]ommit / [e]dit message / [s]kip? ").strip().lower()
 
     if choice == "s":
@@ -3379,7 +3387,10 @@ if __name__ == "__main__":
     pattern_iter = choose_pattern()
 
     # Play default system beep
-    winsound.Beep(1000, 500)  # Frequency 1000Hz, Duration 500ms
+    try:
+        winsound.Beep(1000, 500)  # Frequency 1000Hz, Duration 500ms
+    except:
+        pass
     input("Make sure relive base is updated. Press Enter to continue...")
 
     # 1. Create feeds
@@ -3487,7 +3498,10 @@ if __name__ == "__main__":
     
     # Prompt user to connect phone before continuing
     # Play default system beep
-    winsound.Beep(1000, 500)  # Frequency 1000Hz, Duration 500ms
+    try:
+        winsound.Beep(1000, 500)  # Frequency 1000Hz, Duration 500ms
+    except:
+        pass
     input("Please connect your phone and ensure ADB is enabled. Press Enter to continue...")
 
     # 21. Update extracted_relive_photos_with_gps_data.txt
