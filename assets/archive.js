@@ -4,10 +4,16 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("archive-placeholder").innerHTML = `<aside class="sidebar-archive">
   <h2>Arhiv</h2>
   <details open>
-    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(64)</span></summary>
+    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(70)</span></summary>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/posts/2026/08/">avgust 2026</a>&nbsp;<span class="post-count" dir="ltr">(2)</span></summary>
+      <summary><a href="https://metodlangus.github.io/posts/2026/08/">avgust 2026</a>&nbsp;<span class="post-count" dir="ltr">(8)</span></summary>
       <ul>
+        <li><a href="https://metodlangus.github.io/posts/2026/08/po-grebenu-na-storzic-2132-m/">Po grebenu na Storžič (2132 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/08/za-vikend-v-avstrijo-15-16-8-2026/">Za vikend v Avstrijo (15. – 16. 8. 2026)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/08/breiter-kopf-1558-m-ganges-1732-m-dobratsch-2166-m/">Breiter Kopf (1558 m), Ganges (1732 m), Dobratsch (2166 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/08/mestece-gmund/">Mestece Gmünd</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/08/za-marijin-praznik-na-hochalmspitze-3360-m/">Za Marijin praznik na Hochalmspitze (3360 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/08/kremenovec-1687-m-klecica-1889-m-debeli-vrh-1959-m/">Kremenovec (1687 m), Klečica (1889 m), ..., Debeli vrh (1959 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/08/cima-delle-cenge-visoka-polica-2007-m-vetta-bella-lepa-glava-2049-m/">Cima delle Cenge / Visoka polica (2007 m), Vetta Bella / Lepa glava (2049 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/08/hochobir-ojstrc-2139-m/">Hochobir / Ojstrc (2139 m)</a></li>
       </ul>
