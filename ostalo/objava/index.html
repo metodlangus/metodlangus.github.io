@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Poseben rojstnodnevni trenutek.">
+<meta name="robots" content="noindex, nofollow">
+<title>Vse najboljše! 🎂</title>
+
+<link rel="icon" href="http://127.0.0.1:5502/metodlangus.github.io/photos/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="http://127.0.0.1:5502/metodlangus.github.io/assets_min/Main.css">
+<link rel="stylesheet" href="http://127.0.0.1:5502/metodlangus.github.io/assets_min/MySlideshowScript.css">
+
+<style>
+*,
+*::before,
+*::after { box-sizing:border-box; }
+
+html,body {
+  margin:0;
+  padding:0;
+  width:100%;
+  min-height:100%;
+}
+
+body {
+  min-height:100vh;
+  overflow-x:hidden;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(circle at 50% 10%,rgba(255,190,220,.35),transparent 35%),
+    radial-gradient(circle at 15% 80%,rgba(160,130,255,.25),transparent 35%),
+    linear-gradient(135deg,#190d2c,#35134f 45%,#160d2a);
+}
+
+/* CLOSE BUTTON */
+.birthday-close {
+  position:fixed;
+  top:20px;
+  right:20px;
+  z-index:2147483647;
+  width:46px;
+  height:46px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  border:1px solid rgba(255,255,255,.25);
+  border-radius:50%;
+  background:rgba(20,10,35,.55);
+  color:#fff;
+  font-family:Arial,sans-serif;
+  font-size:28px;
+  line-height:1;
+  cursor:pointer;
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  box-shadow:0 8px 30px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.12);
+  transition:transform .2s ease,background .2s ease,box-shadow .2s ease;
+}
+
+.birthday-close:hover {
+  transform:scale(1.08);
+  background:rgba(255,255,255,.16);
+  box-shadow:0 10px 35px rgba(0,0,0,.4),0 0 25px rgba(255,120,190,.18);
+}
+
+.birthday-close:active {
+  transform:scale(.94);
+}
+
+.birthday-close:focus-visible {
+  outline:2px solid rgba(255,255,255,.8);
+  outline-offset:3px;
+}
+
+.birthday-background,
+.confetti {
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+
+.birthday-background { z-index:0; }
+
+.birthday-glow {
+  position:absolute;
+  width:45vw;
+  height:45vw;
+  max-width:600px;
+  max-height:600px;
+  border-radius:50%;
+  filter:blur(80px);
+  opacity:.25;
+  animation:birthdayGlow 8s ease-in-out infinite alternate;
+}
+
+.birthday-glow.one {
+  top:-15vw;
+  left:-10vw;
+  background:#ff77b7;
+}
+
+.birthday-glow.two {
+  right:-15vw;
+  bottom:-15vw;
+  background:#9b7cff;
+  animation-delay:-3s;
+}
+
+@keyframes birthdayGlow {
+  from { transform:scale(.9); }
+  to { transform:scale(1.15); }
+}
+
+.confetti { z-index:1; }
+
+.confetti span {
+  position:absolute;
+  top:-30px;
+  width:8px;
+  height:16px;
+  border-radius:2px;
+  background:rgba(255,255,255,.8);
+  animation:confettiFall linear infinite;
+}
+
+.confetti span:nth-child(1) { left:7%;animation-duration:7s;animation-delay:-2s;transform:rotate(20deg); }
+.confetti span:nth-child(2) { left:18%;animation-duration:9s;animation-delay:-5s;transform:rotate(70deg); }
+.confetti span:nth-child(3) { left:31%;animation-duration:6s;animation-delay:-1s;transform:rotate(120deg); }
+.confetti span:nth-child(4) { left:44%;animation-duration:8s;animation-delay:-4s;transform:rotate(40deg); }
+.confetti span:nth-child(5) { left:57%;animation-duration:7s;animation-delay:-3s;transform:rotate(90deg); }
+.confetti span:nth-child(6) { left:69%;animation-duration:10s;animation-delay:-7s;transform:rotate(150deg); }
+.confetti span:nth-child(7) { left:81%;animation-duration:6s;animation-delay:-2s;transform:rotate(30deg); }
+.confetti span:nth-child(8) { left:93%;animation-duration:8s;animation-delay:-6s;transform:rotate(110deg); }
+
+@keyframes confettiFall {
+  0% { transform:translateY(-40px) rotate(0);opacity:0; }
+  10% { opacity:1; }
+  100% { transform:translateY(110vh) rotate(720deg);opacity:0; }
+}
+
+.birthday-page {
+  position:relative;
+  z-index:2;
+  width:100%;
+  min-height:100vh;
+  padding:clamp(30px,6vw,80px) 20px 60px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.birthday-hero {
+  width:100%;
+  max-width:900px;
+  margin-bottom:35px;
+  text-align:center;
+  animation:birthdayHeroIn .9s ease both;
+}
+
+@keyframes birthdayHeroIn {
+  from { opacity:0;transform:translateY(25px) scale(.97); }
+  to { opacity:1;transform:translateY(0) scale(1); }
+}
+
+.birthday-kicker {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:18px;
+  padding:8px 16px;
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.85);
+}
+
+.birthday-title {
+  margin:0;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(42px,9vw,82px);
+  line-height:1.125;
+  font-weight:700;
+  letter-spacing:-.04em;
+  background:linear-gradient(90deg,#fff,#ffd6ea,#fff,#e8ddff,#fff);
+  background-size:250% auto;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  animation:birthdayShimmer 7s linear infinite;
+}
+
+@keyframes birthdayShimmer {
+  to { background-position:250% center; }
+}
+
+.birthday-cake {
+  display:inline-block;
+  margin-top:24px;
+  font-size:clamp(42px,8vw,65px);
+  animation:cakeFloat 3s ease-in-out infinite;
+}
+
+@keyframes cakeFloat {
+  0%,100% { transform:translateY(0); }
+  50% { transform:translateY(-8px); }
+}
+
+.birthday-subtitle {
+  max-width:650px;
+  margin:22px auto 0;
+  font-size:clamp(17px,3vw,21px);
+  line-height:1.65;
+  color:rgba(255,255,255,.82);
+}
+
+.birthday-message {
+  width:100%;
+  max-width:760px;
+  margin-bottom:35px;
+  padding:clamp(24px,5vw,40px);
+  text-align:center;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.17);
+  border-radius:28px;
+  background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.045));
+  box-shadow:0 25px 80px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.12);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+}
+
+.birthday-message p {
+  margin:0;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(19px,3vw,25px);
+  line-height:1.6;
+}
+
+.birthday-message .signature {
+  display:block;
+  margin-top:20px;
+  font-size:14px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.55);
+}
+
+.birthday-photo-filter {
+  width:100%;
+  max-width:760px;
+  margin:0 auto 20px;
+  padding:14px 18px;
+  text-align:center;
+  color:rgba(255,255,255,.82);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:16px;
+  background:rgba(255,255,255,.06);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+}
+
+.birthday-photo-filter label {
+  display:block;
+  margin-bottom:8px;
+  font-size:14px;
+  font-weight:600;
+}
+
+.birthday-photo-filter input {
+  width:min(100%,320px);
+  accent-color:#ff9ac7;
+}
+
+.birthday-photo-filter output {
+  display:inline-block;
+  min-width:92px;
+  margin-left:8px;
+  color:#fff;
+  font-weight:700;
+}
+
+.birthday-slideshow {
+  position:relative;
+  width:100%;
+  max-width:1100px;
+  min-height:300px;
+  margin:10px auto 45px;
+  padding:clamp(8px,1.5vw,14px);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:30px;
+  background:rgba(0,0,0,.25);
+  box-shadow:0 30px 100px rgba(0,0,0,.4),0 0 80px rgba(255,120,190,.08);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  overflow:hidden;
+}
+
+.birthday-slideshow::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  border-radius:inherit;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);
+}
+
+.birthday-footer {
+  width:100%;
+  max-width:700px;
+  margin-top:5px;
+  text-align:center;
+}
+
+.birthday-footer-line {
+  width:80px;
+  height:1px;
+  margin:0 auto 20px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.6),transparent);
+}
+
+.birthday-footer p {
+  margin:0;
+  font-size:14px;
+  line-height:1.7;
+  color:rgba(255,255,255,.55);
+}
+
+@media (max-width:600px) {
+  .birthday-close {
+    top:12px;
+    right:12px;
+    width:42px;
+    height:42px;
+    font-size:25px;
+  }
+  .birthday-page { padding:35px 12px 45px; }
+  .birthday-message { border-radius:22px; }
+  .birthday-slideshow { border-radius:20px;padding:5px; }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    scroll-behavior:auto !important;
+  }
+}
+</style>
+
+<script>
+var postTitle='Vse najboljše! 🎂';
+var postId='1445459384122999449';
+var author='Metod';
+</script>
+</head>
+
+<body>
+
+<div class="birthday-background" aria-hidden="true">
+  <div class="birthday-glow one"></div>
+  <div class="birthday-glow two"></div>
+</div>
+
+<div class="confetti" aria-hidden="true">
+  <span></span><span></span><span></span><span></span>
+  <span></span><span></span><span></span><span></span>
+</div>
+
+<button
+  class="birthday-close"
+  type="button"
+  aria-label="Zapri stran"
+  title="Zapri"
+  onclick="closeBirthdayPage()"
+>×</button>
+
+<main class="birthday-page">
+
+  <section class="birthday-hero">
+    <div class="birthday-kicker">✨ <span id="birthday-kicker-text">Danes je poseben dan</span> ✨</div>
+    <h1 class="birthday-title">Vse najboljše za okroglih 30 let!</h1>
+    <div class="birthday-cake">🎂</div>
+  </section>
+
+  <section class="birthday-message">
+    <p>Za poseben dan pa en poseben spomin. 💝</p>
+    <span class="signature">Z najlepšimi željami</span>
+  </section>
+
+  <section class="birthday-slideshow" aria-label="Rojstnodnevni foto album">
+    <script>
+      var slideshowTitle0='Make post slideshow';
+      var CoverPhoto0='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjpDXpDeR9MEn9QbmEAwFsK0dPk8jP-YsoHMnsWvWhmnRcHRM57eb4MwMxMLDOUvzdqKadY9-QUkYnVg2iMP9g7pSGY-Zkt_TDxjcwxr56TEh1HL61XY0WTyMVO6ZXFHe0jH6pmbrCYQtJaxJmmJFqu3wFergTMT-cwMw58ozmNyPp3CTTGlzpcuVmPQEv_/s600/20241101_141832.jpg';
+      var randomizeImages0=true;
+    </script>
+  </section>
+
+    <div class="birthday-photo-filter">
+    <label for="photosSliderElement">Obseg prikazanih slik</label>
+    <input
+      id="photosSliderElement"
+      type="range"
+      min="0"
+      max="3"
+      step="1"
+      value="1"
+      aria-label="Obseg prikazanih slik"
+    >
+    <output id="photosValueElement" for="photosSliderElement"></output>
+  </div>
+
+  <footer class="birthday-footer">
+    <div class="birthday-footer-line"></div>
+    <p>Naj bo pred tabo še veliko lepih trenutkov, čudovitih doživetij in spominov, ki ostanejo za vedno. ❤️</p>
+  </footer>
+
+</main>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var birthdayDate =
+    new URLSearchParams(window.location.search).get('birthday');
+
+  if (!birthdayDate) {
+    return;
+  }
+
+  var parts = birthdayDate.split('-');
+
+  var month = parseInt(parts[0], 10);
+  var day = parseInt(parts[1], 10);
+
+  if (
+    !Number.isInteger(month) ||
+    !Number.isInteger(day) ||
+    month < 1 ||
+    month > 12 ||
+    day < 1 ||
+    day > 31
+  ) {
+    return;
+  }
+
+  var today = new Date();
+
+  today.setHours(0, 0, 0, 0);
+
+  /* Birthday in the current year */
+  var birthday = new Date(
+    today.getFullYear(),
+    month - 1,
+    day
+  );
+
+  birthday.setHours(0, 0, 0, 0);
+
+  /* Birthday has not happened yet */
+  if (today < birthday) {
+    return;
+  }
+
+  var daysSinceBirthday = Math.floor(
+    (today - birthday) / 86400000
+  );
+
+  var text = 'Danes je poseben dan';
+
+  if (daysSinceBirthday === 1) {
+    text = 'Včeraj je bil poseben dan';
+  } else if (daysSinceBirthday > 1) {
+    text =
+      daysSinceBirthday +
+      ' dni nazaj je bil poseben dan';
+  }
+
+  var kickerText = document.getElementById(
+    'birthday-kicker-text'
+  );
+
+  if (kickerText) {
+    kickerText.textContent = text;
+  }
+});
+</script>
+
+<!-- CLOSE HANDLER -->
+<script>
+function closeBirthdayPage() {
+  if (window.parent && window.parent !== window) {
+    window.parent.postMessage(
+      { type:'birthday-close' },
+      window.location.origin
+    );
+    return;
+  }
+
+  /* If opened directly, do not redirect. */
+  if (window.history.length > 1) {
+    window.history.back();
+  }
+}
+</script>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js" defer></script>
+<script src="http://127.0.0.1:5502/metodlangus.github.io/assets_min/MyFiltersScriptModule.js" defer></script>
+<script src="http://127.0.0.1:5502/metodlangus.github.io/assets_min/SiteConfig.js" defer></script>
+<script src="http://127.0.0.1:5502/metodlangus.github.io/assets_min/Main.js" defer></script>
+<script src="http://127.0.0.1:5502/metodlangus.github.io/assets_min/MySlideshowScriptModule.js" defer></script>
+
+</body>
+</html>

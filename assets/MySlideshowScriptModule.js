@@ -2136,10 +2136,19 @@
     function getPostIdFromAnchor() { const anchor=document.querySelector('a[name]'); if(anchor) return anchor.getAttribute('name'); return null; }
 
     function shuffleArray(array, index) {
-        const randomizeImages=localStorage.getItem('randomizeImages')!==null?localStorage.getItem('randomizeImages')==='true':true;
-        if (slideshowTitles[index]==="All pictures") {
-            if (randomizeImages) { for(let i=array.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[array[i],array[j]]=[array[j],array[i]];} }
-        } else { array.unshift(endImage); }
+        const slideshowOverride = window[`randomizeImages${index}`];
+        const storedRandomizeImages = localStorage.getItem('randomizeImages');
+        const shouldRandomize = typeof slideshowOverride === 'boolean'
+            ? slideshowOverride
+            : storedRandomizeImages !== null
+                ? storedRandomizeImages === 'true'
+                : randomizeImages;
+
+        if (shouldRandomize) { for(let i=array.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[array[i],array[j]]=[array[j],array[i]];} }
+
+        if (slideshowTitles[index] !== "All pictures" && slideshowTitles[index] !== "Make post slideshow") {
+            array.unshift(endImage);
+        }
         return array;
     }
 
