@@ -2146,7 +2146,7 @@
 
         if (shouldRandomize) { for(let i=array.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[array[i],array[j]]=[array[j],array[i]];} }
 
-        if (slideshowTitles[index] !== "All pictures" && slideshowTitles[index] !== "Make post slideshow") {
+        if (slideshowTitles[index] !== "All pictures" && !shouldRandomize) {
             array.unshift(endImage);
         }
         return array;
