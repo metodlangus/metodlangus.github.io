@@ -439,16 +439,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const hostname = window.location.hostname.toLowerCase();
 
-  const pathname = window.location.pathname.replace(/\/+$/, "");
-
   const isProduction =
-    hostname === "matejlangus.github.io" &&
-    pathname === "/map";
+    hostname === "matejlangus.github.io";
 
   const isLocal =
     hostname === "127.0.0.1" &&
-    window.location.port === "5500" &&
-    pathname === "/matejlangus.github.io/map";
+    window.location.port === "5500";
 
   if (!isProduction && !isLocal) {
     return;
@@ -542,7 +538,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   const birthdayPagePath =
-    "/metodlangus.github.io/ostalo/objava/";
+    "/ostalo/objava/";
 
   const birthdayPageUrl =
     isProduction
@@ -581,7 +577,7 @@ document.addEventListener("DOMContentLoaded", function () {
     <iframe
       src="${birthdayPageUrl}"
       title="Birthday surprise"
-      allow="autoplay"
+      allow="autoplay; fullscreen"
     ></iframe>
   `;
 
@@ -593,7 +589,7 @@ document.addEventListener("DOMContentLoaded", function () {
     #birthday-surprise-overlay {
       position:fixed;
       inset:0;
-      z-index:2147483647;
+      z-index:9990;
       width:100vw;
       height:100vh;
       margin:0;
@@ -608,9 +604,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     #birthday-surprise-overlay iframe {
+      position:fixed;
+      inset:0;
       display:block;
-      width:100%;
-      height:100%;
+      width:100vw;
+      height:100vh;
       border:0;
       margin:0;
       padding:0;

@@ -7,9 +7,9 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Vse najboljše! 🎂</title>
 
-<link rel="icon" href="http://127.0.0.1:5502/metodlangus.github.io/photos/favicon.ico" type="image/x-icon">
-<link rel="stylesheet" href="http://127.0.0.1:5502/metodlangus.github.io/assets_min/Main.css">
-<link rel="stylesheet" href="http://127.0.0.1:5502/metodlangus.github.io/assets_min/MySlideshowScript.css">
+<link rel="icon" href="https://metodlangus.github.io//photos/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://metodlangus.github.io//assets_min/Main.css">
+<link rel="stylesheet" href="https://metodlangus.github.io//assets_min/MySlideshowScript.css">
 
 <style>
 *,
@@ -355,6 +355,25 @@ body {
     scroll-behavior:auto !important;
   }
 }
+
+body.slideshow-fullscreen .birthday-background,
+body.slideshow-fullscreen .confetti,
+body.slideshow-fullscreen .birthday-hero,
+body.slideshow-fullscreen .birthday-message,
+body.slideshow-fullscreen .birthday-photo-filter,
+body.slideshow-fullscreen .birthday-footer,
+body.slideshow-fullscreen .birthday-close {
+  display:none !important;
+}
+
+body.slideshow-fullscreen .birthday-slideshow {
+  width:100vw !important;
+  max-width:none !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:none !important;
+  border-radius:0 !important;
+}
 </style>
 
 <script>
@@ -399,7 +418,7 @@ var author='Metod';
 
   <section class="birthday-slideshow" aria-label="Rojstnodnevni foto album">
     <script>
-      var slideshowTitle0='Make post slideshow';
+      var slideshowTitle0='Make trip slideshow';
       var CoverPhoto0='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjpDXpDeR9MEn9QbmEAwFsK0dPk8jP-YsoHMnsWvWhmnRcHRM57eb4MwMxMLDOUvzdqKadY9-QUkYnVg2iMP9g7pSGY-Zkt_TDxjcwxr56TEh1HL61XY0WTyMVO6ZXFHe0jH6pmbrCYQtJaxJmmJFqu3wFergTMT-cwMw58ozmNyPp3CTTGlzpcuVmPQEv_/s600/20241101_141832.jpg';
       var randomizeImages0=true;
     </script>
@@ -498,9 +517,14 @@ document.addEventListener('DOMContentLoaded', function () {
 <script>
 function closeBirthdayPage() {
   if (window.parent && window.parent !== window) {
+    const parentOrigin =
+      document.referrer
+        ? new URL(document.referrer).origin
+        : "https://matejlangus.github.io";
+
     window.parent.postMessage(
       { type:'birthday-close' },
-      window.location.origin
+      parentOrigin
     );
     return;
   }
@@ -512,12 +536,92 @@ function closeBirthdayPage() {
 }
 </script>
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const slider =
+      document.getElementById(
+        "photosSliderElement"
+      );
+
+    const output =
+      document.getElementById(
+        "photosValueElement"
+      );
+
+    if (!slider || !output) {
+      return;
+    }
+
+    const specialTitle = {
+      "3": "Največ slik",
+      "2": "Več slik",
+      "1": "Malo slik",
+      "0": "Najboljše"
+    };
+
+    const storedValue =
+      localStorage.getItem(
+        "photosSliderValue"
+      );
+
+    if (storedValue !== null) {
+      slider.value = storedValue;
+    }
+
+    function updateValue() {
+      output.textContent =
+        specialTitle[slider.value] ||
+        slider.value;
+    }
+
+    updateValue();
+
+    slider.addEventListener(
+      "input",
+      updateValue
+    );
+
+    slider.addEventListener(
+      "change",
+      function () {
+
+        localStorage.setItem(
+          "photosSliderValue",
+          slider.value
+        );
+
+        location.reload();
+      }
+    );
+});
+</script>
+
+<script>
+document.addEventListener(
+  'fullscreenchange',
+  function () {
+
+    if (document.fullscreenElement) {
+      document.body.classList.add(
+        'slideshow-fullscreen'
+      );
+    } else {
+      document.body.classList.remove(
+        'slideshow-fullscreen'
+      );
+    }
+  }
+);
+</script>
+
+
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js" defer></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js" defer></script>
-<script src="http://127.0.0.1:5502/metodlangus.github.io/assets_min/MyFiltersScriptModule.js" defer></script>
-<script src="http://127.0.0.1:5502/metodlangus.github.io/assets_min/SiteConfig.js" defer></script>
-<script src="http://127.0.0.1:5502/metodlangus.github.io/assets_min/Main.js" defer></script>
-<script src="http://127.0.0.1:5502/metodlangus.github.io/assets_min/MySlideshowScriptModule.js" defer></script>
+<script src="https://metodlangus.github.io//assets_min/MyFiltersScriptModule.js" defer></script>
+<script src="https://metodlangus.github.io//assets_min/SiteConfig.js" defer></script>
+<script src="https://metodlangus.github.io//assets_min/Main.js" defer></script>
+<script src="https://metodlangus.github.io//assets_min/MySlideshowScriptModule.js" defer></script>
 
 </body>
 </html>
