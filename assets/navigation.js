@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <div class='remaining-items hidden' style='height:auto;'>
 <h3>Država:</h3><ul class='label-list'>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/avstrija/'>Avstrija</a></li>
+<li><a class='label-name' href='https://metodlangus.github.io/search/labels/francija/'>Francija</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/hrvaska/'>Hrvaška</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/italija/'>Italija</a></li>
 <li><a class='label-name' href='https://metodlangus.github.io/search/labels/korzika/'>Korzika</a></li>
