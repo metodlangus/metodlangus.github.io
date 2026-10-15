@@ -1,11 +1,37 @@
 document.addEventListener("DOMContentLoaded",function(){document.getElementById("archive-placeholder").innerHTML=`<aside class="sidebar-archive">
   <h2>Arhiv</h2>
   <details open>
-    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(71)</span></summary>
+    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(97)</span></summary>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/posts/2026/09/">september 2026</a>&nbsp;<span class="post-count" dir="ltr">(1)</span></summary>
+      <summary><a href="https://metodlangus.github.io/posts/2026/09/">september 2026</a>&nbsp;<span class="post-count" dir="ltr">(27)</span></summary>
       <ul>
         <li><a href="https://metodlangus.github.io/posts/2026/09/francosko-italijanske-alpe-4-21-9-2026/">Francosko-Italijanske Alpe (4. – 21. 9. 2026)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/ferrata-gerardo-sega/">Ferrata Gerardo Sega</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/cima-telegrafo-2200-m-cima-valdritta-2218-m/">Cima Telegrafo (2200 m), Cima Valdritta (2218 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/pain-de-sucre-3210-m-rocca-rossa-3190-m/">Pain de Sucre (3210 m), Rocca Rossa (3190 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/via-ferrata-chateau-queyras/">Via Ferrata Chateau-Queyras</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/via-ferrata-d-arvieux/">Via Ferrata d&#x27;Arvieux</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/pic-de-rochebrune-3320-m/">Pic de Rochebrune (3320 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/via-ferrata-de-la-croix-de-toulouse/">Via Ferrata de la Croix de Toulouse</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/le-grand-galibier-3228-m/">Le Grand Galibier (3228 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/via-ferrata-le-fort-du-telegraphe/">Via Ferrata Le Fort du Telegraphe</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/via-ferrata-du-diable/">Via Ferrata du Diable</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/pointe-de-ronce-3612-m-pointe-du-lamet-3504-m/">Pointe de Ronce (3612 m), Pointe du Lamet (3504 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/jezero-lac-du-mont-cenis/">Jezero Lac du Mont-Cenis</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/mont-chaberton-3131-m/">Mont Chaberton (3131 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/via-ferrata-de-l-aiguillette-du-lauzet/">Via Ferrata de L&#x27;Aiguillette du Lauzet</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/prelaz-col-du-lautaret/">Prelaz Col du Lautaret</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/via-ferrata-les-mines-du-grand-clot/">Via Ferrata Les Mines du Grand Clôt</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/via-ferrata-la-cascade-de-la-pisse/">Via Ferrata La Cascade de la Pisse</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/lac-du-chambon/">Lac du Chambon</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/le-neron-1928-m/">Le Neron (1928 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/la-bastille-trdnjava-nad-grenoblom/">La Bastille – trdnjava nad Grenoblom</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/via-ferrata-les-plates-de-la-daille/">Via Ferrata Les Plates de la Daille</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/aiguille-de-la-grande-sassiere-3747-m/">Aiguille de la Grande Sassiere (3747 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/pointe-de-lancebranlette-2936-m/">Pointe de Lancebranlette (2936 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/passarella-panoramica-dell-orrido/">Passarella Panoramica dell&#x27;Orrido</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/monte-emilius-3556-m-punta-della-valletta-3090-m/">Monte Emilius (3556 m), Punta della Valletta (3090 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/punta-cermenati-1875-m/">Punta Cermenati (1875 m)</a></li>
       </ul>
     </details>
     <details class="month-group">
@@ -511,5 +537,4 @@ document.addEventListener("DOMContentLoaded",function(){document.getElementById(
       </ul>
     </details>
   </details>
-</aside>`;document.querySelectorAll("#archive-placeholder details").forEach(function(det,idx){var key="archive-state-"+idx;if(sessionStorage.getItem(key)==="open"){det.setAttribute("open","");}else if(sessionStorage.getItem(key)==="closed"){det.removeAttribute("open");}
-det.addEventListener("toggle",function(){sessionStorage.setItem(key,det.open?"open":"closed");});});});
+</aside>`,document.querySelectorAll("#archive-placeholder details").forEach(function(a,s){var t="archive-state-"+s;sessionStorage.getItem(t)==="open"?a.setAttribute("open",""):sessionStorage.getItem(t)==="closed"&&a.removeAttribute("open"),a.addEventListener("toggle",function(){sessionStorage.setItem(t,a.open?"open":"closed")})})});
