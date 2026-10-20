@@ -83,6 +83,12 @@
   border-radius: 0; /* Remove border radius if needed */
 }
 
+.my-slideshow-container.fullscreen .mySlides img {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
 .my-slideshow-container .mySlides.active {
   opacity: 1;
 }

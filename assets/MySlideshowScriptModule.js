@@ -122,6 +122,7 @@
     var numberOfSlideshows = [];
     var toggleButton;
     const imageLoadStatus = new Map();
+    const imageZoomStates = new WeakMap();
     let activeFullscreenIndex = null;
     let currentSlideshowIndex = 0;
 
@@ -1941,6 +1942,10 @@
                 document.getElementById(`slide2-${index}`),
                 document.getElementById(`slide3-${index}`)
             ]);
+            slideContainers[index].forEach(slide => {
+                const img = slide.querySelector('img');
+                if (img) initializeImageZoom(img, index);
+            });
             toggleNavigationButton.push(document.getElementById(`toggleNavigationButton-${index}`));
             settingsButton.push(document.getElementById(`settingsButton-${index}`));
             infoButton.push(document.getElementById(`infoButton-${index}`));
@@ -1975,6 +1980,128 @@
                 `descriptionControllStyle2-${index}`
             ].map(id => document.getElementById(id));
             descriptionControlStyle.push(descriptionStyle);
+        });
+    }
+
+    function initializeImageZoom(img, index) {
+        const state = {
+            pointers: new Map(),
+            scale: 1,
+            x: 0,
+            y: 0,
+            startDistance: 0,
+            startScale: 1,
+            startX: 0,
+            startY: 0,
+            startMidpoint: null,
+            gestureActive: false,
+            suppressClick: false
+        };
+        imageZoomStates.set(img, state);
+
+        img.addEventListener('pointerdown', event => {
+            if (event.pointerType !== 'touch' ||
+                document.fullscreenElement !== slideshowOuterContainer[index] ||
+                !img.closest('.mySlides')?.classList.contains('fade-in')) return;
+
+            img.setPointerCapture(event.pointerId);
+            state.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+            if (state.pointers.size === 2) {
+                const [first, second] = Array.from(state.pointers.values());
+                state.startDistance = Math.max(1, Math.hypot(second.x - first.x, second.y - first.y));
+                state.startScale = state.scale;
+                state.startX = state.x;
+                state.startY = state.y;
+                state.startMidpoint = {
+                    x: (first.x + second.x) / 2,
+                    y: (first.y + second.y) / 2
+                };
+                state.gestureActive = true;
+                state.suppressClick = true;
+                event.preventDefault();
+            } else if (state.scale > 1) {
+                state.gestureActive = true;
+                event.preventDefault();
+            }
+        });
+
+        img.addEventListener('pointermove', event => {
+            if (!state.pointers.has(event.pointerId)) return;
+
+            const previous = state.pointers.get(event.pointerId);
+            state.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+            if (state.pointers.size >= 2) {
+                event.preventDefault();
+                const [first, second] = Array.from(state.pointers.values());
+                const distance = Math.hypot(second.x - first.x, second.y - first.y);
+                const midpoint = {
+                    x: (first.x + second.x) / 2,
+                    y: (first.y + second.y) / 2
+                };
+                const bounds = img.closest('.mySlides').getBoundingClientRect();
+                const centerX = bounds.left + bounds.width / 2;
+                const centerY = bounds.top + bounds.height / 2;
+                const nextScale = Math.min(4, Math.max(1, state.startScale * distance / state.startDistance));
+
+                if (nextScale === 1) {
+                    state.x = 0;
+                    state.y = 0;
+                } else {
+                    const anchorX = (state.startMidpoint.x - centerX - state.startX) / state.startScale;
+                    const anchorY = (state.startMidpoint.y - centerY - state.startY) / state.startScale;
+                    state.x = midpoint.x - centerX - anchorX * nextScale;
+                    state.y = midpoint.y - centerY - anchorY * nextScale;
+                }
+                state.scale = nextScale;
+                applyImageZoom(img, state);
+            } else if (state.gestureActive && state.scale > 1) {
+                event.preventDefault();
+                state.x += event.clientX - previous.x;
+                state.y += event.clientY - previous.y;
+                applyImageZoom(img, state);
+            }
+        });
+
+        const finishGesture = event => {
+            if (!state.pointers.has(event.pointerId)) return;
+            if (state.gestureActive) event.preventDefault();
+            state.pointers.delete(event.pointerId);
+
+            if (state.pointers.size === 0) {
+                state.gestureActive = false;
+                setTimeout(() => { state.suppressClick = false; }, 0);
+            }
+        };
+        img.addEventListener('pointerup', finishGesture);
+        img.addEventListener('pointercancel', finishGesture);
+        img.addEventListener('click', event => {
+            if (!state.suppressClick) return;
+            event.preventDefault();
+            event.stopPropagation();
+            state.suppressClick = false;
+        }, true);
+    }
+
+    function applyImageZoom(img, state) {
+        img.style.transform = state.scale === 1 && state.x === 0 && state.y === 0
+            ? ''
+            : `translate3d(${state.x}px, ${state.y}px, 0) scale(${state.scale})`;
+    }
+
+    function resetSlideshowImageZoom(index) {
+        (slideContainers[index] || []).forEach(slide => {
+            const img = slide.querySelector('img');
+            const state = imageZoomStates.get(img);
+            if (!state) return;
+            state.pointers.clear();
+            state.scale = 1;
+            state.x = 0;
+            state.y = 0;
+            state.gestureActive = false;
+            state.suppressClick = false;
+            applyImageZoom(img, state);
         });
     }
 
@@ -2360,6 +2487,7 @@
     function toggleFullscreen(index) {
     const wrapper = document.querySelector(`#slideshowOuterContainer-${index}`);
         if (!wrapper) return;
+        resetSlideshowImageZoom(index);
         
         const mapDiv = document.getElementById(`tp-map-ss-${index}`);
         const ts = trackStates[index];
@@ -2486,6 +2614,7 @@
      *          Track mode: dot drives photos directly. No hook needed here.
      */
     async function changeSlide(index,direction=1,isManual=false) {
+        resetSlideshowImageZoom(index);
         if (!slideshows[index].coverPhotoHidden) {
             if (coverPhotoContainer[index]) {
                 if (coverPhotoContainer[index].querySelector('img')) coverPhotoContainer[index].removeChild(coverPhotoContainer[index].querySelector('img'));
@@ -2837,7 +2966,17 @@
             if (typeof toggleButton!=="undefined"&&toggleButton) toggleButton.addEventListener('click',()=>toggleSlideshowOrImageVisibility(index));
         });
 
-        document.addEventListener('fullscreenchange',()=>{for(let index=0;index<slideshows.length;index++){updateFullscreenIcons(index);}});
+        document.addEventListener('fullscreenchange',()=>{
+            for(let index=0;index<slideshows.length;index++){
+                updateFullscreenIcons(index);
+                if (!document.fullscreenElement) {
+                    resetSlideshowImageZoom(index);
+                    [progressBarContainer[index], slideshowContainer[index], slideshowOuterContainer[index], mySlideshowContainer[index]]
+                        .forEach(el => el.classList.remove('fullscreen'));
+                    activeFullscreenIndex = null;
+                }
+            }
+        });
         document.addEventListener('visibilitychange',()=>{for(let index=0;index<slideshows.length;index++){document.visibilityState==='hidden'?pauseSlideshow(index,SLIDESHOW_HIDDEN):resumeSlideshow(index,SLIDESHOW_HIDDEN);}});
         controllButton.forEach(button=>{ button.addEventListener('mouseenter',()=>showTooltip(button)); button.addEventListener('mouseleave',()=>hideTooltip(button)); });
 
