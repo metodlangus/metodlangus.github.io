@@ -121,6 +121,7 @@
     var slideshowTitles = [];
     var numberOfSlideshows = [];
     var toggleButton;
+    const tripSlideshowViewModes = [];
     const imageLoadStatus = new Map();
     const imageZoomStates = new WeakMap();
     let activeFullscreenIndex = null;
@@ -2209,6 +2210,7 @@
             qualityValueElement[index].textContent=Math.ceil(containerWidth/400);
         }
         updateSliderColor(index);
+        if (slideshowTitles[index]==="Make trip slideshow"&&tripSlideshowViewModes[index]===2) renderTripInlinePostImages(index,true);
     }
 
     function updateSliderColor(index) {
@@ -2295,7 +2297,7 @@
                                     const additionalPostData=await additionalPostResponse.json(); let additionalEntries=additionalPostData.entry;
                                     if (additionalEntries&&!Array.isArray(additionalEntries)) additionalEntries=[additionalEntries];
                                     const additionalPostTitle=additionalPostData.entry?.title?.$t||`Post ID: ${additionalPostId}`;
-                                    additionalEntries.forEach(additionalEntry=>{ processEntry(index,additionalEntry); console.log(`Adding images from additional entry with title: ${additionalPostTitle}`); });
+                                    additionalEntries.forEach(additionalEntry=>{ processEntry(index,additionalEntry,additionalPostId); console.log(`Adding images from additional entry with title: ${additionalPostTitle}`); });
                                 } catch(err) { console.error(`Error fetching additional post with ID ${additionalPostId}:`,err); }
                             }
                         }
@@ -2307,6 +2309,7 @@
                 if (slideshowTitles[index]==="Make post slideshow"||slideshowTitles[index]==="Make trip slideshow") { console.log('Fetched',slideshows[index].imageBuffer.length,'images for title:',postId); if(imagesLoadedCountEl) imagesLoadedCountEl.textContent=slideshows[index].imageBuffer.length; }
                 else { console.log('Fetched',slideshows[index].imageBuffer.length,'images for title:',slideshowTitles[index]); if(imagesLoadedCountEl) imagesLoadedCountEl.textContent=slideshows[index].imageBuffer.length; }
                 finalizeAllPicturesSlideshow(index);
+                if (slideshowTitles[index]==="Make trip slideshow"&&tripSlideshowViewModes[index]===2) renderTripInlinePostImages(index,true);
             }
             if (slideshowTitles[index]==="All pictures") {
                 if (isBlogger) { slideshows[index].startIndex+=slideshows[index].maxResults; fetchData(index); }
@@ -2408,7 +2411,7 @@
         updateSliderColor(index);
     }
 
-    function processEntry(index, entry) {
+    function processEntry(index, entry, sourcePostId) {
         const content=entry.content.$t; const parser=new DOMParser(); const htmlDoc=parser.parseFromString(content,'text/html');
         const images=htmlDoc.getElementsByTagName('img'); const postTitle=entry.title.$t;
         const postDateRaw=entry.published?.$t||''; const postDate=postDateRaw?new Date(postDateRaw).toLocaleDateString('sl-SI'):'';
@@ -2425,7 +2428,9 @@
             if (isWithinRange) {
                 let imgSrc=images[i].getAttribute('src').replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//,`/s${containerSize}-rw/`);
                 const caption=captions[i]||'';
-                slideshows[index].imageBuffer.push({src:imgSrc,caption,title:postTitle,date:postDate});
+                const imageData={src:imgSrc,caption,title:postTitle,date:postDate};
+                if (sourcePostId) imageData.postId=sourcePostId;
+                slideshows[index].imageBuffer.push(imageData);
             }
         }
     }
@@ -2523,7 +2528,137 @@
         }
     }
 
+    function renderTripInlinePostImages(index, showImages) {
+        const slideshowIndex=String(index);
+        document.querySelectorAll('.my-trip-inline-images').forEach(gallery=>{
+            if (gallery.dataset.slideshowIndex!==slideshowIndex) return;
+            gallery.style.display='none';
+            const postEntry=gallery.previousElementSibling;
+            if (postEntry&&postEntry.classList.contains('photo-entry')) postEntry.style.display=gallery.dataset.postEntryDisplay||'';
+        });
+        if (!showImages) return;
+
+        const imagesByPostId=new Map();
+        slideshows[index].imageBuffer.forEach(image=>{
+            if (!image.postId) return;
+            if (!imagesByPostId.has(image.postId)) imagesByPostId.set(image.postId,[]);
+            imagesByPostId.get(image.postId).push(image);
+        });
+
+        imagesByPostId.forEach((images,postId)=>{
+            const thumbnail=document.getElementById(`post-snippet-${postId}`);
+            const postEntry=thumbnail&&thumbnail.closest('.photo-entry');
+            const postIdScript=Array.from(document.querySelectorAll('script')).find(script=>
+                script.textContent.match(/var\s+postID\d+\s*=\s*['"]([^'"]+)['"]/)?.[1]===postId
+            );
+            const insertionPoint=postEntry||postIdScript;
+            const insertionContainer=postEntry
+                ? postEntry.closest('.my-post-container')||postEntry.parentElement
+                : postIdScript&&postIdScript.parentElement;
+            if (!insertionPoint||!insertionContainer) {
+                console.warn(`Could not find an insertion point for images from post ID ${postId}`);
+                return;
+            }
+
+            let gallery=Array.from(document.querySelectorAll('.my-trip-inline-images')).find(element=>
+                element.dataset.slideshowIndex===slideshowIndex&&element.dataset.postId===postId
+            );
+            if (!gallery) {
+                gallery=document.createElement('div');
+                gallery.className='my-trip-inline-images';
+                gallery.dataset.slideshowIndex=slideshowIndex;
+                gallery.dataset.postId=postId;
+                gallery.dataset.postEntryDisplay=postEntry?.style.display||'';
+                insertionPoint.insertAdjacentElement('afterend',gallery);
+            }
+            gallery.replaceChildren();
+
+            images.forEach(image=>{
+                const link=document.createElement('a');
+                link.href=image.src;
+                link.setAttribute('data-lightbox','Gallery');
+                link.setAttribute('data-title',image.caption||'');
+
+                const imageElement=document.createElement('img');
+                imageElement.src=image.src;
+                imageElement.alt=image.caption||image.title||'';
+                imageElement.loading='lazy';
+                link.appendChild(imageElement);
+
+                if (image.caption) {
+                    const table=document.createElement('table');
+                    table.className='tr-caption-container';
+                    const imageCell=table.insertRow().insertCell();
+                    imageCell.appendChild(link);
+                    const captionCell=table.insertRow().insertCell();
+                    captionCell.className='tr-caption';
+                    captionCell.textContent=image.caption;
+                    gallery.appendChild(table);
+                } else {
+                    const separator=document.createElement('div');
+                    separator.className='separator';
+                    separator.style.clear='both';
+                    link.style.display='block';
+                    link.style.padding='1em 0';
+                    link.style.textAlign='center';
+                    separator.appendChild(link);
+                    gallery.appendChild(separator);
+                }
+            });
+
+            gallery.style.display='block';
+            if (postEntry) postEntry.style.display='none';
+        });
+    }
+
+    function updateTripToggleButton(viewMode) {
+        if (!toggleButton) return;
+        const buttonViews={
+            0:{
+                label:'Prikaži slike te objave',
+                icon:'<svg viewBox="0 0 24 24" width="52" height="52" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="19" height="19" rx="1.5"/><circle cx="6" cy="6" r="1" fill="currentColor" stroke="none"/><path d="M9 6h9M5 9h14"/><rect x="5" y="11" width="14" height="8" rx="0.8"/><circle cx="9" cy="14" r="1.2"/><path d="m6 18 3.5-3 2.5 2 2.5-3 3.5 4"/></svg>'
+            },
+            1:{
+                label:'Prikaži slike tudi iz povezanih objav',
+                icon:'<svg fill="#000000" width="80px" height="60px" viewBox="0 0 36 36" version="1.1" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="SVGRepo_iconCarrier"><path d="M32.12,10H3.88A1.88,1.88,0,0,0,2,11.88V30.12A1.88,1.88,0,0,0,3.88,32H32.12A1.88,1.88,0,0,0,34,30.12V11.88A1.88,1.88,0,0,0,32.12,10ZM32,30H4V12H32Z" class="clr-i-outline clr-i-outline-path-1"></path><path d="M8.56,19.45a3,3,0,1,0-3-3A3,3,0,0,0,8.56,19.45Zm0-4.6A1.6,1.6,0,1,1,7,16.45,1.6,1.6,0,0,1,8.56,14.85Z" class="clr-i-outline clr-i-outline-path-2"></path><path d="M7.9,28l6-6,3.18,3.18L14.26,28h2l7.46-7.46L30,26.77v-2L24.2,19a.71.71,0,0,0-1,0l-5.16,5.16L14.37,20.5a.71.71,0,0,0-1,0L5.92,28Z" class="clr-i-outline clr-i-outline-path-3"></path><path d="M30.14,3h0a1,1,0,0,0-1-1h-22a1,1,0,0,0-1,1h0V4h24Z" class="clr-i-outline clr-i-outline-path-4"></path><path d="M32.12,7V7a1,1,0,0,0-1-1h-26a1,1,0,0,0-1,1h0V8h28Z" class="clr-i-outline clr-i-outline-path-5"></path><rect x="0" y="0" width="36" height="36" fill-opacity="0"></rect></g></svg>'
+            },
+            2:{
+                label:'Prikaži diaprojekcijo',
+                icon:'<svg version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" xml:space="preserve" width="80px" height="60px" fill="#000000"><g id="SVGRepo_iconCarrier"><style type="text/css">.st0{fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}</style><polyline class="st0" points="25,11 27,13 25,15 "></polyline><polyline class="st0" points="7,11 5,13 7,15 "></polyline><path class="st0" d="M29,23H3c-1.1,0-2-0.9-2-2V5c0-1.1,0.9-2,2-2h26c1.1,0,2,0.9,2,2v16C31,22.1,30.1,23,29,23z"></path><circle class="st0" cx="16" cy="28" r="1"></circle><circle class="st0" cx="10" cy="28" r="1"></circle><circle class="st0" cx="22" cy="28" r="1"></circle></g></svg>'
+            }
+        }[viewMode];
+        if (buttonViews.icon) toggleButton.innerHTML=buttonViews.icon;
+        toggleButton.setAttribute('aria-label',buttonViews.label);
+        toggleButton.title=buttonViews.label;
+    }
+
+    function toggleTripSlideshowView(index) {
+        const currentMode=tripSlideshowViewModes[index]||0;
+        if (currentMode===0) {
+            toggleLegacySlideshowOrImageVisibility(index);
+            tripSlideshowViewModes[index]=1;
+            updateTripToggleButton(1);
+        } else if (currentMode===1) {
+            renderTripInlinePostImages(index,true);
+            tripSlideshowViewModes[index]=2;
+            updateTripToggleButton(2);
+        } else {
+            renderTripInlinePostImages(index,false);
+            toggleLegacySlideshowOrImageVisibility(index);
+            tripSlideshowViewModes[index]=0;
+            updateTripToggleButton(0);
+        }
+    }
+
     function toggleSlideshowOrImageVisibility(index) {
+        if (slideshowTitles[index]==="Make trip slideshow") {
+            toggleTripSlideshowView(index);
+            return;
+        }
+        toggleLegacySlideshowOrImageVisibility(index);
+    }
+
+    function toggleLegacySlideshowOrImageVisibility(index) {
         const separators=document.querySelectorAll('.separator'); const myPostContainers=document.querySelectorAll('.my-post-container'); const tables=document.querySelectorAll('table.tr-caption-container');
         updateImageSources(1200);
         if (toggleButton) {
@@ -2820,6 +2955,7 @@
             toggleButton=document.createElement("button");
             toggleButton.style.cssText="background-color:#f3891d;border-radius:5px;cursor:pointer;padding:12px;display:flex;align-items:center;justify-content:center;width:80px;height:60px;";
             toggleButton.innerHTML=`<svg fill="#000000" width="80px" height="60px" viewBox="0 0 36 36" version="1.1" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="SVGRepo_iconCarrier"><path d="M32.12,10H3.88A1.88,1.88,0,0,0,2,11.88V30.12A1.88,1.88,0,0,0,3.88,32H32.12A1.88,1.88,0,0,0,34,30.12V11.88A1.88,1.88,0,0,0,32.12,10ZM32,30H4V12H32Z" class="clr-i-outline clr-i-outline-path-1"></path><path d="M8.56,19.45a3,3,0,1,0-3-3A3,3,0,0,0,8.56,19.45Zm0-4.6A1.6,1.6,0,1,1,7,16.45,1.6,1.6,0,0,1,8.56,14.85Z" class="clr-i-outline clr-i-outline-path-2"></path><path d="M7.9,28l6-6,3.18,3.18L14.26,28h2l7.46-7.46L30,26.77v-2L24.2,19a.71.71,0,0,0-1,0l-5.16,5.16L14.37,20.5a.71.71,0,0,0-1,0L5.92,28Z" class="clr-i-outline clr-i-outline-path-3"></path><path d="M30.14,3h0a1,1,0,0,0-1-1h-22a1,1,0,0,0-1,1h0V4h24Z" class="clr-i-outline clr-i-outline-path-4"></path><path d="M32.12,7V7a1,1,0,0,0-1-1h-26a1,1,0,0,0-1,1h0V8h28Z" class="clr-i-outline clr-i-outline-path-5"></path><rect x="0" y="0" width="36" height="36" fill-opacity="0"></rect></g></svg>`;
+            updateTripToggleButton(0);
             container.appendChild(content); container.appendChild(toggleButton);
             document.body.appendChild(container); targetDiv.insertAdjacentElement("beforebegin",container);
         }
@@ -2841,6 +2977,7 @@
         if (ts && ts.PHOTOS) {
             ts.PHOTOS.forEach(p => { p.src = p.src.replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//,newQuality); });
         }
+        if (slideshowTitles[index]==="Make trip slideshow"&&tripSlideshowViewModes[index]===2) renderTripInlinePostImages(index,true);
     }
 
     function enqueueManualSlide(index,direction) {
