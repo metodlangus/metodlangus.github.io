@@ -121,6 +121,7 @@
     var slideshowTitles = [];
     var numberOfSlideshows = [];
     var toggleButton;
+    const tripSlideshowViewModes = [];
     const imageLoadStatus = new Map();
     const imageZoomStates = new WeakMap();
     let activeFullscreenIndex = null;
@@ -2209,6 +2210,7 @@
             qualityValueElement[index].textContent=Math.ceil(containerWidth/400);
         }
         updateSliderColor(index);
+        if (slideshowTitles[index]==="Make trip slideshow"&&tripSlideshowViewModes[index]===2) renderTripInlinePostImages(index,true);
     }
 
     function updateSliderColor(index) {
@@ -2295,7 +2297,7 @@
                                     const additionalPostData=await additionalPostResponse.json(); let additionalEntries=additionalPostData.entry;
                                     if (additionalEntries&&!Array.isArray(additionalEntries)) additionalEntries=[additionalEntries];
                                     const additionalPostTitle=additionalPostData.entry?.title?.$t||`Post ID: ${additionalPostId}`;
-                                    additionalEntries.forEach(additionalEntry=>{ processEntry(index,additionalEntry); console.log(`Adding images from additional entry with title: ${additionalPostTitle}`); });
+                                    additionalEntries.forEach(additionalEntry=>{ processEntry(index,additionalEntry,additionalPostId); console.log(`Adding images from additional entry with title: ${additionalPostTitle}`); });
                                 } catch(err) { console.error(`Error fetching additional post with ID ${additionalPostId}:`,err); }
                             }
                         }
@@ -2307,6 +2309,7 @@
                 if (slideshowTitles[index]==="Make post slideshow"||slideshowTitles[index]==="Make trip slideshow") { console.log('Fetched',slideshows[index].imageBuffer.length,'images for title:',postId); if(imagesLoadedCountEl) imagesLoadedCountEl.textContent=slideshows[index].imageBuffer.length; }
                 else { console.log('Fetched',slideshows[index].imageBuffer.length,'images for title:',slideshowTitles[index]); if(imagesLoadedCountEl) imagesLoadedCountEl.textContent=slideshows[index].imageBuffer.length; }
                 finalizeAllPicturesSlideshow(index);
+                if (slideshowTitles[index]==="Make trip slideshow"&&tripSlideshowViewModes[index]===2) renderTripInlinePostImages(index,true);
             }
             if (slideshowTitles[index]==="All pictures") {
                 if (isBlogger) { slideshows[index].startIndex+=slideshows[index].maxResults; fetchData(index); }
@@ -2408,7 +2411,7 @@
         updateSliderColor(index);
     }
 
-    function processEntry(index, entry) {
+    function processEntry(index, entry, sourcePostId) {
         const content=entry.content.$t; const parser=new DOMParser(); const htmlDoc=parser.parseFromString(content,'text/html');
         const images=htmlDoc.getElementsByTagName('img'); const postTitle=entry.title.$t;
         const postDateRaw=entry.published?.$t||''; const postDate=postDateRaw?new Date(postDateRaw).toLocaleDateString('sl-SI'):'';
@@ -2425,7 +2428,9 @@
             if (isWithinRange) {
                 let imgSrc=images[i].getAttribute('src').replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//,`/s${containerSize}-rw/`);
                 const caption=captions[i]||'';
-                slideshows[index].imageBuffer.push({src:imgSrc,caption,title:postTitle,date:postDate});
+                const imageData={src:imgSrc,caption,title:postTitle,date:postDate};
+                if (sourcePostId) imageData.postId=sourcePostId;
+                slideshows[index].imageBuffer.push(imageData);
             }
         }
     }
@@ -2523,7 +2528,144 @@
         }
     }
 
+    function renderTripInlinePostImages(index, showImages) {
+        const slideshowIndex=String(index);
+        document.querySelectorAll('.my-trip-inline-images').forEach(gallery=>{
+            if (gallery.dataset.slideshowIndex!==slideshowIndex) return;
+            gallery.style.display='none';
+            const postEntry=gallery.previousElementSibling;
+            if (postEntry&&postEntry.classList.contains('photo-entry')) postEntry.style.display=gallery.dataset.postEntryDisplay||'';
+        });
+        if (!showImages) return;
+
+        const imagesByPostId=new Map();
+        slideshows[index].imageBuffer.forEach(image=>{
+            if (!image.postId) return;
+            if (!imagesByPostId.has(image.postId)) imagesByPostId.set(image.postId,[]);
+            imagesByPostId.get(image.postId).push(image);
+        });
+
+        imagesByPostId.forEach((images,postId)=>{
+            const thumbnail=document.getElementById(`post-snippet-${postId}`);
+            const postEntry=thumbnail&&thumbnail.closest('.photo-entry');
+            const postIdScript=Array.from(document.querySelectorAll('script')).find(script=>
+                script.textContent.match(/var\s+postID\d+\s*=\s*['"]([^'"]+)['"]/)?.[1]===postId
+            );
+            const insertionPoint=postEntry||postIdScript;
+            const insertionContainer=postEntry
+                ? postEntry.closest('.my-post-container')||postEntry.parentElement
+                : postIdScript&&postIdScript.parentElement;
+            if (!insertionPoint||!insertionContainer) {
+                console.warn(`Could not find an insertion point for images from post ID ${postId}`);
+                return;
+            }
+
+            let gallery=Array.from(document.querySelectorAll('.my-trip-inline-images')).find(element=>
+                element.dataset.slideshowIndex===slideshowIndex&&element.dataset.postId===postId
+            );
+            if (!gallery) {
+                gallery=document.createElement('div');
+                gallery.className='my-trip-inline-images';
+                gallery.dataset.slideshowIndex=slideshowIndex;
+                gallery.dataset.postId=postId;
+                gallery.dataset.postEntryDisplay=postEntry?.style.display||'';
+                insertionPoint.insertAdjacentElement('afterend',gallery);
+            }
+            gallery.replaceChildren();
+
+            images.forEach(image=>{
+                const link=document.createElement('a');
+                link.href=image.src;
+                link.setAttribute('data-lightbox','Gallery');
+                link.setAttribute('data-title',image.caption||'');
+
+                const imageElement=document.createElement('img');
+                imageElement.src=image.src;
+                imageElement.alt=image.caption||image.title||'';
+                imageElement.loading='lazy';
+                link.appendChild(imageElement);
+
+                if (image.caption) {
+                    const table=document.createElement('table');
+                    table.className='tr-caption-container';
+                    const imageCell=table.insertRow().insertCell();
+                    imageCell.appendChild(link);
+                    const captionCell=table.insertRow().insertCell();
+                    captionCell.className='tr-caption';
+                    captionCell.textContent=image.caption;
+                    gallery.appendChild(table);
+                } else {
+                    const separator=document.createElement('div');
+                    separator.className='separator';
+                    separator.style.clear='both';
+                    link.style.display='block';
+                    link.style.padding='1em 0';
+                    link.style.textAlign='center';
+                    separator.appendChild(link);
+                    gallery.appendChild(separator);
+                }
+            });
+
+            gallery.style.display='block';
+            if (postEntry) postEntry.style.display='none';
+        });
+    }
+
+    function updateTripToggleButton(viewMode) {
+        if (!toggleButton) return;
+        const nextMode=(viewMode+1)%3;
+        const buttonViews={
+            0:{
+                label:'Prikaži objavo s povezanimi objavami',
+                icon:'<svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="14" height="15" rx="1"/><path d="M8 3h12v15M7 9h8M7 12h8"/></svg>'
+            },
+            1:{
+                label:'Prikaži vse slike',
+                icon:'<svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>'
+            },
+            2:{
+                label:'Prikaži diaprojekcijo',
+                icon:'<svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="1"/><path d="m10 8 6 3-6 3zM8 22h8M12 18v4"/></svg>'
+            }
+        }[nextMode];
+        toggleButton.innerHTML=buttonViews.icon;
+        toggleButton.setAttribute('aria-label',buttonViews.label);
+        toggleButton.title=buttonViews.label;
+    }
+
+    function toggleTripSlideshowView(index) {
+        const currentMode=tripSlideshowViewModes[index]||0;
+        const nextMode=(currentMode+1)%3;
+        tripSlideshowViewModes[index]=nextMode;
+
+        const separators=document.querySelectorAll('.separator');
+        const postContainers=document.querySelectorAll('.my-post-container');
+        const tables=document.querySelectorAll('table.tr-caption-container');
+        updateImageSources(1200);
+
+        if (nextMode===0) {
+            mySlideshowContainer.forEach(container=>container.style.display='block');
+            postContainers.forEach(container=>container.style.display='none');
+            separators.forEach(separator=>separator.style.display='none');
+            tables.forEach(table=>table.style.display='none');
+            renderTripInlinePostImages(index,false);
+        } else {
+            if (currentMode===0) pauseSlideshow(index,SLIDESHOW_VISIBLE);
+            mySlideshowContainer.forEach(container=>container.style.display='none');
+            postContainers.forEach(container=>container.style.display='block');
+            separators.forEach(separator=>separator.style.display='block');
+            tables.forEach(table=>table.style.display='table');
+            renderTripInlinePostImages(index,nextMode===2);
+        }
+
+        updateTripToggleButton(nextMode);
+    }
+
     function toggleSlideshowOrImageVisibility(index) {
+        if (slideshowTitles[index]==="Make trip slideshow") {
+            toggleTripSlideshowView(index);
+            return;
+        }
         const separators=document.querySelectorAll('.separator'); const myPostContainers=document.querySelectorAll('.my-post-container'); const tables=document.querySelectorAll('table.tr-caption-container');
         updateImageSources(1200);
         if (toggleButton) {
@@ -2841,6 +2983,7 @@
         if (ts && ts.PHOTOS) {
             ts.PHOTOS.forEach(p => { p.src = p.src.replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//,newQuality); });
         }
+        if (slideshowTitles[index]==="Make trip slideshow"&&tripSlideshowViewModes[index]===2) renderTripInlinePostImages(index,true);
     }
 
     function enqueueManualSlide(index,direction) {
@@ -3032,6 +3175,9 @@
         injectTrackStyles();
         generateSlideshowContainers(defaultImgSrc);
         createToggleButton();
+        numberOfSlideshows.forEach(index=>{
+            if (slideshowTitles[index]==="Make trip slideshow") updateTripToggleButton(0);
+        });
         hideAllImages();
 
         numberOfSlideshows.forEach(index => {
