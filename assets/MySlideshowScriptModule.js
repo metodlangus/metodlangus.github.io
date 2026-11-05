@@ -125,6 +125,8 @@
     const imageZoomStates = new WeakMap();
     let activeFullscreenIndex = null;
     let currentSlideshowIndex = 0;
+    let keyboardListenersAdded = false;
+    let trackPhotoTextPromise = null;
 
     // Array to hold all slideshows data
     let slideshows = [];
@@ -339,9 +341,12 @@
         if (!trackPhotoListUrl || !postDate) return [];
         if (photosRange == null) photosRange = 3;
 
-        const resp = await fetch(trackPhotoListUrl);
-        if (!resp.ok) throw new Error('PhotoList HTTP ' + resp.status);
-        const text = await resp.text();
+        // Download the photo list only once per page (cached promise; reset on failure so a retry works)
+        if (!trackPhotoTextPromise) trackPhotoTextPromise = fetch(trackPhotoListUrl).then(resp => {
+            if (!resp.ok) throw new Error('PhotoList HTTP ' + resp.status);
+            return resp.text();
+        }).catch(err => { trackPhotoTextPromise = null; throw err; });
+        const text = await trackPhotoTextPromise;
 
         const lineRe = /(.+?),\s*Link:\s*(https?:\/\/[^\s]+),\s*data-skip=([^\s,]+),\s*"([^"]+)",\s*([^,]+),\s*Latitude:\s*([+-]?\d+\.\d+),\s*Longitude:\s*([+-]?\d+\.\d+)/;
         const photos = [], seen = new Set();
@@ -482,7 +487,7 @@
 
         try {
             const loadingLabel = mapEl.querySelector('.tp-map-loading');
-            if (loadingLabel) loadingLabel.textContent = 'Nalaganje GPX…';
+            if (loadingLabel) { loadingLabel.style.display = ''; loadingLabel.textContent = 'Nalaganje GPX…'; }
 
             // ── Fetch and parse GPX ──
             const gpxText = await fetch(gpxUrl).then(r => { if (!r.ok) throw new Error('GPX '+r.status); return r.text(); });
@@ -747,7 +752,10 @@
         } catch (err) {
             console.error('[Track] init error:', err);
             const loadingLabel2 = mapEl.querySelector('.tp-map-loading');
-            if (loadingLabel2) loadingLabel2.textContent = 'Napaka: ' + err.message;
+            if (loadingLabel2) { loadingLabel2.style.display = ''; loadingLabel2.textContent = 'Napaka: ' + err.message; }
+            // Clean up so toggling the track player off and on again retries from scratch
+            try { tmap.remove(); } catch (e) {}
+            trackStates[ssIdx] = null;
         }
     }
 
@@ -831,10 +839,7 @@
                     if (group && group.photos) {
                         // Preload all photos in the upcoming group
                         group.photos.forEach(photo => {
-                            const _qv = qualitySliderElement[ssIdx] ? qualitySliderElement[ssIdx].value : null;
-                            const _qs = _qv ? ((_qv === '11') ? '/s0-rw/' : `/s${_qv * 400}-rw/`) : '/s1000-rw/';
-                            const resolvedSrc = photo.src.replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//i, _qs);
-                            preloadImage(resolvedSrc).catch(() => {});
+                            preloadImage(trackQualitySrc(ssIdx, photo.src)).catch(() => {});
                         });
                     }
                 }
@@ -912,6 +917,7 @@
 
             // Step 3 — after backdrop fades in, show endImage on slide
             ts._endTimer2 = setTimeout(() => {
+                if (!ts._atEnd) return; // left track mode / sought away meanwhile — never touch the slides
                 showSlideshowSlides(ssIdx);
 
                 const sc = slideContainers[ssIdx] && slideContainers[ssIdx][1];
@@ -922,6 +928,7 @@
 
                 setTimeout(async () => {
                     try { await preloadImage(endImage.src); } catch(e) {}
+                    if (!ts._atEnd) return; // left track mode meanwhile — end image must not appear over the slideshow
                     const img = sc.querySelector('img');
                     const txt = sc.querySelector('.text');
                     const upr = sc.querySelector('.uppertext');
@@ -966,6 +973,19 @@
         showTrackPhoto(ssIdx, groupIdx, 0);
     }
 
+    /** Quality-aware URL of a track photo — single source of truth for display AND preloading (same cache key). */
+    function trackQualitySrc(ssIdx, rawSrc) {
+        let q;
+        if (autoQualityCheckbox[ssIdx] && autoQualityCheckbox[ssIdx].checked) {
+            const cw = slideshowContainer[ssIdx] ? slideshowContainer[ssIdx].offsetWidth  : 800;
+            const ch = slideshowContainer[ssIdx] ? slideshowContainer[ssIdx].offsetHeight : 600;
+            q = `/s${Math.max(cw, ch)}-rw/`;
+        } else {
+            const v = qualitySliderElement[ssIdx] ? String(qualitySliderElement[ssIdx].value) : '3';
+            q = (v === '11') ? '/s0-rw/' : `/s${Number(v) * 400}-rw/`;
+        }
+        return rawSrc.replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//i, q);
+    }
     function showTrackPhoto(ssIdx, groupIdx, photoIdx) {
         const ts    = trackStates[ssIdx];
         const group = ts && ts.GROUPS[groupIdx];
@@ -983,16 +1003,7 @@
 
         // ── Quality-aware URL ─────────────────────────────────────────
         function _qSrc(rawSrc) {
-            let q;
-            if (autoQualityCheckbox[ssIdx] && autoQualityCheckbox[ssIdx].checked) {
-                const cw = slideshowContainer[ssIdx] ? slideshowContainer[ssIdx].offsetWidth  : 800;
-                const ch = slideshowContainer[ssIdx] ? slideshowContainer[ssIdx].offsetHeight : 600;
-                q = `/s${Math.max(cw, ch)}-rw/`;
-            } else {
-                const v = qualitySliderElement[ssIdx] ? String(qualitySliderElement[ssIdx].value) : '3';
-                q = (v === '11') ? '/s0-rw/' : `/s${Number(v) * 400}-rw/`;
-            }
-            return rawSrc.replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//i, q);
+            return trackQualitySrc(ssIdx, rawSrc);
         }
 
         const resolvedSrc = _qSrc(photo.src);
@@ -1067,6 +1078,10 @@
 
             // NOW bring slides to front (map fades out).
             // Incoming slot already has the correct image — no stale flash.
+            // Coming from the map (slides still behind it): instantly hide every slot
+            // so the previous photo can never flash while the map fades out.
+            const _fromMap = scIn.style.zIndex === '-1';
+            if (_fromMap) slideContainers[ssIdx].forEach(sc => { sc.style.transition = 'none'; sc.style.opacity = '0'; });
             showSlideshowSlides(ssIdx);
 
             // Fade out outgoing, fade in incoming
@@ -1074,6 +1089,11 @@
             scIn.classList.remove('fade-out', 'fade-in');
 
             setTimeout(() => {
+                if (_fromMap) {
+                    void scIn.offsetWidth; // flush hidden state before restoring transitions
+                    slideContainers[ssIdx].forEach(sc => { sc.style.transition = ''; sc.style.opacity = ''; });
+                }
+                if (!ts.waitingForSlide) return; // left track mode / sought away meanwhile — do not touch the slides
                 scIn.classList.add('fade-in');
                 ss.activeSlide = incoming;
 
@@ -1140,6 +1160,20 @@
         ts.lastTs = null;
         ts.triggers.forEach(t => { t.fired = t.progress <= ts.progress; });
 
+        // If the end-of-track sequence was running (or the end image shown), cancel it and go back to the map
+        if (ts._atEnd) {
+            ts._atEnd = false;
+            clearTimeout(ts._endTimer);
+            clearTimeout(ts._endTimer2);
+            ts._endTimer = ts._endTimer2 = null;
+            const backdrop = document.getElementById(`tp-backdrop-ss-${ssIdx}`);
+            if (backdrop) {
+                backdrop.style.transition = '';
+                backdrop.style.opacity    = '';
+                backdrop.style.display    = 'none';
+            }
+            hideSlideshowSlides(ssIdx);
+        }
         // If a photo group was showing, cancel it and resume dot
         if (ts.waitingForSlide) {
             clearTimeout(ts._photoTimer);
@@ -1268,10 +1302,14 @@
 
         const coverEl  = document.getElementById(`coverPhotoContainer-${ssIdx}`);
         const coverImg = coverEl ? coverEl.querySelector('img') : null;
+        const photoOv  = document.getElementById(`photoOverlay-${ssIdx}`);
+        const progBar  = document.getElementById(`progressBar-${ssIdx}`);
 
         ss._slotStack = {
             slots:             slotSnaps,
+            progBarStyle:      progBar  ? (progBar.getAttribute('style')  || '') : '',
             coverStyle:        coverEl  ? (coverEl.getAttribute('style')  || '') : '',
+            photoOvStyle:      photoOv  ? (photoOv.getAttribute('style')  || '') : '',
             coverImgSrc:       coverImg ? coverImg.src : '',
             coverImgAlt:       coverImg ? coverImg.alt : '',
             coverImgStyle:     coverImg ? (coverImg.getAttribute('style') || '') : '',
@@ -1300,21 +1338,11 @@
             sc.className = s.classList.join(' ');
 
             if (img) {
-                // IMPROVEMENT: Don't restore endImage - check if it's the SVG data URL
-                const isEndImage = s.imgSrc && s.imgSrc.startsWith('data:image/svg+xml');
-                
-                if (!isEndImage) {
-                    img.src = s.imgSrc;
-                    img.alt = s.imgAlt;
-                    if (s.imgStyle) img.setAttribute('style', s.imgStyle);
-                    else            img.removeAttribute('style');
-                } else {
-                    // If it was endImage, clear it (will be behind cover photo anyway)
-                    img.src = '';
-                    img.alt = '';
-                    if (s.imgStyle) img.setAttribute('style', s.imgStyle);
-                    else            img.removeAttribute('style');
-                }
+                // Restore every slot exactly, including the endImage (SVG data URL)
+                img.src = s.imgSrc;
+                img.alt = s.imgAlt;
+                if (s.imgStyle) img.setAttribute('style', s.imgStyle);
+                else            img.removeAttribute('style');
             }
 
             const upper = sc.querySelector('.uppertext');
@@ -1325,6 +1353,8 @@
             if (text)  text.textContent  = s.caption;
         });
 
+        // Slideshow still in its initial state (cover photo + title showing): no slide, e.g. the end image, may show over it
+        if (!snap.coverPhotoHidden) scs.forEach(sc => sc.classList.remove('fade-in', 'fade-out'));
         // IMPROVEMENT: Restore cover-photo container properly
         const coverEl  = document.getElementById(`coverPhotoContainer-${ssIdx}`);
         const coverImg = coverEl ? coverEl.querySelector('img') : null;
@@ -1332,14 +1362,6 @@
         if (coverEl) {
             if (snap.coverStyle) coverEl.setAttribute('style', snap.coverStyle);
             else                 coverEl.removeAttribute('style');
-            
-            // If cover photo was not hidden when we pushed, ensure it's visible now
-            if (!snap.coverPhotoHidden) {
-                coverEl.style.display = '';
-                // CRITICAL: Ensure cover photo is on top (z-index higher than slides)
-                coverEl.style.position = 'relative';
-                coverEl.style.zIndex = '2';
-            }
         }
         
         if (coverImg) {
@@ -1349,11 +1371,17 @@
             else                    coverImg.removeAttribute('style');
         }
         
-        // Restore photo overlay if cover was visible
+        // Restore photo overlay exactly as it was (no forced z-index, it would cover the click thirds)
         const photoOv = document.getElementById(`photoOverlay-${ssIdx}`);
-        if (photoOv && !snap.coverPhotoHidden) {
-            photoOv.style.display = 'block';
-            photoOv.style.zIndex = '3'; // Above cover photo
+        if (photoOv) {
+            if (snap.photoOvStyle) photoOv.setAttribute('style', snap.photoOvStyle);
+            else                   photoOv.removeAttribute('style');
+        }
+        // Restore the slideshow progress bar (the track player used it for the track position)
+        const progBar = document.getElementById(`progressBar-${ssIdx}`);
+        if (progBar) {
+            if (snap.progBarStyle) progBar.setAttribute('style', snap.progBarStyle);
+            else                   progBar.removeAttribute('style');
         }
 
         // Restore data registers
@@ -1412,18 +1440,32 @@
                 backdrop.style.display    = 'none';
             }
 
+            // Reset all track player layers
+            const tpOverlay = document.getElementById(`tp-overlay-ss-${ssIdx}`);
+            if (tpOverlay) tpOverlay.style.display = 'none';
+            const tpElev = document.getElementById(`tp-elevation-wrap-${ssIdx}`);
+            if (tpElev) tpElev.style.display = 'none';
+            const tpNav = document.getElementById(`navigationControl-${ssIdx}`);
+            if (tpNav) tpNav.style.zIndex = '2';
+            const tpProg = document.getElementById(`overlayProgressContainer-${ssIdx}`);
+            if (tpProg) { tpProg.style.zIndex = ''; tpProg.style.pointerEvents = ''; }
+            if (ts) {
+                ts._atEnd = false;
+                ts._userPanning = false;
+                ts.progress = 0;
+                ts.lastTs = null;
+                if (ts.triggers) ts.triggers.forEach(t => { t.fired = false; t.preloading = false; });
+                if (ts.dotMarker && ts.trackPoints.length) ts.dotMarker.setLatLng([ts.trackPoints[0].lat, ts.trackPoints[0].lon]);
+                updateElevationCursor(ssIdx, 0);
+                if (ts.map) ts.map.stop();
+            }
             const wasRunning = ss._slotStack ? ss._slotStack.wasRunning : false;
             ss._blockSlideUpdate = false;
             _popSlots(ssIdx);
 
-            slideContainers[ssIdx].forEach((sc, i) => {
-                sc.classList.remove('fade-out');
-                if (i === ss.activeSlide) sc.classList.add('fade-in');
-            });
-
             if (btn) btn.classList.remove('tp-sb');
             const overlayCont = document.getElementById(`overlayContainer-${ssIdx}`);
-            if (overlayCont) overlayCont.style.pointerEvents = '';
+            if (overlayCont) { overlayCont.style.pointerEvents = ''; overlayCont.style.zIndex = '1'; }
             const tSettings = document.getElementById(`tp-settings-ss-${ssIdx}`);
             if (tSettings) tSettings.style.display = 'none';
             const barCont = document.getElementById(`progressBarContainer-${ssIdx}`);
@@ -1497,8 +1539,7 @@
                 setTimeout(() => {
                     ts.map.invalidateSize();
                     if (ts.trackPoints.length) {
-                        ts.map.setView([ts.trackPoints[0].lat, ts.trackPoints[0].lon],
-                            ts.map.getZoom(), {animate: false});
+                        ts.map.fitBounds(L.latLngBounds(ts.trackPoints.map(p => [p.lat, p.lon])), {padding:[30,30], animate:false});
                     }
                 }, 50);
             }
@@ -1536,7 +1577,7 @@
         const barCont = document.getElementById(`progressBarContainer-${ssIdx}`);
         if (barCont) barCont.style.height = '3px';
         const overlay = document.getElementById(`overlayContainer-${ssIdx}`);
-        if (overlay) overlay.style.pointerEvents = 'none';
+        if (overlay) { overlay.style.pointerEvents = 'none'; overlay.style.zIndex = '1'; }
     }
 
     /**
@@ -1561,17 +1602,17 @@
             }, 620);
         }
 
-        // Raise slides above map (z-index:3 > map z-index:0)
+        // Raise slides above map (z-index:2 > map z-index:0); click thirds go above the slides (z-index:3)
         ['slide1','slide2','slide3'].forEach(cls => {
             const el = document.querySelector(`#slideshowContainer-${ssIdx} .${cls}`);
-            if (el) { el.style.zIndex = '3'; el.style.position = 'absolute'; }
+            if (el) { el.style.zIndex = '2'; el.style.position = 'absolute'; }
         });
         const nav = document.getElementById(`navigationControl-${ssIdx}`);
         if (nav) nav.style.zIndex = '4';
         const prog = document.getElementById(`overlayProgressContainer-${ssIdx}`);
         if (prog) prog.style.zIndex = '4';
         const overlay = document.getElementById(`overlayContainer-${ssIdx}`);
-        if (overlay) overlay.style.pointerEvents = '';
+        if (overlay) { overlay.style.pointerEvents = ''; overlay.style.zIndex = '3'; }
     }
 
         /**
@@ -1656,13 +1697,11 @@
             .tp-ss-btn:hover { color: #c8602a; border-color: #c8602a; }
 
             /* Map layer sits behind slides (z-index 0).
-               Slides use z-index 1 when track mode is on so they cover the map
-               when a photo group is being shown. */
+               Slides are raised to z-index 2 (click thirds to 3) when a photo
+               group is being shown, so they cover the map. */
             #tp-map-ss-0, #tp-map-ss-1, #tp-map-ss-2, #tp-map-ss-3 {
                 position: absolute; inset: 0;
             }
-            /* Slides raised above map during photo groups */
-            .mySlides.over-map { z-index: 2 !important; }
         `;
         document.head.appendChild(s);
     }
@@ -1683,7 +1722,7 @@
         delete(key) { if (this.cache.has(key)) { this.currentSize-=this.cache.get(key).size; this.cache.delete(key); return true; } return false; }
         clear() { this.cache.clear(); this.currentSize=0; }
     }
-    const imageCache = new LRUCacheBySize(50*1024*1024);
+    const imageCache = new LRUCacheBySize(150*1024*1024);
 
     /* ═══════════════════════════════════════════════════════════════
        SLIDESHOW CONTAINER GENERATION  (original, + track panel + button)
@@ -1780,9 +1819,9 @@
                         </div>
 
                         <div class="overlay-container" id="overlayContainer-${index}" style="position: absolute; top: 0; left: 0; width: 100%; height: 0; display: flex; z-index: 1;">
-                            <div class="overlay-left" style="flex: 1;" onclick="enqueueManualSlide(${index}, -1)"></div>
+                            <div class="overlay-left" style="flex: 1;" onclick="handleSideClick(${index}, -1)"></div>
                             <div class="overlay-middle" style="flex: 1;" onclick="handleClick(${index})"></div>
-                            <div class="overlay-right" style="flex: 1;" onclick="enqueueManualSlide(${index}, 1)"></div>
+                            <div class="overlay-right" style="flex: 1;" onclick="handleSideClick(${index}, 1)"></div>
                         </div>
 
                         <div class="cover-photo-container" id="coverPhotoContainer-${index}">
@@ -2418,6 +2457,8 @@
     }
 
     function initializeKeyboardListeners(index) {
+        if (keyboardListenersAdded) return; // one global listener is enough (it picks the active slideshow itself)
+        keyboardListenersAdded = true;
         document.addEventListener('keydown',({key,ctrlKey,metaKey,altKey})=>{
             if (ctrlKey||metaKey||altKey) return;
             const index=activeFullscreenIndex!==null?activeFullscreenIndex:currentSlideshowIndex;
@@ -2504,6 +2545,22 @@
     }
 
     function preloadAllImages(index) {
+        // Track mode: preload every photo of the whole track and show the note in the track overlay (above the map)
+        const _mapDiv = document.getElementById(`tp-map-ss-${index}`);
+        const _ts = trackStates[index];
+        if (_mapDiv && _mapDiv.style.display !== 'none' && _ts && _ts.ready) {
+            return Promise.all(_ts.PHOTOS.map(p => preloadImage(trackQualitySrc(index, p.src)).catch(() => {}))).then(() => {
+                console.log("All track images preloaded");
+                const _tov = document.getElementById(`tp-overlay-ss-${index}`);
+                const _sp = _tov ? _tov.querySelector('.connection-error') : null;
+                if (_sp) {
+                    if (!_sp.dataset.msg) _sp.dataset.msg = _sp.textContent;
+                    _tov.style.display = 'flex'; _sp.style.color = 'white'; _sp.textContent = 'Slike so pripravljene';
+                    clearTimeout(_tov._noteTimer);
+                    _tov._noteTimer = setTimeout(() => { _tov.style.display = 'none'; _sp.textContent = _sp.dataset.msg; _sp.style.color = ''; }, 2000);
+                }
+            });
+        }
         return Promise.all(slideshows[index].shuffledImages.map(img=>preloadImage(img.src))).then(()=>{
             console.log("All images preloaded");
             if (coverPhotoContainer[index]) {
@@ -2574,6 +2631,7 @@
             const ts=trackStates[index];
             if (!ts || !ts.ready) return;
             // Stop dot and photo timer — keep map visible, don't touch slides
+            ts._hiddenWasPlaying = isSlideshowHidden ? !!ts.playing : false; // remember for tab-visibility resume
             ts.playing=false;
             if (ts.rafId) { cancelAnimationFrame(ts.rafId); ts.rafId=null; }
             clearTimeout(ts._photoTimer); ts._photoTimer=null;
@@ -2605,6 +2663,8 @@
             const ts=trackStates[index];
             if (!ts || !ts.ready) return;
 
+            // Tab became visible again: only resume if the track was playing when the tab got hidden
+            if (isSlideshowHidden) { if (!ts._hiddenWasPlaying) return; ts._hiddenWasPlaying = false; }
             // Handle replay from end
             if (ts._atEnd) { setTrackPlaying(index, true); return; }
 
@@ -2845,6 +2905,12 @@
         slideshows[index].lastClickTime=slideshows[index].currentTime;
     }
 
+    // Left/right third: previous/next image in the slideshow, but in track mode the whole layer acts like the middle one (play/pause, double-click fullscreen)
+    function handleSideClick(index, direction) {
+        const mapDiv = document.getElementById(`tp-map-ss-${index}`);
+        if (mapDiv && mapDiv.style.display !== 'none') handleClick(index);
+        else enqueueManualSlide(index, direction);
+    }
     // Help functionality
     function showHelp() {
         const overlay = document.createElement('div');
@@ -3050,12 +3116,13 @@
                 fetchData(index); updateSlideshowSpeed(index); checkAndInitialize(index);
             });
         });
-        window.onresize=function(){ numberOfSlideshows.forEach(index=>{autoSetQuality(index);}); };
+        window.onresize=function(){ numberOfSlideshows.forEach(index=>{autoSetQuality(index); const ts=trackStates[index]; if (ts && ts.map) ts.map.invalidateSize();}); };
     }
 
     window.MySlideshowModule={init};
     window.enqueueManualSlide=enqueueManualSlide;
     window.handleClick=handleClick;
+    window.handleSideClick=handleSideClick;
     window.toggleProgressBarVisibility=toggleProgressBarVisibility;
 
 })(window);
