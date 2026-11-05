@@ -2613,21 +2613,16 @@
 
     function updateTripToggleButton(viewMode) {
         if (!toggleButton) return;
-        const nextMode=(viewMode+1)%3;
         const buttonViews={
-            0:{
-                label:'Prikaži objavo s povezanimi objavami',
-                icon:'<svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="14" height="15" rx="1"/><path d="M8 3h12v15M7 9h8M7 12h8"/></svg>'
-            },
             1:{
-                label:'Prikaži vse slike',
-                icon:'<svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>'
+                label:'Prikaži slike tudi iz povezanih objav',
+                icon:'<svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="13" height="16" rx="1"/><path d="M7 8h5M7 11h5M7 15l2-2 2 2 2-3 2 3"/><path d="M17 7h4v14h-12"/></svg>'
             },
             2:{
                 label:'Prikaži diaprojekcijo',
-                icon:'<svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="1"/><path d="m10 8 6 3-6 3zM8 22h8M12 18v4"/></svg>'
+                icon:'<svg version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" xml:space="preserve" width="80px" height="60px" fill="#000000"><g id="SVGRepo_iconCarrier"><style type="text/css">.st0{fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}</style><polyline class="st0" points="25,11 27,13 25,15 "></polyline><polyline class="st0" points="7,11 5,13 7,15 "></polyline><path class="st0" d="M29,23H3c-1.1,0-2-0.9-2-2V5c0-1.1,0.9-2,2-2h26c1.1,0,2,0.9,2,2v16C31,22.1,30.1,23,29,23z"></path><circle class="st0" cx="16" cy="28" r="1"></circle><circle class="st0" cx="10" cy="28" r="1"></circle><circle class="st0" cx="22" cy="28" r="1"></circle></g></svg>'
             }
-        }[nextMode];
+        }[viewMode];
         toggleButton.innerHTML=buttonViews.icon;
         toggleButton.setAttribute('aria-label',buttonViews.label);
         toggleButton.title=buttonViews.label;
@@ -2635,30 +2630,19 @@
 
     function toggleTripSlideshowView(index) {
         const currentMode=tripSlideshowViewModes[index]||0;
-        const nextMode=(currentMode+1)%3;
-        tripSlideshowViewModes[index]=nextMode;
-
-        const separators=document.querySelectorAll('.separator');
-        const postContainers=document.querySelectorAll('.my-post-container');
-        const tables=document.querySelectorAll('table.tr-caption-container');
-        updateImageSources(1200);
-
-        if (nextMode===0) {
-            mySlideshowContainer.forEach(container=>container.style.display='block');
-            postContainers.forEach(container=>container.style.display='none');
-            separators.forEach(separator=>separator.style.display='none');
-            tables.forEach(table=>table.style.display='none');
-            renderTripInlinePostImages(index,false);
+        if (currentMode===0) {
+            toggleLegacySlideshowOrImageVisibility(index);
+            tripSlideshowViewModes[index]=1;
+            updateTripToggleButton(1);
+        } else if (currentMode===1) {
+            renderTripInlinePostImages(index,true);
+            tripSlideshowViewModes[index]=2;
+            updateTripToggleButton(2);
         } else {
-            if (currentMode===0) pauseSlideshow(index,SLIDESHOW_VISIBLE);
-            mySlideshowContainer.forEach(container=>container.style.display='none');
-            postContainers.forEach(container=>container.style.display='block');
-            separators.forEach(separator=>separator.style.display='block');
-            tables.forEach(table=>table.style.display='table');
-            renderTripInlinePostImages(index,nextMode===2);
+            renderTripInlinePostImages(index,false);
+            toggleLegacySlideshowOrImageVisibility(index);
+            tripSlideshowViewModes[index]=0;
         }
-
-        updateTripToggleButton(nextMode);
     }
 
     function toggleSlideshowOrImageVisibility(index) {
@@ -2666,6 +2650,10 @@
             toggleTripSlideshowView(index);
             return;
         }
+        toggleLegacySlideshowOrImageVisibility(index);
+    }
+
+    function toggleLegacySlideshowOrImageVisibility(index) {
         const separators=document.querySelectorAll('.separator'); const myPostContainers=document.querySelectorAll('.my-post-container'); const tables=document.querySelectorAll('table.tr-caption-container');
         updateImageSources(1200);
         if (toggleButton) {
@@ -3175,9 +3163,6 @@
         injectTrackStyles();
         generateSlideshowContainers(defaultImgSrc);
         createToggleButton();
-        numberOfSlideshows.forEach(index=>{
-            if (slideshowTitles[index]==="Make trip slideshow") updateTripToggleButton(0);
-        });
         hideAllImages();
 
         numberOfSlideshows.forEach(index => {
