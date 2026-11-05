@@ -83,8 +83,12 @@
   border-radius: 0; /* Remove border radius if needed */
 }
 
-.my-slideshow-container.fullscreen .mySlides img {
+.my-slideshow-container.fullscreen .slideshow-container,
+.my-slideshow-container.fullscreen .overlay-container {
   touch-action: none;
+}
+
+.my-slideshow-container.fullscreen .mySlides img {
   user-select: none;
   -webkit-user-drag: none;
 }

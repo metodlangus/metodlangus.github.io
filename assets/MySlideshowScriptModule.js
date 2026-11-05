@@ -1942,10 +1942,7 @@
                 document.getElementById(`slide2-${index}`),
                 document.getElementById(`slide3-${index}`)
             ]);
-            slideContainers[index].forEach(slide => {
-                const img = slide.querySelector('img');
-                if (img) initializeImageZoom(img, index);
-            });
+            initializeImageZoom(index);
             toggleNavigationButton.push(document.getElementById(`toggleNavigationButton-${index}`));
             settingsButton.push(document.getElementById(`settingsButton-${index}`));
             infoButton.push(document.getElementById(`infoButton-${index}`));
@@ -1983,28 +1980,50 @@
         });
     }
 
-    function initializeImageZoom(img, index) {
-        const state = {
-            pointers: new Map(),
-            scale: 1,
-            x: 0,
-            y: 0,
-            startDistance: 0,
-            startScale: 1,
-            startX: 0,
-            startY: 0,
-            startMidpoint: null,
-            gestureActive: false,
-            suppressClick: false
+    function initializeImageZoom(index) {
+        const surface = slideshowContainer[index];
+        if (!surface) return;
+
+        let activeState = null;
+        let clickSuppressionState = null;
+        const getState = img => {
+            let state = imageZoomStates.get(img);
+            if (!state) {
+                state = {
+                    pointers: new Map(),
+                    scale: 1,
+                    x: 0,
+                    y: 0,
+                    startDistance: 0,
+                    startScale: 1,
+                    startX: 0,
+                    startY: 0,
+                    startMidpoint: null,
+                    gestureActive: false,
+                    suppressClick: false
+                };
+                imageZoomStates.set(img, state);
+            }
+            state.img = img;
+            return state;
         };
-        imageZoomStates.set(img, state);
 
-        img.addEventListener('pointerdown', event => {
+        surface.addEventListener('pointerdown', event => {
             if (event.pointerType !== 'touch' ||
-                document.fullscreenElement !== slideshowOuterContainer[index] ||
-                !img.closest('.mySlides')?.classList.contains('fade-in')) return;
+                !mySlideshowContainer[index]?.classList.contains('fullscreen')) return;
 
-            img.setPointerCapture(event.pointerId);
+            const target = event.target instanceof Element ? event.target : null;
+            if (!target?.closest('.overlay-container, .mySlides')) return;
+
+            const activeSlide = slideContainers[index].find(slide => slide.classList.contains('fade-in'));
+            const img = activeSlide?.querySelector('img');
+            if (!img) return;
+
+            const state = getState(img);
+            if (activeState && activeState.pointers.size === 0) activeState = null;
+            if (activeState && activeState !== state) return;
+            activeState = state;
+            surface.setPointerCapture(event.pointerId);
             state.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
 
             if (state.pointers.size === 2) {
@@ -2019,15 +2038,19 @@
                 };
                 state.gestureActive = true;
                 state.suppressClick = true;
+                clickSuppressionState = state;
                 event.preventDefault();
             } else if (state.scale > 1) {
                 state.gestureActive = true;
+                state.suppressClick = true;
+                clickSuppressionState = state;
                 event.preventDefault();
             }
         });
 
-        img.addEventListener('pointermove', event => {
-            if (!state.pointers.has(event.pointerId)) return;
+        surface.addEventListener('pointermove', event => {
+            const state = activeState;
+            if (!state?.pointers.has(event.pointerId)) return;
 
             const previous = state.pointers.get(event.pointerId);
             state.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
@@ -2040,7 +2063,7 @@
                     x: (first.x + second.x) / 2,
                     y: (first.y + second.y) / 2
                 };
-                const bounds = img.closest('.mySlides').getBoundingClientRect();
+                const bounds = state.img.closest('.mySlides').getBoundingClientRect();
                 const centerX = bounds.left + bounds.width / 2;
                 const centerY = bounds.top + bounds.height / 2;
                 const nextScale = Math.min(4, Math.max(1, state.startScale * distance / state.startDistance));
@@ -2055,32 +2078,38 @@
                     state.y = midpoint.y - centerY - anchorY * nextScale;
                 }
                 state.scale = nextScale;
-                applyImageZoom(img, state);
+                applyImageZoom(state.img, state);
             } else if (state.gestureActive && state.scale > 1) {
                 event.preventDefault();
                 state.x += event.clientX - previous.x;
                 state.y += event.clientY - previous.y;
-                applyImageZoom(img, state);
+                applyImageZoom(state.img, state);
             }
         });
 
         const finishGesture = event => {
-            if (!state.pointers.has(event.pointerId)) return;
+            const state = activeState;
+            if (!state?.pointers.has(event.pointerId)) return;
             if (state.gestureActive) event.preventDefault();
             state.pointers.delete(event.pointerId);
 
             if (state.pointers.size === 0) {
                 state.gestureActive = false;
-                setTimeout(() => { state.suppressClick = false; }, 0);
+                activeState = null;
+                setTimeout(() => {
+                    if (clickSuppressionState === state) clickSuppressionState = null;
+                    state.suppressClick = false;
+                }, 500);
             }
         };
-        img.addEventListener('pointerup', finishGesture);
-        img.addEventListener('pointercancel', finishGesture);
-        img.addEventListener('click', event => {
-            if (!state.suppressClick) return;
+        surface.addEventListener('pointerup', finishGesture);
+        surface.addEventListener('pointercancel', finishGesture);
+        surface.addEventListener('click', event => {
+            if (!clickSuppressionState?.suppressClick) return;
             event.preventDefault();
             event.stopPropagation();
-            state.suppressClick = false;
+            clickSuppressionState.suppressClick = false;
+            clickSuppressionState = null;
         }, true);
     }
 
