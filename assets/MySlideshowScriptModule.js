@@ -2411,6 +2411,12 @@
         updateSliderColor(index);
     }
 
+    function getPostImageBlockMarkup(image) {
+        const bloggerBlock=image.closest('table.tr-caption-container, .separator');
+        if (bloggerBlock&&bloggerBlock.querySelectorAll('img').length===1) return bloggerBlock.outerHTML;
+        return image.closest('a')?.outerHTML||image.outerHTML;
+    }
+
     function processEntry(index, entry, sourcePostId) {
         const content=entry.content.$t; const parser=new DOMParser(); const htmlDoc=parser.parseFromString(content,'text/html');
         const images=htmlDoc.getElementsByTagName('img'); const postTitle=entry.title.$t;
@@ -2429,7 +2435,10 @@
                 let imgSrc=images[i].getAttribute('src').replace(/\/s\d+(-rw)?\/|\/w\d+-h\d+\//,`/s${containerSize}-rw/`);
                 const caption=captions[i]||'';
                 const imageData={src:imgSrc,caption,title:postTitle,date:postDate};
-                if (sourcePostId) imageData.postId=sourcePostId;
+                if (sourcePostId) {
+                    imageData.postId=sourcePostId;
+                    imageData.imageBlock=getPostImageBlockMarkup(images[i]);
+                }
                 slideshows[index].imageBuffer.push(imageData);
             }
         }
@@ -2574,6 +2583,16 @@
             gallery.replaceChildren();
 
             images.forEach(image=>{
+                if (image.imageBlock) {
+                    const template=document.createElement('template');
+                    template.innerHTML=image.imageBlock;
+                    const imageBlock=template.content.firstElementChild;
+                    if (imageBlock) {
+                        gallery.appendChild(imageBlock);
+                        return;
+                    }
+                }
+
                 const link=document.createElement('a');
                 link.href=image.src;
                 link.setAttribute('data-lightbox','Gallery');
