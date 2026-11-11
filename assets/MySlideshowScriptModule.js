@@ -2552,8 +2552,10 @@
         document.querySelectorAll('.my-trip-inline-images').forEach(gallery=>{
             if (gallery.dataset.slideshowIndex!==slideshowIndex) return;
             gallery.style.display='none';
-            const postEntry=gallery.previousElementSibling;
-            if (postEntry&&postEntry.classList.contains('photo-entry')) postEntry.style.display=gallery.dataset.postEntryDisplay||'';
+            const postContainer=gallery.previousElementSibling;
+            if (postContainer&&gallery.dataset.postEntryDisplay!==undefined) {
+                postContainer.style.display=gallery.dataset.postEntryDisplay;
+            }
         });
         if (!showImages) return;
 
@@ -2563,16 +2565,24 @@
             if (!imagesByPostId.has(image.postId)) imagesByPostId.set(image.postId,[]);
             imagesByPostId.get(image.postId).push(image);
         });
+        document.querySelectorAll('script').forEach(script=>{
+            const postId=script.textContent.match(/var\s+postID\d+\s*=\s*['"]([^'"]+)['"]/)?.[1];
+            if (postId&&!imagesByPostId.has(postId)) imagesByPostId.set(postId,[]);
+        });
 
         imagesByPostId.forEach((images,postId)=>{
-            const thumbnail=document.getElementById(`post-snippet-${postId}`);
+            const thumbnail=Array.from(document.querySelectorAll('[id^="post-snippet-"]')).find(element=>
+                element.id===`post-snippet-${postId}`||element.id.endsWith(`post-${postId}`)
+            );
             const postEntry=thumbnail&&thumbnail.closest('.photo-entry');
+            const postCard=thumbnail&&thumbnail.closest('.my-post-outer-container');
+            const postContainer=postEntry||(postCard&&postCard.parentElement.classList.contains('separator')?postCard.parentElement:postCard);
             const postIdScript=Array.from(document.querySelectorAll('script')).find(script=>
                 script.textContent.match(/var\s+postID\d+\s*=\s*['"]([^'"]+)['"]/)?.[1]===postId
             );
-            const insertionPoint=postEntry||postIdScript;
-            const insertionContainer=postEntry
-                ? postEntry.closest('.my-post-container')||postEntry.parentElement
+            const insertionPoint=postContainer||postIdScript;
+            const insertionContainer=postContainer
+                ? postContainer.parentElement
                 : postIdScript&&postIdScript.parentElement;
             if (!insertionPoint||!insertionContainer) {
                 console.warn(`Could not find an insertion point for images from post ID ${postId}`);
@@ -2587,7 +2597,7 @@
                 gallery.className='my-trip-inline-images';
                 gallery.dataset.slideshowIndex=slideshowIndex;
                 gallery.dataset.postId=postId;
-                gallery.dataset.postEntryDisplay=postEntry?.style.display||'';
+                gallery.dataset.postEntryDisplay=postContainer?.style.display||'';
                 insertionPoint.insertAdjacentElement('afterend',gallery);
             }
             gallery.replaceChildren();
@@ -2636,7 +2646,7 @@
             });
 
             gallery.style.display='block';
-            if (postEntry) postEntry.style.display='none';
+            if (postContainer) postContainer.style.display='none';
         });
     }
 
@@ -2645,7 +2655,7 @@
         const buttonViews={
             0:{
                 label:'Prikaži slike te objave',
-                icon:'<svg viewBox="0 0 24 24" width="52" height="52" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="19" height="19" rx="1.5"/><circle cx="6" cy="6" r="1" fill="currentColor" stroke="none"/><path d="M9 6h9M5 9h14"/><rect x="5" y="11" width="14" height="8" rx="0.8"/><circle cx="9" cy="14" r="1.2"/><path d="m6 18 3.5-3 2.5 2 2.5-3 3.5 4"/></svg>'
+                icon:'<svg viewBox="0 0 24 24" width="52" height="52" fill="none" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="19" height="19" rx="1.5"/><circle cx="6" cy="6" r="1" fill="#000000" stroke="none"/><path d="M9 6h9M5 9h14"/><rect x="5" y="11" width="14" height="8" rx="0.8"/><circle cx="9" cy="14" r="1.2"/><path d="m6 18 3.5-3 2.5 2 2.5-3 3.5 4"/></svg>'
             },
             1:{
                 label:'Prikaži slike tudi iz povezanih objav',
