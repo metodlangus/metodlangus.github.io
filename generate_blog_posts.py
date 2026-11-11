@@ -35,7 +35,7 @@ from csscompressor import compress  # pip install csscompressor
 
 GITHUB_USER_NAME = "metodlangus"
 GITHUB_REPO_NAME = "metodlangus.github.io"
-LOCAL_HOST_URL = f"http://127.0.0.1:5502"
+LOCAL_HOST_URL = f"http://127.0.0.1:5500"
 LOCAL_REPO_PATH  = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = Path(LOCAL_REPO_PATH)
 

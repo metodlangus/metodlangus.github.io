@@ -2417,6 +2417,16 @@
         return image.closest('a')?.outerHTML||image.outerHTML;
     }
 
+    function prepareTripInlineImageBlock(imageBlock) {
+        imageBlock.querySelectorAll('img').forEach(imageElement=>{
+            const link=imageElement.closest('a');
+            if (link&&!link.hasAttribute('data-lightbox')) link.setAttribute('data-lightbox','Gallery');
+            if (!link&&!imageElement.hasAttribute('data-lightbox')) imageElement.setAttribute('data-lightbox','Gallery');
+            if (!imageElement.hasAttribute('loading')) imageElement.setAttribute('loading','lazy');
+        });
+        return imageBlock;
+    }
+
     function processEntry(index, entry, sourcePostId) {
         const content=entry.content.$t; const parser=new DOMParser(); const htmlDoc=parser.parseFromString(content,'text/html');
         const images=htmlDoc.getElementsByTagName('img'); const postTitle=entry.title.$t;
@@ -2588,7 +2598,7 @@
                     template.innerHTML=image.imageBlock;
                     const imageBlock=template.content.firstElementChild;
                     if (imageBlock) {
-                        gallery.appendChild(imageBlock);
+                        gallery.appendChild(prepareTripInlineImageBlock(imageBlock));
                         return;
                     }
                 }
@@ -2974,7 +2984,7 @@
             toggleButton=document.createElement("button");
             toggleButton.style.cssText="background-color:#f3891d;border-radius:5px;cursor:pointer;padding:12px;display:flex;align-items:center;justify-content:center;width:80px;height:60px;";
             toggleButton.innerHTML=`<svg fill="#000000" width="80px" height="60px" viewBox="0 0 36 36" version="1.1" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="SVGRepo_iconCarrier"><path d="M32.12,10H3.88A1.88,1.88,0,0,0,2,11.88V30.12A1.88,1.88,0,0,0,3.88,32H32.12A1.88,1.88,0,0,0,34,30.12V11.88A1.88,1.88,0,0,0,32.12,10ZM32,30H4V12H32Z" class="clr-i-outline clr-i-outline-path-1"></path><path d="M8.56,19.45a3,3,0,1,0-3-3A3,3,0,0,0,8.56,19.45Zm0-4.6A1.6,1.6,0,1,1,7,16.45,1.6,1.6,0,0,1,8.56,14.85Z" class="clr-i-outline clr-i-outline-path-2"></path><path d="M7.9,28l6-6,3.18,3.18L14.26,28h2l7.46-7.46L30,26.77v-2L24.2,19a.71.71,0,0,0-1,0l-5.16,5.16L14.37,20.5a.71.71,0,0,0-1,0L5.92,28Z" class="clr-i-outline clr-i-outline-path-3"></path><path d="M30.14,3h0a1,1,0,0,0-1-1h-22a1,1,0,0,0-1,1h0V4h24Z" class="clr-i-outline clr-i-outline-path-4"></path><path d="M32.12,7V7a1,1,0,0,0-1-1h-26a1,1,0,0,0-1,1h0V8h28Z" class="clr-i-outline clr-i-outline-path-5"></path><rect x="0" y="0" width="36" height="36" fill-opacity="0"></rect></g></svg>`;
-            updateTripToggleButton(0);
+            if (slideshowTitles[0]==="Make trip slideshow") updateTripToggleButton(0);
             container.appendChild(content); container.appendChild(toggleButton);
             document.body.appendChild(container); targetDiv.insertAdjacentElement("beforebegin",container);
         }
