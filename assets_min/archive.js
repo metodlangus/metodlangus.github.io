@@ -1,10 +1,31 @@
 document.addEventListener("DOMContentLoaded",function(){document.getElementById("archive-placeholder").innerHTML=`<aside class="sidebar-archive">
   <h2>Arhiv</h2>
   <details open>
-    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(97)</span></summary>
+    <summary><a href="https://metodlangus.github.io/posts/2026/">2026</a>&nbsp;<span class="post-count" dir="ltr">(108)</span></summary>
     <details class="month-group">
-      <summary><a href="https://metodlangus.github.io/posts/2026/09/">september 2026</a>&nbsp;<span class="post-count" dir="ltr">(27)</span></summary>
+      <summary><a href="https://metodlangus.github.io/posts/2026/11/">november 2026</a>&nbsp;<span class="post-count" dir="ltr">(5)</span></summary>
       <ul>
+        <li><a href="https://metodlangus.github.io/posts/2026/11/monte-san-simeone-1505-m/">Monte San Simeone (1505 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/11/poznojesenska-nevihta-pod-krisko-goro/">Poznojesenska nevihta pod Kriško goro</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/11/spanov-vrh-1334-m/">Španov vrh (1334 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/11/wollaner-nock-2145-m/">Wöllaner Nock (2145 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/11/sentanski-vrh-1536-m/">Šentanski vrh (1536 m)</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary><a href="https://metodlangus.github.io/posts/2026/10/">oktober 2026</a>&nbsp;<span class="post-count" dir="ltr">(5)</span></summary>
+      <ul>
+        <li><a href="https://metodlangus.github.io/posts/2026/10/sentanski-vrh-1536-m/">Šentanski vrh (1536 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/10/nlb-30-ljubljanski-maraton-21-km/"> NLB 30. Ljubljanski maraton (21 km)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/10/pokljuska-soteska/">Pokljuška soteska</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/10/kordezeva-glava-peca-2126-m/">Kordeževa glava (Peca) (2126 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/10/polinik-2784-m/">Polinik (2784 m)</a></li>
+      </ul>
+    </details>
+    <details class="month-group">
+      <summary><a href="https://metodlangus.github.io/posts/2026/09/">september 2026</a>&nbsp;<span class="post-count" dir="ltr">(28)</span></summary>
+      <ul>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/hochpalfennock-2099-m/">Hochpalfennock (2099 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/09/francosko-italijanske-alpe-4-21-9-2026/">Francosko-Italijanske Alpe (4. – 21. 9. 2026)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/09/ferrata-gerardo-sega/">Ferrata Gerardo Sega</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/09/cima-telegrafo-2200-m-cima-valdritta-2218-m/">Cima Telegrafo (2200 m), Cima Valdritta (2218 m)</a></li>
@@ -27,7 +48,7 @@ document.addEventListener("DOMContentLoaded",function(){document.getElementById(
         <li><a href="https://metodlangus.github.io/posts/2026/09/le-neron-1928-m/">Le Neron (1928 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/09/la-bastille-trdnjava-nad-grenoblom/">La Bastille – trdnjava nad Grenoblom</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/09/via-ferrata-les-plates-de-la-daille/">Via Ferrata Les Plates de la Daille</a></li>
-        <li><a href="https://metodlangus.github.io/posts/2026/09/aiguille-de-la-grande-sassiere-3747-m/">Aiguille de la Grande Sassiere (3747 m)</a></li>
+        <li><a href="https://metodlangus.github.io/posts/2026/09/aiguille-de-la-grande-sassiere-3747-m/">Aiguille de la Grande Sassière (3747 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/09/pointe-de-lancebranlette-2936-m/">Pointe de Lancebranlette (2936 m)</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/09/passarella-panoramica-dell-orrido/">Passarella Panoramica dell&#x27;Orrido</a></li>
         <li><a href="https://metodlangus.github.io/posts/2026/09/monte-emilius-3556-m-punta-della-valletta-3090-m/">Monte Emilius (3556 m), Punta della Valletta (3090 m)</a></li>
@@ -537,4 +558,5 @@ document.addEventListener("DOMContentLoaded",function(){document.getElementById(
       </ul>
     </details>
   </details>
-</aside>`,document.querySelectorAll("#archive-placeholder details").forEach(function(a,s){var t="archive-state-"+s;sessionStorage.getItem(t)==="open"?a.setAttribute("open",""):sessionStorage.getItem(t)==="closed"&&a.removeAttribute("open"),a.addEventListener("toggle",function(){sessionStorage.setItem(t,a.open?"open":"closed")})})});
+</aside>`;document.querySelectorAll("#archive-placeholder details").forEach(function(det,idx){var key="archive-state-"+idx;if(sessionStorage.getItem(key)==="open"){det.setAttribute("open","");}else if(sessionStorage.getItem(key)==="closed"){det.removeAttribute("open");}
+det.addEventListener("toggle",function(){sessionStorage.setItem(key,det.open?"open":"closed");});});});
