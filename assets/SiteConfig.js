@@ -292,33 +292,83 @@ if (window.location.hostname === "metodlangus.github.io") {
     };
 }
 
+// First-visit welcome and cookie notice
+document.addEventListener("DOMContentLoaded", function () {
+  const hostname = window.location.hostname.toLowerCase();
+  const isLiveSite = hostname === "metodlangus.github.io";
+  const isLocalPreview = hostname === "127.0.0.1" || hostname === "localhost";
+  if (!isLiveSite && !isLocalPreview) return;
 
-// Cookie banner
-(function () {
-  // Only run on the live site
-  if (window.location.hostname !== "metodlangus.github.io") return;
+  document.getElementById("cookie-banner")?.remove();
 
-  const key = 'cookie-consent-gorski';
-  if (!localStorage.getItem(key)) {
-    // Create the banner element
-    const banner = document.createElement('div');
-    banner.id = 'cookie-banner';
+  const key = "cookie-consent-gorski";
+  if (localStorage.getItem(key)) return;
 
-    banner.innerHTML = `
-      <span>This website uses cookies to ensure proper functionality and anonymous visit analysis.</span>
-      <button id="cookie-banner-ok">OK</button>
-    `;
+  const modalStyle = document.createElement("style");
+  modalStyle.textContent = `
+    body.welcome-modal-open{overflow:hidden}
+    #welcome-modal{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:20px;box-sizing:border-box}
+    .welcome-modal-backdrop{position:absolute;inset:0;background:rgba(18,26,22,.68);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+    .welcome-modal-card{position:relative;width:min(520px,calc(100vw - 40px));max-height:calc(100vh - 40px);overflow-y:auto;box-sizing:border-box;padding:32px;border:1px solid rgba(255,255,255,.75);border-radius:18px;background:#fff;color:#2d3731;text-align:center;box-shadow:0 24px 70px rgba(0,0,0,.32);animation:welcome-modal-in 220ms ease-out}
+    .welcome-modal-icon{width:64px;height:64px;margin:0 auto 12px;display:grid;place-items:center;border-radius:50%;background:#edf4ef;overflow:hidden}
+    .welcome-modal-icon img{width:48px;height:48px;object-fit:contain}
+    .welcome-modal-card h2{margin:0 0 14px;padding:0;border:0;color:#2d3731;font-family:Merriweather,serif;font-size:28px;line-height:1.25}
+    .welcome-modal-language,.welcome-modal-cookies{margin:0;font-family:Open Sans,sans-serif;line-height:1.6}
+    .welcome-modal-language{color:#4d5953;font-size:16px}
+    .welcome-modal-translation-note{margin:14px 0 8px;color:#4d5953;font-family:Open Sans,sans-serif;font-size:14px;line-height:1.5}
+    .welcome-modal-cookies{margin-top:18px;padding:13px 14px;border:1px solid #e7ebe8;border-radius:10px;background:#f7f9f7;color:#657069;font-size:13px}
+    .welcome-modal-cookies strong{display:block;margin-bottom:2px;color:#46554d;font-size:14px}
+    #welcome-modal-ok{min-width:150px;margin-top:14px;padding:11px 20px;border:0;border-radius:8px;background:#4a6956;color:#fff;cursor:pointer;font-family:Open Sans,sans-serif;font-size:15px;font-weight:700;transition:background 180ms ease,transform 180ms ease}
+    #welcome-modal-ok:hover{background:#3d5948;transform:translateY(-1px)}
+    #welcome-modal-ok:focus-visible{outline:3px solid rgba(74,105,86,.35);outline-offset:3px}
+    @keyframes welcome-modal-in{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+    @media(max-width:600px){#welcome-modal{padding:14px}.welcome-modal-card{width:calc(100vw - 28px);max-height:calc(100vh - 28px);padding:24px 18px 20px;border-radius:14px}.welcome-modal-icon{width:48px;height:48px}.welcome-modal-card h2{font-size:23px}.welcome-modal-language{font-size:15px}#welcome-modal-ok{width:100%}}
+    @media(prefers-reduced-motion:reduce){.welcome-modal-card{animation:none}#welcome-modal-ok{transition:none}}
+  `;
+  document.head.appendChild(modalStyle);
 
-    document.body.appendChild(banner);
-    banner.style.display = 'flex';
+  const modal = document.createElement("div");
+  modal.id = "welcome-modal";
+  modal.setAttribute("role", "dialog");
+  modal.setAttribute("aria-modal", "true");
+  modal.setAttribute("aria-labelledby", "welcome-modal-title");
+  modal.setAttribute("aria-describedby", "welcome-modal-description");
 
-    // On click, save consent and hide the banner
-    document.getElementById('cookie-banner-ok').addEventListener('click', () => {
-      localStorage.setItem(key, 'yes');
-      banner.remove();
-    });
-  }
-})();
+  modal.innerHTML = `
+    <div class="welcome-modal-backdrop"></div>
+    <div class="welcome-modal-card">
+      <div class="welcome-modal-icon" aria-hidden="true">
+        <img src="https://metodlangus.github.io/photos/favicon.ico"}" alt="">
+      </div>
+      <h2 id="welcome-modal-title">Gorski užitki</h2>
+      <p id="welcome-modal-description" class="welcome-modal-language">
+        Dobrodošli na moji spletni strani „Gorski užitki“, na kateri so zajeti številni lepi trenutki, preživeti v naravi.
+        Z odkrivanjem gorskega sveta se mi je čez leta začelo nabirati veliko fotografij, na katerih so ujeti številni lepi trenutki, preživeti v naravi.
+        Številne lepe slike so se med množico drugih izgubile in ostale shranjene zgolj zase.
+        Zato se je pojavila želja, da bi jih zbral na enem mestu in jim dal prostor, ki si ga zaslužijo.
+      </p>
+      <p class="welcome-modal-cookies">
+        <strong>Piškoti in zasebnost</strong>
+        Stran uporablja piškote za pravilno delovanje in anonimno analizo obiska.<br>
+        <button id="welcome-modal-ok" type="button">V redu</button>
+      </p>
+      <p class="welcome-modal-translation-note">
+        Don't understand Slovene? You can use the integrated Google Translate option at the bottom of the sidebar. First, click <strong>"V redu"</strong> to accept cookies and access the website.
+      </p>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+  document.body.classList.add("welcome-modal-open");
+
+  const closeModal = function () {
+    localStorage.setItem(key, "yes");
+    document.body.classList.remove("welcome-modal-open");
+    modal.remove();
+  };
+
+  document.getElementById("welcome-modal-ok").addEventListener("click", closeModal);
+});
 
 
 (function() {

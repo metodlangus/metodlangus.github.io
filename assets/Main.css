@@ -815,38 +815,165 @@ div#PageList1 ul li {
 }
 
 
-/* Cookie banner */
-#cookie-banner {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: rgba(20, 20, 20, 0.95);
-  color: #fff;
-  padding: 12px 16px;
-  font-size: 14px;
-  display: none; /* prikaže se preko JS */
-  z-index: 9999;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
+/* First-visit welcome and cookie notice */
+body.welcome-modal-open {
+  overflow: hidden;
 }
 
-#cookie-banner button {
-  margin-left: 12px;
-  padding: 6px 12px;
-  background: #4caf50;
-  border: none;
+#welcome-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.welcome-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(18, 26, 22, 0.68);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.welcome-modal-card {
+  position: relative;
+  width: min(520px, calc(100vw - 40px));
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 18px;
+  background: #fff;
+  color: #2d3731;
+  text-align: center;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+  animation: welcome-modal-in 220ms ease-out;
+}
+
+.welcome-modal-icon {
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 12px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #edf4ef;
+  color: #4a6956;
+}
+
+.welcome-modal-icon svg {
+  fill: currentColor;
+}
+
+.welcome-modal-card h2 {
+  margin: 0 0 14px;
+  padding: 0;
+  border: 0;
+  color: #2d3731;
+  font-family: 'Merriweather', serif;
+  font-size: 28px;
+  line-height: 1.25;
+}
+
+.welcome-modal-language,
+.welcome-modal-cookies {
+  margin: 0;
+  font-family: 'Open Sans', sans-serif;
+  line-height: 1.6;
+}
+
+.welcome-modal-language {
+  color: #4d5953;
+  font-size: 16px;
+}
+
+.welcome-modal-cookies {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #e7ebe8;
+  color: #727b76;
+  font-size: 13px;
+}
+
+#welcome-modal-ok {
+  min-width: 150px;
+  margin-top: 22px;
+  padding: 11px 20px;
+  border: 0;
+  border-radius: 8px;
+  background: #4a6956;
   color: #fff;
   cursor: pointer;
-  border-radius: 4px;
-  font-size: 14px;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  transition: background 180ms ease, transform 180ms ease;
 }
 
-#cookie-banner span {
-  flex: 1 1 auto;
-  margin-right: 12px;
+#welcome-modal-ok:hover {
+  background: #3d5948;
+  transform: translateY(-1px);
+}
+
+#welcome-modal-ok:focus-visible {
+  outline: 3px solid rgba(74, 105, 86, 0.35);
+  outline-offset: 3px;
+}
+
+@keyframes welcome-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 600px) {
+  #welcome-modal {
+    align-items: center;
+    padding: 14px;
+  }
+
+  .welcome-modal-card {
+    width: calc(100vw - 28px);
+    max-height: calc(100vh - 28px);
+    padding: 24px 18px 20px;
+    border-radius: 14px;
+  }
+
+  .welcome-modal-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .welcome-modal-card h2 {
+    font-size: 23px;
+  }
+
+  .welcome-modal-language {
+    font-size: 15px;
+  }
+
+  #welcome-modal-ok {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome-modal-card {
+    animation: none;
+  }
+
+  #welcome-modal-ok {
+    transition: none;
+  }
 }
 
 
@@ -1039,7 +1166,7 @@ div#PageList1 ul li {
 .search-toggle,
 .search-close,
 .pill-button,
-#cookie-banner button,
+#welcome-modal-ok,
 #backToTop,
 .close-button,
 .auth-box button,
